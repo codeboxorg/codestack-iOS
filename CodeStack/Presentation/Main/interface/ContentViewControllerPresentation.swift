@@ -8,7 +8,7 @@
 import UIKit
 
 enum ViewControllerPresentation {
-    case embed(ViewController)
+    case embed(UIViewControllerSideMenuDelegate)
     case push(UIViewController)
     case modal(UIViewController)
 }

@@ -14,6 +14,7 @@ class MainView: UIView{
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.backgroundColor = .systemBackground
+        scrollView.alwaysBounceVertical = true
         return scrollView
     }()
     
@@ -57,11 +58,10 @@ class MainView: UIView{
     override init(frame: CGRect) {
         super.init(frame: frame)
         layoutConfigure()
-        
     }
+    
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
-        
     }
     
     private func layoutConfigure(){
@@ -84,7 +84,7 @@ class MainView: UIView{
             $0.top.leading.trailing.equalToSuperview()
             $0.width.equalTo(self.snp.width)
             $0.height.equalTo(500).priority(.low)
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalTo(scrollView.snp.bottom)
         }
         
         backgroundView.snp.makeConstraints{
@@ -112,13 +112,13 @@ class MainView: UIView{
         }
         
     
-        let spacing: CGFloat = 100
+        let spacing: CGFloat = 1
         
         subView_2.snp.makeConstraints{
             $0.top.equalTo(subView_1.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-12)
             $0.height.equalTo(subView_2.getViewHeight() + spacing)
+            $0.bottom.equalToSuperview()
         }
     }
 }

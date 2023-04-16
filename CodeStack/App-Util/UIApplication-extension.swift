@@ -9,7 +9,7 @@ import UIKit
 
 extension UIApplication{
     static func getScreenSize() -> CGFloat{
-        let firstScene = UIApplication.shared.connectedScenes.first // may be nil
+        let firstScene = UIApplication.shared.connectedScenes.first 
         if let scene = firstScene as? UIWindowScene {
             let screenSize = scene.screen.bounds.height
             return screenSize

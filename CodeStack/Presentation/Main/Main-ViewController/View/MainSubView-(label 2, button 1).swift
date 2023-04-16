@@ -25,13 +25,8 @@ class TwoLabelOneButton: UIView{
         return label.descriptionLabel(text: "오늘도 같이 문제를 해결하러 가볼까요?")
     }()
     
-    private lazy var today_problem_btn: UIButton = {
-        var configuration = UIButton.Configuration.plain()
-        configuration.titlePadding = 50
-        let button = UIButton(configuration: configuration)
-        button.layer.borderColor = UIColor.systemBlue.cgColor
-        button.layer.borderWidth = 1
-        button.layer.cornerRadius = 8
+    private lazy var today_problem_btn: HighlightButton = {
+        let button = HighlightButton(frame: .zero)
         return button
     }()
     
@@ -40,26 +35,27 @@ class TwoLabelOneButton: UIView{
         
     }
     
+    var observation : NSKeyValueObservation?
+    
     convenience init(frame: CGRect, labelBtnText: LabelBtnText){
         self.init(frame: .zero)
+        
+        layoutConfigure()
+        
         headLine_label.text = labelBtnText.headLine
         description_label.text = labelBtnText.description
-        today_problem_btn.setAttributedTitle(NSAttributedString(string: labelBtnText.btn_title,
-                                                                attributes: [.foregroundColor : UIColor.systemBlue,
-                                                                             .font : UIFont.systemFont(ofSize: 17)]),
-                                             for: .normal)
+        today_problem_btn.setTitle(labelBtnText.btn_title, for: .normal)
         
-        today_problem_btn.observe(\.isHighlighted,options: [.old,.new], changeHandler: { button,value in
-            
-            guard let highlighetd = value.newValue else { return }
-            if highlighetd{
-                button.backgroundColor = .systemBlue
-            }else{
-                button.backgroundColor = .clear
-            }
-            
-        })
-        layoutConfigure()
+        observation = today_problem_btn.observe(\.isHighlighted, options: [.old, .new], changeHandler: { button, change in
+               if change.oldValue! != change.newValue! {
+                   guard let highlighetd = change.newValue else { return }
+                   if highlighetd{
+                       button.configuration = .filled()
+                   }else{
+                       button.configuration = .plain()
+                   }
+               }
+           })
     }
     
     required init?(coder: NSCoder) {

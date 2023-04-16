@@ -21,6 +21,20 @@ final class SideMenuViewController: UIViewController {
         view.backgroundColor = .white
         return view
     }()
+    
+    private lazy var logoView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "codeStack"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    private lazy var headerTitle: UILabel = {
+        var label = UILabel()
+        label = label.headLineLabel(size: 35, text: "CodeStack", color: .black)
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
 
     private var tableView: UITableView = {
         let tableView = UITableView()
@@ -57,11 +71,9 @@ final class SideMenuViewController: UIViewController {
             self.leadingConstraint.constant = 0
             self.view.layoutIfNeeded()
         }
-        print("-UIApplication.getScreenSize() show : \(-UIApplication.getScreenSize())")
     }
 
     func hide() {
-        print("-UIApplication.getScreenSize() : \(-UIApplication.getScreenSize())")
         self.view.backgroundColor = .clear
         UIView.animate(withDuration: 0.5) {
             self.leadingConstraint.constant = -UIApplication.getScreenSize()
@@ -84,22 +96,38 @@ final class SideMenuViewController: UIViewController {
     private func addSubviews() {
         view.addSubview(sideMenuView)
         sideMenuView.addSubview(headerView)
+        headerView.addSubview(headerTitle)
+        headerView.addSubview(logoView)
         sideMenuView.addSubview(tableView)
         configureConstraints()
     }
     
     private func configureConstraints() {
-        sideMenuView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        leadingConstraint = sideMenuView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -view.frame.size.width)
+        sideMenuView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        leadingConstraint = sideMenuView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: -view.frame.size.width)
         leadingConstraint.isActive = true
-        sideMenuView.widthAnchor.constraint(equalToConstant: view.frame.size.width * 0.8).isActive = true
-        sideMenuView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        sideMenuView.widthAnchor.constraint(equalToConstant: view.frame.size.width * 0.6).isActive = true
+        sideMenuView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
 
         headerView.topAnchor.constraint(equalTo: sideMenuView.topAnchor).isActive = true
         headerView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor).isActive = true
         headerView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor).isActive = true
         headerView.heightAnchor.constraint(equalToConstant: 150).isActive = true
 
+        
+        NSLayoutConstraint.activate([
+            logoView.topAnchor.constraint(equalTo: headerView.topAnchor,constant: 20),
+            logoView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor,constant: 15),
+            logoView.trailingAnchor.constraint(greaterThanOrEqualTo: headerView.leadingAnchor),
+            logoView.widthAnchor.constraint(equalToConstant: 50),
+            logoView.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        NSLayoutConstraint.activate([
+            headerTitle.topAnchor.constraint(equalTo: logoView.bottomAnchor,constant: 12),
+            headerTitle.leadingAnchor.constraint(equalTo: logoView.leadingAnchor),
+            headerTitle.trailingAnchor.constraint(equalTo: headerView.trailingAnchor)
+        ])
+        
         tableView.topAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
         tableView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor).isActive = true

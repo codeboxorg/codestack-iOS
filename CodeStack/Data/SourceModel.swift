@@ -6,3 +6,60 @@
 //
 
 import Foundation
+
+
+
+struct SourceModel{
+    let id: Int
+    var cpuTime: String?
+    var memoryUsage: String?
+    var statusCode: String?
+    var sourceCode: String?
+    var problem: ProblemModel
+    var language: Lanaguage
+    var member: Member
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case cpuTime = "cpu_time"
+        case memoryUsage = "memory_usage"
+        case statusCode = "status_code"
+        case sourceCode = "source_code"
+        case problem
+        case language
+        case member
+    }
+}
+
+struct ProblemModel{
+    let problemID: Int
+    var title: String
+    
+    enum CodingKeys: String,CodingKey{
+        case problemID = "id"
+        case title
+    }
+}
+
+struct Lanaguage{
+    let languageID: Int
+    let name: String
+    
+    enum CodingKeys: String,CodingKey{
+        case languageID = "id"
+        case name
+    }
+}
+
+struct Member{
+    let memberID: Int
+    var userName: String?
+    var nickname: String?
+    
+    enum CodingKeys: String,CodingKey{
+        case memberID = "id"
+        case userName
+        case nickname
+    }
+    
+}

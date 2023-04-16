@@ -10,10 +10,12 @@ import UIKit
 final class ContainerViewController: UIViewController {
     private var sideMenuViewController: SideMenuViewController!
     private var navigator: UINavigationController!
-    private var rootViewController: ViewController! {
+    private var rootViewController: UIViewControllerSideMenuDelegate! {
         didSet {
             rootViewController.delegate = self
-            navigator.setViewControllers([rootViewController], animated: false)
+            if let vc = rootViewController as? UIViewController{
+                navigator.setViewControllers([vc], animated: false)
+            }
         }
     }
     
@@ -51,31 +53,37 @@ final class ContainerViewController: UIViewController {
         rightSwipeGesture.edges = .left
         view.addGestureRecognizer(rightSwipeGesture)
     
-        let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
-        view.addGestureRecognizer(gestureRecognizer)
+//        let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
+//        view.addGestureRecognizer(gestureRecognizer)
     }
     
     @objc private func swipedLeft() {
         sideMenuViewController.hide()
+//        print("left")
     }
     
-    @objc private func swipedRight() {
+    @objc private func swipedRight(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+//        print("gestureRecognizer.edges : \(gestureRecognizer.edges)")
+//        print("gestureRecognizer.state : \(gestureRecognizer.state)")
+//        let translaction = gestureRecognizer.translation(in: self.view)
+//        print("translaction : \(translaction)")
         sideMenuViewController.show()
+//        print("rigth")
     }
     
     @objc func handlePan(_ gestureRecognizer: UIPanGestureRecognizer) {
        
-        
-        if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
-            
-            let translation = gestureRecognizer.translation(in: self.view)
-            // note: 'view' is optional and need to be unwrapped
-            gestureRecognizer.view!.center = CGPoint(x: gestureRecognizer.view!.center.x + translation.x, y: gestureRecognizer.view!.center.y + translation.y)
-            gestureRecognizer.setTranslation(CGPoint.zero, in: self.view)    
-        }
+//
+//        if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
+//
+//            let translation = gestureRecognizer.translation(in: self.view)
+//            // note: 'view' is optional and need to be unwrapped
+//            gestureRecognizer.view!.center = CGPoint(x: gestureRecognizer.view!.center.x + translation.x, y: gestureRecognizer.view!.center.y + translation.y)
+//            gestureRecognizer.setTranslation(CGPoint.zero, in: self.view)
+//        }
     }
     
-    func updateRootViewController(_ viewController: ViewController) {
+    func updateRootViewController(_ viewController: UIViewControllerSideMenuDelegate) {
         rootViewController = viewController
     }
     

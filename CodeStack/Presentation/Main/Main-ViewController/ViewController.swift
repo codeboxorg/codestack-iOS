@@ -18,6 +18,8 @@ extension UIViewController {
         self.title = "CodeStack"
         self.navigationController?.navigationBar.tintColor = UIColor.label
         self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.largeTitleDisplayMode = .automatic
+        
     }
 }
 
@@ -36,7 +38,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         navigationSetting()
         layoutConfigure()
-
     }
     
     
