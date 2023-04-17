@@ -62,6 +62,11 @@ final class SideMenuViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        
+        headerView.layer.cornerRadius = 12
+        headerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        tableView.layer.cornerRadius = 12
+        tableView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
     }
     
     func show() {
@@ -80,7 +85,6 @@ final class SideMenuViewController: UIViewController {
             self.view.layoutIfNeeded()
         } completion: { _ in
             self.view.frame.origin.x = -UIApplication.getScreenSize()
-            
         }
     }
     

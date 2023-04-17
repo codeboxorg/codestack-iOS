@@ -42,9 +42,21 @@ class ViewController: UIViewController {
     
     
     private func navigationSetting(){
+        //라지 타이틀 적용
         adjustLargeTitleSize()
+        
+        // 사이드바 보기 버튼 적용
         self.view.backgroundColor = UIColor.systemBackground
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(rightBarButtonMenuTapped(_:)))
+        
+        // back navigtion 백버튼 타이틀 숨기기
+        let backButtonAppearance = UIBarButtonItemAppearance(style: .plain)
+        backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
+
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backButtonAppearance = backButtonAppearance
+
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
     }
     
     @objc func rightBarButtonMenuTapped(_ sender: UIBarButtonItem){

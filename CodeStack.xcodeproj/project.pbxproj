@@ -29,6 +29,13 @@
 		9653110D29EAF1DF006C3E18 /* CodeProblemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653110C29EAF1DF006C3E18 /* CodeProblemViewController.swift */; };
 		9653110F29EAF2F9006C3E18 /* UIViewController-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653110E29EAF2F9006C3E18 /* UIViewController-ext.swift */; };
 		9653111229EBCD9A006C3E18 /* SourceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111129EBCD9A006C3E18 /* SourceModel.swift */; };
+		9653111429EBD176006C3E18 /* ProblemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111329EBD176006C3E18 /* ProblemCell.swift */; };
+		9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111529EBD729006C3E18 /* CellIdentifierProtocol.swift */; };
+		9653111929EBD7D0006C3E18 /* ProblemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111829EBD7CF006C3E18 /* ProblemModel.swift */; };
+		9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111C29EBF163006C3E18 /* GraphCell.swift */; };
+		9653112029ED1730006C3E18 /* CALayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111F29ED1730006C3E18 /* CALayer.swift */; };
+		9653112429ED1AC0006C3E18 /* LanguageTagContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112329ED1AC0006C3E18 /* LanguageTagContainer.swift */; };
+		9653112729ED1B5F006C3E18 /* LangugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112629ED1B5F006C3E18 /* LangugeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +81,13 @@
 		9653110C29EAF1DF006C3E18 /* CodeProblemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemViewController.swift; sourceTree = "<group>"; };
 		9653110E29EAF2F9006C3E18 /* UIViewController-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController-ext.swift"; sourceTree = "<group>"; };
 		9653111129EBCD9A006C3E18 /* SourceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceModel.swift; sourceTree = "<group>"; };
+		9653111329EBD176006C3E18 /* ProblemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemCell.swift; sourceTree = "<group>"; };
+		9653111529EBD729006C3E18 /* CellIdentifierProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellIdentifierProtocol.swift; sourceTree = "<group>"; };
+		9653111829EBD7CF006C3E18 /* ProblemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemModel.swift; sourceTree = "<group>"; };
+		9653111C29EBF163006C3E18 /* GraphCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphCell.swift; sourceTree = "<group>"; };
+		9653111F29ED1730006C3E18 /* CALayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayer.swift; sourceTree = "<group>"; };
+		9653112329ED1AC0006C3E18 /* LanguageTagContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageTagContainer.swift; sourceTree = "<group>"; };
+		9653112629ED1B5F006C3E18 /* LangugeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangugeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,6 +210,7 @@
 			isa = PBXGroup;
 			children = (
 				965310F629EADE6E006C3E18 /* SideMenuDelegate.swift */,
+				9653111529EBD729006C3E18 /* CellIdentifierProtocol.swift */,
 				965310F829EADE84006C3E18 /* ContentViewControllerPresentation.swift */,
 			);
 			path = interface;
@@ -249,6 +264,9 @@
 			isa = PBXGroup;
 			children = (
 				9653110C29EAF1DF006C3E18 /* CodeProblemViewController.swift */,
+				9653111729EBD7C7006C3E18 /* VIewModel */,
+				9653112529ED1AD6006C3E18 /* Cell */,
+				9653111E29ED1728006C3E18 /* Util */,
 			);
 			path = "CodeProblem-VC";
 			sourceTree = "<group>";
@@ -259,6 +277,49 @@
 				9653111129EBCD9A006C3E18 /* SourceModel.swift */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		9653111729EBD7C7006C3E18 /* VIewModel */ = {
+			isa = PBXGroup;
+			children = (
+				9653111829EBD7CF006C3E18 /* ProblemModel.swift */,
+			);
+			path = VIewModel;
+			sourceTree = "<group>";
+		};
+		9653111E29ED1728006C3E18 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				9653111F29ED1730006C3E18 /* CALayer.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		9653112129ED1AA2006C3E18 /* GraphCell */ = {
+			isa = PBXGroup;
+			children = (
+				9653111C29EBF163006C3E18 /* GraphCell.swift */,
+				9653112229ED1AB0006C3E18 /* View */,
+			);
+			path = GraphCell;
+			sourceTree = "<group>";
+		};
+		9653112229ED1AB0006C3E18 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				9653112329ED1AC0006C3E18 /* LanguageTagContainer.swift */,
+				9653112629ED1B5F006C3E18 /* LangugeView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		9653112529ED1AD6006C3E18 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				9653111329EBD176006C3E18 /* ProblemCell.swift */,
+				9653112129ED1AA2006C3E18 /* GraphCell */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -397,6 +458,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */,
 				965310F929EADE84006C3E18 /* ContentViewControllerPresentation.swift in Sources */,
 				9653110D29EAF1DF006C3E18 /* CodeProblemViewController.swift in Sources */,
 				965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */,
@@ -404,13 +466,19 @@
 				965310E929EA8EF2006C3E18 /* MainSubView-(label 2, button 1).swift in Sources */,
 				965310FD29EADF67006C3E18 /* SideMenuViewController.swift in Sources */,
 				9653110F29EAF2F9006C3E18 /* UIViewController-ext.swift in Sources */,
+				9653112429ED1AC0006C3E18 /* LanguageTagContainer.swift in Sources */,
 				9653110129EAE008006C3E18 /* SideItemCell.swift in Sources */,
 				965310B129EA7A4F006C3E18 /* AppDelegate.swift in Sources */,
 				965310E529EA855D006C3E18 /* Label-extension.swift in Sources */,
+				9653112729ED1B5F006C3E18 /* LangugeView.swift in Sources */,
+				9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */,
 				9653110A29EAF0EA006C3E18 /* HighlightButton.swift in Sources */,
+				9653111929EBD7D0006C3E18 /* ProblemModel.swift in Sources */,
 				9653110429EAE092006C3E18 /* UIApplication-extension.swift in Sources */,
+				9653111429EBD176006C3E18 /* ProblemCell.swift in Sources */,
 				965310F729EADE6E006C3E18 /* SideMenuDelegate.swift in Sources */,
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
+				9653112029ED1730006C3E18 /* CALayer.swift in Sources */,
 				9653111229EBCD9A006C3E18 /* SourceModel.swift in Sources */,
 				965310B329EA7A4F006C3E18 /* SceneDelegate.swift in Sources */,
 			);

@@ -32,7 +32,7 @@ extension UILabel{
         return descriptor
     }
     
-    func headLineLabel(size: CGFloat = 28,text: String, color: UIColor = UIColor.label) -> Self{
+    func headLineLabel(size: CGFloat = 28,text: String = "", color: UIColor = UIColor.label) -> Self{
         let label = self.introduceLable(size, text)
         label.textColor = color
         return label
