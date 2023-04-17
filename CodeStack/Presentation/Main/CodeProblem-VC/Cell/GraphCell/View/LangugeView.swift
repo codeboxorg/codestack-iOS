@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import SnapKit
 
 
 class LanguageTag: UIView {
@@ -47,15 +47,21 @@ class LanguageTag: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        asdfafds
-        self.backgroundColor = .systemCyan
-        self.layer.cornerRadius = 8
-        
+       
         self.addSubview(featureLabel)
-    
         featureLabel.snp.makeConstraints{
             $0.centerX.centerY.equalToSuperview()
         }
+    }
+    
+    convenience init(frame: CGRect,
+                     corner radius: CGFloat,
+                     background color: UIColor,
+                     text color_t: UIColor) {
+        self.init(frame: frame)
+        self.backgroundColor = .systemCyan
+        self.layer.cornerRadius = radius
+        self.featureLabel.textColor = color_t
         
     }
     

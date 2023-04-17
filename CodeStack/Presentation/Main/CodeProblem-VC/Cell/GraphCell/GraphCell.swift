@@ -13,7 +13,6 @@ class GraphCell: UICollectionViewCell{
     
     let lableSize: CGFloat = 14
     
-    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.alignment = .center
@@ -82,6 +81,7 @@ class GraphCell: UICollectionViewCell{
     override init(frame: CGRect) {
         super.init(frame: frame)
         layoutConfigure()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -129,7 +129,7 @@ class GraphCell: UICollectionViewCell{
         
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.equalTo(100).priority(.low)
+            make.height.equalTo(50).priority(.low)
         }
         
         [
@@ -152,20 +152,13 @@ class GraphCell: UICollectionViewCell{
             make.bottom.equalToSuperview()
         }
         
-        problem_submit_tag.snp.makeConstraints{make in
-            
-        }
-        
         separatorView1.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.width.equalTo(1)
             make.height.equalTo(separatorHeight).priority(.low)
         }
         
-        problem_correct_tag.snp.makeConstraints { make in
 
-        }
-        
         separatorView2.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.width.equalTo(1)
@@ -173,10 +166,7 @@ class GraphCell: UICollectionViewCell{
             make.bottom.equalToSuperview()
         }
         
-        problem_correctRate_tap.snp.makeConstraints { make in
 
-        }
-        
         separatorView_end.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.height.equalTo(separatorHeight).priority(.low)

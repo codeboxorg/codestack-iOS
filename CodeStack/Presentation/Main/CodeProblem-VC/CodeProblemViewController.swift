@@ -17,15 +17,16 @@ class CodeProblemViewController: UIViewController{
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(ProblemCell.self, forCellReuseIdentifier: ProblemCell.identifier)
-        tableView.estimatedRowHeight = 150
+        tableView.estimatedRowHeight = 200
         tableView.rowHeight = UITableView.automaticDimension
         return tableView
     }()
+    
+    
+    var listModel: [DummyModel] = DummyData.getAllModels()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.systemBackground
-        
-        
         
         self.title = "Problem List"
         
@@ -42,18 +43,15 @@ extension CodeProblemViewController: UITableViewDelegate{
 }
 extension CodeProblemViewController: UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return listModel.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ProblemCell.identifier, for: indexPath) as? ProblemCell else { return UITableViewCell() }
-        let model = ProblemListItemViewModel(problemNumber: 1,
-                                             problemTitle: "Hellow world",
-                                             submitCount: 12,
-                                             correctAnswer: 14,
-                                             correctRate: 86.2)
-        cell.bind(model)
+        let data = listModel[indexPath.row]
+     
+        cell.bind(data.model, data.language)
         return cell
     }
     

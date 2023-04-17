@@ -72,8 +72,6 @@ final class ContainerViewController: UIViewController {
     }
     
     @objc func handlePan(_ gestureRecognizer: UIPanGestureRecognizer) {
-       
-//
 //        if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
 //
 //            let translation = gestureRecognizer.translation(in: self.view)
@@ -101,6 +99,14 @@ final class ContainerViewController: UIViewController {
 extension ContainerViewController: SideMenuDelegate {
     func menuButtonTapped() {
         sideMenuViewController.show()
+    }
+    
+    func moveToVC(_ name: String) {
+        guard let item = sideMenuViewController.sideMenuItems.filter({ item in
+            item.name == name
+        }).first else { return }
+        
+        itemSelected(item: item.viewController)
     }
     
     func itemSelected(item: ViewControllerPresentation) {

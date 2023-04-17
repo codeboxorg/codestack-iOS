@@ -12,7 +12,7 @@ import SnapKit
 class ProblemCell: UITableViewCell{
     
     let lableSize: CGFloat = 14
-    
+    let containerSpacing: CGFloat = 8
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -33,7 +33,6 @@ class ProblemCell: UITableViewCell{
         return label
     }()
     
-    
     private lazy var graphCollectionView: UICollectionView = {
         let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumLineSpacing = 0 // 상하간격
@@ -41,31 +40,50 @@ class ProblemCell: UITableViewCell{
         let collection = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collection.delegate = self
         collection.dataSource = self
-        
         collection.register(GraphCell.self, forCellWithReuseIdentifier: GraphCell.identifier)
         return collection
     }()
     
     
-    // MARK: - SubView array Property
-    private lazy var subviewsToBeAdded: [UIView] = [
-        problem_number,
-        problem_title,
-        graphCollectionView
-    ]
+    private lazy var languageContainerContainer: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    private lazy var langugeContainer: LanguageTagContainer = {
+        let container = LanguageTagContainer(frame: self.frame, spacing: containerSpacing)
+        
+        return container
+    }()
     
     
     var model: ProblemListItemViewModel?
+    var languages: PMLanguage? {
+        didSet{
+            if let languages{
+                self.langugeContainer.setLanguage(languages)
+                let height = self.langugeContainer.sizeThatFits(CGSize(width: 320, height: 100)).height
+
+                self.languageContainerContainer.snp.updateConstraints { make in
+                    make.height.equalTo(height).priority(.low)
+                }
+            }else{
+                self.langugeContainer.removeLaguageTag()
+            }
+        }
+    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         model = nil
+        languages = nil
     }
     
-    func bind(_ model: ProblemListItemViewModel){
+    func bind(_ model: ProblemListItemViewModel,_ languages: PMLanguage){
         problem_number.setTitle("\(model.problemNumber)", for: .normal)
         problem_title.text = "\(model.problemTitle)"
         self.model = model
+        self.languages = languages
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -78,17 +96,21 @@ class ProblemCell: UITableViewCell{
         fatalError("required init fatalError")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let edge: CGFloat = 10
-        contentView.frame.inset(by: UIEdgeInsets(top: edge, left: edge, bottom: edge, right: edge))
-    }
+    
+    // MARK: - SubView array Property
+    private lazy var subviewsToBeAdded: [UIView] = [
+        problem_number,
+        problem_title,
+        graphCollectionView,
+        languageContainerContainer
+    ]
     
     private func addSubviewsToContentView() {
         contentView.addSubview(containerView)
         subviewsToBeAdded.forEach { subview in
             containerView.addSubview(subview)
         }
+        languageContainerContainer.addSubview(langugeContainer)
     }
     
     private func layoutConfigure(){
@@ -96,8 +118,8 @@ class ProblemCell: UITableViewCell{
         addSubviewsToContentView()
         
         containerView.snp.makeConstraints{ make in
-            make.edges.equalToSuperview().inset(12)
-            
+            make.edges.equalToSuperview().inset(containerSpacing)
+            make.height.equalTo(200).priority(.low)
         }
         containerView.layer.cornerRadius = 16
         containerView.layer.borderWidth = 1
@@ -108,7 +130,6 @@ class ProblemCell: UITableViewCell{
             make.width.height.equalTo(32)
         }
         
-        
         problem_title.snp.makeConstraints { make in
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
             make.centerY.equalTo(problem_number)
@@ -118,33 +139,24 @@ class ProblemCell: UITableViewCell{
             make.top.equalTo(problem_number.snp.bottom).offset(8)
             make.leading.equalTo(problem_number.snp.leading)
             make.trailing.equalToSuperview().offset(-16)
-            make.height.equalTo(100).priority(.low)
-            make.bottom.equalToSuperview()
+            make.height.equalTo(50)
         }
         
+        //view의 우선순위 살펴보기
+        languageContainerContainer.snp.makeConstraints{make in
+            make.top.equalTo(graphCollectionView.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(100).priority(.low)
+            // 왜 .high 를 해야 자리를 잡지?
+            make.bottom.equalTo(containerView.snp.bottom).offset(-12).priority(.high)
+        }
         
+        langugeContainer.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 }
-//
-//if ViewSection(rawValue: indexPath.section) == .review{
-//    let reviewCell = ReviewCell()
-//
-//    let width = collectionView.frame.size.width
-//    reviewCell.contentView.bounds.size.width = width
-//
-//    reviewCell.calculateViewHeight( indexPath,
-//                                    viewModel.getCellData(indexPath.row))
-//
-//    reviewCell.contentView.setNeedsLayout()
-//    reviewCell.contentView.layoutIfNeeded()
-//
-//    // uiview.layoutFittingCompressedSize -> 뷰의 적절한 최소 크기 반환
-//    let height = reviewCell.contentView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)).height
-//
-//    reviewCell.prepareForReuse()
-//
-//    return CGSize(width: width, height: height)
-//}
+
 extension ProblemCell: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let cell = GraphCell(frame: .zero)
@@ -160,6 +172,7 @@ extension ProblemCell: UICollectionViewDelegateFlowLayout{
         return CGSize(width: width, height: height)
     }
 }
+
 extension ProblemCell: UICollectionViewDelegate{
     
 }
@@ -171,14 +184,14 @@ extension ProblemCell: UICollectionViewDataSource{
         return 2
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GraphCell.identifier, for: indexPath) as? GraphCell else {return UICollectionViewCell()}
         if indexPath.row == 1{
             if let model = model{
-                cell.bind(GraphCell.GraphModel(submitCount: "\(model.submitCount)\(model.submitCount)\(model.submitCount)\(model.submitCount)\(model.submitCount)",
+                
+                cell.bind(GraphCell.GraphModel(submitCount: "\(model.submitCount)",
                                                correctAnswer: "\(model.correctAnswer)",
-                                               correctRate: "\(model.correctRate)"))
+                                               correctRate: "\(round(model.correctRate * 100) / 100)"))
             }
             
             return cell
@@ -187,41 +200,3 @@ extension ProblemCell: UICollectionViewDataSource{
         return cell
     }
 }
-//
-
-
-//        problem_submit_tag.snp.makeConstraints { make in
-//            make.left.equalTo(problem_number)
-//            make.top.equalTo(problem_number.snp.bottom).offset(16)
-//        }
-//
-//        problem_submit.snp.makeConstraints { make in
-//            make.left.equalTo(problem_submit_tag.snp.right).offset(8)
-//            make.centerY.equalTo(problem_submit_tag)
-//        }
-//
-//        problem_correct_tag.snp.makeConstraints { make in
-//            make.left.equalTo(problem_submit_tag)
-//            make.top.equalTo(problem_submit_tag.snp.bottom).offset(16)
-//        }
-//
-//        problem_correct.snp.makeConstraints { make in
-//            make.left.equalTo(problem_correct_tag.snp.right).offset(8)
-//            make.centerY.equalTo(problem_correct_tag)
-//        }
-//
-//        problem_correctRate_tap.snp.makeConstraints { make in
-//            make.left.equalTo(problem_correct_tag)
-//            make.top.equalTo(problem_correct_tag.snp.bottom).offset(16)
-//        }
-//
-//        problem_correctRate.snp.makeConstraints { make in
-//            make.left.equalTo(problem_correctRate_tap.snp.right).offset(8)
-//            make.centerY.equalTo(problem_correctRate_tap)
-//            make.bottom.equalToSuperview().offset(-8)
-//        }
-
-
-//2023-04-16 16:28:38.600244+0900 CodeStack[4603:722406] [LayoutConstraints] Changing the translatesAutoresizingMaskIntoConstraints property of the contentView of a UITableViewCell is not supported and will result in undefined behavior, as this property is managed by the owning UITableViewCell. Cell: <CodeStack.ProblemCell: 0x101111800; baseClass = UITableViewCell; frame = (0 0; 320 44); layer = <CALayer: 0x283173600>>
-//2023-04-16 16:28:38.605959+0900 CodeStack[4603:722406] [LayoutConstraints] Changing the translatesAutoresizingMaskIntoConstraints property of the contentView of a UITableViewCell is not supported and will result in undefined behavior, as this property is managed by the owning UITableViewCell. Cell: <CodeStack.ProblemCell: 0x101032200; baseClass = UITableViewCell; frame = (0 0; 320 44); layer = <CALayer: 0x28314c4e0>>
-

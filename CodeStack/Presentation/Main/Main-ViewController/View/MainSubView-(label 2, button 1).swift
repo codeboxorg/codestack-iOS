@@ -9,6 +9,11 @@ import UIKit
 
 class TwoLabelOneButton: UIView{
     
+    enum ButtonType{
+        case today_problem(SideMenuDelegate?)
+        case recommand_problem(SideMenuDelegate?)
+    }
+    
     struct LabelBtnText{
         let headLine: String
         let description: String
@@ -27,11 +32,26 @@ class TwoLabelOneButton: UIView{
     
     private lazy var today_problem_btn: HighlightButton = {
         let button = HighlightButton(frame: .zero)
+        button.addTarget(self, action: #selector(navigationButton(_:)), for: .touchUpInside)
         return button
     }()
+
+    var buttonType: ButtonType?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+    }
+    
+    @objc func navigationButton(_ sender: UIButton){
+        //viewModel 에 주입 해서 navigation 하면 될거 같은데
+        guard let buttonType else {return}
+        switch buttonType{
+        case .today_problem(let delegate):
+            delegate?.moveToVC("문제")
+        case .recommand_problem(let delegate):
+            delegate?.moveToVC("추천")
+        }
         
     }
     

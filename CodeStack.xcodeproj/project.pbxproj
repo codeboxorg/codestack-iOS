@@ -36,6 +36,7 @@
 		9653112029ED1730006C3E18 /* CALayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111F29ED1730006C3E18 /* CALayer.swift */; };
 		9653112429ED1AC0006C3E18 /* LanguageTagContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112329ED1AC0006C3E18 /* LanguageTagContainer.swift */; };
 		9653112729ED1B5F006C3E18 /* LangugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112629ED1B5F006C3E18 /* LangugeView.swift */; };
+		9653112929ED3481006C3E18 /* DummyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112829ED3481006C3E18 /* DummyData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,7 @@
 		9653111F29ED1730006C3E18 /* CALayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayer.swift; sourceTree = "<group>"; };
 		9653112329ED1AC0006C3E18 /* LanguageTagContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageTagContainer.swift; sourceTree = "<group>"; };
 		9653112629ED1B5F006C3E18 /* LangugeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangugeView.swift; sourceTree = "<group>"; };
+		9653112829ED3481006C3E18 /* DummyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,8 +265,9 @@
 		9653110B29EAF1B6006C3E18 /* CodeProblem-VC */ = {
 			isa = PBXGroup;
 			children = (
-				9653110C29EAF1DF006C3E18 /* CodeProblemViewController.swift */,
+				9653112829ED3481006C3E18 /* DummyData.swift */,
 				9653111729EBD7C7006C3E18 /* VIewModel */,
+				9653110C29EAF1DF006C3E18 /* CodeProblemViewController.swift */,
 				9653112529ED1AD6006C3E18 /* Cell */,
 				9653111E29ED1728006C3E18 /* Util */,
 			);
@@ -458,6 +461,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9653112929ED3481006C3E18 /* DummyData.swift in Sources */,
 				9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */,
 				965310F929EADE84006C3E18 /* ContentViewControllerPresentation.swift in Sources */,
 				9653110D29EAF1DF006C3E18 /* CodeProblemViewController.swift in Sources */,

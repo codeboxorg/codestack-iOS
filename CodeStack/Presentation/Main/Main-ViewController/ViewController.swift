@@ -29,8 +29,8 @@ class ViewController: UIViewController {
     weak var delegate: SideMenuDelegate?
     private var barButtonImage: UIImage?
     
-    private let mainView: MainView = {
-        let view = MainView()
+    private lazy var mainView: MainView = {
+        let view = MainView(frame: .zero, delegate: delegate)
         return view
     }()
     
@@ -59,9 +59,11 @@ class ViewController: UIViewController {
         UINavigationBar.appearance().standardAppearance = navigationBarAppearance
     }
     
+    
     @objc func rightBarButtonMenuTapped(_ sender: UIBarButtonItem){
         delegate?.menuButtonTapped()
     }
+    
     
     private func layoutConfigure(){
         self.view.addSubview(mainView)

@@ -49,7 +49,7 @@ final class SideMenuViewController: UIViewController {
         return view
     }()
 
-    private var sideMenuItems: [SideMenuItem] = []
+    var sideMenuItems: [SideMenuItem] = []
     private var leadingConstraint: NSLayoutConstraint!
     private var shadowColor: UIColor = UIColor(red: 33/255, green: 33/255, blue: 33/255, alpha: 0.5)
     weak var delegate: SideMenuDelegate?

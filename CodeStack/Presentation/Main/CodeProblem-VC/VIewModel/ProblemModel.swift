@@ -15,3 +15,7 @@ struct ProblemListItemViewModel{
     var correctRate: Double
 }
 
+struct PMLanguage{
+    var languages: [String]
+}
+

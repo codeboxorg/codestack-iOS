@@ -55,9 +55,19 @@ class MainView: UIView{
         return view
     }()
     
+    
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layoutConfigure()
+    }
+    
+    //MARK: -delegate convenience init
+    convenience init(frame: CGRect, delegate: SideMenuDelegate?) {
+        self.init(frame: frame)
+        subView_1.buttonType = .today_problem(delegate)
+        subView_2.buttonType = .recommand_problem(delegate)
     }
     
     required init?(coder: NSCoder) {
