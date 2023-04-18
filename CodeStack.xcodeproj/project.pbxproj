@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		005D5425A883E7377F12B68C /* Pods_CodeStackTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8B4F4731C06EACB2B67E969 /* Pods_CodeStackTests.framework */; };
+		24AFE7D66347091F273C23C7 /* Pods_CodeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B544284C22797BF70DFA696E /* Pods_CodeStack.framework */; };
 		965310B129EA7A4F006C3E18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B029EA7A4F006C3E18 /* AppDelegate.swift */; };
 		965310B329EA7A4F006C3E18 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B229EA7A4F006C3E18 /* SceneDelegate.swift */; };
 		965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B429EA7A4F006C3E18 /* ViewController.swift */; };
@@ -37,6 +39,17 @@
 		9653112429ED1AC0006C3E18 /* LanguageTagContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112329ED1AC0006C3E18 /* LanguageTagContainer.swift */; };
 		9653112729ED1B5F006C3E18 /* LangugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112629ED1B5F006C3E18 /* LangugeView.swift */; };
 		9653112929ED3481006C3E18 /* DummyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112829ED3481006C3E18 /* DummyData.swift */; };
+		9653112C29EE6D9E006C3E18 /* CodeEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112B29EE6D9E006C3E18 /* CodeEditorViewController.swift */; };
+		9653112E29EE6E43006C3E18 /* CodeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112D29EE6E43006C3E18 /* CodeTextView.swift */; };
+		9653113329EE95F4006C3E18 /* swift in Resources */ = {isa = PBXBuildFile; fileRef = 9653113129EE95F4006C3E18 /* swift */; };
+		9653113429EE95F4006C3E18 /* typescript in Resources */ = {isa = PBXBuildFile; fileRef = 9653113229EE95F4006C3E18 /* typescript */; };
+		9653113629EE9608006C3E18 /* python in Resources */ = {isa = PBXBuildFile; fileRef = 9653113529EE9608006C3E18 /* python */; };
+		9653113929EE9611006C3E18 /* java in Resources */ = {isa = PBXBuildFile; fileRef = 9653113729EE9611006C3E18 /* java */; };
+		9653113A29EE9611006C3E18 /* javascript in Resources */ = {isa = PBXBuildFile; fileRef = 9653113829EE9611006C3E18 /* javascript */; };
+		9653113C29EE9617006C3E18 /* go in Resources */ = {isa = PBXBuildFile; fileRef = 9653113B29EE9617006C3E18 /* go */; };
+		9653114029EE9637006C3E18 /* kotlin in Resources */ = {isa = PBXBuildFile; fileRef = 9653113F29EE9637006C3E18 /* kotlin */; };
+		9653114829EEA162006C3E18 /* KeyBoardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114729EEA162006C3E18 /* KeyBoardManager.swift */; };
+		A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +70,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1E0D0A369F56190969D067C2 /* Pods-CodeStack-CodeStackUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.release.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.release.xcconfig"; sourceTree = "<group>"; };
+		3E8179CD6A4DBC82F1CCAFCB /* Pods-CodeStackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStackTests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStackTests/Pods-CodeStackTests.debug.xcconfig"; sourceTree = "<group>"; };
+		4BC60300DCCB71515B444EC1 /* Pods-CodeStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.release.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.release.xcconfig"; sourceTree = "<group>"; };
+		712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack_CodeStackUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		965310AD29EA7A4F006C3E18 /* CodeStack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeStack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		965310B029EA7A4F006C3E18 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		965310B229EA7A4F006C3E18 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -90,6 +107,21 @@
 		9653112329ED1AC0006C3E18 /* LanguageTagContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageTagContainer.swift; sourceTree = "<group>"; };
 		9653112629ED1B5F006C3E18 /* LangugeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangugeView.swift; sourceTree = "<group>"; };
 		9653112829ED3481006C3E18 /* DummyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyData.swift; sourceTree = "<group>"; };
+		9653112B29EE6D9E006C3E18 /* CodeEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeEditorViewController.swift; sourceTree = "<group>"; };
+		9653112D29EE6E43006C3E18 /* CodeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeTextView.swift; sourceTree = "<group>"; };
+		9653113129EE95F4006C3E18 /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; path = swift; sourceTree = "<group>"; };
+		9653113229EE95F4006C3E18 /* typescript */ = {isa = PBXFileReference; lastKnownFileType = folder; path = typescript; sourceTree = "<group>"; };
+		9653113529EE9608006C3E18 /* python */ = {isa = PBXFileReference; lastKnownFileType = folder; path = python; sourceTree = "<group>"; };
+		9653113729EE9611006C3E18 /* java */ = {isa = PBXFileReference; lastKnownFileType = folder; path = java; sourceTree = "<group>"; };
+		9653113829EE9611006C3E18 /* javascript */ = {isa = PBXFileReference; lastKnownFileType = folder; path = javascript; sourceTree = "<group>"; };
+		9653113B29EE9617006C3E18 /* go */ = {isa = PBXFileReference; lastKnownFileType = folder; path = go; sourceTree = "<group>"; };
+		9653113F29EE9637006C3E18 /* kotlin */ = {isa = PBXFileReference; lastKnownFileType = folder; path = kotlin; sourceTree = "<group>"; };
+		9653114729EEA162006C3E18 /* KeyBoardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBoardManager.swift; sourceTree = "<group>"; };
+		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.debug.xcconfig"; sourceTree = "<group>"; };
+		D728EE75039BD7467F10238E /* Pods-CodeStackTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStackTests.release.xcconfig"; path = "Target Support Files/Pods-CodeStackTests/Pods-CodeStackTests.release.xcconfig"; sourceTree = "<group>"; };
+		F8B4F4731C06EACB2B67E969 /* Pods_CodeStackTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStackTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				965310E229EA8099006C3E18 /* SnapKit in Frameworks */,
+				24AFE7D66347091F273C23C7 /* Pods_CodeStack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +138,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				005D5425A883E7377F12B68C /* Pods_CodeStackTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,12 +146,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		55099AAE04D17F2FB691F355 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */,
+				4BC60300DCCB71515B444EC1 /* Pods-CodeStack.release.xcconfig */,
+				BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */,
+				1E0D0A369F56190969D067C2 /* Pods-CodeStack-CodeStackUITests.release.xcconfig */,
+				3E8179CD6A4DBC82F1CCAFCB /* Pods-CodeStackTests.debug.xcconfig */,
+				D728EE75039BD7467F10238E /* Pods-CodeStackTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		965310A429EA7A4F006C3E18 = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +173,8 @@
 				965310C629EA7A51006C3E18 /* CodeStackTests */,
 				965310D029EA7A51006C3E18 /* CodeStackUITests */,
 				965310AE29EA7A4F006C3E18 /* Products */,
+				55099AAE04D17F2FB691F355 /* Pods */,
+				F1BCF1B720E36514BDC1B286 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -145,8 +195,10 @@
 				965310B229EA7A4F006C3E18 /* SceneDelegate.swift */,
 				9653110229EAE089006C3E18 /* App-Util */,
 				965310EA29EA8F59006C3E18 /* Presentation */,
+				9653114629EEA133006C3E18 /* KeyBoardManager-Shared */,
 				9653111029EBCD8E006C3E18 /* Data */,
 				965310B929EA7A51006C3E18 /* Assets.xcassets */,
+				9653114129EE9BFE006C3E18 /* Resource */,
 				965310BB29EA7A51006C3E18 /* LaunchScreen.storyboard */,
 				965310BE29EA7A51006C3E18 /* Info.plist */,
 			);
@@ -193,6 +245,7 @@
 				9653110629EAEFBE006C3E18 /* Main-ViewController */,
 				9653110829EAF044006C3E18 /* SideBar-VC */,
 				9653110B29EAF1B6006C3E18 /* CodeProblem-VC */,
+				9653112A29EE6D7E006C3E18 /* CodeEditor-VC */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -325,6 +378,47 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
+		9653112A29EE6D7E006C3E18 /* CodeEditor-VC */ = {
+			isa = PBXGroup;
+			children = (
+				9653112B29EE6D9E006C3E18 /* CodeEditorViewController.swift */,
+				9653112D29EE6E43006C3E18 /* CodeTextView.swift */,
+			);
+			path = "CodeEditor-VC";
+			sourceTree = "<group>";
+		};
+		9653114129EE9BFE006C3E18 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				9653113F29EE9637006C3E18 /* kotlin */,
+				9653113B29EE9617006C3E18 /* go */,
+				9653113729EE9611006C3E18 /* java */,
+				9653113829EE9611006C3E18 /* javascript */,
+				9653113529EE9608006C3E18 /* python */,
+				9653113129EE95F4006C3E18 /* swift */,
+				9653113229EE95F4006C3E18 /* typescript */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		9653114629EEA133006C3E18 /* KeyBoardManager-Shared */ = {
+			isa = PBXGroup;
+			children = (
+				9653114729EEA162006C3E18 /* KeyBoardManager.swift */,
+			);
+			path = "KeyBoardManager-Shared";
+			sourceTree = "<group>";
+		};
+		F1BCF1B720E36514BDC1B286 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B544284C22797BF70DFA696E /* Pods_CodeStack.framework */,
+				712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */,
+				F8B4F4731C06EACB2B67E969 /* Pods_CodeStackTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -332,9 +426,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 965310D729EA7A51006C3E18 /* Build configuration list for PBXNativeTarget "CodeStack" */;
 			buildPhases = (
+				E6C3EC674B8CBE508A66CD71 /* [CP] Check Pods Manifest.lock */,
 				965310A929EA7A4F006C3E18 /* Sources */,
 				965310AA29EA7A4F006C3E18 /* Frameworks */,
 				965310AB29EA7A4F006C3E18 /* Resources */,
+				ADD5230EDBD8F279D367629A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -352,6 +448,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 965310DA29EA7A51006C3E18 /* Build configuration list for PBXNativeTarget "CodeStackTests" */;
 			buildPhases = (
+				10CC6FDACF115EB558EF1598 /* [CP] Check Pods Manifest.lock */,
 				965310BF29EA7A51006C3E18 /* Sources */,
 				965310C029EA7A51006C3E18 /* Frameworks */,
 				965310C129EA7A51006C3E18 /* Resources */,
@@ -370,9 +467,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 965310DD29EA7A51006C3E18 /* Build configuration list for PBXNativeTarget "CodeStackUITests" */;
 			buildPhases = (
+				29132931A5E5B1D7686E94FA /* [CP] Check Pods Manifest.lock */,
 				965310C929EA7A51006C3E18 /* Sources */,
 				965310CA29EA7A51006C3E18 /* Frameworks */,
 				965310CB29EA7A51006C3E18 /* Resources */,
+				E4AE76BCBDCC1996DBD7F19F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -435,8 +534,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9653113A29EE9611006C3E18 /* javascript in Resources */,
+				9653113429EE95F4006C3E18 /* typescript in Resources */,
 				9653110529EAE35E006C3E18 /* Assets.xcassets in Resources */,
+				9653113329EE95F4006C3E18 /* swift in Resources */,
+				9653114029EE9637006C3E18 /* kotlin in Resources */,
+				9653113C29EE9617006C3E18 /* go in Resources */,
+				9653113629EE9608006C3E18 /* python in Resources */,
 				965310BD29EA7A51006C3E18 /* LaunchScreen.storyboard in Resources */,
+				9653113929EE9611006C3E18 /* java in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +562,109 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		10CC6FDACF115EB558EF1598 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CodeStackTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		29132931A5E5B1D7686E94FA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CodeStack-CodeStackUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ADD5230EDBD8F279D367629A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CodeStack/Pods-CodeStack-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CodeStack/Pods-CodeStack-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CodeStack/Pods-CodeStack-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E4AE76BCBDCC1996DBD7F19F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E6C3EC674B8CBE508A66CD71 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CodeStack-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		965310A929EA7A4F006C3E18 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -465,10 +674,13 @@
 				9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */,
 				965310F929EADE84006C3E18 /* ContentViewControllerPresentation.swift in Sources */,
 				9653110D29EAF1DF006C3E18 /* CodeProblemViewController.swift in Sources */,
+				9653114829EEA162006C3E18 /* KeyBoardManager.swift in Sources */,
 				965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */,
 				965310FB29EADF4B006C3E18 /* ContainerViewController.swift in Sources */,
 				965310E929EA8EF2006C3E18 /* MainSubView-(label 2, button 1).swift in Sources */,
 				965310FD29EADF67006C3E18 /* SideMenuViewController.swift in Sources */,
+				9653112E29EE6E43006C3E18 /* CodeTextView.swift in Sources */,
+				9653112C29EE6D9E006C3E18 /* CodeEditorViewController.swift in Sources */,
 				9653110F29EAF2F9006C3E18 /* UIViewController-ext.swift in Sources */,
 				9653112429ED1AC0006C3E18 /* LanguageTagContainer.swift in Sources */,
 				9653110129EAE008006C3E18 /* SideItemCell.swift in Sources */,
@@ -648,6 +860,7 @@
 		};
 		965310D829EA7A51006C3E18 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -658,7 +871,6 @@
 				INFOPLIST_FILE = CodeStack/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -676,6 +888,7 @@
 		};
 		965310D929EA7A51006C3E18 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4BC60300DCCB71515B444EC1 /* Pods-CodeStack.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -686,7 +899,6 @@
 				INFOPLIST_FILE = CodeStack/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -704,6 +916,7 @@
 		};
 		965310DB29EA7A51006C3E18 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3E8179CD6A4DBC82F1CCAFCB /* Pods-CodeStackTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -724,6 +937,7 @@
 		};
 		965310DC29EA7A51006C3E18 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D728EE75039BD7467F10238E /* Pods-CodeStackTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -744,6 +958,7 @@
 		};
 		965310DE29EA7A51006C3E18 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -762,6 +977,7 @@
 		};
 		965310DF29EA7A51006C3E18 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1E0D0A369F56190969D067C2 /* Pods-CodeStack-CodeStackUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -788,7 +1004,7 @@
 				965310D629EA7A51006C3E18 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		965310D729EA7A51006C3E18 /* Build configuration list for PBXNativeTarget "CodeStack" */ = {
 			isa = XCConfigurationList;
@@ -797,7 +1013,7 @@
 				965310D929EA7A51006C3E18 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		965310DA29EA7A51006C3E18 /* Build configuration list for PBXNativeTarget "CodeStackTests" */ = {
 			isa = XCConfigurationList;
@@ -806,7 +1022,7 @@
 				965310DC29EA7A51006C3E18 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		965310DD29EA7A51006C3E18 /* Build configuration list for PBXNativeTarget "CodeStackUITests" */ = {
 			isa = XCConfigurationList;
@@ -815,7 +1031,7 @@
 				965310DF29EA7A51006C3E18 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 
