@@ -20,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let codeVC = CodeProblemViewController()
         
+        let testViewController = TestViewController()
         let mainVC = ViewController()
         let items: [SideMenuItem] = [SideMenuItem(icon: UIImage(named: "problem"),
                                                   name: "문제",
@@ -32,7 +33,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                                   viewController: .embed(codeVC)),
                                      SideMenuItem(icon: UIImage(named: "home"),
                                                   name: "메인 페이지",
-                                                  viewController: .embed(mainVC))]
+                                                  viewController: .embed(mainVC)),
+                                     SideMenuItem(icon: nil, name: "추천", viewController: .push(testViewController))]
         
         let sideMenuViewController = SideMenuViewController(sideMenuItems: items)
         let containerViewController = ContainerViewController(sideMenuViewController: sideMenuViewController,

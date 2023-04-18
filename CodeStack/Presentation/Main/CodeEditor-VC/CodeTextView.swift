@@ -19,6 +19,12 @@ class CodeUITextView: UITextView{
         fatalError("fattal error in codeUITextView this is not by using Storyboard")
     }
     
+    deinit{
+        print("CodeUITextView : deinit")
+        
+        
+    }
+    
     fileprivate func addDoneButtonOnKeyboard() {
         let doneToolbar: UIToolbar = UIToolbar(frame: .zero)
         doneToolbar.barStyle = .default

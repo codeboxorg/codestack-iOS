@@ -7,64 +7,96 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0AB66FAC-C8F6-4F58-8C90-0270702DF7E8"
+            uuid = "4F875D74-7CB2-40D1-A814-877575071982"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CodeStack/Presentation/Main/CodeEditor-VC/CodeEditorViewController.swift"
+            filePath = "Pods/Highlightr/Pod/Classes/CodeAttributedString.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "getRect()"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
+            landmarkName = "processEditing()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9CE0604F-494F-409F-963D-814E27E4663A"
+            uuid = "AB5A7D64-77A2-4F10-9ECF-DBA9C4B1A858"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CodeStack/Presentation/Main/CodeEditor-VC/CodeEditorViewController.swift"
+            filePath = "Pods/Highlightr/Pod/Classes/CodeAttributedString.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
-            landmarkName = "getRect()"
+            startingLineNumber = "144"
+            endingLineNumber = "144"
+            landmarkName = "processEditing()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E3BD226A-1FE1-4BF9-80E3-437316835FD4"
+            uuid = "7206BF41-B758-4839-A84F-29A9BEFC6852"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CodeStack/Presentation/Main/CodeEditor-VC/CodeEditorViewController.swift"
+            filePath = "Pods/Highlightr/Pod/Classes/CodeAttributedString.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "getRect()"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "processEditing()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FCF4D27F-9499-4587-ACFA-702F6CAACD3B"
+            uuid = "336BDB61-EDFD-4306-A7EF-CE6E74D58A76"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CodeStack/Presentation/Main/CodeEditor-VC/CodeEditorViewController.swift"
+            filePath = "Pods/Highlightr/Pod/Classes/CodeAttributedString.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "91"
-            endingLineNumber = "91"
-            landmarkName = "getRect()"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
+            landmarkName = "processEditing()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FE72AF65-5748-4526-9EBB-45841F059814"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/Highlightr/Pod/Classes/CodeAttributedString.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
+            landmarkName = "processEditing()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9F0AD8A2-411D-4AED-8822-D4E4E21987E7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/Highlightr/Pod/Classes/CodeAttributedString.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "150"
+            endingLineNumber = "150"
+            landmarkName = "processEditing()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
