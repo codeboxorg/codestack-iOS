@@ -24,6 +24,12 @@ class CodeEditorViewController: UIViewController{
         return view
     }()
     
+    private lazy var numbersView: LineNumberRulerView = {
+        let view = LineNumberRulerView(frame: .zero, textView: nil)
+        
+        return view
+    }()
+    
     deinit{
         print("CodeEditorViewController : deinit")
         
@@ -59,9 +65,9 @@ class CodeEditorViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         layoutConfigure()
-//        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        numbersView.settingTextView(self.codeUITextView)
         self.view.backgroundColor = .systemPink
-        
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
             guard let self else {return}
             let storage = (self.codeUITextView.textStorage as! CodeAttributedString)
@@ -72,24 +78,7 @@ class CodeEditorViewController: UIViewController{
             guard let strings = try? String(contentsOfFile: path) else {return}
             self.codeUITextView.text = strings
 //            self.getRect()
-            
         })
-        
-        
-    }
-    func getWholeParagraphCount() -> Int{
-//        let storage2 = (self.codeUITextView.textStorage)
-//        var startPointer = 0
-//        var endPointer = 0
-//        var cotentsEnds = 0
-//        let nsString = (storage2.string as NSString)
-        
-        //        storage2.mutableString.getParagraphStart(&startPointer, end: &endPointer, contentsEnd: &cotentsEnds, for: NSRange(location: 0, length: storage2.string.count))
-        //        print("startPointer: \(startPointer)")
-        //        print("endPointer: \(endPointer)")
-        //        print("cotentsEnds: \(cotentsEnds)")
-        
-        return 0
     }
     
     func getRect(){
@@ -145,7 +134,6 @@ class CodeEditorViewController: UIViewController{
             let time = Float(end.timeIntervalSince(start));
             print("performance: \(time)")
         })
-        
     }
     
     
@@ -160,10 +148,13 @@ class CodeEditorViewController: UIViewController{
         
     }
     
+    let uiview = UIView(frame: .zero)
+    
     private func layoutConfigure(){
-//        self.view.addSubview(scrollView)
+
         self.view.addSubview(numberTextViewContainer)
         numberTextViewContainer.addSubview(codeUITextView)
+        codeUITextView.addSubview(numbersView)
         
         numberTextViewContainer.snp.makeConstraints { make in
             make.edges.equalTo(self.view.safeAreaLayoutGuide.snp.edges)
@@ -171,21 +162,28 @@ class CodeEditorViewController: UIViewController{
         }
         
         codeUITextView.snp.makeConstraints { make in
-            make.top.right.bottom.equalToSuperview()
-            make.left.equalToSuperview().inset(16)
+            make.top.trailing.bottom.equalToSuperview()
+            make.leading.equalToSuperview()
+        }
+        numbersView.backgroundColor = .systemBlue
+        
+        numbersView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.bottom.equalToSuperview()
+            make.height.equalTo(codeUITextView.snp.height)
+            make.width.equalTo(30).priority(.high)
         }
         
-        
+        // numbersView exclusionPath
+        var inset = codeUITextView.textContainerInset
+        inset.left = 30
+        codeUITextView.textContainerInset = inset
     }
     
     //MARK: - Code HighLiter
     private func settingHighliter(){
         let highlightr = Highlightr()
         highlightr?.setTheme(to: "paraiso-dark")
-        //        let code = "let a = 1"
-        // You can omit the second parameter to use automatic language detection.
-        //        let highlightedCode = highlightr?.highlight(code, as: "swift")
-        
     }
     
 }
