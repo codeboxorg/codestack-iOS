@@ -30,11 +30,6 @@ class CodeEditorViewController: UIViewController{
         return view
     }()
     
-    deinit{
-        print("CodeEditorViewController : deinit")
-        
-    }
-    
     weak var highlightr: Highlightr?
     
     lazy var codeUITextView: CodeUITextView = {
@@ -56,16 +51,19 @@ class CodeEditorViewController: UIViewController{
         textView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         textView.autocorrectionType = UITextAutocorrectionType.no
         textView.autocapitalizationType = UITextAutocapitalizationType.none
-        //        codeUITextView.textContainer.heightTracksTextView
-        
         return textView
     }()
     
     
+    deinit{
+        print("CodeEditorViewController : deinit")
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         layoutConfigure()
-        numbersView.settingTextView(self.codeUITextView)
+        
         self.view.backgroundColor = .systemPink
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
@@ -77,7 +75,9 @@ class CodeEditorViewController: UIViewController{
             guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
             guard let strings = try? String(contentsOfFile: path) else {return}
             self.codeUITextView.text = strings
-//            self.getRect()
+            
+            // Dependency TextView injection in NumbersVIew
+            self.numbersView.settingTextView(self.codeUITextView)
         })
     }
     
@@ -165,7 +165,7 @@ class CodeEditorViewController: UIViewController{
             make.top.trailing.bottom.equalToSuperview()
             make.leading.equalToSuperview()
         }
-        numbersView.backgroundColor = .systemBlue
+        
         
         numbersView.snp.makeConstraints { make in
             make.top.equalToSuperview()
@@ -203,6 +203,7 @@ extension CodeEditorViewController: NSLayoutManagerDelegate{
     func layoutManager(_ layoutManager: NSLayoutManager, paragraphSpacingAfterGlyphAt glyphIndex: Int, withProposedLineFragmentRect rect: CGRect) -> CGFloat {
         return 10
     }
+    
 }
 
 
