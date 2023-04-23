@@ -24,6 +24,7 @@ class CodeProblemViewController: UIViewController{
     
     
     var listModel: [DummyModel] = DummyData.getAllModels()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.systemBackground
@@ -34,6 +35,17 @@ class CodeProblemViewController: UIViewController{
         problemTableView.snp.makeConstraints{
             $0.edges.equalTo(self.view.safeAreaLayoutGuide.snp.edges)
         }
+        
+        #if DEBUG
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+            guard let self else {return}
+            if let _ = problemTableView.cellForRow(at: IndexPath(row: 1, section: 0)){
+                let vc = CodeEditorViewController()
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        })
+        #endif
+        
     }
     
 }

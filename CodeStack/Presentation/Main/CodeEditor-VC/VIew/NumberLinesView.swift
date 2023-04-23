@@ -96,6 +96,7 @@ class LineNumberRulerView: UIView {
             self.drawingLine(line: (start_line,end_line), context: context)
         }
         context.restoreGState()
+        layer.isHidden = false
     }
     
     private func drawingLine(_ color: CGColor = UIColor.black.cgColor,
@@ -122,7 +123,7 @@ class LineNumberRulerView: UIView {
 
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.boldSystemFont(ofSize: 14),
-            .foregroundColor: UIColor.label
+            .foregroundColor: UIColor.black
         ]
         
         let frame = CGRect(x: rect.origin.x,
@@ -139,7 +140,6 @@ class LineNumberRulerView: UIView {
         let ctline = CTLineCreateWithAttributedString(CFAttributedStringCreate(nil, "\(number)" as CFString, attributes as CFDictionary))
         
         context.textPosition = frame.origin.applying(.init(translationX: 5, y: 12))
-        let font = attributes[.font] as! UIFont
         
         CTLineDraw(ctline, context)
     }

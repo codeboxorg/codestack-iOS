@@ -68,7 +68,15 @@ class MainView: UIView{
         self.init(frame: frame)
         subView_1.buttonType = .today_problem(delegate)
         subView_2.buttonType = .recommand_problem(delegate)
+        
+        
     }
+    
+#if DEBUG
+    func move(){
+        subView_1.today_problem_btn.sendActions(for: .touchUpInside)
+    }
+#endif
     
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")

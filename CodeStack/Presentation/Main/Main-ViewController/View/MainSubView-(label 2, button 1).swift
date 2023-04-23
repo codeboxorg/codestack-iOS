@@ -30,7 +30,7 @@ class TwoLabelOneButton: UIView{
         return label.descriptionLabel(text: "오늘도 같이 문제를 해결하러 가볼까요?")
     }()
     
-    private lazy var today_problem_btn: HighlightButton = {
+    lazy var today_problem_btn: HighlightButton = {
         let button = HighlightButton(frame: .zero)
         button.addTarget(self, action: #selector(navigationButton(_:)), for: .touchUpInside)
         return button

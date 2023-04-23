@@ -51,7 +51,15 @@ class CodeEditorViewController: UIViewController{
         textView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         textView.autocorrectionType = UITextAutocorrectionType.no
         textView.autocapitalizationType = UITextAutocapitalizationType.none
+        textView.alwaysBounceVertical = true
+        
         return textView
+    }()
+    
+    
+    lazy var problemPopUpView: ProblemPopUpView = {
+        let popView = ProblemPopUpView(frame: .zero,self)
+        return popView
     }()
     
     
@@ -78,65 +86,10 @@ class CodeEditorViewController: UIViewController{
             
             // Dependency TextView injection in NumbersVIew
             self.numbersView.settingTextView(self.codeUITextView)
+            self.view.bringSubviewToFront(problemPopUpView)
+            self.problemPopUpView.show()
         })
     }
-    
-    func getRect(){
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: { [weak self] in
-            guard let self else {return}
-            let firstParagraphRange = self.codeUITextView.textStorage.mutableString.paragraphRange(for: NSRange(location: 0, length: 1))
-            
-            let start = Date()
-            
-            guard let text = self.codeUITextView.text else { return }
-            
-            var paragraphRanges: [NSRange] = []
-            
-            text.enumerateSubstrings(in: text.startIndex..<text.endIndex , options: .byParagraphs, { (
-                substring, substringRange, _, _) in
-                // Convert the substring range to an NSRange
-                let nsRange = NSRange(substringRange, in: text)
-                // Add the NSRange to the array of paragraph ranges
-                paragraphRanges.append(nsRange)
-            })
-            
-            let wholeRangeOf_textView = NSRange(location: 0, length: self.codeUITextView.textStorage.string.count)
-            let notFound = NSRange(location: NSNotFound, length: 0)
-            
-            paragraphRanges.forEach { range in
-                self.codeUITextView
-                    .layoutManager
-                    .enumerateEnclosingRects(forGlyphRange: range,
-                                             withinSelectedGlyphRange: notFound,
-                                             in: self.codeUITextView.textContainer,
-                                             using: {
-                        rect,objcBool in
-                        let color = [UIColor.black,UIColor.systemRed,UIColor.blue,UIColor.green,UIColor.brown, UIColor.cyan ].randomElement() ?? UIColor.gray
-                        
-                        let y = rect.origin.y
-                        let x = rect.origin.x
-                        
-                        let rect = CGRect(x: x,
-                                          y: y + self.codeUITextView.textContainerInset.top,
-                                          width: rect.width + 1,
-                                          height: rect.height)
-                        
-                        let view = UIView(frame: rect)
-                        view.backgroundColor = color
-                        view.alpha = 0.5
-                        self.codeUITextView.addSubview(view)
-                        print("Range: \(range) \n Rect: \(rect) \n")
-                        
-                    })
-            }
-            let end = Date()
-            let time = Float(end.timeIntervalSince(start));
-            print("performance: \(time)")
-        })
-    }
-    
-    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -145,16 +98,19 @@ class CodeEditorViewController: UIViewController{
     
     private func keyBoardLayoutManager(){
 //        let output = KeyBoardManager.shared.getKeyBoardLifeCycle()
-        
     }
     
-    let uiview = UIView(frame: .zero)
-    
     private func layoutConfigure(){
-
+        self.view.addSubview(problemPopUpView)
         self.view.addSubview(numberTextViewContainer)
         numberTextViewContainer.addSubview(codeUITextView)
         codeUITextView.addSubview(numbersView)
+        
+        problemPopUpView.snp.makeConstraints { make in
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(60)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(400)
+        }
         
         numberTextViewContainer.snp.makeConstraints { make in
             make.edges.equalTo(self.view.safeAreaLayoutGuide.snp.edges)
@@ -162,7 +118,8 @@ class CodeEditorViewController: UIViewController{
         }
         
         codeUITextView.snp.makeConstraints { make in
-            make.top.trailing.bottom.equalToSuperview()
+            make.top.equalTo(problemPopUpView.snp.bottom)
+            make.trailing.bottom.equalToSuperview()
             make.leading.equalToSuperview()
         }
         
@@ -187,6 +144,32 @@ class CodeEditorViewController: UIViewController{
     }
     
 }
+
+extension CodeEditorViewController{
+    func showProblemDiscription(){
+        problemPopUpView.snp.remakeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(300).priority(.low)
+        }
+        numbersView.layer.isHidden = true
+        numbersView.layer.setNeedsDisplay()
+        
+        self.codeUITextView.contentSize.height += problemPopUpView.bounds.height
+    }
+    
+    func dismissProblemDiscription(){
+        problemPopUpView.snp.remakeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(60)
+        }
+        numbersView.layer.isHidden = true
+        numbersView.layer.setNeedsDisplay()
+        
+    }
+}
+
 
 extension CodeEditorViewController: UITextViewDelegate{
     func textViewDidChange(_ textView: UITextView) {

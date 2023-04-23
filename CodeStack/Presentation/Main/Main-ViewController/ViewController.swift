@@ -38,6 +38,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         navigationSetting()
         layoutConfigure()
+        
+        #if DEBUG
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            self.mainView.move()
+        })
+        #endif
     }
     
     
@@ -52,10 +58,10 @@ class ViewController: UIViewController {
         // back navigtion 백버튼 타이틀 숨기기
         let backButtonAppearance = UIBarButtonItemAppearance(style: .plain)
         backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
-
+        
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.backButtonAppearance = backButtonAppearance
-
+        
         UINavigationBar.appearance().standardAppearance = navigationBarAppearance
     }
     
