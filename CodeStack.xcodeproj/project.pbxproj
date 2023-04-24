@@ -53,6 +53,11 @@
 		9653114C29EEF1F9006C3E18 /* CustomLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114B29EEF1F9006C3E18 /* CustomLayoutManager.swift */; };
 		96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA53B129EFE0DA00B5BDD3 /* NumberLinesView.swift */; };
 		96BA53FF29F53DAB00B5BDD3 /* ProblemDescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA53FE29F53DAB00B5BDD3 /* ProblemDescriptionView.swift */; };
+		96BA540229F6A0AE00B5BDD3 /* UITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540129F6A0AE00B5BDD3 /* UITextField.swift */; };
+		96BA540429F6C64700B5BDD3 /* CustomScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540329F6C64700B5BDD3 /* CustomScrollView.swift */; };
+		96BA540729F6C71400B5BDD3 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540629F6C71400B5BDD3 /* LoginViewController.swift */; };
+		96BA540929F6C71A00B5BDD3 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540829F6C71A00B5BDD3 /* LoginView.swift */; };
+		96BA540B29F6C72100B5BDD3 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540A29F6C72100B5BDD3 /* RegisterView.swift */; };
 		A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -125,6 +130,11 @@
 		9653114B29EEF1F9006C3E18 /* CustomLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLayoutManager.swift; sourceTree = "<group>"; };
 		96BA53B129EFE0DA00B5BDD3 /* NumberLinesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberLinesView.swift; sourceTree = "<group>"; };
 		96BA53FE29F53DAB00B5BDD3 /* ProblemDescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemDescriptionView.swift; sourceTree = "<group>"; };
+		96BA540129F6A0AE00B5BDD3 /* UITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITextField.swift; sourceTree = "<group>"; };
+		96BA540329F6C64700B5BDD3 /* CustomScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScrollView.swift; sourceTree = "<group>"; };
+		96BA540629F6C71400B5BDD3 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		96BA540829F6C71A00B5BDD3 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		96BA540A29F6C72100B5BDD3 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.debug.xcconfig"; sourceTree = "<group>"; };
@@ -241,6 +251,7 @@
 		965310EA29EA8F59006C3E18 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				96BA540529F6C70700B5BDD3 /* LoginPage */,
 				965310EB29EA8F68006C3E18 /* Main */,
 			);
 			path = Presentation;
@@ -390,6 +401,8 @@
 			isa = PBXGroup;
 			children = (
 				96BA53FE29F53DAB00B5BDD3 /* ProblemDescriptionView.swift */,
+				96BA540329F6C64700B5BDD3 /* CustomScrollView.swift */,
+				96BA540029F6A0A000B5BDD3 /* TextField */,
 				9653112B29EE6D9E006C3E18 /* CodeEditorViewController.swift */,
 				96BA53B029EFE0CE00B5BDD3 /* VIew */,
 				9653114B29EEF1F9006C3E18 /* CustomLayoutManager.swift */,
@@ -427,6 +440,24 @@
 				96BA53B129EFE0DA00B5BDD3 /* NumberLinesView.swift */,
 			);
 			path = VIew;
+			sourceTree = "<group>";
+		};
+		96BA540029F6A0A000B5BDD3 /* TextField */ = {
+			isa = PBXGroup;
+			children = (
+				96BA540129F6A0AE00B5BDD3 /* UITextField.swift */,
+			);
+			path = TextField;
+			sourceTree = "<group>";
+		};
+		96BA540529F6C70700B5BDD3 /* LoginPage */ = {
+			isa = PBXGroup;
+			children = (
+				96BA540629F6C71400B5BDD3 /* LoginViewController.swift */,
+				96BA540829F6C71A00B5BDD3 /* LoginView.swift */,
+				96BA540A29F6C72100B5BDD3 /* RegisterView.swift */,
+			);
+			path = LoginPage;
 			sourceTree = "<group>";
 		};
 		F1BCF1B720E36514BDC1B286 /* Frameworks */ = {
@@ -698,6 +729,8 @@
 				965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */,
 				965310FB29EADF4B006C3E18 /* ContainerViewController.swift in Sources */,
 				96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */,
+				96BA540929F6C71A00B5BDD3 /* LoginView.swift in Sources */,
+				96BA540B29F6C72100B5BDD3 /* RegisterView.swift in Sources */,
 				965310E929EA8EF2006C3E18 /* MainSubView-(label 2, button 1).swift in Sources */,
 				965310FD29EADF67006C3E18 /* SideMenuViewController.swift in Sources */,
 				9653112E29EE6E43006C3E18 /* CodeTextView.swift in Sources */,
@@ -709,6 +742,7 @@
 				9653114A29EEED69006C3E18 /* TestViewController.swift in Sources */,
 				965310B129EA7A4F006C3E18 /* AppDelegate.swift in Sources */,
 				965310E529EA855D006C3E18 /* Label-extension.swift in Sources */,
+				96BA540229F6A0AE00B5BDD3 /* UITextField.swift in Sources */,
 				9653112729ED1B5F006C3E18 /* LangugeView.swift in Sources */,
 				9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */,
 				9653110A29EAF0EA006C3E18 /* HighlightButton.swift in Sources */,
@@ -719,8 +753,10 @@
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
 				96BA53FF29F53DAB00B5BDD3 /* ProblemDescriptionView.swift in Sources */,
 				9653112029ED1730006C3E18 /* CALayer.swift in Sources */,
+				96BA540729F6C71400B5BDD3 /* LoginViewController.swift in Sources */,
 				9653111229EBCD9A006C3E18 /* SourceModel.swift in Sources */,
 				965310B329EA7A4F006C3E18 /* SceneDelegate.swift in Sources */,
+				96BA540429F6C64700B5BDD3 /* CustomScrollView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,9 +11,16 @@ import RxSwift
 
 class CodeUITextView: UITextView{
     
+    override var contentSize: CGSize {
+        didSet{
+            
+        }
+    }
+    
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         addDoneButtonOnKeyboard()
+        
     }
     required init?(coder: NSCoder) {
         fatalError("fattal error in codeUITextView this is not by using Storyboard")
@@ -23,6 +30,9 @@ class CodeUITextView: UITextView{
         print("CodeUITextView : deinit")
         
         
+    }
+    fileprivate func addAttributes(){
+        self.font = UIFont.boldSystemFont(ofSize: 14)
     }
     
     fileprivate func addDoneButtonOnKeyboard() {

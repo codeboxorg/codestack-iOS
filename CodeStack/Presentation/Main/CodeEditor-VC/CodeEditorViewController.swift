@@ -45,14 +45,13 @@ class CodeEditorViewController: UIViewController{
         let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
         textView.delegate = self
         textView.isScrollEnabled = true
-        textView.layer.borderColor = UIColor.systemCyan.cgColor
+        textView.layer.borderColor = UIColor.systemGray6.cgColor
         textView.layer.borderWidth = 1
         textView.spellCheckingType = .no
         textView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         textView.autocorrectionType = UITextAutocorrectionType.no
         textView.autocapitalizationType = UITextAutocapitalizationType.none
         textView.alwaysBounceVertical = true
-        
         return textView
     }()
     
@@ -65,30 +64,28 @@ class CodeEditorViewController: UIViewController{
     
     deinit{
         print("CodeEditorViewController : deinit")
-        
     }
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
         layoutConfigure()
         
-        self.view.backgroundColor = .systemPink
+        self.view.backgroundColor = .systemBackground
         self.navigationController?.setNavigationBarHidden(true, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-            guard let self else {return}
-            let storage = (self.codeUITextView.textStorage as! CodeAttributedString)
-            self.highlightr?.setTheme(to: "vs")
-            self.codeUITextView.backgroundColor = self.highlightr?.theme.themeBackgroundColor
-            storage.language = "swift"
-            guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
-            guard let strings = try? String(contentsOfFile: path) else {return}
-            self.codeUITextView.text = strings
-            
-            // Dependency TextView injection in NumbersVIew
-            self.numbersView.settingTextView(self.codeUITextView)
-            self.view.bringSubviewToFront(problemPopUpView)
-            self.problemPopUpView.show()
-        })
+        
+        let storage = (self.codeUITextView.textStorage as! CodeAttributedString)
+        self.highlightr?.setTheme(to: "Chalk")
+        self.codeUITextView.backgroundColor = self.highlightr?.theme.themeBackgroundColor
+        storage.language = "swift"
+        guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
+        guard let strings = try? String(contentsOfFile: path) else {return}
+        self.codeUITextView.text = strings
+        
+        // Dependency TextView injection in NumbersVIew
+        self.numbersView.settingTextView(self.codeUITextView,contentSize: self)
+        self.view.bringSubviewToFront(problemPopUpView)
+        self.problemPopUpView.show()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -97,7 +94,7 @@ class CodeEditorViewController: UIViewController{
     }
     
     private func keyBoardLayoutManager(){
-//        let output = KeyBoardManager.shared.getKeyBoardLifeCycle()
+        //        let output = KeyBoardManager.shared.getKeyBoardLifeCycle()
     }
     
     private func layoutConfigure(){
@@ -124,17 +121,20 @@ class CodeEditorViewController: UIViewController{
         }
         
         
+        //MARK: TextContainer Inset -> 넘버 뷰의 위치의 텍스트입력 방지 inset
+        var inset = codeUITextView.textContainerInset
+        
+        inset.left = 35
+        codeUITextView.textContainerInset = inset
         numbersView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.bottom.equalToSuperview()
-            make.height.equalTo(codeUITextView.snp.height)
-            make.width.equalTo(30).priority(.high)
+            make.height.equalTo(codeUITextView.bounds.height)
+            make.width.equalTo(inset.left).priority(.high)
         }
         
         // numbersView exclusionPath
-        var inset = codeUITextView.textContainerInset
-        inset.left = 30
-        codeUITextView.textContainerInset = inset
+        
     }
     
     //MARK: - Code HighLiter
@@ -145,16 +145,27 @@ class CodeEditorViewController: UIViewController{
     
 }
 
+//MARK: TextView Size Tracker
+extension CodeEditorViewController: TextViewSizeTracker{
+
+    func updateNumberViewsHeight(_ height: CGFloat){
+        numbersView.snp.updateConstraints { make in
+            make.height.equalTo(height)
+        }
+    }
+}
+
+
+//MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
 extension CodeEditorViewController{
     func showProblemDiscription(){
         problemPopUpView.snp.remakeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(300).priority(.low)
+            make.height.equalTo(400)
         }
-        numbersView.layer.isHidden = true
+//        numbersView.layer.isHidden = true
         numbersView.layer.setNeedsDisplay()
-        
         self.codeUITextView.contentSize.height += problemPopUpView.bounds.height
     }
     
@@ -164,16 +175,17 @@ extension CodeEditorViewController{
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(60)
         }
-        numbersView.layer.isHidden = true
+//        numbersView.layer.isHidden = true
         numbersView.layer.setNeedsDisplay()
         
     }
 }
 
 
+//MARK: - TextView delegate
 extension CodeEditorViewController: UITextViewDelegate{
     func textViewDidChange(_ textView: UITextView) {
-     
+        
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {

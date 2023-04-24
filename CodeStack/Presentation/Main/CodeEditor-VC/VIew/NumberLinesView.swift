@@ -8,25 +8,30 @@
 import UIKit
 import CoreImage
 
+protocol TextViewSizeTracker: AnyObject{
+    func updateNumberViewsHeight(_ height: CGFloat)
+}
+
 class LineNumberRulerView: UIView {
     private weak var textView: UITextView?
-    
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    private var textViewContentObserver: NSKeyValueObservation?
+    private weak var tracker: TextViewSizeTracker?
+    private lazy var updateContentSize: (CGSize) -> () = { size in
+        self.tracker?.updateNumberViewsHeight(size.height)
+        self.layer.setNeedsDisplay()
     }
     
-    func settingTextView(_ textView: UITextView){
-        self.textView = textView
-        self.backgroundColor = textView.backgroundColor
-        self.layer.addBorder(side: .right, thickness: 1, color: UIColor.systemGray.cgColor)
-        
-        if !textView.text.isEmpty{
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: { [weak self] in
-                guard let self else {return}
-                self.layer.setNeedsDisplay()
-            })
-        }
+    private var attributes: [NSAttributedString.Key : Any] {
+        [
+           .font: UIFont.boldSystemFont(ofSize: 14),
+           .foregroundColor: UIColor.systemGray
+        ]
+    }
+    
+    //MARK: init process
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+     
     }
     
     convenience init(frame: CGRect,textView: UITextView?) {
@@ -45,6 +50,8 @@ class LineNumberRulerView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    //MARK: draw Process
     typealias LinePoint = (start: CGPoint,end: CGPoint)
     
     override func draw(_ layer: CALayer, in ctx: CGContext) {
@@ -88,7 +95,8 @@ class LineNumberRulerView: UIView {
                     (start_line,end_line) = self.getLinePoint(rect)
                     return
                 }
-                self.addDrawingText(rect, context: context, line: lineNum)
+                
+                self.addDrawingText(rect, context: context, line: lineNum, attributes: self.attributes )
                 (start_line,end_line) = self.getLinePoint(rect)
                 lineNum += 1
                 beforeRange = range
@@ -99,7 +107,37 @@ class LineNumberRulerView: UIView {
         layer.isHidden = false
     }
     
-    private func drawingLine(_ color: CGColor = UIColor.black.cgColor,
+    
+    //MARK: textView setting
+    func settingTextView(_ textView: UITextView,contentSize delegate: TextViewSizeTracker ){
+        self.textView = textView
+        self.tracker = delegate
+        self.backgroundColor = textView.backgroundColor
+        
+        if !textView.text.isEmpty{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: { [weak self] in
+                guard let self else {return}
+                self.layer.setNeedsDisplay()
+            })
+        }
+        guard let codeTextView = self.textView else {return}
+        let kvo = codeTextView.observe(\.contentSize,options: [.new], changeHandler: { [weak self] ui, value in
+            guard let self else { return }
+            guard let newValue = value.newValue else {return}
+            self.updateContentSize(newValue)
+        })
+        keyValueObserving(content: kvo)
+    }
+    
+    //MARK: TextView contentSize KVO
+    private func keyValueObserving(content observing: NSKeyValueObservation){
+        textViewContentObserver = observing
+    }
+    
+    
+   
+    //MARK: Custom Draw func
+    private func drawingLine(_ color: CGColor = UIColor.systemGray2.cgColor,
                              _ width: CGFloat = 1.0,
                              line point: LinePoint,
                              context: CGContext){
@@ -118,13 +156,13 @@ class LineNumberRulerView: UIView {
         return (start_line, end_line)
     }
     
-    private func addDrawingText(_ rect: CGRect, context: CGContext, line number: Int) {
+    private func addDrawingText(_ rect: CGRect,
+                                context: CGContext,
+                                line number: Int,
+                                attributes: [NSAttributedString.Key : Any]) {
         guard let textView else {return}
 
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.boldSystemFont(ofSize: 14),
-            .foregroundColor: UIColor.black
-        ]
+        let attributes: [NSAttributedString.Key: Any] = attributes
         
         let frame = CGRect(x: rect.origin.x,
                            y: rect.origin.y + textView.textContainerInset.top,
@@ -137,9 +175,13 @@ class LineNumberRulerView: UIView {
             numberText.insert(contentsOf: "  ", at: numberText.startIndex)
         }
         
-        let ctline = CTLineCreateWithAttributedString(CFAttributedStringCreate(nil, "\(number)" as CFString, attributes as CFDictionary))
+        if number < 100{
+            context.textPosition = frame.origin.applying(.init(translationX: 5, y: 12))
+        }else{
+            context.textPosition = frame.origin.applying(.init(translationX: 0, y: 12))
+        }
         
-        context.textPosition = frame.origin.applying(.init(translationX: 5, y: 12))
+        let ctline = CTLineCreateWithAttributedString(CFAttributedStringCreate(nil, "\(number)" as CFString, attributes as CFDictionary))
         
         CTLineDraw(ctline, context)
     }
