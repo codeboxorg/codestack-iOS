@@ -17,29 +17,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windoScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windoScene)
         window.makeKeyAndVisible()
+       
         
-        let codeVC = CodeProblemViewController()
         
-        let testViewController = TestViewController()
-        let mainVC = ViewController()
-        let items: [SideMenuItem] = [SideMenuItem(icon: UIImage(named: "problem"),
-                                                  name: "문제",
-                                                  viewController: .push(codeVC)),
-                                     SideMenuItem(icon: UIImage(named: "submit"),
-                                                  name: "제출근황",
-                                                  viewController: .modal(codeVC)),
-                                     SideMenuItem(icon: UIImage(named: "my"),
-                                                  name: "마이 페이지",
-                                                  viewController: .embed(codeVC)),
-                                     SideMenuItem(icon: UIImage(named: "home"),
-                                                  name: "메인 페이지",
-                                                  viewController: .embed(mainVC)),
-                                     SideMenuItem(icon: nil, name: "추천", viewController: .push(testViewController))]
-        
-        let sideMenuViewController = SideMenuViewController(sideMenuItems: items)
-        let containerViewController = ContainerViewController(sideMenuViewController: sideMenuViewController,
-                                                              rootViewController: mainVC)
-        window.rootViewController = containerViewController
+        let vc = LoginViewController()
+        let navigationController = UINavigationController(rootViewController: vc)
+        window.rootViewController = navigationController
         
         self.window = window
     }
