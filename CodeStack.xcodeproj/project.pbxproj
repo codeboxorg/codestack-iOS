@@ -160,6 +160,7 @@
 		96C9F5B429FE90EC008D48B9 /* GitToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitToken.swift; sourceTree = "<group>"; };
 		96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleOAuthrizationRequest.swift; sourceTree = "<group>"; };
 		96C9F5B829FE9DEB008D48B9 /* String-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-ext.swift"; sourceTree = "<group>"; };
+		96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CodeStack.entitlements; sourceTree = "<group>"; };
 		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.debug.xcconfig"; sourceTree = "<group>"; };
@@ -234,6 +235,7 @@
 		965310AF29EA7A4F006C3E18 /* CodeStack */ = {
 			isa = PBXGroup;
 			children = (
+				96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */,
 				965310B029EA7A4F006C3E18 /* AppDelegate.swift */,
 				965310B229EA7A4F006C3E18 /* SceneDelegate.swift */,
 				9653110229EAE089006C3E18 /* App-Util */,
@@ -1000,6 +1002,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CodeStack/CodeStack.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
@@ -1014,8 +1018,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.CodeStack;
+				PRODUCT_BUNDLE_IDENTIFIER = "kr.co.CodeStack-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1028,6 +1033,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CodeStack/CodeStack.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
@@ -1042,8 +1049,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.CodeStack;
+				PRODUCT_BUNDLE_IDENTIFIER = "kr.co.CodeStack-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

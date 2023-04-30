@@ -23,10 +23,6 @@
 			<array/>
 		</dict>
 	</array>
-	<key>client_id</key>
-	<string>$(client_id)</string>
-	<key>client_secret_git</key>
-	<string>$(client_secret_git)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -44,5 +40,9 @@
 			</array>
 		</dict>
 	</dict>
+	<key>client_id</key>
+	<string>$(client_id)</string>
+	<key>client_secret_git</key>
+	<string>$(client_secret_git)</string>
 </dict>
 </plist>
