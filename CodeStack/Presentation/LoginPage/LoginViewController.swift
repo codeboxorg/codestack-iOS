@@ -11,11 +11,20 @@ import UIKit
 
 class LoginViewController: UIViewController{
     
+    //MARK: -Dependency
+    var loginViewModel: LoginViewModelProtocol?
+    
+    static func create(with viewModel: LoginViewModelProtocol) -> LoginViewController{
+        let vc = LoginViewController()
+        vc.loginViewModel = viewModel
+        return vc
+    }
     
     let codeVC = CodeProblemViewController()
     
     let testViewController = TestViewController()
     let mainVC = ViewController()
+    
     lazy var items: [SideMenuItem] = [SideMenuItem(icon: UIImage(named: "problem"),
                                               name: "문제",
                                               viewController: .push(codeVC)),
@@ -31,8 +40,7 @@ class LoginViewController: UIViewController{
                                  SideMenuItem(icon: nil, name: "추천", viewController: .push(testViewController))]
     
     lazy var sideMenuViewController = SideMenuViewController(sideMenuItems: items)
-    lazy var containerViewController = ContainerViewController(sideMenuViewController: sideMenuViewController,
-                                                          rootViewController: mainVC)
+    lazy var containerViewController = ContainerViewController(sideMenuViewController: sideMenuViewController,rootViewController: mainVC)
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -48,24 +56,28 @@ class LoginViewController: UIViewController{
     }()
     
     private lazy var loginView: LoginView = {
-        let loginView = LoginView(frame: .zero,dependencies: nil)
+        let loginView = LoginView(frame: .zero,dependencies: self.loginViewModel)
         loginView.translatesAutoresizingMaskIntoConstraints = false
         return loginView
     }()
     
     
     
+    
+    //MARK: LoginVC Life-Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         layoutConfigure()
         
+        
         loginView.moveTomain = { [weak self] in
             guard let self else {return}
             self.navigationController?.pushViewController(containerViewController, animated: true)
-            
         }
+        
+        
     }
     
     fileprivate func layoutConfigure(){

@@ -1,0 +1,16 @@
+//
+//  Config.xcconfig
+//  CodeStack
+//
+//  Created by 박형환 on 2023/04/30.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+
+CODESTACK_URL_SCHEME = DFdfsfCODESTACKURLasdfasdkfjaks213fsdf
+
+
+client_id = 19e5f44c22df5f6af06c
+client_secret_git = f0e3ef6b56f6b31cd325c32672a51fd6519a7025

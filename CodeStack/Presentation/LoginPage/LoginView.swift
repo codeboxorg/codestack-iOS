@@ -109,6 +109,13 @@ class LoginView: UIView{
         return button
     }()
     
+    
+    private lazy var githubLoginButton: GitHubLoginButton = {
+        let button = GitHubLoginButton(frame: .zero)
+        button.addTarget(self, action: #selector(gitLogin(_:)), for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var infoLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
@@ -130,7 +137,7 @@ class LoginView: UIView{
     private lazy var placeOffset: CGFloat = (self.idTextField.font?.pointSize ?? 32) + 8
     
     
-    weak var loginDelegate: LoginViewModelType?
+    weak var loginViewModel: LoginViewModelProtocol?
     var completion: ((Bool) -> ())?
     var moveTomain: (() -> ())?
     
@@ -141,9 +148,9 @@ class LoginView: UIView{
         addAutoLayout()
     }
     
-    convenience init(frame: CGRect, dependencies: LoginViewModelType?){
+    convenience init(frame: CGRect, dependencies: LoginViewModelProtocol?){
         self.init(frame: frame)
-        self.loginDelegate = dependencies
+        self.loginViewModel = dependencies
        
         self.completion = { [weak self] flag in
             guard let self = self else {return}
@@ -156,18 +163,24 @@ class LoginView: UIView{
     }
     
     
+    @objc func gitLogin(_ sender: UIButton){
+        do{
+            try loginViewModel?.requestOAuth()
+        }catch{
+          print("error: \(error)")
+        }
+    }
+    
     @objc func addActions(_ sender: UIButton){
         completion?(true)
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
             self.moveTomain?()
         })
-        
     }
     
     @objc func isValidLogin(_ sender: UIButton){
         self.loginButton.isLoading = true
-//        loginDelegate?.moveHomeVC(completion: completion! )
+
     }
 }
 
@@ -244,6 +257,7 @@ extension LoginView {
          rememberCheckBox,
          rememberLabel,
          loginButton,
+         githubLoginButton,
          loginPlaceHolderView,
          passwordPlaceHolderView,
          infoLabel,
@@ -365,9 +379,16 @@ extension LoginView {
             $0.isActive = true
         }
         
+        NSLayoutConstraint.activate([
+            githubLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,constant: leading_Trailing_contant),
+            githubLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,constant: -leading_Trailing_contant),
+            githubLoginButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor,constant: info_top_constant),
+            githubLoginButton.heightAnchor.constraint(equalToConstant: 55)
+        ])
+        
         
         NSLayoutConstraint.activate([
-            loginProviderStackView.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 12),
+            loginProviderStackView.topAnchor.constraint(equalTo: githubLoginButton.bottomAnchor, constant: 12),
             loginProviderStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
             loginProviderStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
             loginProviderStackView.heightAnchor.constraint(equalToConstant: 55)

@@ -2,6 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLIconFile</key>
+			<string>/Users/baghyeonghwan/Downloads/AppIcons 3/appstore.png</string>
+			<key>CFBundleURLName</key>
+			<string>kr.co.codestack_ios_client</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>codestackiOSClient</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array/>
+		</dict>
+	</array>
+	<key>client_id</key>
+	<string>$(client_id)</string>
+	<key>client_secret_git</key>
+	<string>$(client_secret_git)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

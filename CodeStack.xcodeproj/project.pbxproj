@@ -59,6 +59,15 @@
 		96BA540929F6C71A00B5BDD3 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540829F6C71A00B5BDD3 /* CustomTextField.swift */; };
 		96BA540B29F6C72100B5BDD3 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540A29F6C72100B5BDD3 /* LoginView.swift */; };
 		96BA540D29F6CA1800B5BDD3 /* LoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540C29F6CA1800B5BDD3 /* LoginButton.swift */; };
+		96C9F5A229FE73D6008D48B9 /* appstore.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C9F5A129FE73D6008D48B9 /* appstore.png */; };
+		96C9F5A429FE751E008D48B9 /* GitHubLoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A329FE751E008D48B9 /* GitHubLoginButton.swift */; };
+		96C9F5A729FE7A7A008D48B9 /* ServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A629FE7A7A008D48B9 /* ServiceManager.swift */; };
+		96C9F5A929FE7C15008D48B9 /* HTTPHeaderFiled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */; };
+		96C9F5AB29FE7C30008D48B9 /* CuStomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */; };
+		96C9F5AE29FE7ED1008D48B9 /* URLRequest-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */; };
+		96C9F5B029FE8238008D48B9 /* OAuthrizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */; };
+		96C9F5B329FE871C008D48B9 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */; };
+		96C9F5B529FE90EC008D48B9 /* GitToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B429FE90EC008D48B9 /* GitToken.swift */; };
 		A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -137,6 +146,16 @@
 		96BA540829F6C71A00B5BDD3 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
 		96BA540A29F6C72100B5BDD3 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		96BA540C29F6CA1800B5BDD3 /* LoginButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginButton.swift; sourceTree = "<group>"; };
+		96C9F59C29FE6FBF008D48B9 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		96C9F5A129FE73D6008D48B9 /* appstore.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appstore.png; sourceTree = "<group>"; };
+		96C9F5A329FE751E008D48B9 /* GitHubLoginButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubLoginButton.swift; sourceTree = "<group>"; };
+		96C9F5A629FE7A7A008D48B9 /* ServiceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
+		96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeaderFiled.swift; sourceTree = "<group>"; };
+		96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuStomError.swift; sourceTree = "<group>"; };
+		96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest-ext.swift"; sourceTree = "<group>"; };
+		96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthrizationRequest.swift; sourceTree = "<group>"; };
+		96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		96C9F5B429FE90EC008D48B9 /* GitToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitToken.swift; sourceTree = "<group>"; };
 		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.debug.xcconfig"; sourceTree = "<group>"; };
@@ -189,6 +208,7 @@
 		965310A429EA7A4F006C3E18 = {
 			isa = PBXGroup;
 			children = (
+				96C9F5A129FE73D6008D48B9 /* appstore.png */,
 				965310AF29EA7A4F006C3E18 /* CodeStack */,
 				965310C629EA7A51006C3E18 /* CodeStackTests */,
 				965310D029EA7A51006C3E18 /* CodeStackUITests */,
@@ -217,7 +237,9 @@
 				965310EA29EA8F59006C3E18 /* Presentation */,
 				9653114629EEA133006C3E18 /* KeyBoardManager-Shared */,
 				9653111029EBCD8E006C3E18 /* Data */,
+				96C9F5A529FE7A67008D48B9 /* Service */,
 				965310B929EA7A51006C3E18 /* Assets.xcassets */,
+				96C9F59C29FE6FBF008D48B9 /* Config.xcconfig */,
 				9653114129EE9BFE006C3E18 /* Resource */,
 				965310BB29EA7A51006C3E18 /* LaunchScreen.storyboard */,
 				965310BE29EA7A51006C3E18 /* Info.plist */,
@@ -253,6 +275,7 @@
 		965310EA29EA8F59006C3E18 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				96C9F5B129FE86F8008D48B9 /* ViewModel */,
 				96BA540529F6C70700B5BDD3 /* LoginPage */,
 				965310EB29EA8F68006C3E18 /* Main */,
 			);
@@ -352,6 +375,7 @@
 			isa = PBXGroup;
 			children = (
 				9653111129EBCD9A006C3E18 /* SourceModel.swift */,
+				96C9F5B429FE90EC008D48B9 /* GitToken.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -458,9 +482,38 @@
 				96BA540629F6C71400B5BDD3 /* LoginViewController.swift */,
 				96BA540829F6C71A00B5BDD3 /* CustomTextField.swift */,
 				96BA540A29F6C72100B5BDD3 /* LoginView.swift */,
+				96C9F5A329FE751E008D48B9 /* GitHubLoginButton.swift */,
 				96BA540C29F6CA1800B5BDD3 /* LoginButton.swift */,
 			);
 			path = LoginPage;
+			sourceTree = "<group>";
+		};
+		96C9F5A529FE7A67008D48B9 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				96C9F5A629FE7A7A008D48B9 /* ServiceManager.swift */,
+				96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */,
+				96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */,
+				96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */,
+				96C9F5AC29FE7EC8008D48B9 /* Util */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		96C9F5AC29FE7EC8008D48B9 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		96C9F5B129FE86F8008D48B9 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		F1BCF1B720E36514BDC1B286 /* Frameworks */ = {
@@ -593,6 +646,7 @@
 				9653110529EAE35E006C3E18 /* Assets.xcassets in Resources */,
 				9653113329EE95F4006C3E18 /* swift in Resources */,
 				9653114029EE9637006C3E18 /* kotlin in Resources */,
+				96C9F5A229FE73D6008D48B9 /* appstore.png in Resources */,
 				9653113C29EE9617006C3E18 /* go in Resources */,
 				9653113629EE9608006C3E18 /* python in Resources */,
 				965310BD29EA7A51006C3E18 /* LaunchScreen.storyboard in Resources */,
@@ -725,33 +779,41 @@
 			buildActionMask = 2147483647;
 			files = (
 				9653112929ED3481006C3E18 /* DummyData.swift in Sources */,
+				96C9F5AE29FE7ED1008D48B9 /* URLRequest-ext.swift in Sources */,
 				9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */,
 				965310F929EADE84006C3E18 /* ContentViewControllerPresentation.swift in Sources */,
+				96C9F5AB29FE7C30008D48B9 /* CuStomError.swift in Sources */,
 				9653110D29EAF1DF006C3E18 /* CodeProblemViewController.swift in Sources */,
 				9653114829EEA162006C3E18 /* KeyBoardManager.swift in Sources */,
 				965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */,
+				96C9F5A729FE7A7A008D48B9 /* ServiceManager.swift in Sources */,
 				965310FB29EADF4B006C3E18 /* ContainerViewController.swift in Sources */,
 				96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */,
 				96BA540929F6C71A00B5BDD3 /* CustomTextField.swift in Sources */,
 				96BA540B29F6C72100B5BDD3 /* LoginView.swift in Sources */,
 				965310E929EA8EF2006C3E18 /* MainSubView-(label 2, button 1).swift in Sources */,
 				965310FD29EADF67006C3E18 /* SideMenuViewController.swift in Sources */,
+				96C9F5A929FE7C15008D48B9 /* HTTPHeaderFiled.swift in Sources */,
 				9653112E29EE6E43006C3E18 /* CodeTextView.swift in Sources */,
 				9653112C29EE6D9E006C3E18 /* CodeEditorViewController.swift in Sources */,
 				9653114C29EEF1F9006C3E18 /* CustomLayoutManager.swift in Sources */,
+				96C9F5B529FE90EC008D48B9 /* GitToken.swift in Sources */,
 				9653110F29EAF2F9006C3E18 /* UIViewController-ext.swift in Sources */,
 				9653112429ED1AC0006C3E18 /* LanguageTagContainer.swift in Sources */,
 				9653110129EAE008006C3E18 /* SideItemCell.swift in Sources */,
 				9653114A29EEED69006C3E18 /* TestViewController.swift in Sources */,
 				965310B129EA7A4F006C3E18 /* AppDelegate.swift in Sources */,
+				96C9F5B329FE871C008D48B9 /* LoginViewModel.swift in Sources */,
 				965310E529EA855D006C3E18 /* Label-extension.swift in Sources */,
 				96BA540229F6A0AE00B5BDD3 /* UITextField.swift in Sources */,
+				96C9F5A429FE751E008D48B9 /* GitHubLoginButton.swift in Sources */,
 				9653112729ED1B5F006C3E18 /* LangugeView.swift in Sources */,
 				9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */,
 				9653110A29EAF0EA006C3E18 /* HighlightButton.swift in Sources */,
 				9653111929EBD7D0006C3E18 /* ProblemModel.swift in Sources */,
 				9653110429EAE092006C3E18 /* UIApplication-extension.swift in Sources */,
 				9653111429EBD176006C3E18 /* ProblemCell.swift in Sources */,
+				96C9F5B029FE8238008D48B9 /* OAuthrizationRequest.swift in Sources */,
 				965310F729EADE6E006C3E18 /* SideMenuDelegate.swift in Sources */,
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
 				96BA53FF29F53DAB00B5BDD3 /* ProblemDescriptionView.swift in Sources */,
@@ -810,6 +872,7 @@
 /* Begin XCBuildConfiguration section */
 		965310D529EA7A51006C3E18 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 96C9F59C29FE6FBF008D48B9 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -870,6 +933,7 @@
 		};
 		965310D629EA7A51006C3E18 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 96C9F59C29FE6FBF008D48B9 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
