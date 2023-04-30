@@ -13,6 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     
     let serviceManager: OAuthrizationRequest = ServiceManager()
+    var appleLoginManager: AppleLoginManager?
     var disposeBag: DisposeBag = DisposeBag()
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -23,9 +24,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let viewModel = LoginViewModel(service: serviceManager)
         
-        let vc = LoginViewController.create(with: viewModel)
+        let dependencies = LoginViewController.Dependencies(viewModel: viewModel)
+        let vc = LoginViewController.create(with: dependencies)
         
         let navigationController = UINavigationController(rootViewController: vc)
+        appleLoginManager = AppleLoginManager(vc)
+        vc.appleLoginManager = appleLoginManager
+        
         window.rootViewController = navigationController
         
         self.window = window

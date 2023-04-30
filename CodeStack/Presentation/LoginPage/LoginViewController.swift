@@ -13,10 +13,15 @@ class LoginViewController: UIViewController{
     
     //MARK: -Dependency
     var loginViewModel: LoginViewModelProtocol?
+    weak var appleLoginManager: AppleLoginManager?
     
-    static func create(with viewModel: LoginViewModelProtocol) -> LoginViewController{
+    struct Dependencies{
+        var viewModel: LoginViewModelProtocol?
+    }
+    
+    static func create(with dependencies: Dependencies) -> LoginViewController{
         let vc = LoginViewController()
-        vc.loginViewModel = viewModel
+        vc.loginViewModel = dependencies.viewModel
         return vc
     }
     
@@ -55,7 +60,7 @@ class LoginViewController: UIViewController{
         return view
     }()
     
-    private lazy var loginView: LoginView = {
+    lazy var loginView: LoginView = {
         let loginView = LoginView(frame: .zero,dependencies: self.loginViewModel)
         loginView.translatesAutoresizingMaskIntoConstraints = false
         return loginView
@@ -70,6 +75,8 @@ class LoginViewController: UIViewController{
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         layoutConfigure()
+        // Apple login buton setting
+        appleLoginManager?.settingLoginView()
         
         
         loginView.moveTomain = { [weak self] in

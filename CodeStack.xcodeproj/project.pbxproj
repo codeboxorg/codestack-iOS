@@ -68,6 +68,8 @@
 		96C9F5B029FE8238008D48B9 /* OAuthrizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */; };
 		96C9F5B329FE871C008D48B9 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */; };
 		96C9F5B529FE90EC008D48B9 /* GitToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B429FE90EC008D48B9 /* GitToken.swift */; };
+		96C9F5B729FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */; };
+		96C9F5B929FE9DEB008D48B9 /* String-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B829FE9DEB008D48B9 /* String-ext.swift */; };
 		A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -156,6 +158,8 @@
 		96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthrizationRequest.swift; sourceTree = "<group>"; };
 		96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		96C9F5B429FE90EC008D48B9 /* GitToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitToken.swift; sourceTree = "<group>"; };
+		96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleOAuthrizationRequest.swift; sourceTree = "<group>"; };
+		96C9F5B829FE9DEB008D48B9 /* String-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-ext.swift"; sourceTree = "<group>"; };
 		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.debug.xcconfig"; sourceTree = "<group>"; };
@@ -208,7 +212,6 @@
 		965310A429EA7A4F006C3E18 = {
 			isa = PBXGroup;
 			children = (
-				96C9F5A129FE73D6008D48B9 /* appstore.png */,
 				965310AF29EA7A4F006C3E18 /* CodeStack */,
 				965310C629EA7A51006C3E18 /* CodeStackTests */,
 				965310D029EA7A51006C3E18 /* CodeStackUITests */,
@@ -441,6 +444,7 @@
 		9653114129EE9BFE006C3E18 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				96C9F5A129FE73D6008D48B9 /* appstore.png */,
 				9653113F29EE9637006C3E18 /* kotlin */,
 				9653113B29EE9617006C3E18 /* go */,
 				9653113729EE9611006C3E18 /* java */,
@@ -493,6 +497,7 @@
 			children = (
 				96C9F5A629FE7A7A008D48B9 /* ServiceManager.swift */,
 				96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */,
+				96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */,
 				96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */,
 				96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */,
 				96C9F5AC29FE7EC8008D48B9 /* Util */,
@@ -504,6 +509,7 @@
 			isa = PBXGroup;
 			children = (
 				96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */,
+				96C9F5B829FE9DEB008D48B9 /* String-ext.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -800,6 +806,7 @@
 				96C9F5B529FE90EC008D48B9 /* GitToken.swift in Sources */,
 				9653110F29EAF2F9006C3E18 /* UIViewController-ext.swift in Sources */,
 				9653112429ED1AC0006C3E18 /* LanguageTagContainer.swift in Sources */,
+				96C9F5B729FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift in Sources */,
 				9653110129EAE008006C3E18 /* SideItemCell.swift in Sources */,
 				9653114A29EEED69006C3E18 /* TestViewController.swift in Sources */,
 				965310B129EA7A4F006C3E18 /* AppDelegate.swift in Sources */,
@@ -810,6 +817,7 @@
 				9653112729ED1B5F006C3E18 /* LangugeView.swift in Sources */,
 				9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */,
 				9653110A29EAF0EA006C3E18 /* HighlightButton.swift in Sources */,
+				96C9F5B929FE9DEB008D48B9 /* String-ext.swift in Sources */,
 				9653111929EBD7D0006C3E18 /* ProblemModel.swift in Sources */,
 				9653110429EAE092006C3E18 /* UIApplication-extension.swift in Sources */,
 				9653111429EBD176006C3E18 /* ProblemCell.swift in Sources */,
