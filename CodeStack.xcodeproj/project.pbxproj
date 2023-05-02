@@ -65,7 +65,7 @@
 		96C9F5A929FE7C15008D48B9 /* HTTPHeaderFiled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */; };
 		96C9F5AB29FE7C30008D48B9 /* CuStomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */; };
 		96C9F5AE29FE7ED1008D48B9 /* URLRequest-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */; };
-		96C9F5B029FE8238008D48B9 /* OAuthrizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */; };
+		96C9F5B029FE8238008D48B9 /* GitOAuthrizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AF29FE8238008D48B9 /* GitOAuthrizationRequest.swift */; };
 		96C9F5B329FE871C008D48B9 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */; };
 		96C9F5B529FE90EC008D48B9 /* GitToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B429FE90EC008D48B9 /* GitToken.swift */; };
 		96C9F5B729FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */; };
@@ -155,7 +155,7 @@
 		96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeaderFiled.swift; sourceTree = "<group>"; };
 		96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuStomError.swift; sourceTree = "<group>"; };
 		96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest-ext.swift"; sourceTree = "<group>"; };
-		96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthrizationRequest.swift; sourceTree = "<group>"; };
+		96C9F5AF29FE8238008D48B9 /* GitOAuthrizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitOAuthrizationRequest.swift; sourceTree = "<group>"; };
 		96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		96C9F5B429FE90EC008D48B9 /* GitToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitToken.swift; sourceTree = "<group>"; };
 		96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleOAuthrizationRequest.swift; sourceTree = "<group>"; };
@@ -498,7 +498,7 @@
 			isa = PBXGroup;
 			children = (
 				96C9F5A629FE7A7A008D48B9 /* ServiceManager.swift */,
-				96C9F5AF29FE8238008D48B9 /* OAuthrizationRequest.swift */,
+				96C9F5AF29FE8238008D48B9 /* GitOAuthrizationRequest.swift */,
 				96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */,
 				96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */,
 				96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */,
@@ -823,7 +823,7 @@
 				9653111929EBD7D0006C3E18 /* ProblemModel.swift in Sources */,
 				9653110429EAE092006C3E18 /* UIApplication-extension.swift in Sources */,
 				9653111429EBD176006C3E18 /* ProblemCell.swift in Sources */,
-				96C9F5B029FE8238008D48B9 /* OAuthrizationRequest.swift in Sources */,
+				96C9F5B029FE8238008D48B9 /* GitOAuthrizationRequest.swift in Sources */,
 				965310F729EADE6E006C3E18 /* SideMenuDelegate.swift in Sources */,
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
 				96BA53FF29F53DAB00B5BDD3 /* ProblemDescriptionView.swift in Sources */,

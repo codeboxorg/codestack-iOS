@@ -48,16 +48,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 
                 serviceManager
                     .request(code: code)
-                    .subscribe(onSuccess: { token in
-                        print("token : \(token)")
-                    }, onError: { err in
-                        
-                    }, onCompleted: {
-                        
-                    }, onDisposed: {
-                        
+                    .flatMap{self.serviceManager.request(with: $0, provider: .github)}
+                    .observe(on: MainScheduler.instance)
+                    .subscribe(onSuccess: {
+                        print("onSuccess")
                     }).disposed(by: disposeBag)
-                
             }
             
             

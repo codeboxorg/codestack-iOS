@@ -23,7 +23,7 @@ final class ServiceManager: NSObject{
     }
 }
 
-extension ServiceManager: GitOAuthrizationRequest{
+extension ServiceManager: GitOAuthrizationRequest,OAuthrization{
     func gitOAuthrization() throws{
         guard let url = makeGitURL() else { throw CSError.badURLError}
         
@@ -34,8 +34,32 @@ extension ServiceManager: GitOAuthrizationRequest{
         }
     }
     
-    func request(code: String) -> Maybe<GitToken>{
+    
+    //MARK: - codestack server
+    func request(with token: GitToken, provider: OAuthProvider) -> Maybe<Void>{
+        let request = postHeader(with: token)
         
+        return URLSession.shared.rx
+            .response(request: request)
+            .asMaybe()
+            .map{ (response: HTTPURLResponse, data: Data) -> Void in
+                if  (200..<300) ~= response.statusCode {
+                    do{
+                        let token = try JSONSerialization.jsonObject(with: data)
+                        print("token : \(token)")
+                        return ()
+                    }catch{
+                        throw CSError.decodingError
+                    }
+                }else {
+                    print(response)
+                    throw CSError.httpResponseError(code: response.statusCode)
+                }
+            }
+    }
+    
+    //MARK: - Git server
+    func request(code: String) -> Maybe<GitToken>{
         guard let request = try? self.postGitRequest(code: code) else {return Maybe.error(CSError.badURLRequest)}
         return URLSession.shared.rx
             .response(request: request)
