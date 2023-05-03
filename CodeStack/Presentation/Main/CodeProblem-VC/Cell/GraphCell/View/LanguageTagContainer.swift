@@ -53,11 +53,17 @@ class LanguageTagContainer: UIView {
         }
         self.currentHight = 0
         self.currentWidth = 0
+        invalidateIntrinsicContentSize()
     }
     
     func setLanguage(_ language: PMLanguage){
         fetures = language.languages
         feturesUpdate()
+    }
+    
+    
+    func getCurrentIntrinsicHeight() -> CGFloat {
+        return self.intrinsicContentSize.height
     }
     
     private func feturesUpdate(){

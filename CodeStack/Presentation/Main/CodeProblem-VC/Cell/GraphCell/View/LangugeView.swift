@@ -11,12 +11,12 @@ import SnapKit
 
 class LanguageTag: UIView {
 
-    private let widthSpacing: CGFloat = 24
+    private let widthSpacing: CGFloat = 20
     private let heightSpacing: CGFloat = 20
     
      lazy var featureLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.font = UIFont.boldSystemFont(ofSize: 12)
         label.textColor = .systemGray
         return label
     }()

@@ -17,7 +17,15 @@ struct DummyData{
                                              submitCount: Int.random(in: 10...134),
                                              correctAnswer: Int.random(in: 10...134),
                                              correctRate: Double.random(in: 0...100))
-        let languese = PMLanguage(languages: ["C", "JAVA" , "C++", "Node.js", "Swift", "Kotlin", "Go", "Python", "javascript"])
+        let random = Int.random(in: 0...8)
+        let lang =  ["C", "JAVA" , "C++", "Node.js", "Swift", "Kot", "Go", "Python", "javascript"]
+        
+        var newLang: [String] = []
+        
+        for i in 0..<random + 1 {
+            newLang.append(lang[i])
+        }
+        let languese = PMLanguage(languages: newLang)
         
         return (model,languese)
     }

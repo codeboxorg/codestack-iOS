@@ -84,6 +84,11 @@ class LoginViewController: UIViewController{
             self.navigationController?.pushViewController(containerViewController, animated: true)
         }
         
+        #if DEBUG
+        DispatchQueue.main.async {
+            self.loginView.moveTomain?()
+        }
+        #endif
         
     }
     

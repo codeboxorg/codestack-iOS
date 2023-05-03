@@ -37,13 +37,13 @@ class CodeProblemViewController: UIViewController{
         }
         
         #if DEBUG
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
-            guard let self else {return}
-            if let _ = problemTableView.cellForRow(at: IndexPath(row: 1, section: 0)){
-                let vc = CodeEditorViewController()
-                self.navigationController?.pushViewController(vc, animated: true)
-            }
-        })
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+//            guard let self else {return}
+//            if let _ = problemTableView.cellForRow(at: IndexPath(row: 1, section: 0)){
+//                let vc = CodeEditorViewController()
+//                self.navigationController?.pushViewController(vc, animated: true)
+//            }
+//        })
         #endif
         
     }

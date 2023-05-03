@@ -12,7 +12,7 @@ import SnapKit
 class ProblemCell: UITableViewCell{
     
     let lableSize: CGFloat = 14
-    let containerSpacing: CGFloat = 8
+    let containerSpacing: CGFloat = 10
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -62,8 +62,7 @@ class ProblemCell: UITableViewCell{
         didSet{
             if let languages{
                 self.langugeContainer.setLanguage(languages)
-                let height = self.langugeContainer.sizeThatFits(CGSize(width: 320, height: 100)).height
-
+                let height = self.langugeContainer.getCurrentIntrinsicHeight()
                 self.languageContainerContainer.snp.updateConstraints { make in
                     make.height.equalTo(height).priority(.low)
                 }

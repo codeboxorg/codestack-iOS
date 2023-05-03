@@ -96,7 +96,7 @@ class LoginView: UIView{
         return label
     }()
     
-    private lazy var loginButton: LoginButton = {
+    lazy var loginButton: LoginButton = {
         let button = LoginButton()
         button.tintColor = .white
         button.setTitle("Log in", for: .normal)
@@ -237,8 +237,8 @@ extension LoginView {
             layout.constant += offset
             self.loginPlaceHolderView.text = "이메일"
             self.layoutIfNeeded()
-        },completion: { [weak self] _ in
-            guard let self else {return}
+        },completion: {  _ in
+            
         })
     }
 
