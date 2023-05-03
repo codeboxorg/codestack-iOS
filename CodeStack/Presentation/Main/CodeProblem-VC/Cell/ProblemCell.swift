@@ -7,12 +7,51 @@
 
 import UIKit
 import SnapKit
-
+import RxSwift
+import RxCocoa
 
 class ProblemCell: UITableViewCell{
     
     let lableSize: CGFloat = 14
     let containerSpacing: CGFloat = 10
+    
+    
+    var languages: PMLanguage? {
+        didSet{
+            if let languages{
+                self.langugeContainer.setLanguage(languages)
+                let height = self.langugeContainer.getCurrentIntrinsicHeight()
+                self.languageContainerContainer.snp.updateConstraints { make in
+                    make.height.equalTo(height).priority(.low)
+                }
+            }else{
+                self.langugeContainer.removeLaguageTag()
+            }
+        }
+    }
+    
+    var model: ProblemListItemModel?
+    
+    var styleFlag = PublishSubject<Bool>()
+    
+    lazy var subscription: Driver<Bool> =
+    styleFlag
+        .asDriver(onErrorJustReturn: true)
+        
+    
+    var disposeBag = DisposeBag()
+    var cellDisposeBag = DisposeBag()
+    
+    var binder: Binder<DummyModel> {
+        return Binder(self){ cell , dummy in
+            let (model,language,flag) = dummy
+            cell.problem_number.setTitle("\(model.problemNumber)", for: .normal)
+            cell.problem_title.text = "\(model.problemTitle)"
+            cell.model = model
+            cell.languages = language
+            cell.styleFlag.onNext(flag)
+        }
+    }
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -55,40 +94,25 @@ class ProblemCell: UITableViewCell{
         
         return container
     }()
-    
-    
-    var model: ProblemListItemViewModel?
-    var languages: PMLanguage? {
-        didSet{
-            if let languages{
-                self.langugeContainer.setLanguage(languages)
-                let height = self.langugeContainer.getCurrentIntrinsicHeight()
-                self.languageContainerContainer.snp.updateConstraints { make in
-                    make.height.equalTo(height).priority(.low)
-                }
-            }else{
-                self.langugeContainer.removeLaguageTag()
-            }
-        }
-    }
+   
     
     override func prepareForReuse() {
         super.prepareForReuse()
         model = nil
         languages = nil
+        disposeBag = DisposeBag()
     }
-    
-    func bind(_ model: ProblemListItemViewModel,_ languages: PMLanguage){
-        problem_number.setTitle("\(model.problemNumber)", for: .normal)
-        problem_title.text = "\(model.problemTitle)"
-        self.model = model
-        self.languages = languages
-    }
+
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         //레이아웃 추가
         layoutConfigure()
+        
+        _ = subscription
+            .drive(onNext: { flag in print("dsfadsfasd flag : \(flag)")})
+            .disposed(by: cellDisposeBag)
+   
     }
     
     required init?(coder: NSCoder) {

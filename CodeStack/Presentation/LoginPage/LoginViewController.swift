@@ -25,7 +25,8 @@ class LoginViewController: UIViewController{
         return vc
     }
     
-    let codeVC = CodeProblemViewController()
+    let codeVC = CodeProblemViewController.create(with: .init(delegate: nil,
+                                                              viewModel: CodeProblemViewModel() as? (any ProblemViewModelProtocol) ))
     
     let testViewController = TestViewController()
     let mainVC = ViewController()

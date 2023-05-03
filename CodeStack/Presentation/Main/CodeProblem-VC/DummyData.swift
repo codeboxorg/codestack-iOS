@@ -7,12 +7,12 @@
 
 import Foundation
 
-typealias DummyModel = (model: ProblemListItemViewModel, language: PMLanguage)
+typealias DummyModel = (model: ProblemListItemModel, language: PMLanguage, flag: Bool)
 
 struct DummyData{
     
-    static func getDummyDataModel(name: String) -> DummyModel{
-        let model = ProblemListItemViewModel(problemNumber: 1,
+    func getDummyDataModel(name: String) -> DummyModel{
+        let model = ProblemListItemModel(problemNumber: 1,
                                              problemTitle: "\(name)",
                                              submitCount: Int.random(in: 10...134),
                                              correctAnswer: Int.random(in: 10...134),
@@ -27,10 +27,10 @@ struct DummyData{
         }
         let languese = PMLanguage(languages: newLang)
         
-        return (model,languese)
+        return (model,languese, true)
     }
     
-    static func getAllModels() -> [DummyModel]{
+    func getAllModels() -> [DummyModel]{
         let model = [getDummyDataModel(name: "hellow World"),
                      getDummyDataModel(name: "ABC"),
                      getDummyDataModel(name: "별찍기"),
