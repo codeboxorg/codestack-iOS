@@ -71,6 +71,7 @@
 		96C9F5B729FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */; };
 		96C9F5B929FE9DEB008D48B9 /* String-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B829FE9DEB008D48B9 /* String-ext.swift */; };
 		96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */; };
+		96C9F5BF2A03C456008D48B9 /* FoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldView.swift */; };
 		A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -163,6 +164,7 @@
 		96C9F5B829FE9DEB008D48B9 /* String-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-ext.swift"; sourceTree = "<group>"; };
 		96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CodeStack.entitlements; sourceTree = "<group>"; };
 		96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemViewModel.swift; sourceTree = "<group>"; };
+		96C9F5BE2A03C456008D48B9 /* FoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldView.swift; sourceTree = "<group>"; };
 		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.debug.xcconfig"; sourceTree = "<group>"; };
@@ -426,6 +428,7 @@
 			isa = PBXGroup;
 			children = (
 				9653111329EBD176006C3E18 /* ProblemCell.swift */,
+				96C9F5BE2A03C456008D48B9 /* FoldView.swift */,
 				9653112129ED1AA2006C3E18 /* GraphCell */,
 			);
 			path = Cell;
@@ -830,6 +833,7 @@
 				96C9F5B029FE8238008D48B9 /* GitOAuthrizationRequest.swift in Sources */,
 				965310F729EADE6E006C3E18 /* SideMenuDelegate.swift in Sources */,
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
+				96C9F5BF2A03C456008D48B9 /* FoldView.swift in Sources */,
 				96BA53FF29F53DAB00B5BDD3 /* ProblemDescriptionView.swift in Sources */,
 				9653112029ED1730006C3E18 /* CALayer.swift in Sources */,
 				96BA540729F6C71400B5BDD3 /* LoginViewController.swift in Sources */,

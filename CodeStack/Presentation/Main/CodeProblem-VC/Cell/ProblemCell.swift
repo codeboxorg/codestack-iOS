@@ -37,7 +37,9 @@ class ProblemCell: UITableViewCell{
     lazy var subscription: Driver<Bool> =
     styleFlag
         .asDriver(onErrorJustReturn: true)
-        
+        .asSharedSequence()
+    
+    
     
     var disposeBag = DisposeBag()
     var cellDisposeBag = DisposeBag()
@@ -52,6 +54,10 @@ class ProblemCell: UITableViewCell{
             cell.styleFlag.onNext(flag)
         }
     }
+    
+    
+    let fo = FoldView()
+    
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -69,6 +75,8 @@ class ProblemCell: UITableViewCell{
     
     private lazy var problem_title: UILabel = {
         let label = UILabel().headLineLabel(size: lableSize + 10)
+        label.contentMode = .left
+        label.textAlignment = .left
         return label
     }()
     
@@ -91,10 +99,17 @@ class ProblemCell: UITableViewCell{
     
     private lazy var langugeContainer: LanguageTagContainer = {
         let container = LanguageTagContainer(frame: self.frame, spacing: containerSpacing)
-        
         return container
     }()
-   
+    
+    //MARK: - Binding to VC
+    // using ControlProperty when seletedChange
+    lazy var foldView: FoldView = {
+        let view = FoldView(frame: .zero)
+        view.tintColor = .label
+        view.contentMode = .scaleAspectFit
+        return view
+    }()
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -102,27 +117,78 @@ class ProblemCell: UITableViewCell{
         languages = nil
         disposeBag = DisposeBag()
     }
-
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         //레이아웃 추가
-        layoutConfigure()
+        
         
         _ = subscription
-            .drive(onNext: { flag in print("dsfadsfasd flag : \(flag)")})
+            .drive(foldView.rx.isSelected)
             .disposed(by: cellDisposeBag)
-   
+        
+        subscription
+            .drive(onNext: { layoutFlag in
+                if layoutFlag {
+                    self.layoutConfigure()
+                }else{
+                    
+                }
+            }).disposed(by: cellDisposeBag)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
+            guard let self else {return}
+            self.foldTableView()
+            
+        })
     }
     
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
     }
     
+    //MARK: - Fold Action
+    func foldTableView(){
+        self.graphCollectionView.isHidden = true
+        self.langugeContainer.isHidden = true
+        
+        
+        problem_number.snp.remakeConstraints { make in
+            make.top.left.equalToSuperview().inset(12)
+            make.width.height.equalTo(32)
+        }
+        
+        problem_title.snp.remakeConstraints { make in
+            make.leading.equalTo(problem_number.snp.trailing).offset(8)
+            make.centerY.equalTo(problem_number)
+            make.trailing.equalTo(foldView.snp.leading).offset(8)
+        }
+        
+        problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        
+        foldView.snp.remakeConstraints { make in
+            make.width.height.equalTo(30)
+            make.trailing.equalToSuperview().inset(12)
+            make.top.equalTo(problem_title.snp.top)
+            make.bottom.equalToSuperview().offset(-8)
+        }
+        
+        UIView.animate(withDuration: 0.5,
+                       animations: {
+            self.layoutIfNeeded()
+        },
+                       completion: {_ in
+            
+        })
+    }
+    
     
     // MARK: - SubView array Property
     private lazy var subviewsToBeAdded: [UIView] = [
         problem_number,
+        foldView,
         problem_title,
         graphCollectionView,
         languageContainerContainer
@@ -156,7 +222,18 @@ class ProblemCell: UITableViewCell{
         problem_title.snp.makeConstraints { make in
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
             make.centerY.equalTo(problem_number)
+            make.trailing.equalTo(foldView.snp.leading).offset(8)
         }
+        
+        problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        
+        foldView.snp.makeConstraints { make in
+            make.width.height.equalTo(30)
+            make.trailing.equalToSuperview().inset(12)
+            make.top.equalTo(problem_title.snp.top)
+        }
+        
         
         graphCollectionView.snp.makeConstraints{ make in
             make.top.equalTo(problem_number.snp.bottom).offset(8)

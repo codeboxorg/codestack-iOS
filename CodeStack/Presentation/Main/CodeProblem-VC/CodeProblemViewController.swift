@@ -81,11 +81,16 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     
     //MARK: - Binding from ViewModel
     var disposeBag: DisposeBag = DisposeBag()
+    
+    var foldButtonSeleted = PublishRelay<Bool>()
+    
     lazy var _segmentcontrolValue = segmentControl.rx.selectedSegmentIndex.asSignal(onErrorJustReturn: 0)
     lazy var input = CodeProblemViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(),
-                                                segmentIndex: _segmentcontrolValue)
+                                                segmentIndex: _segmentcontrolValue,
+                                                foldButtonSeleted: foldButtonSeleted.asSignal())
     
     var output: CodeProblemViewModel.Output?
+
     
     private func bindingModel(){
         let viewmodel = (viewModel as? CodeProblemViewModel)
@@ -112,8 +117,19 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
             (index: Int, model : DummyModel ,cell: ProblemCell) in
             
             cell.binder.onNext(model)
+        
+            cell.foldView.rx.tap.bind(onNext: {
+                self.foldButtonSeleted.accept(cell.foldView.isSelected)
+            }).disposed(by: cell.disposeBag)
             
         }.disposed(by: disposeBag)
+        
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
+            guard let self else {return}
+            self.problemTableView.reloadData()
+        })
+
         
     }
     

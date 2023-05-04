@@ -21,6 +21,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol{
     struct Input{
         var viewDidLoad: Signal<Void>
         var segmentIndex: Signal<Int>
+        var foldButtonSeleted: Signal<Bool>
     }
     
     struct Output{
@@ -31,14 +32,13 @@ class CodeProblemViewModel: ProblemViewModelProtocol{
     
     init(_ service: DummyData = DummyData()){
         self.service = service
-//        var listModel: [DummyModel] = DummyData.getAllModels()
     }
     
     private var seg_list_model = PublishRelay<[DummyModel]>()
     
     private var listModel = PublishRelay<[DummyModel]>()
     private var segmentIndex = BehaviorSubject<Int>(value: 0)
-    
+    private var foldButton = BehaviorSubject<Bool>(value: true)
     
     var disposeBag = DisposeBag()
     
@@ -51,12 +51,16 @@ class CodeProblemViewModel: ProblemViewModelProtocol{
             })
             .disposed(by: disposeBag)
         
-        
         input.segmentIndex
             .emit(to: segmentIndex)
             .disposed(by: disposeBag)
         
-        Observable.combineLatest(listModel, segmentIndex, resultSelector: { model, index in
+        input.foldButtonSeleted
+            .emit(to: foldButton)
+            .disposed(by: disposeBag)
+        
+        
+        Observable.combineLatest(listModel, segmentIndex, resultSelector: { model, index  in
             let flag = index == 0 ? true : false
             return model.map{ problem, lang, _ in DummyModel(model: problem,language: lang, flag: flag )}
         })
