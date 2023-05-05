@@ -165,7 +165,7 @@ class ProblemCell: UITableViewCell{
         problem_title.snp.remakeConstraints { make in
             make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.trailing.equalTo(foldView.snp.leading).offset(8)
+            make.trailing.equalTo(foldView.snp.leading).offset(-8)
         }
         setViewPriority()
         
@@ -194,7 +194,7 @@ class ProblemCell: UITableViewCell{
         problem_title.snp.remakeConstraints { make in
             make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.trailing.equalTo(foldView.snp.leading).offset(8)
+            make.trailing.equalTo(foldView.snp.leading).offset(-8)
         }
         
         setViewPriority()
@@ -250,6 +250,7 @@ class ProblemCell: UITableViewCell{
     fileprivate func setViewPriority() {
         problem_number.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        problem_title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
     }
     
@@ -272,7 +273,7 @@ class ProblemCell: UITableViewCell{
         problem_title.snp.makeConstraints { make in
             make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.trailing.equalTo(foldView.snp.leading).offset(8)
+            make.trailing.equalTo(foldView.snp.leading).offset(-8)
         }
         
         setViewPriority()
