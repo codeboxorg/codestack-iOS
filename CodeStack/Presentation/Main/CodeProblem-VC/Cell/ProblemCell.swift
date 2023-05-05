@@ -15,10 +15,17 @@ class ProblemCell: UITableViewCell{
     let lableSize: CGFloat = 14
     let containerSpacing: CGFloat = 10
     
+    // UITapGesture
+    var problemCell_tapGesture: ControlEvent<UITapGestureRecognizer>?
+    
     private lazy var containerView: UIView = {
         let view = UIView()
+        let tapGesture = UITapGestureRecognizer()
+        view.addGestureRecognizer(tapGesture)
+        problemCell_tapGesture = tapGesture.rx.event
         return view
     }()
+
     
     private lazy var problem_number: UIButton = {
         var configuration = UIButton.Configuration.filled()
@@ -68,7 +75,6 @@ class ProblemCell: UITableViewCell{
         view.layer.borderWidth = 1
         return view
     }()
-    
     
     var languages: PMLanguage? {
         didSet{

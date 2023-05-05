@@ -101,8 +101,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
             .modelSelected(DummyModel.self)
             .withUnretained(self)
             .subscribe(onNext: { vc,k in
-                let editorvc = CodeEditorViewController()
-                vc.navigationController?.pushViewController(editorvc, animated: true)
+                print("cell tapped")
             }).disposed(by: disposeBag)
         
         guard let seg_list_model = self.output?.seg_list_model.asObservable() else {return}
@@ -116,6 +115,13 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
             cell.foldButtonTap.bind(onNext: {
                 self.foldButtonSeleted.accept((index,cell.foldView.isSelected))
             }).disposed(by: cell.disposeBag)
+            
+            cell.problemCell_tapGesture?
+                .asSignal()
+                .emit(onNext: { recognizer in
+                    let editorvc = CodeEditorViewController()
+                    self.navigationController?.pushViewController(editorvc, animated: true)
+                }).disposed(by: cell.disposeBag)
             
         }.disposed(by: disposeBag)    
     }
