@@ -167,9 +167,7 @@ class ProblemCell: UITableViewCell{
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
             make.trailing.equalTo(foldView.snp.leading).offset(8)
         }
-        
-        problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        setViewPriority()
         
         foldView.snp.remakeConstraints { make in
             make.width.height.equalTo(30)
@@ -199,8 +197,7 @@ class ProblemCell: UITableViewCell{
             make.trailing.equalTo(foldView.snp.leading).offset(8)
         }
         
-        problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        setViewPriority()
         
         foldView.snp.remakeConstraints { make in
             make.width.height.equalTo(30)
@@ -250,6 +247,12 @@ class ProblemCell: UITableViewCell{
         makeConfigure()
     }
  
+    fileprivate func setViewPriority() {
+        problem_number.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+    }
+    
     private func makeConfigure(){
         containerView.snp.makeConstraints{ make in
             make.edges.equalToSuperview().inset(containerSpacing)
@@ -272,8 +275,7 @@ class ProblemCell: UITableViewCell{
             make.trailing.equalTo(foldView.snp.leading).offset(8)
         }
         
-        problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        setViewPriority()
         
         foldView.snp.makeConstraints { make in
             make.width.height.equalTo(30)
