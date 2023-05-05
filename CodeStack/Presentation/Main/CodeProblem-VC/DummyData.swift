@@ -12,7 +12,7 @@ typealias DummyModel = (model: ProblemListItemModel, language: PMLanguage, flag:
 struct DummyData{
     
     func getDummyDataModel(name: String) -> DummyModel{
-        let model = ProblemListItemModel(problemNumber: 1,
+        let model = ProblemListItemModel(problemNumber: Int.random(in: 1...400),
                                          problemTitle: "\(name)",
                                          submitCount: Int.random(in: 10...134),
                                          correctAnswer: Int.random(in: 10...134),

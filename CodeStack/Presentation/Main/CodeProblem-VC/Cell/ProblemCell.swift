@@ -31,7 +31,7 @@ class ProblemCell: UITableViewCell{
         var configuration = UIButton.Configuration.filled()
         configuration.titlePadding = 8
         let button = UIButton(configuration: configuration)
-        button.tintColor = UIColor.systemBlue
+        button.tintColor = UIColor.getRandomColor()
         button.setTitle("1", for: .normal)
         return button
     }()
@@ -151,7 +151,6 @@ class ProblemCell: UITableViewCell{
     }
     
     
-    
     private func strechTableView(){
 
         self.graphCollectionView.isHidden = false
@@ -159,7 +158,8 @@ class ProblemCell: UITableViewCell{
         
         problem_number.snp.remakeConstraints { make in
             make.top.left.equalToSuperview().inset(12)
-            make.width.height.equalTo(32)
+            make.height.equalTo(25)
+            make.width.equalTo(25).priority(.low)
         }
         
         problem_title.snp.remakeConstraints { make in
@@ -189,7 +189,8 @@ class ProblemCell: UITableViewCell{
         
         problem_number.snp.remakeConstraints { make in
             make.top.left.equalToSuperview().inset(12)
-            make.width.height.equalTo(25).priority(.high)
+            make.height.equalTo(25).priority(.high)
+            make.width.equalTo(25).priority(.low)
             make.bottom.equalToSuperview().offset(-12)
         }
         problem_title.snp.remakeConstraints { make in
@@ -257,11 +258,12 @@ class ProblemCell: UITableViewCell{
         
         containerView.layer.cornerRadius = 16
         containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = UIColor.lightGray.cgColor
+        containerView.layer.borderColor = UIColor.getRandomColor().cgColor
         
         problem_number.snp.makeConstraints { make in
             make.top.left.equalToSuperview().inset(12)
-            make.width.height.equalTo(25)
+            make.height.equalTo(25)
+            make.width.equalTo(25).priority(.low)
         }
         
         problem_title.snp.makeConstraints { make in

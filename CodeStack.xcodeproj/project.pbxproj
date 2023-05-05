@@ -72,6 +72,7 @@
 		96C9F5B929FE9DEB008D48B9 /* String-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B829FE9DEB008D48B9 /* String-ext.swift */; };
 		96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */; };
 		96C9F5BF2A03C456008D48B9 /* FoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldView.swift */; };
+		96C9F5C12A051354008D48B9 /* UIColor-Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */; };
 		A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -165,6 +166,7 @@
 		96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CodeStack.entitlements; sourceTree = "<group>"; };
 		96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemViewModel.swift; sourceTree = "<group>"; };
 		96C9F5BE2A03C456008D48B9 /* FoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldView.swift; sourceTree = "<group>"; };
+		96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor-Ext.swift"; sourceTree = "<group>"; };
 		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.debug.xcconfig"; sourceTree = "<group>"; };
@@ -402,6 +404,7 @@
 			isa = PBXGroup;
 			children = (
 				9653111F29ED1730006C3E18 /* CALayer.swift */,
+				96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -827,6 +830,7 @@
 				9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */,
 				9653110A29EAF0EA006C3E18 /* HighlightButton.swift in Sources */,
 				96C9F5B929FE9DEB008D48B9 /* String-ext.swift in Sources */,
+				96C9F5C12A051354008D48B9 /* UIColor-Ext.swift in Sources */,
 				9653111929EBD7D0006C3E18 /* ProblemItemModel.swift in Sources */,
 				9653110429EAE092006C3E18 /* UIApplication-extension.swift in Sources */,
 				9653111429EBD176006C3E18 /* ProblemCell.swift in Sources */,
