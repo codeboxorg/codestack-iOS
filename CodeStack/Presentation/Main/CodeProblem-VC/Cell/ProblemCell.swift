@@ -15,50 +15,6 @@ class ProblemCell: UITableViewCell{
     let lableSize: CGFloat = 14
     let containerSpacing: CGFloat = 10
     
-    
-    var languages: PMLanguage? {
-        didSet{
-            if let languages{
-                self.langugeContainer.setLanguage(languages)
-                let height = self.langugeContainer.getCurrentIntrinsicHeight()
-                self.languageContainerContainer.snp.updateConstraints { make in
-                    make.height.equalTo(height).priority(.low)
-                }
-            }else{
-                self.langugeContainer.removeLaguageTag()
-            }
-        }
-    }
-    
-    var model: ProblemListItemModel?
-    
-    var styleFlag = PublishSubject<Bool>()
-    
-    lazy var subscription: Driver<Bool> =
-    styleFlag
-        .asDriver(onErrorJustReturn: true)
-        .asSharedSequence()
-    
-    
-    
-    var disposeBag = DisposeBag()
-    var cellDisposeBag = DisposeBag()
-    
-    var binder: Binder<DummyModel> {
-        return Binder(self){ cell , dummy in
-            let (model,language,flag) = dummy
-            cell.problem_number.setTitle("\(model.problemNumber)", for: .normal)
-            cell.problem_title.text = "\(model.problemTitle)"
-            cell.model = model
-            cell.languages = language
-            cell.styleFlag.onNext(flag)
-        }
-    }
-    
-    
-    let fo = FoldView()
-    
-    
     private lazy var containerView: UIView = {
         let view = UIView()
         return view
@@ -108,8 +64,50 @@ class ProblemCell: UITableViewCell{
         let view = FoldView(frame: .zero)
         view.tintColor = .label
         view.contentMode = .scaleAspectFit
+        view.layer.borderColor = UIColor.label.cgColor
+        view.layer.borderWidth = 1
         return view
     }()
+    
+    
+    var languages: PMLanguage? {
+        didSet{
+            if let languages{
+                self.langugeContainer.setLanguage(languages)
+                let height = self.langugeContainer.getCurrentIntrinsicHeight()
+                self.languageContainerContainer.snp.updateConstraints { make in
+                    make.height.equalTo(height).priority(.low)
+                }
+            }else{
+                self.langugeContainer.removeLaguageTag()
+            }
+        }
+    }
+    
+    var model: ProblemListItemModel?
+    
+    var styleFlag = PublishSubject<Bool>()
+    
+    lazy var subscription: Driver<Bool> =
+    styleFlag
+        .asDriver(onErrorJustReturn: true)
+        .asSharedSequence()
+    
+    
+    var disposeBag = DisposeBag()
+    var cellDisposeBag = DisposeBag()
+        
+    
+    var binder: Binder<DummyModel> {
+        return Binder(self){ cell , dummy in
+            let (model,language,flag) = dummy
+            cell.problem_number.setTitle("\(model.problemNumber)", for: .normal)
+            cell.problem_title.text = "\(model.problemTitle)"
+            cell.model = model
+            cell.languages = language
+            cell.styleFlag.onNext(flag)
+        }
+    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -118,11 +116,14 @@ class ProblemCell: UITableViewCell{
         disposeBag = DisposeBag()
     }
     
+    lazy var foldButtonTap: Observable<Void> = self.foldView.rx.tap.share()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         //레이아웃 추가
         
+        layoutConfigure()
         
         _ = subscription
             .drive(foldView.rx.isSelected)
@@ -131,28 +132,23 @@ class ProblemCell: UITableViewCell{
         subscription
             .drive(onNext: { layoutFlag in
                 if layoutFlag {
-                    self.layoutConfigure()
-                }else{
-                    
+                    self.strechTableView()
+                }else if !layoutFlag{
+                    self.foldTableView()
                 }
             }).disposed(by: cellDisposeBag)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-            guard let self else {return}
-            self.foldTableView()
-            
-        })
     }
     
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
     }
     
-    //MARK: - Fold Action
-    func foldTableView(){
-        self.graphCollectionView.isHidden = true
-        self.langugeContainer.isHidden = true
-        
+    
+    
+    private func strechTableView(){
+
+        self.graphCollectionView.isHidden = false
+        self.langugeContainer.isHidden = false
         
         problem_number.snp.remakeConstraints { make in
             make.top.left.equalToSuperview().inset(12)
@@ -172,18 +168,55 @@ class ProblemCell: UITableViewCell{
             make.width.height.equalTo(30)
             make.trailing.equalToSuperview().inset(12)
             make.top.equalTo(problem_title.snp.top)
-            make.bottom.equalToSuperview().offset(-8)
         }
-        
-        UIView.animate(withDuration: 0.5,
-                       animations: {
-            self.layoutIfNeeded()
-        },
-                       completion: {_ in
-            
-        })
+        containerViewHiddenAnimation()
     }
     
+    
+    
+    //MARK: - Fold Action
+    private func foldTableView(){
+
+        self.graphCollectionView.isHidden = true
+        self.langugeContainer.isHidden = true
+        
+        problem_number.snp.remakeConstraints { make in
+            make.top.left.equalToSuperview().inset(12)
+            make.width.height.equalTo(32).priority(.high)
+            make.bottom.equalToSuperview().offset(-12)
+        }
+        problem_title.snp.remakeConstraints { make in
+            make.leading.equalTo(problem_number.snp.trailing).offset(8)
+            make.centerY.equalTo(problem_number)
+            make.trailing.equalTo(foldView.snp.leading).offset(8)
+        }
+        
+        problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        
+        foldView.snp.remakeConstraints { make in
+            make.width.height.equalTo(30)
+            make.trailing.equalToSuperview().inset(12)
+            make.top.equalTo(problem_title.snp.top)
+        }
+        containerViewHiddenAnimation()
+    }
+    
+    private func containerViewHiddenAnimation(){
+        UIView.animate(withDuration: 0.15, animations: {
+            self.containerView.alpha = 0
+        }) { (finished) in
+            self.containerView.isHidden = finished
+        }
+        
+        UIView.animate(withDuration: 0.15, animations: {
+            self.containerView.alpha = 1
+        }) { (finished) in
+            self.containerView.isHidden = !finished
+        }
+    }
+    
+   
     
     // MARK: - SubView array Property
     private lazy var subviewsToBeAdded: [UIView] = [
@@ -204,12 +237,17 @@ class ProblemCell: UITableViewCell{
     
     private func layoutConfigure(){
         // contentView의 서브뷰로 추가
+        self.selectionStyle = .none
         addSubviewsToContentView()
-        
+        makeConfigure()
+    }
+ 
+    private func makeConfigure(){
         containerView.snp.makeConstraints{ make in
             make.edges.equalToSuperview().inset(containerSpacing)
             make.height.equalTo(200).priority(.low)
         }
+        
         containerView.layer.cornerRadius = 16
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = UIColor.lightGray.cgColor
@@ -233,7 +271,6 @@ class ProblemCell: UITableViewCell{
             make.trailing.equalToSuperview().inset(12)
             make.top.equalTo(problem_title.snp.top)
         }
-        
         
         graphCollectionView.snp.makeConstraints{ make in
             make.top.equalTo(problem_number.snp.bottom).offset(8)

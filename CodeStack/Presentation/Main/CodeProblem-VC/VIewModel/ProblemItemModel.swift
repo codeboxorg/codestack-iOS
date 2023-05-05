@@ -8,6 +8,7 @@
 import Foundation
 
 struct ProblemListItemModel{
+    
     var problemNumber: Int
     var problemTitle: String
     var submitCount: Int

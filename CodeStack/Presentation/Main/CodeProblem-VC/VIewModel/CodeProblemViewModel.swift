@@ -21,11 +21,12 @@ class CodeProblemViewModel: ProblemViewModelProtocol{
     struct Input{
         var viewDidLoad: Signal<Void>
         var segmentIndex: Signal<Int>
-        var foldButtonSeleted: Signal<Bool>
+        var foldButtonSeleted: Signal<(Int,Bool)>
     }
     
     struct Output{
         var seg_list_model: Driver<[DummyModel]>
+        var cell_temporary_content_update: Driver<(Int,Bool)>
     }
     
     private var service: DummyData
@@ -34,11 +35,13 @@ class CodeProblemViewModel: ProblemViewModelProtocol{
         self.service = service
     }
     
+    //Output
     private var seg_list_model = PublishRelay<[DummyModel]>()
     
+    //handler
     private var listModel = PublishRelay<[DummyModel]>()
     private var segmentIndex = BehaviorSubject<Int>(value: 0)
-    private var foldButton = BehaviorSubject<Bool>(value: true)
+    private var foldButton = PublishSubject<(Int,Bool)>()
     
     var disposeBag = DisposeBag()
     
@@ -59,6 +62,17 @@ class CodeProblemViewModel: ProblemViewModelProtocol{
             .emit(to: foldButton)
             .disposed(by: disposeBag)
         
+
+        foldButton
+            .withLatestFrom(seg_list_model){ data, originals in
+                let (index, flag) = data
+                var origin = originals
+                origin[index].flag = !flag
+                return origin
+            }
+            .bind(to: seg_list_model)
+            .disposed(by: disposeBag)
+        
         
         Observable.combineLatest(listModel, segmentIndex, resultSelector: { model, index  in
             let flag = index == 0 ? true : false
@@ -66,10 +80,11 @@ class CodeProblemViewModel: ProblemViewModelProtocol{
         })
         .bind(to: seg_list_model)
         .disposed(by: disposeBag)
-            
         
         
-        return Output(seg_list_model: seg_list_model.asDriver(onErrorJustReturn: []))
+        
+        return Output(seg_list_model: seg_list_model.asDriver(onErrorJustReturn: []),
+                      cell_temporary_content_update: foldButton.asDriver(onErrorJustReturn: (0,false)))
     }
     
 }

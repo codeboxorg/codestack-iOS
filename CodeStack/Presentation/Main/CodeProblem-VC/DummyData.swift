@@ -13,10 +13,10 @@ struct DummyData{
     
     func getDummyDataModel(name: String) -> DummyModel{
         let model = ProblemListItemModel(problemNumber: 1,
-                                             problemTitle: "\(name)",
-                                             submitCount: Int.random(in: 10...134),
-                                             correctAnswer: Int.random(in: 10...134),
-                                             correctRate: Double.random(in: 0...100))
+                                         problemTitle: "\(name)",
+                                         submitCount: Int.random(in: 10...134),
+                                         correctAnswer: Int.random(in: 10...134),
+                                         correctRate: Double.random(in: 0...100))
         let random = Int.random(in: 0...8)
         let lang =  ["C", "JAVA" , "C++", "Node.js", "Swift", "Kot", "Go", "Python", "javascript"]
         
@@ -32,6 +32,26 @@ struct DummyData{
     
     func getAllModels() -> [DummyModel]{
         let model = [getDummyDataModel(name: "hellow World"),
+                     getDummyDataModel(name: "ABC"),
+                     getDummyDataModel(name: "별찍기"),
+                     getDummyDataModel(name: "Three Sum"),
+                     getDummyDataModel(name: "Dynamic programming"),
+                     getDummyDataModel(name: "DFS"),
+                     getDummyDataModel(name: "BFS"),
+                     getDummyDataModel(name: "Cell merge"),
+                     getDummyDataModel(name: "CompactMap"),
+                     getDummyDataModel(name: "filter"),
+                     getDummyDataModel(name: "hellow World"),
+                     getDummyDataModel(name: "ABC"),
+                     getDummyDataModel(name: "별찍기"),
+                     getDummyDataModel(name: "Three Sum"),
+                     getDummyDataModel(name: "Dynamic programming"),
+                     getDummyDataModel(name: "DFS"),
+                     getDummyDataModel(name: "BFS"),
+                     getDummyDataModel(name: "Cell merge"),
+                     getDummyDataModel(name: "CompactMap"),
+                     getDummyDataModel(name: "filter"),
+                     getDummyDataModel(name: "hellow World"),
                      getDummyDataModel(name: "ABC"),
                      getDummyDataModel(name: "별찍기"),
                      getDummyDataModel(name: "Three Sum"),

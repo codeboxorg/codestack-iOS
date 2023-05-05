@@ -32,6 +32,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(ProblemCell.self, forCellReuseIdentifier: ProblemCell.identifier)
         tableView.estimatedRowHeight = 200
+        tableView.separatorColor = UIColor.clear
         tableView.rowHeight = UITableView.automaticDimension
         return tableView
     }()
@@ -50,9 +51,6 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         return segmentControl
     }()
     
-    
-    var _viewDidLoad = PublishRelay<Void>()
-    
     //MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,7 +61,6 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         layoutConfigure()
         
         //moveFunc()
-        
     }
     
     
@@ -81,8 +78,8 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     
     //MARK: - Binding from ViewModel
     var disposeBag: DisposeBag = DisposeBag()
-    
-    var foldButtonSeleted = PublishRelay<Bool>()
+    var _viewDidLoad = PublishRelay<Void>()
+    var foldButtonSeleted = PublishRelay<(Int,Bool)>()
     
     lazy var _segmentcontrolValue = segmentControl.rx.selectedSegmentIndex.asSignal(onErrorJustReturn: 0)
     lazy var input = CodeProblemViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(),
@@ -90,7 +87,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
                                                 foldButtonSeleted: foldButtonSeleted.asSignal())
     
     var output: CodeProblemViewModel.Output?
-
+    
     
     private func bindingModel(){
         let viewmodel = (viewModel as? CodeProblemViewModel)
@@ -108,29 +105,19 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
                 vc.navigationController?.pushViewController(editorvc, animated: true)
             }).disposed(by: disposeBag)
         
-        
         guard let seg_list_model = self.output?.seg_list_model.asObservable() else {return}
-        
         
         seg_list_model.bind(to: problemTableView.rx.items(cellIdentifier: ProblemCell.identifier))
         {
             (index: Int, model : DummyModel ,cell: ProblemCell) in
             
             cell.binder.onNext(model)
-        
-            cell.foldView.rx.tap.bind(onNext: {
-                self.foldButtonSeleted.accept(cell.foldView.isSelected)
+            
+            cell.foldButtonTap.bind(onNext: {
+                self.foldButtonSeleted.accept((index,cell.foldView.isSelected))
             }).disposed(by: cell.disposeBag)
             
-        }.disposed(by: disposeBag)
-        
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
-            guard let self else {return}
-            self.problemTableView.reloadData()
-        })
-
-        
+        }.disposed(by: disposeBag)    
     }
     
     
@@ -145,7 +132,6 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         })
 #endif
     }
-    
     
     func settingSegmentControll(){
         segmentControl.sizeToFit()
