@@ -55,7 +55,7 @@ struct DummyData{
                      getDummyDataModel(name: "ABC"),
                      getDummyDataModel(name: "별찍기"),
                      getDummyDataModel(name: "Three Sum"),
-                     getDummyDataModel(name: "Dynamic programming"),
+                     getDummyDataModel(name: "Dynamic safsdfasffds programmingDynamic programming"),
                      getDummyDataModel(name: "DFS"),
                      getDummyDataModel(name: "BFS"),
                      getDummyDataModel(name: "Cell merge"),

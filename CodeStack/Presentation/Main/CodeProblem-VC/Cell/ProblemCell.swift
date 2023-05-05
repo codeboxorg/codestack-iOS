@@ -12,7 +12,7 @@ import RxCocoa
 
 class ProblemCell: UITableViewCell{
     
-    let lableSize: CGFloat = 14
+    let lableSize: CGFloat = 16
     let containerSpacing: CGFloat = 10
     
     // UITapGesture
@@ -37,7 +37,8 @@ class ProblemCell: UITableViewCell{
     }()
     
     private lazy var problem_title: UILabel = {
-        let label = UILabel().headLineLabel(size: lableSize + 10)
+        let label = UILabel().headLineLabel(size: lableSize)
+        label.numberOfLines = 1
         label.contentMode = .left
         label.textAlignment = .left
         return label
@@ -162,8 +163,8 @@ class ProblemCell: UITableViewCell{
         }
         
         problem_title.snp.remakeConstraints { make in
+            make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.centerY.equalTo(problem_number)
             make.trailing.equalTo(foldView.snp.leading).offset(8)
         }
         
@@ -173,7 +174,7 @@ class ProblemCell: UITableViewCell{
         foldView.snp.remakeConstraints { make in
             make.width.height.equalTo(30)
             make.trailing.equalToSuperview().inset(12)
-            make.top.equalTo(problem_title.snp.top)
+            make.centerY.equalTo(problem_number.snp.centerY)
         }
         containerViewHiddenAnimation()
     }
@@ -188,12 +189,12 @@ class ProblemCell: UITableViewCell{
         
         problem_number.snp.remakeConstraints { make in
             make.top.left.equalToSuperview().inset(12)
-            make.width.height.equalTo(32).priority(.high)
+            make.width.height.equalTo(25).priority(.high)
             make.bottom.equalToSuperview().offset(-12)
         }
         problem_title.snp.remakeConstraints { make in
+            make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.centerY.equalTo(problem_number)
             make.trailing.equalTo(foldView.snp.leading).offset(8)
         }
         
@@ -203,7 +204,7 @@ class ProblemCell: UITableViewCell{
         foldView.snp.remakeConstraints { make in
             make.width.height.equalTo(30)
             make.trailing.equalToSuperview().inset(12)
-            make.top.equalTo(problem_title.snp.top)
+            make.centerY.equalTo(problem_number.snp.centerY)
         }
         containerViewHiddenAnimation()
     }
@@ -260,12 +261,12 @@ class ProblemCell: UITableViewCell{
         
         problem_number.snp.makeConstraints { make in
             make.top.left.equalToSuperview().inset(12)
-            make.width.height.equalTo(32)
+            make.width.height.equalTo(25)
         }
         
         problem_title.snp.makeConstraints { make in
+            make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.centerY.equalTo(problem_number)
             make.trailing.equalTo(foldView.snp.leading).offset(8)
         }
         
@@ -275,7 +276,7 @@ class ProblemCell: UITableViewCell{
         foldView.snp.makeConstraints { make in
             make.width.height.equalTo(30)
             make.trailing.equalToSuperview().inset(12)
-            make.top.equalTo(problem_title.snp.top)
+            make.centerY.equalTo(problem_number.snp.centerY)
         }
         
         graphCollectionView.snp.makeConstraints{ make in
