@@ -72,8 +72,6 @@ class ProblemCell: UITableViewCell{
         let view = FoldView(frame: .zero)
         view.tintColor = .label
         view.contentMode = .scaleAspectFit
-        view.layer.borderColor = UIColor.label.cgColor
-        view.layer.borderWidth = 1
         return view
     }()
     
