@@ -3,6 +3,9 @@ PODS:
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
+  - RxFlow (2.13.0):
+    - RxCocoa (>= 6.0.0)
+    - RxSwift (>= 6.0.0)
   - RxRelay (6.5.0):
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
@@ -10,11 +13,13 @@ PODS:
 DEPENDENCIES:
   - Highlightr
   - RxCocoa (= 6.5.0)
+  - RxFlow
   - RxSwift (= 6.5.0)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - RxCocoa
+    - RxFlow
     - RxRelay
     - RxSwift
   trunk:
@@ -23,9 +28,10 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Highlightr: 595f3e100737c8de41113385da8bd0b5b65212c6
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxFlow: 52f6f6379918392c1ea8cb62d8dcf2df9a5463dd
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
 
-PODFILE CHECKSUM: 39ee7ea7e81b21afbb4af8485f4cbe564de64a6d
+PODFILE CHECKSUM: 83d08cadfefe563fae8819cc1b5e9a973a1c9673
 
 COCOAPODS: 1.11.3

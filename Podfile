@@ -7,6 +7,7 @@ target 'CodeStack' do
   pod 'Highlightr'
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
+  pod 'RxFlow'
 
   target 'CodeStackTests' do
     inherit! :search_paths
