@@ -52,34 +52,16 @@ final class ContainerViewController: UIViewController {
         rightSwipeGesture.cancelsTouchesInView = false
         rightSwipeGesture.edges = .left
         view.addGestureRecognizer(rightSwipeGesture)
-    
-//        let gestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
-//        view.addGestureRecognizer(gestureRecognizer)
     }
     
     @objc private func swipedLeft() {
         sideMenuViewController.hide()
-//        print("left")
     }
     
     @objc private func swipedRight(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
-//        print("gestureRecognizer.edges : \(gestureRecognizer.edges)")
-//        print("gestureRecognizer.state : \(gestureRecognizer.state)")
-//        let translaction = gestureRecognizer.translation(in: self.view)
-//        print("translaction : \(translaction)")
         sideMenuViewController.show()
-//        print("rigth")
     }
     
-    @objc func handlePan(_ gestureRecognizer: UIPanGestureRecognizer) {
-//        if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
-//
-//            let translation = gestureRecognizer.translation(in: self.view)
-//            // note: 'view' is optional and need to be unwrapped
-//            gestureRecognizer.view!.center = CGPoint(x: gestureRecognizer.view!.center.x + translation.x, y: gestureRecognizer.view!.center.y + translation.y)
-//            gestureRecognizer.setTranslation(CGPoint.zero, in: self.view)
-//        }
-    }
     
     func updateRootViewController(_ viewController: UIViewControllerSideMenuDelegate) {
         rootViewController = viewController

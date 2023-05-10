@@ -52,7 +52,6 @@ extension ServiceManager: GitOAuthrizationRequest,OAuthrization{
                         throw CSError.decodingError
                     }
                 }else {
-                    print(response)
                     throw CSError.httpResponseError(code: response.statusCode)
                 }
             }
@@ -73,7 +72,6 @@ extension ServiceManager: GitOAuthrizationRequest,OAuthrization{
                         throw CSError.decodingError
                     }
                 }else {
-                    print(response)
                     throw CSError.httpResponseError(code: response.statusCode)
                 }
             }

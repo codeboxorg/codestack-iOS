@@ -167,7 +167,7 @@ class LoginView: UIView{
         do{
             try loginViewModel?.requestOAuth()
         }catch{
-          print("error: \(error)")
+            assert(false,"\(error)")
         }
     }
     

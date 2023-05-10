@@ -10,11 +10,6 @@ import UIKit
 class CustomScrollView: UIScrollView{
     
     
-    override var contentOffset: CGPoint{
-        didSet{
-            print("contentOffset: \(self.contentOffset)")
-        }
-    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

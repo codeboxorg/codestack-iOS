@@ -41,18 +41,13 @@ class TestViewController: UIViewController {
                 let x = self.textView.frame.origin.x
                 let y = self.textView.frame.origin.y
                 
-                print(rect)
-//                let rect = CGRect(x: x,
-//                                  y: y + self.textView.textContainerInset.top,
-//                                  width: rect.width,
-//                                  height: rect.height )
+                
                 
                 let view = UIView(frame: rect)
                 view.backgroundColor = .blue
                 view.alpha = 0.5
                 self.textView.addSubview(view)
  
-//                objcBool.pointee = true
             })
     }
 }
