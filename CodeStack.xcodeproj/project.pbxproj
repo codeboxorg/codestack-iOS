@@ -73,6 +73,8 @@
 		96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */; };
 		96C9F5BF2A03C456008D48B9 /* FoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldView.swift */; };
 		96C9F5C12A051354008D48B9 /* UIColor-Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */; };
+		96D77C4A2A1C8AF90075E52E /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D77C492A1C8AF90075E52E /* MyPageViewController.swift */; };
+		96D77C4C2A1C8B160075E52E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D77C4B2A1C8B160075E52E /* ProfileView.swift */; };
 		A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -167,6 +169,8 @@
 		96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemViewModel.swift; sourceTree = "<group>"; };
 		96C9F5BE2A03C456008D48B9 /* FoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldView.swift; sourceTree = "<group>"; };
 		96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor-Ext.swift"; sourceTree = "<group>"; };
+		96D77C492A1C8AF90075E52E /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
+		96D77C4B2A1C8B160075E52E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABDF8E58EE2EA1941E627FA /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BDE1E8AC81982C810908EEF3 /* Pods-CodeStack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.debug.xcconfig"; sourceTree = "<group>"; };
@@ -289,6 +293,7 @@
 				96C9F5B129FE86F8008D48B9 /* ViewModel */,
 				96BA540529F6C70700B5BDD3 /* LoginPage */,
 				965310EB29EA8F68006C3E18 /* Main */,
+				96D77C482A1C8ADF0075E52E /* MyPage */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -531,6 +536,15 @@
 				96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		96D77C482A1C8ADF0075E52E /* MyPage */ = {
+			isa = PBXGroup;
+			children = (
+				96D77C492A1C8AF90075E52E /* MyPageViewController.swift */,
+				96D77C4B2A1C8B160075E52E /* ProfileView.swift */,
+			);
+			path = MyPage;
 			sourceTree = "<group>";
 		};
 		F1BCF1B720E36514BDC1B286 /* Frameworks */ = {
@@ -805,6 +819,7 @@
 				965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */,
 				96C9F5A729FE7A7A008D48B9 /* ServiceManager.swift in Sources */,
 				965310FB29EADF4B006C3E18 /* ContainerViewController.swift in Sources */,
+				96D77C4A2A1C8AF90075E52E /* MyPageViewController.swift in Sources */,
 				96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */,
 				96BA540929F6C71A00B5BDD3 /* CustomTextField.swift in Sources */,
 				96BA540B29F6C72100B5BDD3 /* LoginView.swift in Sources */,
@@ -834,6 +849,7 @@
 				9653111929EBD7D0006C3E18 /* ProblemItemModel.swift in Sources */,
 				9653110429EAE092006C3E18 /* UIApplication-extension.swift in Sources */,
 				9653111429EBD176006C3E18 /* ProblemCell.swift in Sources */,
+				96D77C4C2A1C8B160075E52E /* ProfileView.swift in Sources */,
 				96C9F5B029FE8238008D48B9 /* GitOAuthrizationRequest.swift in Sources */,
 				965310F729EADE6E006C3E18 /* SideMenuDelegate.swift in Sources */,
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
