@@ -6,14 +6,19 @@
 //
 
 import UIKit
+import RxFlow
+import RxCocoa
+import RxSwift
 
-
-
-class LoginViewController: UIViewController{
+class LoginViewController: UIViewController,Stepper{
+    
+    
+    //MARK: - RXFLow
+    let steps = PublishRelay<Step>()
     
     //MARK: -Dependency
-    var loginViewModel: LoginViewModelProtocol?
-    weak var appleLoginManager: AppleLoginManager?
+    private var loginViewModel: LoginViewModelProtocol?
+    var appleLoginService: AppleLoginManager?
     
     struct Dependencies{
         var viewModel: LoginViewModelProtocol?
@@ -22,11 +27,12 @@ class LoginViewController: UIViewController{
     static func create(with dependencies: Dependencies) -> LoginViewController{
         let vc = LoginViewController()
         vc.loginViewModel = dependencies.viewModel
+        vc.appleLoginService = AppleLoginManager(vc)
         return vc
     }
     
     let codeVC = CodeProblemViewController.create(with: .init(delegate: nil,
-                                                              viewModel: CodeProblemViewModel() as? (any ProblemViewModelProtocol) ))
+                                                              viewModel: CodeProblemViewModel() as (any ProblemViewModelProtocol) ))
     
     let testViewController = TestViewController()
     let mainVC = ViewController()
@@ -77,7 +83,7 @@ class LoginViewController: UIViewController{
         
         layoutConfigure()
         // Apple login buton setting
-        appleLoginManager?.settingLoginView()
+        appleLoginService?.settingLoginView()
         
         
         loginView.moveTomain = { [weak self] in

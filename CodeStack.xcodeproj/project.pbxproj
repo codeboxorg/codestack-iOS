@@ -73,6 +73,10 @@
 		96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */; };
 		96C9F5BF2A03C456008D48B9 /* FoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldView.swift */; };
 		96C9F5C12A051354008D48B9 /* UIColor-Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */; };
+		96D638E32A30B5CE00AA95B5 /* LoginFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */; };
+		96D638E52A30B5D900AA95B5 /* AppFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E42A30B5D900AA95B5 /* AppFlow.swift */; };
+		96D638EA2A30B7A100AA95B5 /* CodestackStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E92A30B7A100AA95B5 /* CodestackStep.swift */; };
+		96D638EC2A30BF2600AA95B5 /* LoginStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638EB2A30BF2600AA95B5 /* LoginStepper.swift */; };
 		96D77C4A2A1C8AF90075E52E /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D77C492A1C8AF90075E52E /* MyPageViewController.swift */; };
 		96D77C4C2A1C8B160075E52E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D77C4B2A1C8B160075E52E /* ProfileView.swift */; };
 		A39C318B10A5E3B9EE3DA7D8 /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */; };
@@ -169,6 +173,10 @@
 		96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemViewModel.swift; sourceTree = "<group>"; };
 		96C9F5BE2A03C456008D48B9 /* FoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldView.swift; sourceTree = "<group>"; };
 		96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor-Ext.swift"; sourceTree = "<group>"; };
+		96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFlow.swift; sourceTree = "<group>"; };
+		96D638E42A30B5D900AA95B5 /* AppFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlow.swift; sourceTree = "<group>"; };
+		96D638E92A30B7A100AA95B5 /* CodestackStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackStep.swift; sourceTree = "<group>"; };
+		96D638EB2A30BF2600AA95B5 /* LoginStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStepper.swift; sourceTree = "<group>"; };
 		96D77C492A1C8AF90075E52E /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
 		96D77C4B2A1C8B160075E52E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		B544284C22797BF70DFA696E /* Pods_CodeStack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -248,6 +256,7 @@
 				96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */,
 				965310B029EA7A4F006C3E18 /* AppDelegate.swift */,
 				965310B229EA7A4F006C3E18 /* SceneDelegate.swift */,
+				96D638E12A30B51600AA95B5 /* Flow */,
 				9653110229EAE089006C3E18 /* App-Util */,
 				965310EA29EA8F59006C3E18 /* Presentation */,
 				9653114629EEA133006C3E18 /* KeyBoardManager-Shared */,
@@ -538,6 +547,25 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		96D638E12A30B51600AA95B5 /* Flow */ = {
+			isa = PBXGroup;
+			children = (
+				96D638E92A30B7A100AA95B5 /* CodestackStep.swift */,
+				96D638E62A30B64800AA95B5 /* InitialFlow */,
+				96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */,
+				96D638EB2A30BF2600AA95B5 /* LoginStepper.swift */,
+			);
+			path = Flow;
+			sourceTree = "<group>";
+		};
+		96D638E62A30B64800AA95B5 /* InitialFlow */ = {
+			isa = PBXGroup;
+			children = (
+				96D638E42A30B5D900AA95B5 /* AppFlow.swift */,
+			);
+			path = InitialFlow;
+			sourceTree = "<group>";
+		};
 		96D77C482A1C8ADF0075E52E /* MyPage */ = {
 			isa = PBXGroup;
 			children = (
@@ -811,6 +839,7 @@
 			files = (
 				9653112929ED3481006C3E18 /* DummyData.swift in Sources */,
 				96C9F5AE29FE7ED1008D48B9 /* URLRequest-ext.swift in Sources */,
+				96D638E32A30B5CE00AA95B5 /* LoginFlow.swift in Sources */,
 				9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */,
 				965310F929EADE84006C3E18 /* ContentViewControllerPresentation.swift in Sources */,
 				96C9F5AB29FE7C30008D48B9 /* CuStomError.swift in Sources */,
@@ -818,6 +847,7 @@
 				9653114829EEA162006C3E18 /* KeyBoardManager.swift in Sources */,
 				965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */,
 				96C9F5A729FE7A7A008D48B9 /* ServiceManager.swift in Sources */,
+				96D638EA2A30B7A100AA95B5 /* CodestackStep.swift in Sources */,
 				965310FB29EADF4B006C3E18 /* ContainerViewController.swift in Sources */,
 				96D77C4A2A1C8AF90075E52E /* MyPageViewController.swift in Sources */,
 				96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */,
@@ -826,7 +856,9 @@
 				965310E929EA8EF2006C3E18 /* MainSubView-(label 2, button 1).swift in Sources */,
 				965310FD29EADF67006C3E18 /* SideMenuViewController.swift in Sources */,
 				96C9F5A929FE7C15008D48B9 /* HTTPHeaderFiled.swift in Sources */,
+				96D638EC2A30BF2600AA95B5 /* LoginStepper.swift in Sources */,
 				9653112E29EE6E43006C3E18 /* CodeTextView.swift in Sources */,
+				96D638E52A30B5D900AA95B5 /* AppFlow.swift in Sources */,
 				9653112C29EE6D9E006C3E18 /* CodeEditorViewController.swift in Sources */,
 				9653114C29EEF1F9006C3E18 /* CustomLayoutManager.swift in Sources */,
 				96C9F5B529FE90EC008D48B9 /* GitToken.swift in Sources */,

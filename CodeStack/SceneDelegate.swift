@@ -7,38 +7,36 @@
 
 import UIKit
 import RxSwift
+import RxFlow
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    let serviceManager: OAuthrizationRequest = ServiceManager()
-    var appleLoginManager: AppleLoginManager?
+    private let serviceManager: OAuthrizationRequest = ServiceManager()
+    
+    var coordinator: FlowCoordinator = FlowCoordinator()
     var disposeBag: DisposeBag = DisposeBag()
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
         guard let windoScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windoScene)
-        window.makeKeyAndVisible()
+
         
-        let viewModel = LoginViewModel(service: serviceManager)
+        let flow = AppFlow(loginService: self.serviceManager)
+        self.coordinator.coordinate(flow: flow, with: AppStepper())
         
-        let dependencies = LoginViewController.Dependencies(viewModel: viewModel)
-        let vc = LoginViewController.create(with: dependencies)
-        
-        let navigationController = UINavigationController(rootViewController: vc)
-        appleLoginManager = AppleLoginManager(vc)
-        vc.appleLoginManager = appleLoginManager
-        
-        window.rootViewController = navigationController
+        Flows.use(flow, when: .created, block: { root in
+            window.rootViewController = root
+            window.makeKeyAndVisible()
+        })
         
         self.window = window
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
-            
             
             //MARK: - Github url open
             let component = url.absoluteString.components(separatedBy: "?")

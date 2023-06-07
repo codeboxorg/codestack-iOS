@@ -20,10 +20,8 @@ class LoginViewModel: LoginViewModelProtocol{
     
     private weak var service: OAuthrizationRequest?
     
-    init(service: OAuthrizationRequest){
+    init(service: OAuthrizationRequest?){
         self.service = service
-        
-        
     }
     
     func requestOAuth() throws {

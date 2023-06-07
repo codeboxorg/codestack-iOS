@@ -8,8 +8,6 @@
 import Foundation
 import RxSwift
 
-typealias OAuthrizationRequest = GitOAuthrizationRequest
-
 
 enum OAuthProvider: String{
     case github

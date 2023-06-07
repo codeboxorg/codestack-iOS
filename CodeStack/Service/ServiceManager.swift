@@ -17,13 +17,14 @@ final class ServiceManager: NSObject{
     
     init(_ session: URLSession = URLSession(configuration: .default)) {
         self.urlSession = session
-        
         super.init()
         
     }
 }
 
-extension ServiceManager: GitOAuthrizationRequest,OAuthrization{
+typealias OAuthrizationRequest = GitOAuthrizationRequest & OAuthrization
+
+extension ServiceManager: OAuthrizationRequest{
     func gitOAuthrization() throws{
         guard let url = makeGitURL() else { throw CSError.badURLError}
         
@@ -38,7 +39,6 @@ extension ServiceManager: GitOAuthrizationRequest,OAuthrization{
     //MARK: - codestack server
     func request(with token: GitToken, provider: OAuthProvider) -> Maybe<Void>{
         let request = postHeader(with: token)
-        
         return URLSession.shared.rx
             .response(request: request)
             .asMaybe()
