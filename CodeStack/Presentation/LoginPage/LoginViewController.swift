@@ -17,11 +17,11 @@ class LoginViewController: UIViewController,Stepper{
     let steps = PublishRelay<Step>()
     
     //MARK: -Dependency
-    private var loginViewModel: LoginViewModelProtocol?
+    private var loginViewModel: (any LoginViewModelProtocol)?
     var appleLoginService: AppleLoginManager?
     
     struct Dependencies{
-        var viewModel: LoginViewModelProtocol?
+        var viewModel: (any LoginViewModelProtocol)?
     }
     
     static func create(with dependencies: Dependencies) -> LoginViewController{
@@ -31,28 +31,6 @@ class LoginViewController: UIViewController,Stepper{
         return vc
     }
     
-    let codeVC = CodeProblemViewController.create(with: .init(delegate: nil,
-                                                              viewModel: CodeProblemViewModel() as (any ProblemViewModelProtocol) ))
-    
-    let testViewController = TestViewController()
-    let mainVC = ViewController()
-    
-    lazy var items: [SideMenuItem] = [SideMenuItem(icon: UIImage(named: "problem"),
-                                              name: "문제",
-                                              viewController: .push(codeVC)),
-                                 SideMenuItem(icon: UIImage(named: "submit"),
-                                              name: "제출근황",
-                                              viewController: .modal(codeVC)),
-                                 SideMenuItem(icon: UIImage(named: "my"),
-                                              name: "마이 페이지",
-                                              viewController: .embed(codeVC)),
-                                 SideMenuItem(icon: UIImage(named: "home"),
-                                              name: "메인 페이지",
-                                              viewController: .embed(mainVC)),
-                                 SideMenuItem(icon: nil, name: "추천", viewController: .push(testViewController))]
-    
-    lazy var sideMenuViewController = SideMenuViewController(sideMenuItems: items)
-    lazy var containerViewController = ContainerViewController(sideMenuViewController: sideMenuViewController,rootViewController: mainVC)
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -72,10 +50,7 @@ class LoginViewController: UIViewController,Stepper{
         loginView.translatesAutoresizingMaskIntoConstraints = false
         return loginView
     }()
-    
-    
-    
-    
+
     //MARK: LoginVC Life-Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,15 +60,20 @@ class LoginViewController: UIViewController,Stepper{
         // Apple login buton setting
         appleLoginService?.settingLoginView()
         
+        let loginEvent = loginView.emitButtonEvents()
         
-        loginView.moveTomain = { [weak self] in
-            guard let self else {return}
-            self.navigationController?.pushViewController(containerViewController, animated: true)
-        }
+        _ = (loginViewModel as! LoginViewModel).transform(input: LoginViewModel.Input(loginEvent: loginEvent))
+        
+        
+        //원래 main으로 가는 화면이동 코드
+//        loginView.moveTomain = { [weak self] in
+//            guard let self else {return}
+//            self.navigationController?.pushViewController(containerViewController, animated: true)
+//        }
         
         #if DEBUG
         DispatchQueue.main.async {
-            self.loginView.moveTomain?()
+//            self.loginView.moveTomain?()
         }
         #endif
         

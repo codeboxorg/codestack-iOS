@@ -6,13 +6,9 @@
 //
 
 import UIKit
+import RxCocoa
 
 class TwoLabelOneButton: UIView{
-    
-    enum ButtonType{
-        case today_problem(SideMenuDelegate?)
-        case recommand_problem(SideMenuDelegate?)
-    }
     
     struct LabelBtnText{
         let headLine: String
@@ -40,7 +36,10 @@ class TwoLabelOneButton: UIView{
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+    }
+    
+    func buttonTapSignal() -> Signal<ButtonType>{
+        today_problem_btn.rx.tap.map{ self.buttonType! }.asSignal(onErrorJustReturn: .none)
     }
     
     @objc func navigationButton(_ sender: UIButton){
@@ -48,11 +47,14 @@ class TwoLabelOneButton: UIView{
         guard let buttonType else {return}
         switch buttonType{
         case .today_problem(let delegate):
+            print("navigationButton : \(delegate)")
             delegate?.moveToVC("문제")
         case .recommand_problem(let delegate):
             delegate?.moveToVC("추천")
+            print("navigationButton : \(delegate)")
+        case .none:
+            break
         }
-        
     }
     
     var observation : NSKeyValueObservation?

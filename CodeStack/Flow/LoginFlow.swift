@@ -18,17 +18,20 @@ class LoginFlow: Flow{
     
     private weak var loginService: OAuthrizationRequest?
     
-    private let rootViewController = UINavigationController()
+//    private let rootViewController = UINavigationController()
+    
+    var loginStepper: LoginStepper
     
     private lazy var loginViewController: LoginViewController = {
-        let viewModel = LoginViewModel(service: self.loginService)
+        let viewModel = LoginViewModel(service: self.loginService,stepper: loginStepper)
         let dp = LoginViewController.Dependencies(viewModel: viewModel)
         let vc = LoginViewController.create(with: dp)
         return vc
     }()
     
-    init(loginService: OAuthrizationRequest){
+    init(loginService: OAuthrizationRequest, stepper: LoginStepper){
         self.loginService = loginService
+        self.loginStepper = stepper
     }
     
     func navigate(to step: Step) -> FlowContributors {
@@ -38,15 +41,34 @@ class LoginFlow: Flow{
             print("loginFLow navigate  .loginNeeded")
             return .none
         case .userLoggedIn:
-            return .none
+            return navigateToHomeViewController()
         default:
             return .none
         }
     }
     
-    private func navigateToLoginViewController() -> FlowContributors {
-        let loginVC = loginViewController
-        self.rootViewController.pushViewController(loginVC, animated: false)
-        return .one(flowContributor: .contribute(withNext: loginVC))
+//    private func navigateToLoginViewController() -> FlowContributors {
+//        let loginVC = loginViewController
+//        self.rootViewController.pushViewController(loginVC, animated: false)
+//        return .one(flowContributor: .contribute(withNext: loginVC))
+//    }
+    
+    private func navigateToHomeViewController() -> FlowContributors{
+        let flow = HomeFlow()
+        Flows.use(flow, when: .ready, block: { root in
+            self.loginViewController.navigationController?.pushViewController(root, animated: false)
+        })
+        
+        return .one(flowContributor: .contribute(withNextPresentable: flow, withNextStepper: OneStepper(withSingleStep: CodestackStep.fakeStep)))
+    }
+}
+
+
+class LoginStepper: Stepper{
+    
+    var steps: PublishRelay<Step> = PublishRelay<Step>()
+    
+    var initialStep: Step{
+        CodestackStep.loginNeeded
     }
 }

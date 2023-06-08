@@ -39,8 +39,8 @@ class AppFlow: Flow{
     }
     
     private func navigateToLoginVC() -> FlowContributors{
-        let loginFlow = LoginFlow(loginService: self.loginService)
         let loginStepper = LoginStepper()
+        let loginFlow = LoginFlow(loginService: self.loginService, stepper: loginStepper)
         
         Flows.use(loginFlow, when: .created, block: { root in
             self.rootViewController.pushViewController(root, animated: false)

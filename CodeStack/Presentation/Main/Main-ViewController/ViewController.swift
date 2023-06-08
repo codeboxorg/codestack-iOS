@@ -7,7 +7,9 @@
 
 import UIKit
 import SnapKit
-
+import RxFlow
+import RxSwift
+import RxRelay
 
 extension UINavigationController{
     
@@ -25,9 +27,10 @@ extension UIViewController {
 
 class ViewController: UIViewController {
     
-    
     weak var delegate: SideMenuDelegate?
     private var barButtonImage: UIImage?
+    
+    private var homeViewModel: any HomeViewModelProtocol = HomeViewModel()
     
     private lazy var mainView: MainView = {
         let view = MainView(frame: .zero, delegate: delegate)
@@ -41,9 +44,12 @@ class ViewController: UIViewController {
         
         #if DEBUG
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-            self.mainView.move()
+//            self.mainView.move()
         })
         #endif
+        
+        _ = (homeViewModel as! HomeViewModel)
+            .transform(input: HomeViewModel.Input(problemButtonEvent: mainView.emitButtonEvents()))
     }
     
     

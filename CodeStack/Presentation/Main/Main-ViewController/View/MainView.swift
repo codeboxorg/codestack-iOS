@@ -6,7 +6,8 @@
 //
 
 import UIKit
-
+import RxCocoa
+import RxSwift
 
 class MainView: UIView{
     
@@ -56,8 +57,6 @@ class MainView: UIView{
     }()
     
     
-    
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layoutConfigure()
@@ -68,13 +67,17 @@ class MainView: UIView{
         self.init(frame: frame)
         subView_1.buttonType = .today_problem(delegate)
         subView_2.buttonType = .recommand_problem(delegate)
-        
-        
+    }
+    
+    //MARK: - Events merge to Signal
+    func emitButtonEvents() -> Signal<ButtonType>{
+        let events = [subView_1.buttonTapSignal(),subView_2.buttonTapSignal()]
+        return Signal.merge(events).asSignal()
     }
     
 #if DEBUG
     func move(){
-        subView_1.today_problem_btn.sendActions(for: .touchUpInside)
+//        subView_1.today_problem_btn.sendActions(for: .touchUpInside)
     }
 #endif
     

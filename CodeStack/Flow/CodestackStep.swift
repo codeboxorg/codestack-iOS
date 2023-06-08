@@ -18,7 +18,11 @@ enum CodestackStep: Step{
     
     // Login
     case loginNeeded
-    case userLoggedIn
+    case userLoggedIn(ID?,Pwd?)
+    
+    //problemSolve VC
+    case problemList
+    case problemPick(String)
     
     case sideMenuDelegate(String)
     

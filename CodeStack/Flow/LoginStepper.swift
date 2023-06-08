@@ -10,11 +10,3 @@ import RxFlow
 import RxCocoa
 import RxSwift
 
-class LoginStepper: Stepper{
-    
-    var steps: PublishRelay<Step> = PublishRelay<Step>()
-    
-    var initialStep: Step{
-        CodestackStep.loginNeeded
-    }
-}

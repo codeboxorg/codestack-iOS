@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
 
 protocol LoginViewModelType: AnyObject{
     
@@ -104,7 +106,7 @@ class LoginView: UIView{
         button.setTitleColor(UIColor.black, for: .normal)
         button.backgroundColor = .white
         button.layer.cornerRadius = (button.titleLabel?.font.pointSize ?? 24) / 2
-        button.addTarget(self, action: #selector(addActions(_:)), for: .touchUpInside)
+        //        button.addTarget(self, action: #selector(addActions(_:)), for: .touchUpInside)
         button.addTarget(self, action: #selector(isValidLogin(_:)), for: .touchUpInside)
         return button
     }()
@@ -137,7 +139,7 @@ class LoginView: UIView{
     private lazy var placeOffset: CGFloat = (self.idTextField.font?.pointSize ?? 32) + 8
     
     
-    weak var loginViewModel: LoginViewModelProtocol?
+    //    weak var loginViewModel: (any LoginViewModelProtocol)?
     var completion: ((Bool) -> ())?
     var moveTomain: (() -> ())?
     
@@ -148,14 +150,37 @@ class LoginView: UIView{
         addAutoLayout()
     }
     
-    convenience init(frame: CGRect, dependencies: LoginViewModelProtocol?){
+    convenience init(frame: CGRect, dependencies: (any LoginViewModelProtocol)?){
         self.init(frame: frame)
-        self.loginViewModel = dependencies
-       
+        //        self.loginViewModel = dependencies
+        
         self.completion = { [weak self] flag in
             guard let self = self else {return}
             self.loginButton.isLoading = false
         }
+    }
+    
+    
+    //MARK: emit RX button Tap Event to login
+    func emitButtonEvents() -> Signal<LoginButtonType>{
+        
+        let git = githubLoginButton.rx.tap
+            .map{ _ in return LoginButtonType.gitHub }
+            .asSignal(onErrorJustReturn: .none)
+        
+        let email = loginButton.rx.tap
+            .map{ [weak self] _ in
+                if let id = self?.idTextField.text,
+                   let pwd = self?.passwordTextField.text{
+                    return LoginButtonType.email((id,pwd))
+                }else{
+                    return LoginButtonType.none
+                }
+            }
+            .asSignal(onErrorJustReturn: .none)
+        
+        return Signal.merge([git,email])
+            .asSignal(onErrorJustReturn: .none)
     }
     
     required init?(coder: NSCoder) {
@@ -165,7 +190,7 @@ class LoginView: UIView{
     
     @objc func gitLogin(_ sender: UIButton){
         do{
-            try loginViewModel?.requestOAuth()
+            //            try loginViewModel?.requestOAuth()
         }catch{
             assert(false,"\(error)")
         }
@@ -180,7 +205,7 @@ class LoginView: UIView{
     
     @objc func isValidLogin(_ sender: UIButton){
         self.loginButton.isLoading = true
-
+        
     }
 }
 
@@ -225,9 +250,9 @@ extension LoginView: TextFieldAnimationDelegate{
 
 
 extension LoginView {
-  
+    
     func changePlaceOffsetAnimation(_ layout: NSLayoutConstraint,_ offset: CGFloat){
-
+        
         UIView.animate(withDuration: 0.5,
                        delay: 0.05,
                        usingSpringWithDamping: 0.6,
@@ -241,7 +266,7 @@ extension LoginView {
             
         })
     }
-
+    
     
     func addContentView(){
         self.addSubview(containerView)
@@ -296,7 +321,7 @@ extension LoginView {
          loginLabel.centerXAnchor.constraint(equalTo: containerView.centerXAnchor, constant: 0)].forEach{
             $0.isActive = true
         }
-
+        
         
         [idTextField.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: idTop + 10),
          idTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
@@ -304,7 +329,7 @@ extension LoginView {
          idTextField.heightAnchor.constraint(equalToConstant: idHeight)].forEach{
             $0.isActive = true
         }
-
+        
         
         idPlaceHolder_Center_Constraint = loginPlaceHolderView.centerYAnchor.constraint(equalTo: idTextField.centerYAnchor)
         
@@ -333,11 +358,11 @@ extension LoginView {
         
         NSLayoutConstraint.activate([
             passwordTextField.topAnchor.constraint(equalTo: idTextField.bottomAnchor, constant: idTop),
-             passwordTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
-             passwordTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant - button_Width_height),
-             passwordTextField.heightAnchor.constraint(equalToConstant: idHeight)
+            passwordTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
+            passwordTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant - button_Width_height),
+            passwordTextField.heightAnchor.constraint(equalToConstant: idHeight)
         ])
-       
+        
         
         
         passwordPlaceHolder_Center_Constraint = passwordPlaceHolderView.centerYAnchor.constraint(equalTo: passwordTextField.centerYAnchor)
@@ -402,7 +427,7 @@ extension LoginView {
         }
         
         // Update the containerView height constraint
-
+        
         // Calculate the height of the subviews
         subviewsHeight += [loginLabel,idTextField,passwordTextField,infoLabel,loginButton,rememberLabel,loginProviderStackView].reduce(0) { $0 + $1.systemLayoutSizeFitting(CGSize(width: containerView.bounds.width, height: UIView.layoutFittingCompressedSize.height)).height
         }
