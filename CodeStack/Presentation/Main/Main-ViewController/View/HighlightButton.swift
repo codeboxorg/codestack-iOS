@@ -13,6 +13,7 @@ class HighlightButton: UIButton{
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         layoutConfigure()
     }
     

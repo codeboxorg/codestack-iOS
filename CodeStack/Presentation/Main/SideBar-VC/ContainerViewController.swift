@@ -6,24 +6,26 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
 
 final class ContainerViewController: UIViewController {
     private var sideMenuViewController: SideMenuViewController!
     private var navigator: UINavigationController!
-    private var rootViewController: UIViewControllerSideMenuDelegate! {
-        didSet {
-            rootViewController.delegate = self
-            if let vc = rootViewController as? UIViewController{
-                navigator.setViewControllers([vc], animated: false)
-            }
-        }
-    }
+//    private var rootViewController: UIViewControllerSideMenuDelegate! {
+//        didSet {
+//            rootViewController.delegate = self
+//            if let vc = rootViewController as? UIViewController{
+//                navigator.setViewControllers([vc], animated: false)
+//            }
+//        }
+//    }
     
-    convenience init(sideMenuViewController: SideMenuViewController, rootViewController: ViewController) {
+    convenience init(sideMenuViewController: SideMenuViewController){ // }, rootViewController: ViewController) {
         self.init()
         self.sideMenuViewController = sideMenuViewController
-        self.rootViewController = rootViewController
-        self.navigator = UINavigationController(rootViewController: rootViewController)
+//        self.rootViewController = rootViewController
+//        self.navigator = UINavigationController(rootViewController: rootViewController)
     }
     
     override func viewDidLoad() {
@@ -38,8 +40,8 @@ final class ContainerViewController: UIViewController {
     }
     
     private func configureDelegates() {
-        sideMenuViewController.delegate = self
-        rootViewController.delegate = self
+//        sideMenuViewController.delegate = self
+//        rootViewController.delegate = self
     }
     
     private func configureGestures() {
@@ -63,14 +65,14 @@ final class ContainerViewController: UIViewController {
     }
     
     
-    func updateRootViewController(_ viewController: UIViewControllerSideMenuDelegate) {
-        rootViewController = viewController
-    }
+//    func updateRootViewController(_ viewController: UIViewControllerSideMenuDelegate) {
+//        rootViewController = viewController
+//    }
     
     private func addChildViewControllers() {
-        addChild(navigator)
-        view.addSubview(navigator.view)
-        navigator.didMove(toParent: self)
+//        addChild(navigator)
+//        view.addSubview(navigator.view)
+//        navigator.didMove(toParent: self)
         
         addChild(sideMenuViewController)
         view.addSubview(sideMenuViewController.view)
@@ -78,30 +80,30 @@ final class ContainerViewController: UIViewController {
     }
 }
 
-extension ContainerViewController: SideMenuDelegate {
-    func menuButtonTapped() {
-        sideMenuViewController.show()
-    }
+//extension ContainerViewController: SideMenuDelegate {
+//    func menuButtonTapped() {
+//        sideMenuViewController.show()
+//    }
+//
+//    func moveToVC(_ name: String) {
+//        guard let item = sideMenuViewController.sideMenuItems.filter({ item in
+//            item.name == name
+//        }).first else { return }
+//
+//        itemSelected(item: item.viewController)
+//    }
     
-    func moveToVC(_ name: String) {
-        guard let item = sideMenuViewController.sideMenuItems.filter({ item in
-            item.name == name
-        }).first else { return }
-        
-        itemSelected(item: item.viewController)
-    }
-    
-    func itemSelected(item: ViewControllerPresentation) {
-        switch item {
-        case let .embed(viewController):
-            updateRootViewController(viewController)
-            sideMenuViewController.hide()
-        case let .push(viewController):
-            sideMenuViewController.hide()
-            navigator.pushViewController(viewController, animated: true)
-        case let .modal(viewController):
-            sideMenuViewController.hide()
-            navigator.present(viewController, animated: true, completion: nil)
-        }
-    }
-}
+//    func itemSelected(item: ViewControllerPresentation) {
+//        switch item {
+//        case let .embed(viewController):
+//            updateRootViewController(viewController)
+//            sideMenuViewController.hide()
+//        case let .push(viewController):
+//            sideMenuViewController.hide()
+//            navigator.pushViewController(viewController, animated: true)
+//        case let .modal(viewController):
+//            sideMenuViewController.hide()
+//            navigator.present(viewController, animated: true, completion: nil)
+//        }
+//    }
+//}

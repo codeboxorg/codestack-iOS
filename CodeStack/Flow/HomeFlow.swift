@@ -13,37 +13,29 @@ import RxCocoa
 class HomeFlow: Flow{
     
     var root: RxFlow.Presentable{
-        self.containerViewController
+        self.rootViewController
     }
     
-    private let rootViewController: UINavigationController = {
-        let nav = UINavigationController()
-        nav.setNavigationBarHidden(true, animated: false)
-        return nav
-    }()
+    let viewModel: any HomeViewModelProtocol
+    private lazy var rootViewController = ViewController.create(with: viewModel)
+    private lazy var containerScreen = ContainerViewController(sideMenuViewController: sideMenuViewController)
+//    let codePRListScreen = CodeProblemViewController.create(with: .init(viewModel: CodeProblemViewModel() as (any ProblemViewModelProtocol) ))
     
+    let testScreen = TestViewController()
     
-    lazy var containerViewController = ContainerViewController(sideMenuViewController: sideMenuViewController,rootViewController: mainVC)
-    
-    let codeVC = CodeProblemViewController.create(with: .init(delegate: nil,
-                                                              viewModel: CodeProblemViewModel() as (any ProblemViewModelProtocol) ))
-    
-    let testViewController = TestViewController()
-    let mainVC = ViewController()
+    init(dependencies: any HomeViewModelProtocol){
+        self.viewModel = dependencies
+    }
     
     lazy var items: [SideMenuItem] = [SideMenuItem(icon: UIImage(named: "problem"),
-                                              name: "문제",
-                                              viewController: .push(codeVC)),
+                                              name: "문제"),
                                  SideMenuItem(icon: UIImage(named: "submit"),
-                                              name: "제출근황",
-                                              viewController: .modal(codeVC)),
+                                              name: "제출근황"),
                                  SideMenuItem(icon: UIImage(named: "my"),
-                                              name: "마이 페이지",
-                                              viewController: .embed(codeVC)),
+                                              name: "마이 페이지"),
                                  SideMenuItem(icon: UIImage(named: "home"),
-                                              name: "메인 페이지",
-                                              viewController: .embed(mainVC)),
-                                 SideMenuItem(icon: nil, name: "추천", viewController: .push(testViewController))]
+                                              name: "메인 페이지"),
+                                 SideMenuItem(icon: nil, name: "추천")]
     
     lazy var sideMenuViewController = SideMenuViewController(sideMenuItems: items)
     
@@ -51,8 +43,10 @@ class HomeFlow: Flow{
         guard let codestackStep = step as? CodestackStep else {return .none}
         
         switch codestackStep {
-        case .problemList:
+        case .firstHomeStep:
             return .none
+        case .problemList:
+            return navigateToProblemList()
         case .problemPick(let _):
             return .none
         case .alert(let _):
@@ -66,12 +60,26 @@ class HomeFlow: Flow{
         case .sideMenuDelegate(let _):
             return .none
         default:
+            print("codestackStep: \(codestackStep)")
             return .none
         }
     }
     
+//    private func navigateToHomeScreen() -> FlowContributors{
+//        return .one(flowContributor: .contribute(withNextPresentable: <#T##Presentable#>, withNextStepper: <#T##Stepper#>))
+//    }
+    
     private func navigateToProblemList() -> FlowContributors{
+//        CompositeStepper(steppers: [viewController.viewModel, viewController])
+        let viewModel = CodeProblemViewModel(DummyData())
+        let codeListFlow = CodeProblemListFlow(dependencies: viewModel)
+        let stepper = CodeProblemStepper()
         
-        return .none
+        Flows.use(codeListFlow, when: .created, block: {flowRoot in
+            self.rootViewController.navigationController?.pushViewController(flowRoot, animated: false)
+        })
+        
+        return .one(flowContributor: .contribute(withNextPresentable: codeListFlow,
+                                                 withNextStepper: CompositeStepper(steppers: [stepper,viewModel])))
     }
 }

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol UIViewControllerSideMenuDelegate{
-    var delegate: SideMenuDelegate? { get set }
+//    var delegate: SideMenuDelegate? { get set }
 }
-extension ViewController: UIViewControllerSideMenuDelegate{}
-extension CodeProblemViewController: UIViewControllerSideMenuDelegate{}
+//extension ViewController: UIViewControllerSideMenuDelegate{}
+//extension CodeProblemViewController: UIViewControllerSideMenuDelegate{}

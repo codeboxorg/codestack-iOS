@@ -54,11 +54,15 @@ class LoginFlow: Flow{
 //    }
     
     private func navigateToHomeViewController() -> FlowContributors{
-        let flow = HomeFlow()
-        Flows.use(flow, when: .ready, block: { root in
-            self.loginViewController.navigationController?.pushViewController(root, animated: false)
-        })
+        let viewModel = HomeViewModel()
+        let flow = HomeFlow(dependencies: viewModel)
         
+        Flows.use(flow, when: .ready, block: { root in
+            self.loginViewController.navigationController?.setNavigationBarHidden(false, animated: true)
+            self.loginViewController.navigationController?.pushViewController(root, animated: false)
+            
+        })
+
         return .one(flowContributor: .contribute(withNextPresentable: flow, withNextStepper: OneStepper(withSingleStep: CodestackStep.fakeStep)))
     }
 }

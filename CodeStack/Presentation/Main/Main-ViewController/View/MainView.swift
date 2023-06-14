@@ -63,10 +63,10 @@ class MainView: UIView{
     }
     
     //MARK: -delegate convenience init
-    convenience init(frame: CGRect, delegate: SideMenuDelegate?) {
+    convenience init(frame: CGRect, stepType: [CodestackStep]) {
         self.init(frame: frame)
-        subView_1.buttonType = .today_problem(delegate)
-        subView_2.buttonType = .recommand_problem(delegate)
+        subView_1.buttonType = .today_problem(stepType[safe: 0])
+        subView_2.buttonType = .recommand_problem(stepType[safe: 1])
     }
     
     //MARK: - Events merge to Signal

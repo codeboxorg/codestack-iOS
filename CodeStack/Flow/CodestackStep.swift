@@ -8,7 +8,18 @@
 import Foundation
 import RxFlow
 
-enum CodestackStep: Step{
+
+
+enum ButtonType{
+    case today_problem(CodestackStep?)
+    case recommand_problem(CodestackStep?)
+    case none
+}
+
+
+enum CodestackStep: Step, CaseIterable{
+    static var allCases: [CodestackStep] = []
+    
     // Global
     case logoutIsRequired
     case dashboardIsRequired
@@ -19,6 +30,10 @@ enum CodestackStep: Step{
     // Login
     case loginNeeded
     case userLoggedIn(ID?,Pwd?)
+    
+    
+    //Home Step
+    case firstHomeStep
     
     //problemSolve VC
     case problemList

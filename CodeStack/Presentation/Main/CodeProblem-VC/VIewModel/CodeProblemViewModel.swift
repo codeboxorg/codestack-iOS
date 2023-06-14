@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RxFlow
 
 protocol ProblemViewModelProtocol{
     associatedtype Input = CodeProblemViewModel.Input
@@ -16,7 +17,8 @@ protocol ProblemViewModelProtocol{
     func transform(_ input: Input) -> Output
 }
 
-class CodeProblemViewModel: ProblemViewModelProtocol{
+class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
+    var steps = PublishRelay<Step>()
     
     struct Input{
         var viewDidLoad: Signal<Void>
@@ -31,7 +33,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol{
     
     private var service: DummyData
     
-    init(_ service: DummyData = DummyData()){
+    init(_ service: DummyData){
         self.service = service
     }
     

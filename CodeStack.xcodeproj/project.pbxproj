@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		005D5425A883E7377F12B68C /* Pods_CodeStackTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8B4F4731C06EACB2B67E969 /* Pods_CodeStackTests.framework */; };
 		24AFE7D66347091F273C23C7 /* Pods_CodeStack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B544284C22797BF70DFA696E /* Pods_CodeStack.framework */; };
+		96123D0D2A39FEDB002160B9 /* CodeProblemListFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96123D0C2A39FEDB002160B9 /* CodeProblemListFlow.swift */; };
+		96123D122A3A088C002160B9 /* Collection+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96123D112A3A088C002160B9 /* Collection+extension.swift */; };
 		965310B129EA7A4F006C3E18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B029EA7A4F006C3E18 /* AppDelegate.swift */; };
 		965310B329EA7A4F006C3E18 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B229EA7A4F006C3E18 /* SceneDelegate.swift */; };
 		965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B429EA7A4F006C3E18 /* ViewController.swift */; };
@@ -108,6 +110,8 @@
 		3E8179CD6A4DBC82F1CCAFCB /* Pods-CodeStackTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStackTests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStackTests/Pods-CodeStackTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4BC60300DCCB71515B444EC1 /* Pods-CodeStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.release.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.release.xcconfig"; sourceTree = "<group>"; };
 		712D677D9775AF006F6F2AB8 /* Pods_CodeStack_CodeStackUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack_CodeStackUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		96123D0C2A39FEDB002160B9 /* CodeProblemListFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemListFlow.swift; sourceTree = "<group>"; };
+		96123D112A3A088C002160B9 /* Collection+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+extension.swift"; sourceTree = "<group>"; };
 		965310AD29EA7A4F006C3E18 /* CodeStack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeStack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		965310B029EA7A4F006C3E18 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		965310B229EA7A4F006C3E18 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -236,6 +240,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		96123D102A3A0866002160B9 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				96123D112A3A088C002160B9 /* Collection+extension.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
 		965310A429EA7A4F006C3E18 = {
 			isa = PBXGroup;
 			children = (
@@ -264,6 +276,7 @@
 				96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */,
 				965310B029EA7A4F006C3E18 /* AppDelegate.swift */,
 				965310B229EA7A4F006C3E18 /* SceneDelegate.swift */,
+				96123D102A3A0866002160B9 /* Extension */,
 				96D638E12A30B51600AA95B5 /* Flow */,
 				9653110229EAE089006C3E18 /* App-Util */,
 				965310EA29EA8F59006C3E18 /* Presentation */,
@@ -563,19 +576,12 @@
 			isa = PBXGroup;
 			children = (
 				96D638E92A30B7A100AA95B5 /* CodestackStep.swift */,
-				96D638E62A30B64800AA95B5 /* InitialFlow */,
+				96D638E42A30B5D900AA95B5 /* AppFlow.swift */,
 				96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */,
 				966972802A31FFE3004E0E8B /* HomeFlow.swift */,
+				96123D0C2A39FEDB002160B9 /* CodeProblemListFlow.swift */,
 			);
 			path = Flow;
-			sourceTree = "<group>";
-		};
-		96D638E62A30B64800AA95B5 /* InitialFlow */ = {
-			isa = PBXGroup;
-			children = (
-				96D638E42A30B5D900AA95B5 /* AppFlow.swift */,
-			);
-			path = InitialFlow;
 			sourceTree = "<group>";
 		};
 		96D77C482A1C8ADF0075E52E /* MyPage */ = {
@@ -853,6 +859,7 @@
 				96C9F5AE29FE7ED1008D48B9 /* URLRequest-ext.swift in Sources */,
 				96D638E32A30B5CE00AA95B5 /* LoginFlow.swift in Sources */,
 				9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */,
+				96123D0D2A39FEDB002160B9 /* CodeProblemListFlow.swift in Sources */,
 				965310F929EADE84006C3E18 /* ContentViewControllerPresentation.swift in Sources */,
 				96C9F5AB29FE7C30008D48B9 /* CuStomError.swift in Sources */,
 				9653110D29EAF1DF006C3E18 /* CodeProblemViewController.swift in Sources */,
@@ -861,6 +868,7 @@
 				96C9F5A729FE7A7A008D48B9 /* ServiceManager.swift in Sources */,
 				96D638EA2A30B7A100AA95B5 /* CodestackStep.swift in Sources */,
 				965310FB29EADF4B006C3E18 /* ContainerViewController.swift in Sources */,
+				96123D122A3A088C002160B9 /* Collection+extension.swift in Sources */,
 				96D77C4A2A1C8AF90075E52E /* MyPageViewController.swift in Sources */,
 				96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */,
 				96BA540929F6C71A00B5BDD3 /* CustomTextField.swift in Sources */,

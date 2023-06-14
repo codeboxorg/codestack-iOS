@@ -8,8 +8,3 @@
 import Foundation
 
 
-enum ButtonType{
-    case today_problem(SideMenuDelegate?)
-    case recommand_problem(SideMenuDelegate?)
-    case none
-}

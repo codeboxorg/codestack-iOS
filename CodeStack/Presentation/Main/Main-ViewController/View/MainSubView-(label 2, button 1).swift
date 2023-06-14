@@ -8,6 +8,12 @@
 import UIKit
 import RxCocoa
 
+
+
+///  Title Label 1개
+///  description Label 1개
+///  action Button 1개
+///   Vertical
 class TwoLabelOneButton: UIView{
     
     struct LabelBtnText{
@@ -44,17 +50,18 @@ class TwoLabelOneButton: UIView{
     
     @objc func navigationButton(_ sender: UIButton){
         //viewModel 에 주입 해서 navigation 하면 될거 같은데
-        guard let buttonType else {return}
-        switch buttonType{
-        case .today_problem(let delegate):
-            print("navigationButton : \(delegate)")
-            delegate?.moveToVC("문제")
-        case .recommand_problem(let delegate):
-            delegate?.moveToVC("추천")
-            print("navigationButton : \(delegate)")
-        case .none:
-            break
-        }
+//        guard let buttonType else {return}
+//        switch buttonType{
+//        case .today_problem:
+//            print("navigationButton : \(delegate)")
+//            delegate?.moveToVC("문제")
+//
+//        case .recommand_problem:
+//            delegate?.moveToVC("추천")
+//            print("navigationButton : \(delegate)")
+//        case .none:
+//            break
+//        }
     }
     
     var observation : NSKeyValueObservation?

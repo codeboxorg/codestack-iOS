@@ -14,16 +14,16 @@ import RxCocoa
 class CodeProblemViewController: UIViewController, UITableViewDelegate{
     
     struct Dependencies{
-        var delegate: SideMenuDelegate?
+//        var delegate: SideMenuDelegate?
         var viewModel: (any ProblemViewModelProtocol)?
     }
     
-    weak var delegate: SideMenuDelegate?
+//    weak var delegate: SideMenuDelegate?
     var viewModel: (any ProblemViewModelProtocol)?
     
     static func create(with dependencies: Dependencies) -> Self{
         let code = CodeProblemViewController()
-        code.delegate = dependencies.delegate
+//        code.delegate = dependencies.delegate
         code.viewModel = dependencies.viewModel
         return code as! Self
     }
@@ -59,7 +59,6 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         _viewDidLoad.accept(())
         
         layoutConfigure()
-        
         //moveFunc()
     }
     

@@ -25,15 +25,22 @@ extension UIViewController {
     }
 }
 
+typealias HomeViewController = ViewController
 class ViewController: UIViewController {
     
-    weak var delegate: SideMenuDelegate?
-    private var barButtonImage: UIImage?
+//    weak var delegate: SideMenuDelegate?
     
-    private var homeViewModel: any HomeViewModelProtocol = HomeViewModel()
+    private var homeViewModel: (any HomeViewModelProtocol)?
+    
+    static func create(with dependencies: any HomeViewModelProtocol) -> ViewController{
+        let vc = ViewController()
+        vc.homeViewModel = dependencies
+//        vc.navigationSetting()
+        return vc
+    }
     
     private lazy var mainView: MainView = {
-        let view = MainView(frame: .zero, delegate: delegate)
+        let view = MainView(frame: .zero, stepType: [.problemList,.fakeStep])
         return view
     }()
     
@@ -41,7 +48,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         navigationSetting()
         layoutConfigure()
-        
+        print("ViewController - viewDidLoad")
         #if DEBUG
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
 //            self.mainView.move()
@@ -53,9 +60,10 @@ class ViewController: UIViewController {
     }
     
     
-    private func navigationSetting(){
+    func navigationSetting(){
         //라지 타이틀 적용
         adjustLargeTitleSize()
+        
         
         // 사이드바 보기 버튼 적용
         self.view.backgroundColor = UIColor.systemBackground
@@ -69,11 +77,13 @@ class ViewController: UIViewController {
         navigationBarAppearance.backButtonAppearance = backButtonAppearance
         
         UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+        print(self.navigationItem)
+        print(self.navigationController)
     }
     
     
     @objc func rightBarButtonMenuTapped(_ sender: UIBarButtonItem){
-        delegate?.menuButtonTapped()
+//        delegate?.menuButtonTapped()
     }
     
     

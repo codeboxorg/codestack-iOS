@@ -50,7 +50,11 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                 case .gitHub:
                     break
                 case .email((let id, let pwd)):
-                    vm.steps.accept(CodestackStep.userLoggedIn(id, pwd))
+                    #if DEBUG
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                        vm.steps.accept(CodestackStep.userLoggedIn(id, pwd))
+                    })
+                    #endif
                 case .none:
                     break
                 }

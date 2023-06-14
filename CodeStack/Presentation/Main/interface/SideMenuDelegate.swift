@@ -7,8 +7,8 @@
 
 import Foundation
 
-protocol SideMenuDelegate: AnyObject {
-    func menuButtonTapped()
-    func itemSelected(item: ViewControllerPresentation)
-    func moveToVC(_ name: String)
-}
+//protocol SideMenuDelegate: AnyObject {
+//    func menuButtonTapped()
+//    func itemSelected(item: ViewControllerPresentation)
+//    func moveToVC(_ name: String)
+//}

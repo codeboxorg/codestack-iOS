@@ -26,6 +26,7 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
     }
     
     var steps = PublishRelay<Step>()
+    
     private var disposeBag: DisposeBag = DisposeBag()
     
     init(){
@@ -34,8 +35,16 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
     
     func transform(input: Input) -> Output {
         input.problemButtonEvent
-            .emit{
-                print("buttonType : \($0)")
+            .withUnretained(self)
+            .emit{ vm,type in
+                switch type{
+                case .today_problem(let step):
+                    vm.steps.accept(step ?? .fakeStep)
+                case .recommand_problem(let step):
+                    vm.steps.accept(step ?? .fakeStep)
+                default:
+                    vm.steps.accept(CodestackStep.fakeStep)
+                }
             }.disposed(by: disposeBag)
         
         return Output()

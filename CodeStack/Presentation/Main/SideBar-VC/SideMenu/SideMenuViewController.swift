@@ -10,7 +10,7 @@ import UIKit
 struct SideMenuItem {
     let icon: UIImage?
     let name: String
-    let viewController: ViewControllerPresentation
+//    let viewController: ViewControllerPresentation
 }
 
 
@@ -50,9 +50,12 @@ final class SideMenuViewController: UIViewController {
     }()
 
     var sideMenuItems: [SideMenuItem] = []
-    private var leadingConstraint: NSLayoutConstraint!
+    
+    //sideMenuView.leadingAnchor.constraint
+    private var sideMenuViewLeadingContraint: NSLayoutConstraint!
+    
     private var shadowColor: UIColor = UIColor(red: 33/255, green: 33/255, blue: 33/255, alpha: 0.5)
-    weak var delegate: SideMenuDelegate?
+//    weak var delegate: SideMenuDelegate?
     
     convenience init(sideMenuItems: [SideMenuItem]) {
         self.init()
@@ -73,7 +76,7 @@ final class SideMenuViewController: UIViewController {
         self.view.frame.origin.x = 0
         self.view.backgroundColor = self.shadowColor
         UIView.animate(withDuration: 0.5) {
-            self.leadingConstraint.constant = 0
+            self.sideMenuViewLeadingContraint.constant = 0
             self.view.layoutIfNeeded()
         }
     }
@@ -81,7 +84,7 @@ final class SideMenuViewController: UIViewController {
     func hide() {
         self.view.backgroundColor = .clear
         UIView.animate(withDuration: 0.5) {
-            self.leadingConstraint.constant = -UIApplication.getScreenSize()
+            self.sideMenuViewLeadingContraint.constant = -UIApplication.getScreenSize()
             self.view.layoutIfNeeded()
         } completion: { _ in
             self.view.frame.origin.x = -UIApplication.getScreenSize()
@@ -108,8 +111,8 @@ final class SideMenuViewController: UIViewController {
     
     private func configureConstraints() {
         sideMenuView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        leadingConstraint = sideMenuView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: -view.frame.size.width)
-        leadingConstraint.isActive = true
+        sideMenuViewLeadingContraint = sideMenuView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: -view.frame.size.width)
+        sideMenuViewLeadingContraint.isActive = true
         sideMenuView.widthAnchor.constraint(equalToConstant: view.frame.size.width * 0.6).isActive = true
         sideMenuView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
 
@@ -185,7 +188,7 @@ extension SideMenuViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         let item = sideMenuItems[indexPath.row]
-        delegate?.itemSelected(item: item.viewController)
+//        delegate?.itemSelected(item: item.viewController)
     }
 }
 
