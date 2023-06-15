@@ -18,10 +18,13 @@ protocol ProblemViewModelProtocol{
 }
 
 class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
+    
+    
     var steps = PublishRelay<Step>()
     
     struct Input{
         var viewDidLoad: Signal<Void>
+        var viewDissapear: Signal<Void>
         var segmentIndex: Signal<Int>
         var foldButtonSeleted: Signal<(Int,Bool)>
     }
@@ -37,6 +40,10 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
         self.service = service
     }
     
+    deinit{
+        print("\(String(describing: Self.self)) - deinint")
+    }
+    
     //Output
     private var seg_list_model = PublishRelay<[DummyModel]>()
     
@@ -48,7 +55,8 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
     var disposeBag = DisposeBag()
     
     func transform(_ input: Input) -> Output{
-        input.viewDidLoad
+        
+        _ = input.viewDidLoad
             .withUnretained(self)
             .emit(onNext: { vm,_ in
                 let model = vm.service.getAllModels()
@@ -56,17 +64,26 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
             })
             .disposed(by: disposeBag)
         
-        input.segmentIndex
+        //추후에 flow 분리후 추가예정
+        //        _ = input.viewDissapear
+        //            .map{ _ in CodestackStep.problemComplete}
+        //            .emit(to: steps)
+        
+        
+        _ = input.segmentIndex
             .emit(to: segmentIndex)
             .disposed(by: disposeBag)
         
-        input.foldButtonSeleted
-            .emit(to: foldButton)
+        _ = input.foldButtonSeleted
+            .withUnretained(self)
+            .emit(onNext: { vm, model in
+                vm.foldButton.onNext(model)
+            })
             .disposed(by: disposeBag)
         
-
+        
         foldButton
-            .withLatestFrom(seg_list_model){ data, originals in
+            .withLatestFrom(seg_list_model){data, originals in
                 let (index, flag) = data
                 var origin = originals
                 origin[index].flag = !flag

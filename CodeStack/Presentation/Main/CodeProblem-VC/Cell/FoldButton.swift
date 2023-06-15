@@ -9,7 +9,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-class FoldView: UIButton{
+class FoldButton: UIButton{
     
     
     override init(frame: CGRect) {

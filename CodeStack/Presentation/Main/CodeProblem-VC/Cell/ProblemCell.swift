@@ -15,8 +15,6 @@ class ProblemCell: UITableViewCell{
     let lableSize: CGFloat = 16
     let containerSpacing: CGFloat = 10
     
-    // UITapGesture
-    var problemCell_tapGesture: ControlEvent<UITapGestureRecognizer>?
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -68,8 +66,8 @@ class ProblemCell: UITableViewCell{
     
     //MARK: - Binding to VC
     // using ControlProperty when seletedChange
-    lazy var foldView: FoldView = {
-        let view = FoldView(frame: .zero)
+    lazy var foldButton: FoldButton = {
+        let view = FoldButton(frame: .zero)
         view.tintColor = .label
         view.contentMode = .scaleAspectFit
         return view
@@ -93,10 +91,10 @@ class ProblemCell: UITableViewCell{
     
     var styleFlag = PublishSubject<Bool>()
     
-    lazy var subscription: Driver<Bool> =
-    styleFlag
-        .asDriver(onErrorJustReturn: true)
-        .asSharedSequence()
+    // UITapGesture
+    var problemCell_tapGesture: ControlEvent<UITapGestureRecognizer>?
+    
+   
     
     
     var disposeBag = DisposeBag()
@@ -114,6 +112,11 @@ class ProblemCell: UITableViewCell{
         }
     }
     
+    
+    deinit{
+        print("\(String(describing: Self.self)) - deinint")
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         model = nil
@@ -121,7 +124,14 @@ class ProblemCell: UITableViewCell{
         disposeBag = DisposeBag()
     }
     
-    lazy var foldButtonTap: Observable<Void> = self.foldView.rx.tap.share()
+    lazy var subscription: Driver<Bool> = self.styleFlag
+        .asDriver(onErrorJustReturn: true)
+        .asSharedSequence()
+    
+//    lazy var foldButtonTap: Observable<Void> = self.foldView.rx.tap.share()
+//    func getEvnetTap() -> ControlEvent<Void>{
+////        return self
+//    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         
@@ -131,15 +141,17 @@ class ProblemCell: UITableViewCell{
         layoutConfigure()
         
         _ = subscription
-            .drive(foldView.rx.isSelected)
+            .drive(onNext: { [weak self] value in
+                self?.foldButton.rx.isSelected.onNext(value)
+            })
             .disposed(by: cellDisposeBag)
         
-        subscription
-            .drive(onNext: { layoutFlag in
+        _ = subscription
+            .drive(onNext: {[weak self] layoutFlag in
                 if layoutFlag {
-                    self.strechTableView()
+                    self?.strechTableView()
                 }else if !layoutFlag{
-                    self.foldTableView()
+                    self?.foldTableView()
                 }
             }).disposed(by: cellDisposeBag)
     }
@@ -163,11 +175,11 @@ class ProblemCell: UITableViewCell{
         problem_title.snp.remakeConstraints { make in
             make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.trailing.equalTo(foldView.snp.leading).offset(-8)
+            make.trailing.equalTo(foldButton.snp.leading).offset(-8)
         }
         setViewPriority()
         
-        foldView.snp.remakeConstraints { make in
+        foldButton.snp.remakeConstraints { make in
             make.width.height.equalTo(30)
             make.trailing.equalToSuperview().inset(12)
             make.centerY.equalTo(problem_number.snp.centerY)
@@ -192,12 +204,12 @@ class ProblemCell: UITableViewCell{
         problem_title.snp.remakeConstraints { make in
             make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.trailing.equalTo(foldView.snp.leading).offset(-8)
+            make.trailing.equalTo(foldButton.snp.leading).offset(-8)
         }
         
         setViewPriority()
         
-        foldView.snp.remakeConstraints { make in
+        foldButton.snp.remakeConstraints { make in
             make.width.height.equalTo(30)
             make.trailing.equalToSuperview().inset(12)
             make.centerY.equalTo(problem_number.snp.centerY)
@@ -224,7 +236,7 @@ class ProblemCell: UITableViewCell{
     // MARK: - SubView array Property
     private lazy var subviewsToBeAdded: [UIView] = [
         problem_number,
-        foldView,
+        foldButton,
         problem_title,
         graphCollectionView,
         languageContainerContainer
@@ -249,7 +261,7 @@ class ProblemCell: UITableViewCell{
         problem_number.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
         problem_title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        foldView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        foldButton.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
     }
     
     private func makeConfigure(){
@@ -271,12 +283,12 @@ class ProblemCell: UITableViewCell{
         problem_title.snp.makeConstraints { make in
             make.centerY.equalTo(problem_number.snp.centerY)
             make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.trailing.equalTo(foldView.snp.leading).offset(-8)
+            make.trailing.equalTo(foldButton.snp.leading).offset(-8)
         }
         
         setViewPriority()
         
-        foldView.snp.makeConstraints { make in
+        foldButton.snp.makeConstraints { make in
             make.width.height.equalTo(30)
             make.trailing.equalToSuperview().inset(12)
             make.centerY.equalTo(problem_number.snp.centerY)

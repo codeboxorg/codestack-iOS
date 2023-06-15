@@ -51,6 +51,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         return segmentControl
     }()
     
+    
     //MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +61,24 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         
         layoutConfigure()
         //moveFunc()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        print("viewDidAppear - CodeProbleViewController")
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        print("viewWillDisappear - CodeProblemViewController")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        _viewDissapear.accept(())
+        
+        disposeBag = DisposeBag()
+    }
+    
+    deinit{
+        print("\(String(describing: Self.self)) - deinint")
     }
     
     
@@ -78,10 +97,13 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     //MARK: - Binding from ViewModel
     var disposeBag: DisposeBag = DisposeBag()
     var _viewDidLoad = PublishRelay<Void>()
+    var _viewDissapear = PublishRelay<Void>()
     var foldButtonSeleted = PublishRelay<(Int,Bool)>()
+    
     
     lazy var _segmentcontrolValue = segmentControl.rx.selectedSegmentIndex.asSignal(onErrorJustReturn: 0)
     lazy var input = CodeProblemViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(),
+                                                viewDissapear: _viewDissapear.asSignal(),
                                                 segmentIndex: _segmentcontrolValue,
                                                 foldButtonSeleted: foldButtonSeleted.asSignal())
     
@@ -111,18 +133,20 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
             
             cell.binder.onNext(model)
             
-            cell.foldButtonTap.bind(onNext: {
-                self.foldButtonSeleted.accept((index,cell.foldView.isSelected))
+            cell.foldButton.rx.tap.asObservable().bind(onNext: { [weak self] in
+                let value = cell.foldButton.isSelected
+                self?.foldButtonSeleted.accept((index,value))
             }).disposed(by: cell.disposeBag)
-            
+
             cell.problemCell_tapGesture?
                 .asSignal()
-                .emit(onNext: { recognizer in
+                .emit(onNext: { [weak self] recognizer in
+                    guard let self = self else {return}
                     let editorvc = CodeEditorViewController()
                     self.navigationController?.pushViewController(editorvc, animated: true)
                 }).disposed(by: cell.disposeBag)
             
-        }.disposed(by: disposeBag)    
+        }.disposed(by: disposeBag)
     }
     
     
