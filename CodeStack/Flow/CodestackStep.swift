@@ -36,9 +36,12 @@ enum CodestackStep: Step, CaseIterable{
     case firstHomeStep
     
     //problemSolve VC
+    case problemComplete
     case problemList
     case problemPick(String)
     
     case sideMenuDelegate(String)
+    
+    case none
     
 }

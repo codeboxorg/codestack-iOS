@@ -16,15 +16,15 @@ class HomeFlow: Flow{
         self.rootViewController
     }
     
-    let viewModel: any HomeViewModelProtocol
-    private lazy var rootViewController = ViewController.create(with: viewModel)
+//    let viewModel: any HomeViewModelProtocol
+    private var rootViewController: ViewController
     private lazy var containerScreen = ContainerViewController(sideMenuViewController: sideMenuViewController)
 //    let codePRListScreen = CodeProblemViewController.create(with: .init(viewModel: CodeProblemViewModel() as (any ProblemViewModelProtocol) ))
     
     let testScreen = TestViewController()
     
     init(dependencies: any HomeViewModelProtocol){
-        self.viewModel = dependencies
+        rootViewController = ViewController.create(with: dependencies)
     }
     
     lazy var items: [SideMenuItem] = [SideMenuItem(icon: UIImage(named: "problem"),
@@ -48,6 +48,8 @@ class HomeFlow: Flow{
         case .problemList:
             return navigateToProblemList()
         case .problemPick(let _):
+            return navigateToCodeEditor()
+        case .problemComplete:
             return .none
         case .alert(let _):
             return .none
@@ -70,16 +72,27 @@ class HomeFlow: Flow{
 //    }
     
     private func navigateToProblemList() -> FlowContributors{
-//        CompositeStepper(steppers: [viewController.viewModel, viewController])
+//        let stepper = CodeProblemStepper()
         let viewModel = CodeProblemViewModel(DummyData())
-        let codeListFlow = CodeProblemListFlow(dependencies: viewModel)
-        let stepper = CodeProblemStepper()
+//        let codeListFlow = CodeProblemListFlow(dependencies: viewModel)
         
-        Flows.use(codeListFlow, when: .created, block: {flowRoot in
-            self.rootViewController.navigationController?.pushViewController(flowRoot, animated: false)
-        })
+        let viewController = CodeProblemViewController.create(with: .init(viewModel: viewModel))
         
-        return .one(flowContributor: .contribute(withNextPresentable: codeListFlow,
-                                                 withNextStepper: CompositeStepper(steppers: [stepper,viewModel])))
+        self.rootViewController.navigationController?.pushViewController(viewController, animated: false)
+//        Flows.use(codeListFlow, when: .created, block: {flowRoot in
+//            self.rootViewController.navigationController?.pushViewController(flowRoot, animated: false)
+//        })
+        
+        return .one(flowContributor: .contribute(withNextPresentable: viewController,
+                                                 withNextStepper: viewModel))
+    }
+    
+    private func navigateToCodeEditor() -> FlowContributors{
+        
+        let editorvc = CodeEditorViewController()
+        self.rootViewController.navigationController?.pushViewController(editorvc, animated: true)
+        
+        return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: DefaultStepper()))
+        
     }
 }

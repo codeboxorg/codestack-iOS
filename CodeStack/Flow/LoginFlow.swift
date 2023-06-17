@@ -56,6 +56,7 @@ class LoginFlow: Flow{
     private func navigateToHomeViewController() -> FlowContributors{
         let viewModel = HomeViewModel()
         let flow = HomeFlow(dependencies: viewModel)
+        let stepper = HomeStepper()
         
         Flows.use(flow, when: .ready, block: { root in
             self.loginViewController.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -63,7 +64,8 @@ class LoginFlow: Flow{
             
         })
 
-        return .one(flowContributor: .contribute(withNextPresentable: flow, withNextStepper: OneStepper(withSingleStep: CodestackStep.fakeStep)))
+        return .one(flowContributor: .contribute(withNextPresentable: flow,
+                                                 withNextStepper: CompositeStepper(steppers: [viewModel,stepper])))
     }
 }
 

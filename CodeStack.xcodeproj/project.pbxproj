@@ -78,7 +78,7 @@
 		96C9F5B729FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B629FE9CBF008D48B9 /* AppleOAuthrizationRequest.swift */; };
 		96C9F5B929FE9DEB008D48B9 /* String-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B829FE9DEB008D48B9 /* String-ext.swift */; };
 		96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */; };
-		96C9F5BF2A03C456008D48B9 /* FoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldView.swift */; };
+		96C9F5BF2A03C456008D48B9 /* FoldButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldButton.swift */; };
 		96C9F5C12A051354008D48B9 /* UIColor-Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */; };
 		96D638E32A30B5CE00AA95B5 /* LoginFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */; };
 		96D638E52A30B5D900AA95B5 /* AppFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E42A30B5D900AA95B5 /* AppFlow.swift */; };
@@ -184,7 +184,7 @@
 		96C9F5B829FE9DEB008D48B9 /* String-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-ext.swift"; sourceTree = "<group>"; };
 		96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CodeStack.entitlements; sourceTree = "<group>"; };
 		96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemViewModel.swift; sourceTree = "<group>"; };
-		96C9F5BE2A03C456008D48B9 /* FoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldView.swift; sourceTree = "<group>"; };
+		96C9F5BE2A03C456008D48B9 /* FoldButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldButton.swift; sourceTree = "<group>"; };
 		96C9F5C02A051354008D48B9 /* UIColor-Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor-Ext.swift"; sourceTree = "<group>"; };
 		96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFlow.swift; sourceTree = "<group>"; };
 		96D638E42A30B5D900AA95B5 /* AppFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlow.swift; sourceTree = "<group>"; };
@@ -468,7 +468,7 @@
 			isa = PBXGroup;
 			children = (
 				9653111329EBD176006C3E18 /* ProblemCell.swift */,
-				96C9F5BE2A03C456008D48B9 /* FoldView.swift */,
+				96C9F5BE2A03C456008D48B9 /* FoldButton.swift */,
 				9653112129ED1AA2006C3E18 /* GraphCell */,
 			);
 			path = Cell;
@@ -908,7 +908,7 @@
 				96C9F5B029FE8238008D48B9 /* GitOAuthrizationRequest.swift in Sources */,
 				965310F729EADE6E006C3E18 /* SideMenuDelegate.swift in Sources */,
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
-				96C9F5BF2A03C456008D48B9 /* FoldView.swift in Sources */,
+				96C9F5BF2A03C456008D48B9 /* FoldButton.swift in Sources */,
 				96BA53FF29F53DAB00B5BDD3 /* ProblemDescriptionView.swift in Sources */,
 				9653112029ED1730006C3E18 /* CALayer.swift in Sources */,
 				96BA540729F6C71400B5BDD3 /* LoginViewController.swift in Sources */,

@@ -16,17 +16,29 @@ class CodeProblemListFlow: Flow{
         return codeProblemVC
     }
     
-    
-    let codeProblemViewModel: any ProblemViewModelProtocol
-    lazy var codeProblemVC = CodeProblemViewController.create(with: .init(viewModel: codeProblemViewModel))
+    var codeProblemVC: CodeProblemViewController
     
     init(dependencies: any ProblemViewModelProtocol){
-        self.codeProblemViewModel = dependencies
+        self.codeProblemVC = CodeProblemViewController.create(with: .init(viewModel: dependencies))
+    }
+    
+    deinit{
+        print("\(String(describing: Self.self)) - deinint")
     }
     
     func navigate(to step: RxFlow.Step) -> RxFlow.FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
-        
+        switch codestackStep {
+        case .logoutIsRequired:
+            return .none
+        case .problemComplete:
+            print("navigate")
+            return .end(forwardToParentFlowWithStep: CodestackStep.problemComplete)
+        case .fakeStep:
+            return .none
+        default:
+            return .none
+        }
         return .none
     }
     
