@@ -64,18 +64,27 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         print("viewDidAppear - CodeProbleViewController")
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         print("viewWillDisappear - CodeProblemViewController")
     }
     
+    
+    
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         _viewDissapear.accept(())
         
-        disposeBag = DisposeBag()
+        if self.navigationController == nil{
+            disposeBag = DisposeBag()
+        }
+        
     }
+    
     
     deinit{
         print("\(String(describing: Self.self)) - deinint")
@@ -99,13 +108,14 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     var _viewDidLoad = PublishRelay<Void>()
     var _viewDissapear = PublishRelay<Void>()
     var foldButtonSeleted = PublishRelay<(Int,Bool)>()
-    
+    var _cellSelect = PublishRelay<Void>()
     
     lazy var _segmentcontrolValue = segmentControl.rx.selectedSegmentIndex.asSignal(onErrorJustReturn: 0)
     lazy var input = CodeProblemViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(),
                                                 viewDissapear: _viewDissapear.asSignal(),
                                                 segmentIndex: _segmentcontrolValue,
-                                                foldButtonSeleted: foldButtonSeleted.asSignal())
+                                                foldButtonSeleted: foldButtonSeleted.asSignal(),
+                                                cellSelect: _cellSelect.asSignal())
     
     var output: CodeProblemViewModel.Output?
     
@@ -127,28 +137,31 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         
         guard let seg_list_model = self.output?.seg_list_model.asObservable() else {return}
         
-        seg_list_model.bind(to: problemTableView.rx.items(cellIdentifier: ProblemCell.identifier))
+        
+        
+        seg_list_model.bind(to: problemTableView.rx.items(cellIdentifier: ProblemCell.identifier,cellType: ProblemCell.self))
         {
             (index: Int, model : DummyModel ,cell: ProblemCell) in
             
             cell.binder.onNext(model)
             
-            cell.foldButton.rx.tap.asObservable().bind(onNext: { [weak self] in
-                let value = cell.foldButton.isSelected
-                self?.foldButtonSeleted.accept((index,value))
+            let isSelected = cell.foldButton.isSelected
+            
+            cell.foldButtonTap?.asObservable().bind(onNext: { [weak self] in
+                guard let self = self else {return}
+                self.foldButtonSeleted.accept((index,isSelected))
             }).disposed(by: cell.disposeBag)
 
-            cell.problemCell_tapGesture?
+            cell.problemCell_tapGesture?.rx.event
                 .asSignal()
-                .emit(onNext: { [weak self] recognizer in
-                    guard let self = self else {return}
-                    let editorvc = CodeEditorViewController()
-                    self.navigationController?.pushViewController(editorvc, animated: true)
+                .emit(onNext: { [weak self] _ in
+                    self?._cellSelect.accept(())
                 }).disposed(by: cell.disposeBag)
             
         }.disposed(by: disposeBag)
+            
     }
-    
+
     
     func moveFunc(){
 #if DEBUG

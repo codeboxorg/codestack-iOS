@@ -27,6 +27,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
         var viewDissapear: Signal<Void>
         var segmentIndex: Signal<Int>
         var foldButtonSeleted: Signal<(Int,Bool)>
+        var cellSelect: Signal<Void>
     }
     
     struct Output{
@@ -68,7 +69,10 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
         //        _ = input.viewDissapear
         //            .map{ _ in CodestackStep.problemComplete}
         //            .emit(to: steps)
-        
+        _ = input.cellSelect
+            .map{_ in CodestackStep.problemPick("")}
+            .emit(to: steps)
+            .disposed(by: disposeBag)
         
         _ = input.segmentIndex
             .emit(to: segmentIndex)

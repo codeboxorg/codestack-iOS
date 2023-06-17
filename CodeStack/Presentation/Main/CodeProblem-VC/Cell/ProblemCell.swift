@@ -20,7 +20,7 @@ class ProblemCell: UITableViewCell{
         let view = UIView()
         let tapGesture = UITapGestureRecognizer()
         view.addGestureRecognizer(tapGesture)
-        problemCell_tapGesture = tapGesture.rx.event
+        problemCell_tapGesture = tapGesture
         return view
     }()
 
@@ -91,10 +91,12 @@ class ProblemCell: UITableViewCell{
     
     var styleFlag = PublishSubject<Bool>()
     
-    // UITapGesture
-    var problemCell_tapGesture: ControlEvent<UITapGestureRecognizer>?
     
-   
+    //foldButton Tap
+    lazy var foldButtonTap: ControlEvent<Void>? = foldButton.rx.tap
+    
+    // UITapGesture
+    weak var problemCell_tapGesture: UITapGestureRecognizer?
     
     
     var disposeBag = DisposeBag()
@@ -122,11 +124,11 @@ class ProblemCell: UITableViewCell{
         model = nil
         languages = nil
         disposeBag = DisposeBag()
+        
     }
     
-    lazy var subscription: Driver<Bool> = self.styleFlag
-        .asDriver(onErrorJustReturn: true)
-        .asSharedSequence()
+//    lazy var subscription: Driver<Bool> =
+        
     
 //    lazy var foldButtonTap: Observable<Void> = self.foldView.rx.tap.share()
 //    func getEvnetTap() -> ControlEvent<Void>{
@@ -140,13 +142,15 @@ class ProblemCell: UITableViewCell{
         
         layoutConfigure()
         
-        _ = subscription
+        _ = self.styleFlag
+            .asDriver(onErrorJustReturn: true)
             .drive(onNext: { [weak self] value in
                 self?.foldButton.rx.isSelected.onNext(value)
             })
             .disposed(by: cellDisposeBag)
         
-        _ = subscription
+        _ = self.styleFlag
+            .asDriver(onErrorJustReturn: true)
             .drive(onNext: {[weak self] layoutFlag in
                 if layoutFlag {
                     self?.strechTableView()
@@ -219,7 +223,7 @@ class ProblemCell: UITableViewCell{
     
     private func containerViewHiddenAnimation(){
         UIView.animate(withDuration: 0.15, animations: {
-            self.containerView.alpha = 0
+            self.containerView.alpha = 1
         }) { (finished) in
             self.containerView.isHidden = finished
         }
