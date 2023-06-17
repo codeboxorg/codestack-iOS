@@ -8,9 +8,12 @@
 import UIKit
 import Highlightr
 import SnapKit
+import RxFlow
+import RxCocoa
 
-class CodeEditorViewController: UIViewController{
+class CodeEditorViewController: UIViewController,Stepper{
     
+    var steps = PublishRelay<Step>()
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -61,6 +64,12 @@ class CodeEditorViewController: UIViewController{
         return popView
     }()
     
+    
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        steps.accept(CodestackStep.problemComplete)
+    }
     
     deinit{
         print("CodeEditorViewController : deinit")
