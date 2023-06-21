@@ -14,7 +14,7 @@ final class ProblemPopUpView: UIView{
     
     var popUpFlag: Bool = false
     
-    private lazy var scrollView: CustomScrollView = {
+    lazy var scrollView: CustomScrollView = {
         let scrollView = CustomScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = true
@@ -26,7 +26,7 @@ final class ProblemPopUpView: UIView{
         return containerView
     }()
     
-    private lazy var backButton: UIButton = {
+    lazy var backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         button.tintColor = UIColor.systemGray
@@ -140,13 +140,13 @@ final class ProblemPopUpView: UIView{
     }()
     
     
-    private lazy var hideButton: UIButton = {
+    lazy var hideButton: UIButton = {
         let button = UIButton()
         button.addTarget(self, action: #selector(hidebuttonTapped(_:)), for: .touchUpInside)
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         button.backgroundColor = UIColor.black
         button.tintColor = UIColor.systemPink
-        button.layer.cornerRadius = 25
+        button.layer.cornerRadius = button_width_height / 2
         return button
     }()
     
@@ -156,6 +156,13 @@ final class ProblemPopUpView: UIView{
     }()
     
     private weak var delegate: CodeEditorViewController?
+    
+    let button_width_height: CGFloat = 44
+    
+    let vertical_spacing: CGFloat = 25
+    
+    let leading_trailing_spacing: CGFloat = 20
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -189,7 +196,7 @@ final class ProblemPopUpView: UIView{
         hideButton.snp.remakeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview()
-            make.width.height.equalTo(50)
+            make.width.height.equalTo(44)
         }
         
         UIView.animate(
@@ -212,14 +219,14 @@ final class ProblemPopUpView: UIView{
     func hide(completion: (() -> Void)? ) {
         hideButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         
-        
-        self.delegate!.dismissProblemDiscription()
+        let buttonHeight: CGFloat = 44
+        self.delegate!.dismissProblemDiscription(button: buttonHeight)
         
         hideButton.snp.remakeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.width.equalTo(50)
-            make.height.equalTo(50)
+            make.width.equalTo(buttonHeight)
+            make.height.equalTo(buttonHeight)
         }
         UIView.animate(
             withDuration: 0.3,
@@ -267,12 +274,6 @@ private extension ProblemPopUpView{
         outputTextField].forEach{
             popUpContainerView.addSubview($0)
         }
-        
-        let button_width_height: CGFloat = 50
-        
-        let vertical_spacing: CGFloat = 25
-        
-        let leading_trailing_spacing: CGFloat = 20
         
         scrollView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()

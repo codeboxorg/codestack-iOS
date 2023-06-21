@@ -178,11 +178,11 @@ extension CodeEditorViewController{
         self.codeUITextView.contentSize.height += problemPopUpView.bounds.height
     }
     
-    func dismissProblemDiscription(){
+    func dismissProblemDiscription(button height: CGFloat ){
         problemPopUpView.snp.remakeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(60)
+            make.height.equalTo(height)
         }
 //        numbersView.layer.isHidden = true
         numbersView.layer.setNeedsDisplay()
