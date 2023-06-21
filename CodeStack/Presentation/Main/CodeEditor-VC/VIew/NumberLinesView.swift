@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreImage
+import CoreFoundation
 
 protocol TextViewSizeTracker: AnyObject{
     func updateNumberViewsHeight(_ height: CGFloat)
@@ -16,9 +17,9 @@ class LineNumberRulerView: UIView {
     private weak var textView: UITextView?
     private var textViewContentObserver: NSKeyValueObservation?
     private weak var tracker: TextViewSizeTracker?
-    private lazy var updateContentSize: (CGSize) -> () = { size in
-        self.tracker?.updateNumberViewsHeight(size.height)
-        self.layer.setNeedsDisplay()
+    private lazy var updateContentSize: (CGSize) -> () = {[weak self] size in
+        self?.tracker?.updateNumberViewsHeight(size.height)
+        self?.layer.setNeedsDisplay()
     }
     
     private var attributes: [NSAttributedString.Key : Any] {
@@ -68,6 +69,7 @@ class LineNumberRulerView: UIView {
         let isFlipped: Bool = true
         context.saveGState()
         context.textMatrix = CGAffineTransform(scaleX: 1, y: isFlipped ? -1 : 1)
+        context.restoreGState()
         
         var paragraphRanges: [NSRange] = []
         guard let text = textView.text else { return }
@@ -80,7 +82,8 @@ class LineNumberRulerView: UIView {
         
         var lineNum = 1
         
-        paragraphRanges.forEach{ range in
+        paragraphRanges.forEach{ [weak self] range in
+            guard let self else { return }
             var start_line: CGPoint = CGPoint(x: 0, y: 0)
             var end_line: CGPoint = CGPoint(x: 0, y: 0)
             var beforeRange: NSRange = NSRange(location: NSNotFound, length: 0)
@@ -100,10 +103,11 @@ class LineNumberRulerView: UIView {
                 (start_line,end_line) = self.getLinePoint(rect)
                 lineNum += 1
                 beforeRange = range
+                
             })
             self.drawingLine(line: (start_line,end_line), context: context)
         }
-        context.restoreGState()
+        
         layer.isHidden = false
     }
     
@@ -141,11 +145,16 @@ class LineNumberRulerView: UIView {
                              _ width: CGFloat = 1.0,
                              line point: LinePoint,
                              context: CGContext){
+        context.saveGState()
+        
         context.setStrokeColor(color)
         context.setLineWidth(width)
         context.move(to: point.start)
         context.addLine(to: point.end)
         context.strokePath()
+        
+        
+        context.restoreGState()
     }
     
     private func getLinePoint(_ rect: CGRect, _ lineSpacing: CGFloat = 6) -> LinePoint{
@@ -161,19 +170,14 @@ class LineNumberRulerView: UIView {
                                 line number: Int,
                                 attributes: [NSAttributedString.Key : Any]) {
         guard let textView else {return}
-
-        let attributes: [NSAttributedString.Key: Any] = attributes
         
         let frame = CGRect(x: rect.origin.x,
                            y: rect.origin.y + textView.textContainerInset.top,
                            width: rect.width,
                            height: rect.height)
         
-        var numberText: String = "\(number)"
-        
-        if number % 10 == number{
-            numberText.insert(contentsOf: "  ", at: numberText.startIndex)
-        }
+     
+        context.saveGState()
         
         if number < 100{
             context.textPosition = frame.origin.applying(.init(translationX: 5, y: 12))
@@ -183,7 +187,12 @@ class LineNumberRulerView: UIView {
         
         let ctline = CTLineCreateWithAttributedString(CFAttributedStringCreate(nil, "\(number)" as CFString, attributes as CFDictionary))
         
+        
         CTLineDraw(ctline, context)
+        
+        
+        context.restoreGState()
+        
     }
 
 }
