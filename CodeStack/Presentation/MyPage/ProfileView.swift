@@ -82,14 +82,12 @@ class ProfileView: UIView{
         imageView.snp.makeConstraints{
             $0.width.height.equalTo(80)
             $0.top.leading.equalToSuperview().inset(16)
-            $0.leading.equalToSuperview().inset(12)
         }
         nameLabel.snp.makeConstraints{
             $0.top.equalTo(imageView.snp.top).offset(12)
             $0.leading.equalTo(imageView.snp.trailing).offset(12)
             $0.trailing.equalToSuperview().offset(-12)
         }
-        
         
         rank.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(-25)
