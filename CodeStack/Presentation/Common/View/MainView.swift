@@ -71,15 +71,18 @@ class MainView: UIView{
     
     //MARK: - Events merge to Signal
     func emitButtonEvents() -> Signal<ButtonType>{
+        
+//        #if DEBUG
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
+//            guard let self else {return}
+//            subView_1.today_problem_btn.sendActions(for: .touchUpInside)
+//        })
+//        #endif
+
         let events = [subView_1.buttonTapSignal(),subView_2.buttonTapSignal()]
         return Signal.merge(events).asSignal()
     }
-    
-#if DEBUG
-    func move(){
-//        subView_1.today_problem_btn.sendActions(for: .touchUpInside)
-    }
-#endif
+
     
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
