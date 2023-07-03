@@ -10,21 +10,19 @@ import RxSwift
 
 
 enum OAuthProvider: String{
-    case github
-    case apple
+    case github = "github"
+    case apple = "apple"
 }
 
-protocol OAuthrization{
-    func getBaseURL(provider: OAuthProvider) -> String
-}
+
 
 extension OAuthrization{
     private var root: String{
-        return "http://dev-api.codestack.co.kr/v1/oauth2/login/provider/"
+        return "http://api-dev.codestack.co.kr/v1/oauth2/login/"
     }
     
     func getBaseURL(provider: OAuthProvider) -> String{
-        return root + "github"
+        return root + "\(provider.rawValue)"
     }
     
     func postHeader(with token: GitToken) -> URLRequest{
@@ -32,7 +30,8 @@ extension OAuthrization{
         var urlRequest = URLRequest(url: URL(string: url)!)
         urlRequest.httpMethod = "POST"
         
-        let body = ["type" : "access_token", "token" : token.accessToken]
+//        let body = ["type" : "access_token", "token" : token.accessToken]
+        let body = ["code" : token.accessToken]
         
         do {
             urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -41,14 +40,34 @@ extension OAuthrization{
         }
         return urlRequest
     }
+    
+    
+    
+    /// Apple URLRequest
+    /// - Parameter token: Apple info
+    /// - Returns: URLRequest
+    func postHeader(with token: AppleToken) -> URLRequest {
+        let url = getBaseURL(provider: .apple)
+        var urlRequest = URLRequest(url: URL(string: url)!)
+        urlRequest.httpMethod = "POST"
+        var body: [String : String]
+        
+        if let user = token.user{
+            body = [ "code" : token.authorizationCode, "user" : user]
+        }else{
+            body = [ "code" : token.authorizationCode]
+        }
+        
+        do {
+            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
+        }catch{
+            fatalError("postHeader(with token: GitToken) -> URLRequest: \(error)")
+        }
+        return urlRequest
+        
+    }
 }
 
-protocol GitOAuthrizationRequest: AnyObject{
-    func gitOAuthrization() throws
-    func request(code: String) -> Maybe<GitToken>
-    func request(with token: GitToken, provider: OAuthProvider) -> Maybe<Void>
-    func endPoint(url string: String) -> URL
-}
 
 extension GitOAuthrizationRequest{
     
