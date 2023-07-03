@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+
+
+struct AppleToken{
+    let authorizationCode: String
+    let user: String?
+}
