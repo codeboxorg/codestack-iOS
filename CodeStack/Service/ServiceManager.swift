@@ -22,9 +22,41 @@ final class ServiceManager: NSObject{
     }
 }
 
-typealias OAuthrizationRequest = GitOAuthrizationRequest & OAuthrization
+extension ServiceManager: OAuthrization{
+    
+}
 
-extension ServiceManager: OAuthrizationRequest{
+
+extension ServiceManager: AppleAuth{
+    //MARK: - codeStack APPle
+    func request(with token: AppleToken) -> Maybe<String>{
+        let request = postHeader(with: token)
+        
+        return URLSession.shared.rx
+            .response(request: request)
+            .asMaybe()
+            .map{ (response: HTTPURLResponse, data: Data) -> String in
+                if  (200..<300) ~= response.statusCode {
+                    do{
+                        let token = try JSONSerialization.jsonObject(with: data)
+                        let resonseToken = try JSONDecoder().decode(CodestackLoginResponse.self, from: data)
+                        print("token : \(token)")
+                        return "성공했지;;;; -> \(resonseToken)"
+                    }catch{
+                        throw CSError.decodingError
+                    }
+                }else {
+                    throw CSError.httpResponseError(code: response.statusCode)
+                }
+            }
+    }
+    
+}
+
+extension ServiceManager: GitOAuthrizationRequest{
+    
+    
+    /// Git Login URL 오픈 -> 사파리
     func gitOAuthrization() throws{
         guard let url = makeGitURL() else { throw CSError.badURLError}
         
@@ -35,10 +67,10 @@ extension ServiceManager: OAuthrizationRequest{
         }
     }
     
-    
     //MARK: - codestack server
     func request(with token: GitToken, provider: OAuthProvider) -> Maybe<Void>{
         let request = postHeader(with: token)
+        
         return URLSession.shared.rx
             .response(request: request)
             .asMaybe()

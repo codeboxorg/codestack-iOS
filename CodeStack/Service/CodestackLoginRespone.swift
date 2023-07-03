@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+
+struct CodestackLoginResponse: Codable{
+    let refreshToken: String
+    let accessToken: String
+    let expiresIn: String
+    let tokenType: String
+}
