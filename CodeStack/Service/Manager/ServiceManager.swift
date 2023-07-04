@@ -22,12 +22,8 @@ final class ServiceManager: NSObject{
     }
 }
 
-extension ServiceManager: OAuthrization{
-    
-}
 
-
-extension ServiceManager: AppleAuth{
+extension ServiceManager: AppleAuthorization{
     //MARK: - codeStack APPle
     func request(with token: AppleToken) -> Maybe<String>{
         let request = postHeader(with: token)
@@ -50,11 +46,9 @@ extension ServiceManager: AppleAuth{
                 }
             }
     }
-    
 }
 
-extension ServiceManager: GitOAuthrizationRequest{
-    
+extension ServiceManager: GitOAuthorization{
     
     /// Git Login URL 오픈 -> 사파리
     func gitOAuthrization() throws{

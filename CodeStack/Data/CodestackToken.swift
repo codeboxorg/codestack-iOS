@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct CodestackLoginResponse: Codable{
+struct CodestackToken: Codable{
     let refreshToken: String
     let accessToken: String
     let expiresIn: String

@@ -1,5 +1,5 @@
 //
-//  AppleOAuthrizationRequest.swift
+//  AppleLoginManager.swift
 //  CodeStack
 //
 //  Created by 박형환 on 2023/04/30.
@@ -15,7 +15,7 @@ import RxRelay
 class AppleLoginManager:NSObject,ASAuthorizationControllerDelegate{
     
     weak var loginViewcontroller: LoginViewController?
-    weak var serviceManager: AppleAuth?
+    weak var serviceManager: AppleAuthorization?
     var currentNonce: String?
     var disposebag = DisposeBag()
     
@@ -23,7 +23,7 @@ class AppleLoginManager:NSObject,ASAuthorizationControllerDelegate{
         super.init()
     }
     
-    convenience init(serviceManager: AppleAuth){
+    convenience init(serviceManager: AppleAuthorization){
         self.init()
         self.serviceManager = serviceManager
     }
