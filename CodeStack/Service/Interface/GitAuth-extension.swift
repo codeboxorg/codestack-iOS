@@ -16,14 +16,9 @@ enum OAuthProvider: String{
 
 
 
-extension OAuthrization{
-    private var root: String{
-        return "http://api-dev.codestack.co.kr/v1/oauth2/login/"
-    }
+extension GitOAuthorization{
     
-    func getBaseURL(provider: OAuthProvider) -> String{
-        return root + "\(provider.rawValue)"
-    }
+    
     
     func postHeader(with token: GitToken) -> URLRequest{
         let url = getBaseURL(provider: .github)
@@ -42,34 +37,30 @@ extension OAuthrization{
     }
     
     
-    
-    /// Apple URLRequest
-    /// - Parameter token: Apple info
-    /// - Returns: URLRequest
-    func postHeader(with token: AppleToken) -> URLRequest {
-        let url = getBaseURL(provider: .apple)
-        var urlRequest = URLRequest(url: URL(string: url)!)
+    func postGitRequest(code: String) throws -> URLRequest{
+        let client_id = client_id
+        let client_secret = client_secret_git
+        let url = endPoint(url: gitBaseUrl + "access_token")
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
-        var body: [String : String]
         
-        if let user = token.user{
-            body = [ "code" : token.authorizationCode, "user" : user]
-        }else{
-            body = [ "code" : token.authorizationCode]
-        }
+        urlRequest.setValue(HTTPHeaderFields.application_json.string, forHTTPHeaderField: "Accept")
+        urlRequest.setValue(HTTPHeaderFields.application_json.string, forHTTPHeaderField: "Content-Type")
         
-        do {
+        let body = ["client_id" : client_id,
+                    "client_secret" : client_secret,
+                    "code" : code]
+        do{
             urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
+            return urlRequest
         }catch{
-            fatalError("postHeader(with token: GitToken) -> URLRequest: \(error)")
+            throw CSError.JSONSerializationDataError
         }
-        return urlRequest
-        
     }
 }
 
 
-extension GitOAuthrizationRequest{
+extension GitOAuthorization{
     
     var gitBaseUrl: String {
         "https://github.com/login/oauth/"
@@ -112,24 +103,4 @@ extension GitOAuthrizationRequest{
         return component?.url
     }
     
-    func postGitRequest(code: String) throws -> URLRequest{
-        let client_id = client_id
-        let client_secret = client_secret_git
-        let url = endPoint(url: gitBaseUrl + "access_token")
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = "POST"
-        
-        urlRequest.setValue(HTTPHeaderFields.application_json.string, forHTTPHeaderField: "Accept")
-        urlRequest.setValue(HTTPHeaderFields.application_json.string, forHTTPHeaderField: "Content-Type")
-        
-        let body = ["client_id" : client_id,
-                    "client_secret" : client_secret,
-                    "code" : code]
-        do{
-            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
-            return urlRequest
-        }catch{
-            throw CSError.JSONSerializationDataError
-        }
-    }
 }

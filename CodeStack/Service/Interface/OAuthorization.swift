@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-typealias OAuthrizationRequest = GitOAuthrizationRequest & OAuthrization
+typealias OAuthrizationRequest = GitOAuthrizationRequest & OAuthorization
 
 protocol AppleAuth: AnyObject{
     func request(with token: AppleToken) -> Maybe<String>
@@ -21,9 +21,15 @@ protocol GitOAuthrizationRequest: AnyObject{
     func endPoint(url string: String) -> URL
 }
 
-protocol OAuthrization{
+protocol OAuthorization{
     func getBaseURL(provider: OAuthProvider) -> String
 }
+au·thor·i·za·tion
+
+protocol CodestackAuthorization{
+    
+}
+
 
 
 protocol ApolloService{
