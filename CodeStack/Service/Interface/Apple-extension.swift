@@ -18,8 +18,12 @@ extension AppleAuthorization{
         urlRequest.httpMethod = "POST"
         var body: [String : String]
         
+        
+        urlRequest.setValue("application/json; charset=utf-8", forHTTPHeaderField: "content-type")
+        urlRequest.setValue("application/json", forHTTPHeaderField: "accept")
+        
         if let user = token.user{
-            body = [ "code" : token.authorizationCode, "user" : user]
+            body = [ "code" : token.authorizationCode] //, "user" : user]
         }else{
             body = [ "code" : token.authorizationCode]
         }

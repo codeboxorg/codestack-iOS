@@ -8,42 +8,46 @@
 import Foundation
 import RxSwift
 
-typealias OAuthrizationRequest = GitOAuthrizationRequest & OAuthorization
+typealias OAuthrizationRequest = GitOAuthorization & AppleAuthorization & CodestackAuthorization
 
-protocol AppleAuth: AnyObject{
-    func request(with token: AppleToken) -> Maybe<String>
-}
 
-protocol GitOAuthrizationRequest: AnyObject{
-    func gitOAuthrization() throws
-    func request(code: String) -> Maybe<GitToken>
-    func request(with token: GitToken, provider: OAuthProvider) -> Maybe<Void>
-    func endPoint(url string: String) -> URL
-}
-
+//POST /v1/auth/token
+//body {
+//    "refreshToken": {refreshToken}
+//}
 protocol OAuthorization{
     func getBaseURL(provider: OAuthProvider) -> String
 }
-au·thor·i·za·tion
 
-protocol CodestackAuthorization{
+
+extension OAuthorization{
+    private var root: String{
+        return "https://api-dev.codestack.co.kr/v1/"
+    }
     
+    func getBaseURL(provider: OAuthProvider) -> String{
+        switch provider {
+        case .email:
+            return root + "auth/login"
+        default:
+            return root + "oauth2/login/" + "\(provider.rawValue)"
+        }
+    }
 }
 
 
-
-protocol ApolloService{
+protocol TestService{
     func request() -> SubmissionPagedResult
 }
 
 
 //MARK: TestMock 삭제예졍
 
-class NetworkService: ApolloService{
+class NetworkService: TestService{
     
     func request() -> SubmissionPagedResult {
         let sub = Submission.dummy()
-        let result = SubmissionPagedResult(content: sub, pageInfo: PageInfo(totalElement: 1, totalPage: 1))
+        let result = SubmissionPagedResult(content: sub, pageInfo: _PageInfo(totalElement: 1, totalPage: 1))
         return result
     }
 }
