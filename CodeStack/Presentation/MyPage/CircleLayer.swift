@@ -67,7 +67,8 @@ class CircleLayer: CALayer {
     }
     
     private func addProgressBackground(_ ctx: CGContext) {
-        ctx.addArc(center: center, radius: radius - progressWidth / 2, startAngle: startAngle, endAngle: endAngle, clockwise: clockwise)
+        ctx.addArc(center: center, radius: radius - progressWidth / 2,
+                                startAngle: startAngle, endAngle: endAngle, clockwise: clockwise)
         ctx.setLineWidth(progressWidth)
         ctx.setStrokeColor(progressBackgroundColor?.withAlphaComponent(0.3).cgColor ?? UIColor.white.cgColor)
         ctx.strokePath()

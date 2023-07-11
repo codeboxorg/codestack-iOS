@@ -29,7 +29,6 @@ class CodeEditorViewController: UIViewController,Stepper{
     
     private lazy var numbersView: LineNumberRulerView = {
         let view = LineNumberRulerView(frame: .zero, textView: nil)
-        
         return view
     }()
     
@@ -75,6 +74,27 @@ class CodeEditorViewController: UIViewController,Stepper{
         print("CodeEditorViewController : deinit")
     }
    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+//        #if DEBUG
+//        DispatchQueue.main.asyncAfter(deadline: .now(), execute: { [weak self] in
+//            guard let self else { return }
+//            self.problemPopUpView.hideButton.sendActions(for: .touchUpInside)
+//            
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: { [weak self] in
+//                guard let self else { return }
+//                self.codeUITextView.setContentOffset(CGPoint(x: 0, y: Int.random(in: (300...1600))), animated: true)
+//                
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+//                    guard let self else { return }
+//                    self.problemPopUpView.backButton.sendActions(for: .touchUpInside)
+//                })
+//            })
+//        })
+//        
+//        #endif
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -9,9 +9,6 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-protocol LoginViewModelType: AnyObject{
-    
-}
 
 class LoginView: UIView{
     
@@ -93,7 +90,7 @@ class LoginView: UIView{
     private lazy var rememberLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.text = "Remember Me Forget Password"
+        label.text = "아이디 / 비밀번호 찾기"
         label.textColor = .white
         return label
     }()
@@ -121,7 +118,7 @@ class LoginView: UIView{
     private lazy var infoLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.text = "Don`t habe a account Register"
+        label.text = "회원가입 하실래여?"
         label.textColor = .white
         return label
     }()
@@ -139,9 +136,11 @@ class LoginView: UIView{
     private lazy var placeOffset: CGFloat = (self.idTextField.font?.pointSize ?? 32) + 8
     
     
-    //    weak var loginViewModel: (any LoginViewModelProtocol)?
+//    weak var loginViewModel: (any LoginViewModelProtocol)?
+    
     var completion: ((Bool) -> ())?
     var moveTomain: (() -> ())?
+    private var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -150,16 +149,19 @@ class LoginView: UIView{
         addAutoLayout()
     }
     
-    convenience init(frame: CGRect, dependencies: (any LoginViewModelProtocol)?){
-        self.init(frame: frame)
-        //        self.loginViewModel = dependencies
-        
-        self.completion = { [weak self] flag in
-            guard let self = self else {return}
-            self.loginButton.isLoading = false
-        }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?){
+        self.endEditing(true)
     }
     
+    
+    func binding(loading: Driver<Bool>){
+        loading
+            .drive(with: self, onNext: { owner, value in
+                owner.loginButton.isLoading = value
+                Log.debug("login button value : \(value)")
+            }).disposed(by: disposeBag)
+    }
     
     //MARK: emit RX button Tap Event to login
     func emitButtonEvents() -> Signal<LoginButtonType>{
@@ -167,6 +169,13 @@ class LoginView: UIView{
         let git = githubLoginButton.rx.tap
             .map{ _ in return LoginButtonType.gitHub }
             .asSignal(onErrorJustReturn: .none)
+        
+        #if DEBUG
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
+//            guard let self else {return}
+//            self.loginButton.sendActions(for: .touchUpInside)
+        })
+        #endif
         
         let email = loginButton.rx.tap
             .map{ [weak self] _ in
@@ -204,7 +213,6 @@ class LoginView: UIView{
     }
     
     @objc func isValidLogin(_ sender: UIButton){
-        self.loginButton.isLoading = true
         
     }
 }
@@ -329,7 +337,6 @@ extension LoginView {
          idTextField.heightAnchor.constraint(equalToConstant: idHeight)].forEach{
             $0.isActive = true
         }
-        
         
         idPlaceHolder_Center_Constraint = loginPlaceHolderView.centerYAnchor.constraint(equalTo: idTextField.centerYAnchor)
         

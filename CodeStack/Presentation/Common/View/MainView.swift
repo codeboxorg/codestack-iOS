@@ -31,7 +31,6 @@ class MainView: UIView{
     
     private lazy var introduce_small: UILabel = {
         let label = UILabel()
-        
         return label.introduceLable(14, "codeStack과 함께 목표를 설정하고 같이 문제를 풀어나가보아요!")
     }()
     
@@ -102,7 +101,7 @@ class MainView: UIView{
         }
         
         subView_1.snp.makeConstraints{
-            $0.top.equalToSuperview().inset(12)
+            $0.top.equalToSuperview().inset(6)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(subViews_1_height)
         }
