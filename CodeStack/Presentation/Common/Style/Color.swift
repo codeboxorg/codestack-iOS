@@ -8,9 +8,28 @@
 import UIKit
 
 
+extension UIColor {
+    static func getRandomColor() -> UIColor{
+        let randomRed:CGFloat = CGFloat(drand48())
+        
+        let randomGreen:CGFloat = CGFloat(drand48())
+        
+        let randomBlue:CGFloat = CGFloat(drand48())
+        
+        return UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+    }
+}
+
 extension UIColor{
     static let juhwang: UIColor = UIColor(hexCode: "#ff7f00")
+    
+    static let red_c: UIColor = UIColor(hexCode: "#FAE9DE")
+    static let juhwang_2: UIColor = UIColor(hexCode: "#FC4F08")
+    static let powder_blue: UIColor = UIColor(hexCode: "#B0E0E6")
+    static let sky_blue: UIColor = UIColor(hexCode: "#87CEEB")
+
 }
+
 
 
 extension UIColor {

@@ -8,8 +8,46 @@
 
 import UIKit
 
+enum SolveStatus: CaseIterable{
+    case temp
+    case solve
+    case fail
+}
 
 extension UILabel{
+    
+    func pr_status_label(_ status: SolveStatus){
+        let attributedString = NSMutableAttributedString()
+        
+        var attributed: [NSAttributedString.Key : Any]
+        
+        switch status {
+        case .temp:
+            attributed = [NSAttributedString.Key.foregroundColor : UIColor.lightGray,
+                          .font : UIFont.preferredFont(forTextStyle: .largeTitle)]
+            attributedString.append(NSAttributedString(string: "•",attributes: attributed))
+            attributedString.append(NSAttributedString(string: "임시 저장",
+                                                       attributes: [.font : UIFont.systemFont(ofSize: 10),
+                                                                    .baselineOffset : 5 ]))
+        case .solve:
+            attributed = [NSAttributedString.Key.foregroundColor : UIColor.green,
+                          .font : UIFont.preferredFont(forTextStyle: .largeTitle)]
+            attributedString.append(NSAttributedString(string: "•",attributes: attributed))
+            attributedString.append(NSAttributedString(string: "성공",
+                                                       attributes: [.font : UIFont.systemFont(ofSize: 10),
+                                                                    .baselineOffset : 5 ]))
+        case .fail:
+            attributed = [NSAttributedString.Key.foregroundColor : UIColor.red,
+                          .font : UIFont.preferredFont(forTextStyle: .largeTitle)]
+            attributedString.append(NSAttributedString(string: "•",attributes: attributed))
+            attributedString.append(NSAttributedString(string: "실패",
+                                                       attributes: [.font : UIFont.systemFont(ofSize: 10),
+                                                                    .baselineOffset : 5 ]))
+        }
+        self.attributedText = attributedString
+    }
+    
+    
     func introduceLable(_ size: CGFloat, _ text: String) -> Self{
         let descriptor = self.create_descriptor(style: .headline)
         

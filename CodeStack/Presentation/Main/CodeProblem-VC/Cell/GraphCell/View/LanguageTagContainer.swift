@@ -30,8 +30,6 @@ class LanguageTagContainer: UIView {
         return size
     }
     
-    
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }

@@ -19,8 +19,12 @@ enum Constants{
 
 class GraphView: UIView{
     
-    var startColor: UIColor = UIColor.darkGray
-    var endColor: UIColor = UIColor.tertiarySystemBackground
+    var startColor: UIColor = UIColor.sky_blue
+    var endColor: UIColor = UIColor.powder_blue
+    
+    let dotColor: UIColor = UIColor.black
+    let dayLabelColor: UIColor = UIColor.black
+    let lineColor: UIColor = UIColor.white
     
     private lazy var hStackView: UIStackView = {
         let stackView = UIStackView()
@@ -65,7 +69,7 @@ class GraphView: UIView{
             let label = UILabel()
             label.font = UIFont.boldSystemFont(ofSize: 14)
             label.text = dayArray[value]
-            label.textColor = .white
+            label.textColor = dayLabelColor
             return label
         }
     }()
@@ -133,8 +137,8 @@ class GraphView: UIView{
         }
         
         
-        UIColor.lightGray.setFill()
-        UIColor.lightGray.setStroke()
+        dotColor.setFill()
+        lineColor.setStroke()
         
         // set up the points line
         let graphPath = UIBezierPath()

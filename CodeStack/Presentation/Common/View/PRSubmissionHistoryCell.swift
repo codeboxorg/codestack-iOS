@@ -14,29 +14,31 @@ import RxSwift
 final class PRSubmissionHistoryCell: UICollectionViewCell {
     
     
-    private lazy var titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.textAlignment = .left
+        label.font = UIFont.boldSystemFont(ofSize: 18)
         label.textColor = .label
         return label
     }()
     
-    private lazy var separatorLine: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        return view
-    }()
-    
-    private lazy var contentImageView: UIImageView = {
+    private let contentImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "book")
+        imageView.image = UIImage(systemName: "list.clipboard.fill")
         imageView.contentMode = .scaleToFill
-        imageView.tintColor = .systemPink
+        imageView.tintColor = UIColor.sky_blue
         return imageView
     }()
     
+    private let statusLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""
+        label.textAlignment = .left
+        return label
+    }()
     
     var onRecentPageData = PublishRelay<Submission>()
+    var onStatus = PublishRelay<SolveStatus>()
     
     var cellDisposeBag = DisposeBag()
     var disposeBag = DisposeBag()
@@ -53,6 +55,13 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
             .drive(onNext: {[weak self] submission in
                 guard let self = self else {return}
                 self.titleLabel.text = submission.problem?.title
+            }).disposed(by: cellDisposeBag)
+        
+        onStatus
+            .asDriver(onErrorJustReturn: .temp)
+            .drive(onNext: { [weak self] status in
+                guard let self = self else {return}
+                self.statusLabel.pr_status_label(status)
             }).disposed(by: cellDisposeBag)
     }
     
@@ -96,26 +105,26 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         
         
         self.contentView.addSubview(titleLabel)
-        self.contentView.addSubview(separatorLine)
+        self.contentView.addSubview(statusLabel)
         self.contentView.addSubview(contentImageView)
         
-        titleLabel.snp.makeConstraints{
-            $0.top.equalToSuperview().inset(5)
-            $0.leading.trailing.equalToSuperview().inset(5)
-            $0.centerX.equalToSuperview()
+        statusLabel.snp.makeConstraints{
+            $0.top.equalToSuperview().offset(-4)
+            $0.leading.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(10)
         }
-        separatorLine.snp.makeConstraints{
-            $0.top.equalTo(titleLabel.snp.bottom).offset(5)
-            $0.leading.trailing.equalToSuperview().inset(5)
-            $0.height.equalTo(1)
+        
+        titleLabel.snp.makeConstraints{
+            $0.top.equalTo(statusLabel.snp.bottom).offset(6)
+            $0.leading.equalToSuperview().inset(10)
+            $0.trailing.equalToSuperview().inset(5)
         }
         
         contentImageView.snp.makeConstraints{
-            $0.top.equalTo(separatorLine.snp.bottom).offset(5)
-            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(25)
+            $0.leading.equalToSuperview().inset(12)
             $0.width.height.equalTo(50)
         }
-        
     }
     
 }

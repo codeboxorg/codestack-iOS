@@ -14,17 +14,15 @@ import UIKit
 class ProgressView: UIProgressView{
     
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
     }
     
     
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
-        
     }
+  
     
     
     override func layoutSubviews() {
