@@ -8,9 +8,9 @@
 import Foundation
 
 
-struct CodestackToken: Codable{
+struct CodestackResponseToken: Codable{
     let refreshToken: String
     let accessToken: String
-    let expiresIn: String
+    let expiresIn: TimeInterval
     let tokenType: String
 }

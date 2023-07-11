@@ -12,7 +12,7 @@ struct Tag: Codable{
     let name: String
 }
 
-struct TagPagedResult: Codable{
+struct _TagPagedResult: Codable{
     let content: [Tag]
-    let pageInfo: PageInfo
+    let pageInfo: _PageInfo
 }
