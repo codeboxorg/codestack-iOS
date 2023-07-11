@@ -9,23 +9,42 @@ import Foundation
 import RxSwift
 
 
-enum OAuthProvider: String{
-    case github = "github"
-    case apple = "apple"
-}
-
 
 
 extension GitOAuthorization{
     
-    
-    
-    func postHeader(with token: GitToken) -> URLRequest{
+    func postHeader(with code: GitCode) -> URLRequest{
         let url = getBaseURL(provider: .github)
+        
         var urlRequest = URLRequest(url: URL(string: url)!)
         urlRequest.httpMethod = "POST"
         
-//        let body = ["type" : "access_token", "token" : token.accessToken]
+
+        urlRequest.setValue("application/json; charset=utf-8", forHTTPHeaderField: "content-type")
+        urlRequest.setValue("application/json", forHTTPHeaderField: "accept")
+        
+        let body = ["code" : code.code]
+    
+        
+        do {
+            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body,
+                                                             options: [.fragmentsAllowed,.prettyPrinted,.withoutEscapingSlashes])
+        }catch{
+            fatalError("postHeader(with token: GitToken) -> URLRequest: \(error)")
+        }
+        return urlRequest
+    }
+    
+    func postHeader(with token: GitToken) -> URLRequest{
+        let url = getBaseURL(provider: .github)
+        
+        var urlRequest = URLRequest(url: URL(string: url)!)
+        urlRequest.httpMethod = "POST"
+        
+
+        urlRequest.setValue("application/json; charset=utf-8", forHTTPHeaderField: "content-type")
+        urlRequest.setValue("application/json", forHTTPHeaderField: "accept")
+        
         let body = ["code" : token.accessToken]
         
         do {
@@ -98,8 +117,7 @@ extension GitOAuthorization{
     func makeGitURL() -> URL?{
         var component = URLComponents(string: gitBaseUrl + "authorize")
         let scope = "repo,user"
-        component?.queryItems = [URLQueryItem(name: "client_id", value: client_id),
-                                URLQueryItem(name: "scope", value: scope)]
+        component?.queryItems = [URLQueryItem(name: "client_id", value: client_id)]
         return component?.url
     }
     
