@@ -5,13 +5,15 @@
 //  Created by 박형환 on 2023/04/30.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 import RxCocoa
 
 final class LoginService: NSObject{
     
     let urlSession: URLSession
+    
+    var loginViewModel: (any LoginViewModelProtocol)?
     
     var disposeBag = DisposeBag()
     
@@ -33,10 +35,8 @@ extension LoginService: CodestackAuthorization{
             .map{ (response: HTTPURLResponse, data: Data) -> CodestackResponseToken in
                 if  (200..<300) ~= response.statusCode {
                     do{
-                        let token = try JSONSerialization.jsonObject(with: data)
-                        let token2 = try JSONDecoder().decode(CodestackResponseToken.self, from: data)
-                        print("token : \(token)")
-                        return token2
+                        let token = try JSONDecoder().decode(CodestackResponseToken.self, from: data)
+                        return token
                     }catch{
                         throw CSError.decodingError
                     }
@@ -51,23 +51,28 @@ extension LoginService: CodestackAuthorization{
 
 //MARK: - Apple
 extension LoginService: AppleAuthorization{
+    
+    func oAuthComplte(token: AppleToken) {
+        loginViewModel?.oAuthComplte(apple: token)
+    }
+    
     //MARK: - codeStack APPle
     /// Codestack으로 토큰 요청 함수
     /// - Parameter token: 애플로 부터 받은 token (Authorization code)
     /// - Returns: 발급받은 토큰 을 요청하는 Maybe
-    func request(with token: AppleToken) -> Maybe<String>{
+    func request(with token: AppleToken) -> Maybe<CodestackResponseToken>{
         let request = postHeader(with: token)
         
         return URLSession.shared.rx
             .response(request: request)
             .asMaybe()
-            .map{ (response: HTTPURLResponse, data: Data) -> String in
+            .map{ (response: HTTPURLResponse, data: Data) -> CodestackResponseToken in
                 if  (200..<300) ~= response.statusCode {
                     do{
                         let token = try JSONSerialization.jsonObject(with: data)
                         let resonseToken = try JSONDecoder().decode(CodestackResponseToken.self, from: data)
                         print("token : \(token)")
-                        return "성공했지;;;; -> \(resonseToken)"
+                        return resonseToken
                     }catch{
                         throw CSError.decodingError
                     }
@@ -80,6 +85,13 @@ extension LoginService: AppleAuthorization{
 
 //MARK: - Git
 extension LoginService: GitOAuthorization{
+    
+    
+    /// LoginViewModel에 인증완료 이벤트 전달
+    /// - Parameter code: github code
+    func gitOAuthComplete(code: String){
+        loginViewModel?.oAuthComplete(code: code)
+    }
     
     /// Git Login URL 오픈 -> 사파리
     func gitOAuthrization() throws{
@@ -107,8 +119,6 @@ extension LoginService: GitOAuthorization{
                 if  (200..<300) ~= response.statusCode {
                     do{
                         print(data)
-                        
-                        
                         let json = try JSONSerialization.jsonObject(with: data)
                         
                         return .init(refreshToken: "", accessToken: "", expiresIn: 0, tokenType: "")
