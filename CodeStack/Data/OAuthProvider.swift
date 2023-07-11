@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+
+enum OAuthProvider: String{
+    case github = "github"
+    case apple = "apple"
+    case email = ""
+}

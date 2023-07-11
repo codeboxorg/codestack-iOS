@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct PageInfo: Codable{
+struct _PageInfo: Codable{
     let totalElement: Int
     let totalPage: Int
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct Problem: Codable{
+struct _Problem: Codable{
     let id: Int
     let title: String
     let context: String
@@ -22,7 +22,7 @@ struct Problem: Codable{
 
 
 
-struct ProblemPagedResult: Codable{
-    let content: [Problem]
-    let pageInfo: PageInfo
+struct _ProblemPagedResult: Codable{
+    let content: [_Problem]
+    let pageInfo: _PageInfo
 }
