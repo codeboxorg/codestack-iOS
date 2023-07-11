@@ -16,72 +16,60 @@ class HomeFlow: Flow{
         self.rootViewController
     }
     
-//    let viewModel: any HomeViewModelProtocol
-    private var rootViewController: ViewController
-    private lazy var containerScreen = ContainerViewController(sideMenuViewController: sideMenuViewController)
-//    let codePRListScreen = CodeProblemViewController.create(with: .init(viewModel: CodeProblemViewModel() as (any ProblemViewModelProtocol) ))
+    private var rootViewController: HomeViewController
+    var sideMenuViewController: SideMenuViewController
+    
     
     let testScreen = TestViewController()
-    
+        
     init(dependencies: any HomeViewModelProtocol){
-        rootViewController = ViewController.create(with: dependencies)
+        
+        sideMenuViewController = SideMenuViewController(sideMenuItems: SideMenuViewController.items())
+        rootViewController = ViewController.create(with: HomeViewController.Dependencies(homeViewModel: dependencies,
+                                                                                         sidemenuVC: sideMenuViewController))
     }
     
-    lazy var items: [SideMenuItem] = [SideMenuItem(icon: UIImage(named: "problem"),
-                                              name: "문제"),
-                                 SideMenuItem(icon: UIImage(named: "submit"),
-                                              name: "제출근황"),
-                                 SideMenuItem(icon: UIImage(named: "my"),
-                                              name: "마이 페이지"),
-                                 SideMenuItem(icon: UIImage(named: "home"),
-                                              name: "메인 페이지"),
-                                 SideMenuItem(icon: nil, name: "추천")]
     
-    lazy var sideMenuViewController = SideMenuViewController(sideMenuItems: items)
     
     func navigate(to step: RxFlow.Step) -> RxFlow.FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
         
         switch codestackStep {
+        case .logout:
+            return .end(forwardToParentFlowWithStep: CodestackStep.logout)
         case .firstHomeStep:
             return .none
         case .problemList:
             return navigateToProblemList()
-        case .problemPick(let _):
+        case .problemPick(_):
             return navigateToCodeEditor()
         case .problemComplete:
             return .none
-        case .alert(let _):
+        case .alert(_):
             return .none
         case .fakeStep:
             return .none
-        case .unauthorized:
+        case .sideMenuDelegate(_):
             return .none
-        case .loginNeeded:
-            return .none
-        case .sideMenuDelegate(let _):
-            return .none
+        case .sideShow:
+            return showSideMenuView()
+        case .sideDissmiss:
+            return dismissSideMenuView()
+        case .profilePage:
+            return navigateToProfileViewController()
         default:
             print("codestackStep: \(codestackStep)")
             return .none
         }
     }
     
-//    private func navigateToHomeScreen() -> FlowContributors{
-//        return .one(flowContributor: .contribute(withNextPresentable: <#T##Presentable#>, withNextStepper: <#T##Stepper#>))
-//    }
     
     private func navigateToProblemList() -> FlowContributors{
-//        let stepper = CodeProblemStepper()
         let viewModel = CodeProblemViewModel(DummyData())
-//        let codeListFlow = CodeProblemListFlow(dependencies: viewModel)
         
         let viewController = CodeProblemViewController.create(with: .init(viewModel: viewModel))
         
-        self.rootViewController.navigationController?.pushViewController(viewController, animated: false)
-//        Flows.use(codeListFlow, when: .created, block: {flowRoot in
-//            self.rootViewController.navigationController?.pushViewController(flowRoot, animated: false)
-//        })
+        self.rootViewController.navigationController?.pushViewController(viewController, animated: true)
         
         return .one(flowContributor: .contribute(withNextPresentable: viewController,
                                                  withNextStepper: viewModel))
@@ -95,4 +83,24 @@ class HomeFlow: Flow{
         return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: DefaultStepper()))
         
     }
+    
+    private func showSideMenuView() -> FlowContributors{
+        sideMenuViewController.show()
+        return .none
+    }
+    
+    private func dismissSideMenuView() -> FlowContributors{
+        sideMenuViewController.hide()
+        return .none
+    }
+    
+    
+    private func navigateToProfileViewController() -> FlowContributors{
+        let profileVC = MyPageViewController()
+        
+        self.rootViewController.navigationController?.pushViewController(profileVC, animated: true)
+        
+        return .one(flowContributor: .contribute(withNextPresentable: profileVC, withNextStepper: DefaultStepper()))
+    }
 }
+
