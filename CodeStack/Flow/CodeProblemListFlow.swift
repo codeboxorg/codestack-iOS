@@ -39,10 +39,7 @@ class CodeProblemListFlow: Flow{
         default:
             return .none
         }
-        return .none
     }
-    
-    
 }
 
 class CodeProblemStepper: Stepper{
@@ -51,6 +48,5 @@ class CodeProblemStepper: Stepper{
     var initialStep: Step{
         CodestackStep.problemList
     }
-    
     
 }
