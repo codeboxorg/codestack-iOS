@@ -81,6 +81,11 @@ extension GitOAuthorization{
 
 extension GitOAuthorization{
     
+    
+    var gitMobileRedirect: String{
+        "https://dev.codestack.co.kr/api/oauth/github?isMobile=true"
+    }
+    
     var gitBaseUrl: String {
         "https://github.com/login/oauth/"
     }
@@ -114,9 +119,10 @@ extension GitOAuthorization{
         return url
     }
     
+
+    
     func makeGitURL() -> URL?{
         var component = URLComponents(string: gitBaseUrl + "authorize")
-        let scope = "repo,user"
         component?.queryItems = [URLQueryItem(name: "client_id", value: client_id)]
         return component?.url
     }

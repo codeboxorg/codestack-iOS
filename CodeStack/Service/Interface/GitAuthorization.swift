@@ -14,7 +14,7 @@ protocol GitOAuthorization: AnyObject,OAuthorization{
     func request(code: String) -> Maybe<GitToken>
     
     /// codestack 서버에 토큰 요청하는 함수
-    /// - Parameters:
+    /// - Parameters:\
     ///   - code: github에서 받은 code
     ///   - provider: github
     /// - Returns: CodestackResponseToken
