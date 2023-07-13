@@ -51,7 +51,7 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         addAutoLayout()
         
         onRecentPageData
-            .asDriver(onErrorJustReturn: .init())
+            .asDriver(onErrorJustReturn: .init(_problem: _Problem(title: "")))
             .drive(onNext: {[weak self] submission in
                 guard let self = self else {return}
                 self.titleLabel.text = submission.problem?.title
