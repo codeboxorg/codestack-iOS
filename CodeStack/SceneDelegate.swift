@@ -13,10 +13,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    private let serviceManager: OAuthrizationRequest = ServiceManager()
+    private let serviceManager: OAuthrizationRequest = LoginService()
     
     var coordinator: FlowCoordinator = FlowCoordinator()
     var disposeBag: DisposeBag = DisposeBag()
+    lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.serviceManager as AppleAuthorization)
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
@@ -24,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windoScene)
 
         
-        let flow = AppFlow(loginService: self.serviceManager)
+        let flow = AppFlow(loginService: self.serviceManager,appleService: appleLoginManger)
         self.coordinator.coordinate(flow: flow, with: AppStepper())
         
         Flows.use(flow, when: .created, block: { root in
@@ -32,28 +33,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window.makeKeyAndVisible()
         })
         
+        
+        
         self.window = window
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
-            
             //MARK: - Github url open
             let component = url.absoluteString.components(separatedBy: "?")
             if let flag = component.first?.elementsEqual("codestackiosclient://login"),
                flag,
                let code = component.last?.components(separatedBy: "=").last{
-                
-                serviceManager
-                    .request(code: code)
-                    .flatMap{self.serviceManager.request(with: $0, provider: .github)}
-                    .observe(on: MainScheduler.instance)
-                    .subscribe(onSuccess: {
-                        print("onSuccess")
-                    }).disposed(by: disposeBag)
+                (serviceManager as GitOAuthorization).gitOAuthComplete(code: code)
             }
-            
-            
         }
     }
     

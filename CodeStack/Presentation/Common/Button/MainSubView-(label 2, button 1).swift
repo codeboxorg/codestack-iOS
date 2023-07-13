@@ -16,6 +16,7 @@ import RxCocoa
 ///   Vertical
 class TwoLabelOneButton: UIView{
     
+    
     struct LabelBtnText{
         let headLine: String
         let description: String
@@ -64,7 +65,7 @@ class TwoLabelOneButton: UIView{
 //        }
     }
     
-    var observation : NSKeyValueObservation?
+    private var observation : NSKeyValueObservation?
     
     convenience init(frame: CGRect, labelBtnText: LabelBtnText){
         self.init(frame: .zero)
@@ -79,7 +80,7 @@ class TwoLabelOneButton: UIView{
                if change.oldValue! != change.newValue! {
                    guard let highlighetd = change.newValue else { return }
                    if highlighetd{
-                       button.configuration = .filled()
+                       button.configuration = .tinted()
                    }else{
                        button.configuration = .plain()
                    }

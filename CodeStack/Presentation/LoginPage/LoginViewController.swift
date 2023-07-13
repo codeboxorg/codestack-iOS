@@ -17,17 +17,20 @@ class LoginViewController: UIViewController,Stepper{
     let steps = PublishRelay<Step>()
     
     //MARK: -Dependency
+    
     private var loginViewModel: (any LoginViewModelProtocol)?
-    var appleLoginService: AppleLoginManager?
+    private weak var appleManager: AppleLoginManager?
     
     struct Dependencies{
         var viewModel: (any LoginViewModelProtocol)?
+        var appleManager: AppleLoginManager?
     }
     
     static func create(with dependencies: Dependencies) -> LoginViewController{
         let vc = LoginViewController()
         vc.loginViewModel = dependencies.viewModel
-        vc.appleLoginService = AppleLoginManager(vc)
+        vc.appleManager = dependencies.appleManager
+        vc.appleManager?.loginViewcontroller = vc
         return vc
     }
     
@@ -46,7 +49,7 @@ class LoginViewController: UIViewController,Stepper{
     }()
     
     lazy var loginView: LoginView = {
-        let loginView = LoginView(frame: .zero,dependencies: self.loginViewModel)
+        let loginView = LoginView(frame: .zero)
         loginView.translatesAutoresizingMaskIntoConstraints = false
         return loginView
     }()
@@ -58,22 +61,17 @@ class LoginViewController: UIViewController,Stepper{
         
         layoutConfigure()
         // Apple login buton setting
-        appleLoginService?.settingLoginView()
+        appleManager?.settingLoginView()
         
         let loginEvent = loginView.emitButtonEvents()
         
-        _ = (loginViewModel as! LoginViewModel).transform(input: LoginViewModel.Input(loginEvent: loginEvent))
+        let output = (loginViewModel as! LoginViewModel).transform(input: LoginViewModel.Input(loginEvent: loginEvent))
         
-        
-        //원래 main으로 가는 화면이동 코드
-//        loginView.moveTomain = { [weak self] in
-//            guard let self else {return}
-//            self.navigationController?.pushViewController(containerViewController, animated: true)
-//        }
-        
+        loginView.binding(loading: output.loading)
+    
         #if DEBUG
         DispatchQueue.main.async {
-//            self.loginView.moveTomain?()
+            self.loginView.moveTomain?()
         }
         #endif
         

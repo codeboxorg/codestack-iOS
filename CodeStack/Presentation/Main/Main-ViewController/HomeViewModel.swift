@@ -5,8 +5,9 @@
 //  Created by 박형환 on 2023/06/08.
 //
 
-import Foundation
+import UIKit
 import RxSwift
+import RxGesture
 import RxCocoa
 import RxFlow
 
@@ -18,19 +19,29 @@ protocol HomeViewModelProtocol: ViewModelType{
 class HomeViewModel: HomeViewModelProtocol,Stepper{
     
     struct Input{
+        var viewDidLoad: Signal<Void>
         var problemButtonEvent: Signal<ButtonType>
+        var rightSwipeGesture: Observable<UIGestureRecognizer>
+        var leftSwipeGesture: Observable<UIGestureRecognizer>
+        var leftNavigationButtonEvent: Signal<Void>
     }
     
     struct Output{
-        
+        var submissions: Driver<[Submission]>
     }
     
     var steps = PublishRelay<Step>()
     
     private var disposeBag: DisposeBag = DisposeBag()
     
-    init(){
-        
+    private var service: TestService = NetworkService()
+    
+    
+    //MARK: -output
+    private var submissions = PublishRelay<[Submission]>()
+    
+    init(_ service: TestService = NetworkService()){
+        self.service = service
     }
     
     func transform(input: Input) -> Output {
@@ -47,7 +58,33 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
                 }
             }.disposed(by: disposeBag)
         
-        return Output()
+        input.rightSwipeGesture
+            .withUnretained(self)
+            .subscribe(onNext: {vm,  _ in
+                vm.steps.accept(CodestackStep.sideShow)
+            }).disposed(by: disposeBag)
+        
+        input.leftSwipeGesture
+            .withUnretained(self)
+            .subscribe(onNext: {vm, value in
+                vm.steps.accept(CodestackStep.sideDissmiss)
+            }).disposed(by: disposeBag)
+        
+        input.leftNavigationButtonEvent
+            .withUnretained(self)
+            .emit(onNext: {vm, value in
+                vm.steps.accept(CodestackStep.sideShow)
+            }).disposed(by: disposeBag)
+        
+       input.viewDidLoad
+            .map{_ in self.service.request().content}
+            .withUnretained(self)
+            .emit(onNext: { vm, value in
+                
+                vm.submissions.accept(value)
+            }).disposed(by: disposeBag)
+        
+        return Output(submissions: self.submissions.asDriver(onErrorJustReturn: []))
     }
     
 }

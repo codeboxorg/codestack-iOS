@@ -8,12 +8,12 @@
 import Foundation
 
 
-struct Member: Codable{
+struct _Member: Codable{
     let username: String?
     let nickname: String?
     let email: String?
     let profileImage: String?
-    let problemCalendar: [ProblemCalendar?]
+    let problemCalendar: [_ProblemCalendar?]
     
     //MARK: 나중에 데이터 타입 확인 필요
     let year: String?

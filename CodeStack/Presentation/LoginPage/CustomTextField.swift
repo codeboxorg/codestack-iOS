@@ -33,7 +33,9 @@ class CustomTextField: UITextField{
         }
         return super.resignFirstResponder()
     }
-
+    
+    
+   
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -53,15 +55,28 @@ class CustomTextField: UITextField{
         
     }
     
-   
+    
     
     private func layoutConfigure(){
         self.tintColor = UIColor.black
-        addDoneButtonOnKeyboard()
+        
+        switch fieldType{
+        case .ID:
+            return
+        case .PassWord:
+            return
+//            addDoneButtonOnKeyboard()
+            
+        case .none:
+            return
+        }
+        
+        
     }
     
     fileprivate func addDoneButtonOnKeyboard() {
-        let doneToolbar: UIToolbar = UIToolbar(frame: .zero)
+        let doneToolbar = UIToolbar(frame: .zero)
+        
         doneToolbar.barStyle = .default
         
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -70,7 +85,11 @@ class CustomTextField: UITextField{
         let up: UIBarButtonItem = UIBarButtonItem(title: "up", style: .plain, target: self, action: #selector(self.doneButtonAction))
         
         let items = [up,flexSpace, done]
-        doneToolbar.items = items
+        doneToolbar.setItems(items, animated: false)
+        doneToolbar.updateConstraintsIfNeeded()
+        
+        doneToolbar.isUserInteractionEnabled = true
+        
         doneToolbar.sizeToFit()
         
         self.inputAccessoryView = doneToolbar

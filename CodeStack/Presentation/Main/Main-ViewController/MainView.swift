@@ -24,13 +24,6 @@ class MainView: UIView{
         return view
     }()
     
-    private var backgroundView: UIImageView = {
-        let imageView = UIImageView(frame: .zero)
-        imageView.image = UIImage(named: "main-banner")
-        imageView.contentMode = .scaleAspectFill
-        return imageView
-    }()
-    
     private lazy var introduce_big: UILabel = {
         let label = UILabel()
         return label.introduceLable(30, "다 함께 성장하는\n 코딩테스트 연습 플랫폼")
@@ -38,7 +31,6 @@ class MainView: UIView{
     
     private lazy var introduce_small: UILabel = {
         let label = UILabel()
-        
         return label.introduceLable(14, "codeStack과 함께 목표를 설정하고 같이 문제를 풀어나가보아요!")
     }()
     
@@ -71,74 +63,54 @@ class MainView: UIView{
     
     //MARK: - Events merge to Signal
     func emitButtonEvents() -> Signal<ButtonType>{
+        
+//        #if DEBUG
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
+//            guard let self else {return}
+//            subView_1.today_problem_btn.sendActions(for: .touchUpInside)
+//        })
+//        #endif
+
         let events = [subView_1.buttonTapSignal(),subView_2.buttonTapSignal()]
         return Signal.merge(events).asSignal()
     }
-    
-#if DEBUG
-    func move(){
-//        subView_1.today_problem_btn.sendActions(for: .touchUpInside)
-    }
-#endif
+
     
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
     }
     
+    private let imageViewHeight: CGFloat = 300
+    private let spacing: CGFloat = 1
+    private lazy var subViews_1_height: CGFloat = subView_1.getViewHeight()
+    private lazy var subViews_2_height: CGFloat = subView_2.getViewHeight()
+    private let introduce_small_offset: CGFloat = 20
+    
+    lazy var container_height = subViews_1_height + subViews_2_height + 10
+    
     private func layoutConfigure(){
-        self.addSubview(scrollView)
-        
-        scrollView.addSubview(containerView)
-        containerView.addSubview(backgroundView)
-        
-        backgroundView.addSubview(introduce_big)
-        backgroundView.addSubview(introduce_small)
+        self.addSubview(containerView)
         
         containerView.addSubview(subView_1)
         containerView.addSubview(subView_2)
         
-        scrollView.snp.makeConstraints{
-            $0.edges.equalTo(self.snp.edges)
-        }
-        
         containerView.snp.makeConstraints{
             $0.top.leading.trailing.equalToSuperview()
-            $0.width.equalTo(self.snp.width)
             $0.height.equalTo(500).priority(.low)
-            $0.bottom.equalTo(scrollView.snp.bottom)
+            $0.bottom.equalToSuperview()
         }
-        
-        backgroundView.snp.makeConstraints{
-            $0.top.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.trailing.equalToSuperview()
-            $0.height.equalTo(300)
-        }
-        
-        introduce_big.snp.makeConstraints{
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview()
-        }
-
-        introduce_small.snp.makeConstraints{
-            $0.top.equalTo(introduce_big.snp.bottom).offset(20)
-            $0.centerX.equalToSuperview()
-        }
-        
         
         subView_1.snp.makeConstraints{
-            $0.top.equalTo(backgroundView.snp.bottom)
+            $0.top.equalToSuperview().inset(6)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(subView_1.getViewHeight())
+            $0.height.equalTo(subViews_1_height)
         }
-        
-    
-        let spacing: CGFloat = 1
         
         subView_2.snp.makeConstraints{
             $0.top.equalTo(subView_1.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(subView_2.getViewHeight() + spacing)
+            //MARK: - priority low 로 설정해야 오토레이아웃 오류 안남, 이유 -> bottomEqualToSuperView와 height의 충돌 때문에
+            $0.height.equalTo(subViews_2_height + spacing).priority(.low)
             $0.bottom.equalToSuperview()
         }
     }

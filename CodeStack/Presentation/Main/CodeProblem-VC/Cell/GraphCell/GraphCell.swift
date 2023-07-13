@@ -88,6 +88,9 @@ class GraphCell: UICollectionViewCell{
         fatalError("required init fatalError")
         
     }
+    deinit{
+        print("\(String(describing: Self.self)) - deinint")
+    }
     
     struct GraphModel{
         var submitCount: String?

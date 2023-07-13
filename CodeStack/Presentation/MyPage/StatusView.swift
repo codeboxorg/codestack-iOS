@@ -30,7 +30,6 @@ class StatusView: UIView{
     
     private let statusViewEasy: ProgressView = {
         let view = ProgressView(progressViewStyle: .bar)
-        view.progress = 0.65
         view.tintColor = .systemGreen
         view.backgroundColor = UIColor.green.withAlphaComponent(0.3)
         return view
@@ -38,7 +37,6 @@ class StatusView: UIView{
     
     private let statusViewMedium: ProgressView = {
         let view = ProgressView(progressViewStyle: .bar)
-        view.progress = 0.8
         view.tintColor = .systemYellow
         view.backgroundColor = UIColor.yellow.withAlphaComponent(0.3)
         return view
@@ -46,7 +44,6 @@ class StatusView: UIView{
     
     private let statusViewHard: ProgressView = {
         let view = ProgressView(progressViewStyle: .bar)
-        view.progress = 0.93
         view.tintColor = .systemRed
         view.backgroundColor = UIColor.red.withAlphaComponent(0.3)
         return view
@@ -58,11 +55,20 @@ class StatusView: UIView{
         layoutConfigure()
         self.backgroundColor = .tertiarySystemBackground
         
-        circleProgressView.progressColor = .yellow
-        circleProgressView.progressBackgroundColor = .blue.withAlphaComponent(0.5)
+        circleProgressView.progressColor = .juhwang
+        circleProgressView.progressBackgroundColor = .gray
         circleProgressView.progressWidth = 8
         circleProgressView.progress = 0.5
         circleProgressView.clockwise = false
+    }
+    
+    
+    func settingProgressViewAnimation(_ easy: Float,
+                                      _ medium: Float,
+                                      _ hard: Float){
+        self.statusViewEasy.setProgress(easy, animated: true)
+        self.statusViewMedium.setProgress(medium, animated: true)
+        self.statusViewHard.setProgress(hard, animated: true)
     }
     
     required init?(coder: NSCoder) {

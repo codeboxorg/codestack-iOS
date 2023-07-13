@@ -13,12 +13,16 @@
 			<string>kr.co.codestack_ios_client</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>codestackiOSClient</string>
+				<string>codestackiosclient://login</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLIconFile</key>
+			<string>appstore</string>
+			<key>CFBundleURLName</key>
+			<string>kr.co.codestack_ios_git</string>
 			<key>CFBundleURLSchemes</key>
 			<array/>
 		</dict>

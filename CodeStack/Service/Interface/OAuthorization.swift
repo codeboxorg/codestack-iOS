@@ -1,0 +1,53 @@
+//
+//  NetworkInterface.swift
+//  CodeStack
+//
+//  Created by 박형환 on 2023/07/03.
+//
+
+import Foundation
+import RxSwift
+
+typealias OAuthrizationRequest = GitOAuthorization & AppleAuthorization & CodestackAuthorization
+
+
+//POST /v1/auth/token
+//body {
+//    "refreshToken": {refreshToken}
+//}
+protocol OAuthorization{
+    func getBaseURL(provider: OAuthProvider) -> String
+}
+
+
+extension OAuthorization{
+    private var root: String{
+        return "https://api-dev.codestack.co.kr/v1/"
+    }
+    
+    func getBaseURL(provider: OAuthProvider) -> String{
+        switch provider {
+        case .email:
+            return root + "auth/login"
+        default:
+            return root + "oauth2/login/" + "\(provider.rawValue)"
+        }
+    }
+}
+
+
+protocol TestService{
+    func request() -> SubmissionPagedResult
+}
+
+
+//MARK: TestMock 삭제예졍
+
+class NetworkService: TestService{
+    
+    func request() -> SubmissionPagedResult {
+        let sub = Submission.dummy()
+        let result = SubmissionPagedResult(content: sub, pageInfo: _PageInfo(totalElement: 1, totalPage: 1))
+        return result
+    }
+}

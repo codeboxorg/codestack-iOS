@@ -128,8 +128,6 @@ class ProblemCell: UITableViewCell{
     }
     
 //    lazy var subscription: Driver<Bool> =
-        
-    
 //    lazy var foldButtonTap: Observable<Void> = self.foldView.rx.tap.share()
 //    func getEvnetTap() -> ControlEvent<Void>{
 ////        return self

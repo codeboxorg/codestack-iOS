@@ -11,7 +11,7 @@ import RxSwift
 
 final class ContainerViewController: UIViewController {
     private var sideMenuViewController: SideMenuViewController!
-    private var navigator: UINavigationController!
+//    private var navigator: UINavigationController!
 //    private var rootViewController: UIViewControllerSideMenuDelegate! {
 //        didSet {
 //            rootViewController.delegate = self
@@ -25,18 +25,21 @@ final class ContainerViewController: UIViewController {
         self.init()
         self.sideMenuViewController = sideMenuViewController
 //        self.rootViewController = rootViewController
-//        self.navigator = UINavigationController(rootViewController: rootViewController)
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+        
+//        sideMenuViewController.show()
     }
     
     private func configureView() {
         addChildViewControllers()
         configureDelegates()
         configureGestures()
+        
     }
     
     private func configureDelegates() {
@@ -50,20 +53,20 @@ final class ContainerViewController: UIViewController {
         swipeLeftGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(swipeLeftGesture)
         
-        let rightSwipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(swipedRight))
-        rightSwipeGesture.cancelsTouchesInView = false
-        rightSwipeGesture.edges = .left
-        view.addGestureRecognizer(rightSwipeGesture)
+//        let rightSwipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(swipedRight))
+//        rightSwipeGesture.cancelsTouchesInView = false
+//        rightSwipeGesture.edges = .left
+//        view.addGestureRecognizer(rightSwipeGesture)
     }
     
     @objc private func swipedLeft() {
         sideMenuViewController.hide()
     }
     
-    @objc private func swipedRight(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
-        sideMenuViewController.show()
-    }
-    
+//    @objc private func swipedRight(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+//        sideMenuViewController.show()
+//    }
+//
     
 //    func updateRootViewController(_ viewController: UIViewControllerSideMenuDelegate) {
 //        rootViewController = viewController
@@ -74,9 +77,9 @@ final class ContainerViewController: UIViewController {
 //        view.addSubview(navigator.view)
 //        navigator.didMove(toParent: self)
         
-        addChild(sideMenuViewController)
-        view.addSubview(sideMenuViewController.view)
-        sideMenuViewController.didMove(toParent: self)
+//        addChild(sideMenuViewController)
+//        view.addSubview(sideMenuViewController.view)
+//        sideMenuViewController.didMove(toParent: self)
     }
 }
 

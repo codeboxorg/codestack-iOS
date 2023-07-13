@@ -1,5 +1,5 @@
 //
-//  AppleOAuthrizationRequest.swift
+//  AppleLoginManager.swift
 //  CodeStack
 //
 //  Created by 박형환 on 2023/04/30.
@@ -7,32 +7,63 @@
 
 import Foundation
 import AuthenticationServices
+import RxSwift
+import RxRelay
 
-
-protocol AppleOAuthrizationRequest{
-    
-}
-extension AppleOAuthrizationRequest{
-    
-}
 
 
 class AppleLoginManager:NSObject,ASAuthorizationControllerDelegate{
     
     weak var loginViewcontroller: LoginViewController?
+    weak var serviceManager: AppleAuthorization?
     var currentNonce: String?
+    var disposebag = DisposeBag()
     
     override init(){
         super.init()
     }
     
-    convenience init(_ dependency: LoginViewController){
+    convenience init(serviceManager: AppleAuthorization){
         self.init()
-        self.loginViewcontroller = dependency
+        self.serviceManager = serviceManager
     }
     
     func settingLoginView(){
         self.setupProviderLoginView()
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization){
+        let authorization = authorization
+        
+        switch authorization.credential{
+        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            
+            if let data = appleIDCredential.authorizationCode ,
+               let authorizationCode = String(data: data, encoding: .utf8){
+                let apple = AppleToken(authorizationCode: authorizationCode,user: appleIDCredential.user)
+                
+                serviceManager?.request(with: apple)
+                    .subscribe(onSuccess: {
+                        print("성공 : \($0)")
+                    },onError: { err in
+                        print("error \(err)")
+                    },onCompleted: {
+                        print("completed")
+                    },onDisposed: {
+                        print("ondispose")
+                    }).disposed(by: disposebag)
+                    
+            }
+            break
+        default:
+            break
+        }
+        print(authorization.provider)
+        
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error){
+        
     }
     
 }
@@ -44,7 +75,7 @@ extension AppleLoginManager: ASAuthorizationControllerPresentationContextProvidi
     
 }
 
-extension AppleLoginManager: AppleOAuthrizationRequest{
+extension AppleLoginManager{
     
     /// - Tag: add_appleid_button
     /// - 애플 로그인 버튼을 추가한다.

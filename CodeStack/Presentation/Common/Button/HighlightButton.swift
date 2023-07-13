@@ -8,9 +8,10 @@
 import UIKit
 
 
+/// 강조 버튼 component
+/// Tap 하면 -> color 변경
 class HighlightButton: UIButton{
 
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -25,11 +26,12 @@ class HighlightButton: UIButton{
     private func layoutConfigure(){
         var configuration = UIButton.Configuration.plain()
         configuration.titlePadding = 10
+        self.tintColor = UIColor.white
         self.configuration = configuration
-        self.layer.borderColor = UIColor.systemBlue.cgColor
+        self.layer.borderColor = UIColor.white.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
-        self.setTitleColor(.white, for: .highlighted)
-        self.setTitleColor(.systemBlue, for: .normal)
+        self.setTitleColor(.lightGray, for: .highlighted)
+        self.setTitleColor(.white, for: .normal)
     }
 }

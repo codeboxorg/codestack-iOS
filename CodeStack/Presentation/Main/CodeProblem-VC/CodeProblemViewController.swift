@@ -61,11 +61,16 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         
         layoutConfigure()
         //moveFunc()
+        
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("viewDidAppear - CodeProbleViewController")
+//        #if DEBUG
+//        cellClickedEvent()
+//        #endif
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -119,6 +124,15 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     
     var output: CodeProblemViewModel.Output?
     
+    #if DEBUG
+    func cellClickedEvent(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: { [weak self] in
+            guard let self else {return}
+            self._cellSelect.accept(())
+        })
+    }
+    #endif
+
     
     private func bindingModel(){
         let viewmodel = (viewModel as? CodeProblemViewModel)

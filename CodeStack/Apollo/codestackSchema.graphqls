@@ -1,0 +1,114 @@
+type Query {
+    me: Member
+    tag(id: ID): Tag
+    tags(
+    limit: Int
+    page: Int
+    ): TagPagedResult
+    
+    matchedUser(username: String): Member
+    
+    problems(
+    limit: Int
+    page: Int
+    ): ProblemPagedResult
+    
+    problem(id: ID): Problem
+    
+    submissions(
+    limit: Int
+    page: Int
+    ): SubmissionPagedResult
+    
+    submission(id: ID): Submission
+}
+
+type Mutation {
+  createSubmission(input: CreateSubmissionInput!): Submission
+}
+
+
+input CreateSubmissionInput{
+    problemId: Int
+    languageId: Int
+    sourceCode: String
+}
+
+type Language{
+    id: Int
+    name: String
+    extension: String
+}
+
+type Member{
+    username: String
+    nickname: String
+    email: String
+    profileImage: String
+    problemCalendar(year: String): [ProblemCalendar!]!
+}
+
+
+enum OAuth2Provider{
+    NONE
+    APPLE
+    GITHUB
+}
+
+type PageInfo{
+    totalElement: Int
+    totalPage: Int
+}
+
+type Problem{
+    id: Int
+    title: String
+    context: String
+    maxCpuTime: Int
+    maxMemory: Int
+    submission: Int
+    accepted: Int
+    tags: [Tag]
+    languages: [Language]
+}
+
+
+
+
+type ProblemCalendar{
+    date: String
+    solved: Int
+}
+
+type ProblemPagedResult{
+    content: [Problem]
+    pageInfo: PageInfo
+}
+
+
+type Submission{
+    id: Int
+    sourceCode: String
+    problem: Problem
+    member: Member
+    language: Language
+    cpuTime: Int
+    memoryUsage: Int
+    statusCode: String
+    createdAt: String
+}
+
+type SubmissionPagedResult{
+    content: [Submission]
+    pageInfo: PageInfo
+}
+
+type Tag{
+    id: Int
+    name: String
+}
+
+type TagPagedResult{
+    content: [Tag]
+    pageInfo: PageInfo
+}
