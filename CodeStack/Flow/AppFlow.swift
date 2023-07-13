@@ -17,9 +17,11 @@ class AppFlow: Flow{
     }
     
     private let loginService: OAuthrizationRequest
+    private let appleService: AppleLoginManager
     
-    init(loginService: OAuthrizationRequest){
+    init(loginService: OAuthrizationRequest,appleService: AppleLoginManager){
         self.loginService = loginService
+        self.appleService = appleService
     }
 
     private lazy var rootViewController: UINavigationController = {
@@ -30,6 +32,8 @@ class AppFlow: Flow{
     
     func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
+        
+        Log.debug(step)
         switch codestackStep{
         case .loginNeeded:
             return navigateToLoginVC()
@@ -40,7 +44,7 @@ class AppFlow: Flow{
     
     private func navigateToLoginVC() -> FlowContributors{
         let loginStepper = LoginStepper()
-        let loginFlow = LoginFlow(loginService: self.loginService, stepper: loginStepper)
+        let loginFlow = LoginFlow(loginService: self.loginService,appleLogin: appleService, stepper: loginStepper)
         
         Flows.use(loginFlow, when: .created, block: { root in
             self.rootViewController.pushViewController(root, animated: false)
@@ -57,6 +61,6 @@ class AppStepper: Stepper{
     }
     
     func readyToEmitSteps() {
-        print("i`m ready to push Login View")
+        
     }
 }

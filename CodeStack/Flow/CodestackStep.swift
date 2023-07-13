@@ -31,6 +31,11 @@ enum CodestackStep: Step, CaseIterable{
     case loginNeeded
     case userLoggedIn(ID?,Pwd?)
     
+    case logout
+    
+    
+    //myPage
+    case profilePage
     
     //Home Step
     case firstHomeStep
@@ -39,8 +44,12 @@ enum CodestackStep: Step, CaseIterable{
     case problemComplete
     case problemList
     case problemPick(String)
+    case recentSolveList
+    case recommendPage
     
     case sideMenuDelegate(String)
+    case sideShow
+    case sideDissmiss
     
     case none
     

@@ -15,12 +15,12 @@ class MyPageViewController: UIViewController{
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceVertical = true
         return scrollView
     }()
     
     private lazy var containerView: UIView = {
         let view = UIView()
-        
         return view
     }()
     
@@ -44,8 +44,9 @@ class MyPageViewController: UIViewController{
         self.view.backgroundColor = UIColor.systemBackground
         
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+        DispatchQueue.main.asyncAfter(deadline: .now() , execute: {
             self.statusView.circleProgressView.startProgressAnimate()
+            self.statusView.settingProgressViewAnimation(0.3, 0.6, 0.9)
         })
     }
     
@@ -57,15 +58,15 @@ class MyPageViewController: UIViewController{
         }
         
         scrollView.snp.makeConstraints{
-            $0.edges.equalToSuperview()
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(-44)
         }
         
         
         containerView.snp.makeConstraints{
-            $0.leading.bottom.trailing.equalToSuperview()
-            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(-44)
+            $0.top.leading.bottom.trailing.equalToSuperview()
             $0.width.equalTo(self.view.snp.width)
-            $0.height.equalTo(1000).priority(.low)
+            $0.height.equalTo(500).priority(.low)
         }
         
         profileView.snp.makeConstraints{
@@ -75,7 +76,7 @@ class MyPageViewController: UIViewController{
         }
         
         statusView.snp.makeConstraints{
-            $0.top.equalTo(profileView.snp.bottom).offset(80)
+            $0.top.equalTo(profileView.snp.bottom).offset(25)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(300).priority(.low)
         }

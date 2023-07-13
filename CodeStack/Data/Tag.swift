@@ -6,12 +6,13 @@
 //
 
 import Foundation
+
 struct Tag: Codable{
     let id: String
     let name: String
 }
 
-struct TagPagedResult: Codable{
+struct _TagPagedResult: Codable{
     let content: [Tag]
-    let pageInfo: PageInfo
+    let pageInfo: _PageInfo
 }

@@ -9,7 +9,7 @@ import Foundation
 
 
 
-struct SourceModel{
+struct _SourceModel{
     let id: Int
     var cpuTime: String?
     var memoryUsage: String?
@@ -17,7 +17,7 @@ struct SourceModel{
     var sourceCode: String?
     var problem: ProblemModel
     var language: Lanaguage
-    var member: Member
+    var member: _Member
     
     enum CodingKeys: String, CodingKey {
         case id

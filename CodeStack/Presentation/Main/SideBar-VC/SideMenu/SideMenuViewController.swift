@@ -6,15 +6,38 @@
 //
 
 import UIKit
+import RxFlow
+import RxCocoa
 
 struct SideMenuItem {
     let icon: UIImage?
     let name: String
-//    let viewController: ViewControllerPresentation
+    let presentation: CodestackStep
 }
 
 
-final class SideMenuViewController: UIViewController {
+final class SideMenuViewController: UIViewController ,Stepper{
+    
+    static func items() -> [SideMenuItem]{
+        return  [SideMenuItem(icon: UIImage(named: "problem"),
+                              name: "문제",
+                              presentation: .problemList),
+                 SideMenuItem(icon: UIImage(named: "submit"),
+                              name: "제출근황",
+                              presentation: .recentSolveList),
+                 SideMenuItem(icon: UIImage(named: "my"),
+                              name: "마이 페이지",
+                              presentation: .profilePage),
+                 SideMenuItem(icon: UIImage(named: "home"),
+                              name: "메인 페이지",
+                              presentation: .firstHomeStep),
+                 SideMenuItem(icon: nil,
+                              name: "추천",
+                              presentation: .recommendPage),
+                 SideMenuItem(icon: UIImage(systemName: "lock.open"),
+                              name: "logout", presentation: .logout)]
+    }
+    
     private var headerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -55,7 +78,8 @@ final class SideMenuViewController: UIViewController {
     private var sideMenuViewLeadingContraint: NSLayoutConstraint!
     
     private var shadowColor: UIColor = UIColor(red: 33/255, green: 33/255, blue: 33/255, alpha: 0.5)
-//    weak var delegate: SideMenuDelegate?
+    
+    var steps: PublishRelay<Step> = PublishRelay<Step>()
     
     convenience init(sideMenuItems: [SideMenuItem]) {
         self.init()
@@ -66,25 +90,35 @@ final class SideMenuViewController: UIViewController {
         super.viewDidLoad()
         configureView()
         
+        self.view.backgroundColor = .clear
         headerView.layer.cornerRadius = 12
         headerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         tableView.layer.cornerRadius = 12
         tableView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        
     }
     
     func show() {
         self.view.frame.origin.x = 0
         self.view.backgroundColor = self.shadowColor
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.3) {
             self.sideMenuViewLeadingContraint.constant = 0
+            if let parent = self.parent{
+                parent.navigationController?.navigationBar.isHidden = true
+                parent.navigationController?.navigationItem.titleView?.tintColor = .black
+            }
             self.view.layoutIfNeeded()
         }
     }
 
     func hide() {
         self.view.backgroundColor = .clear
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.3) {
             self.sideMenuViewLeadingContraint.constant = -UIApplication.getScreenSize()
+            if let parent = self.parent{
+                parent.navigationController?.navigationBar.isHidden = false
+                parent.navigationController?.navigationItem.titleView?.tintColor = .clear
+            }
             self.view.layoutIfNeeded()
         } completion: { _ in
             self.view.frame.origin.x = -UIApplication.getScreenSize()
@@ -110,7 +144,7 @@ final class SideMenuViewController: UIViewController {
     }
     
     private func configureConstraints() {
-        sideMenuView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        sideMenuView.topAnchor.constraint(equalTo: view.topAnchor,constant: 44).isActive = true
         sideMenuViewLeadingContraint = sideMenuView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: -view.frame.size.width)
         sideMenuViewLeadingContraint.isActive = true
         sideMenuView.widthAnchor.constraint(equalToConstant: view.frame.size.width * 0.6).isActive = true
@@ -185,10 +219,27 @@ extension SideMenuViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 
+    
+    /// tableView select
+    /// - Parameters:
+    ///   - tableView: navigation 정보
+    ///   - indexPath: (row,column)
+    ///   list 에 맞는 presentation으로 navigate 후 dismiss
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         let item = sideMenuItems[indexPath.row]
-//        delegate?.itemSelected(item: item.viewController)
+    
+        DispatchQueue.global().async { [weak self] in
+            guard let self else {return}
+            do{
+                try KeychainItem(service: .bundle, account: .access).deleteItem()
+                try KeychainItem(service: .bundle, account: .refresh).deleteItem()
+            }catch{
+                Log.error("logout but KeychainItem deleteError")
+            }
+            self.steps.accept(item.presentation)
+        }
+        hide()
     }
 }
 
