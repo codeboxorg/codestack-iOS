@@ -34,15 +34,21 @@ class AppFlow: Flow{
         guard let codestackStep = step as? CodestackStep else {return .none}
         
         Log.debug(step)
+        
         switch codestackStep{
         case .loginNeeded:
             return navigateToLoginVC()
+        case .onBoardingRequired:
+            return navigateToOnBoarding()
+        case .onBoardingComplte:
+            return dismissOnBoarding()
         default:
             return .none
         }
     }
     
     private func navigateToLoginVC() -> FlowContributors{
+        
         let loginStepper = LoginStepper()
         let loginFlow = LoginFlow(loginService: self.loginService,appleLogin: appleService, stepper: loginStepper)
         
@@ -50,7 +56,30 @@ class AppFlow: Flow{
             self.rootViewController.pushViewController(root, animated: false)
         })
         return .one(flowContributor: .contribute(withNextPresentable: loginFlow, withNextStepper: loginStepper))
-    }   
+    }
+    
+    private func navigateToOnBoarding() -> FlowContributors{
+    
+        let onBoardingFlow = OnBoardingFlow()
+        
+        Flows.use(onBoardingFlow, when: .created){ [unowned self] root in
+            DispatchQueue.main.async {
+                root.modalPresentationStyle = .fullScreen
+                self.rootViewController.present(root, animated: false)
+            }
+        }
+        
+        return .one(flowContributor: .contribute(withNextPresentable: onBoardingFlow,
+                                                 withNextStepper: OneStepper(withSingleStep: CodestackStep.onBoardingRequired)))
+    }
+    
+    private func dismissOnBoarding() -> FlowContributors{
+        if let vc = self.rootViewController.presentedViewController{
+            vc.dismiss(animated: true)
+        }
+        return .none
+    }
+    
 }
 
 class AppStepper: Stepper{
@@ -61,6 +90,6 @@ class AppStepper: Stepper{
     }
     
     func readyToEmitSteps() {
-        
+        steps.accept(CodestackStep.onBoardingRequired)
     }
 }
