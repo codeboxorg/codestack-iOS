@@ -20,6 +20,11 @@ enum ButtonType{
 enum CodestackStep: Step, CaseIterable{
     static var allCases: [CodestackStep] = []
     
+    //onBoarding
+    case onBoardingRequired
+    case onBoardingComplte
+    
+    
     // Global
     case logoutIsRequired
     case dashboardIsRequired
