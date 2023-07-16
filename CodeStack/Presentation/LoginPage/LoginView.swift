@@ -111,7 +111,6 @@ class LoginView: UIView{
     
     private lazy var githubLoginButton: GitHubLoginButton = {
         let button = GitHubLoginButton(frame: .zero)
-        button.addTarget(self, action: #selector(gitLogin(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -196,15 +195,7 @@ class LoginView: UIView{
         fatalError("required init fatalError")
     }
     
-    
-    @objc func gitLogin(_ sender: UIButton){
-        do{
-            //            try loginViewModel?.requestOAuth()
-        }catch{
-            assert(false,"\(error)")
-        }
-    }
-    
+  
     @objc func addActions(_ sender: UIButton){
         completion?(true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
