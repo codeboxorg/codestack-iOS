@@ -59,19 +59,21 @@ class LoginFlow: Flow{
 //        self.rootViewController.pushViewController(loginVC, animated: false)
 //        return .one(flowContributor: .contribute(withNext: loginVC))
 //    }
+
     
     private func navigateToHomeViewController() -> FlowContributors{
-        let viewModel = HomeViewModel()
-        let flow = HomeFlow(dependencies: viewModel)
+        
+        let flow = TabBarFlow()
         let stepper = HomeStepper()
         
         Flows.use(flow, when: .ready, block: { root in
-            self.loginViewController.navigationController?.setNavigationBarHidden(false, animated: true)
+//            self.loginViewController.navigationController?.setNavigationBarHidden(false, animated: true)
+            Log.debug(root)
             self.loginViewController.navigationController?.pushViewController(root, animated: false)
         })
 
         return .one(flowContributor: .contribute(withNextPresentable: flow,
-                                                 withNextStepper: CompositeStepper(steppers: [viewModel,stepper,flow.sideMenuViewController])))
+                                                 withNextStepper: CompositeStepper(steppers: [stepper])))
     }
 }
 
