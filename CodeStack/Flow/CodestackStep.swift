@@ -56,6 +56,9 @@ enum CodestackStep: Step, CaseIterable{
     case sideShow
     case sideDissmiss
     
+    
+    case historyflow
+    
     case none
     
 }

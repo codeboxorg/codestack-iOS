@@ -1,106 +1,65 @@
 //
-//  MainViewControllerFlow.swift
+//  TabFlow.swift
 //  CodeStack
 //
-//  Created by 박형환 on 2023/06/08.
+//  Created by 박형환 on 2023/07/16.
 //
 
-import Foundation
+import UIKit
 import RxFlow
 import RxSwift
 import RxCocoa
 
+
 class HomeFlow: Flow{
     
-    var root: RxFlow.Presentable{
-        self.rootViewController
+    var root: Presentable{
+        rootViewController
     }
     
-    private var rootViewController: HomeViewController
-    var sideMenuViewController: SideMenuViewController
+    private let rootViewController: UINavigationController = {
+        let viewController = UINavigationController()
+        viewController.setNavigationBarHidden(false, animated: false)
+        return viewController
+    }()
     
+    private var sideVC = SideMenuViewController()
     
-    let testScreen = TestViewController()
-        
-    init(dependencies: any HomeViewModelProtocol){
-        
-        sideMenuViewController = SideMenuViewController(sideMenuItems: SideMenuViewController.items())
-        rootViewController = ViewController.create(with: HomeViewController.Dependencies(homeViewModel: dependencies,
-                                                                                         sidemenuVC: sideMenuViewController))
-    }
-    
-    
-    
-    func navigate(to step: RxFlow.Step) -> RxFlow.FlowContributors {
+    func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
-        
-        switch codestackStep {
-        case .logout:
-            return .end(forwardToParentFlowWithStep: CodestackStep.logout)
+        switch codestackStep{
         case .firstHomeStep:
-            return .none
-        case .problemList:
-            return navigateToProblemList()
-        case .problemPick(_):
-            return navigateToCodeEditor()
-        case .problemComplete:
-            return .none
-        case .alert(_):
-            return .none
-        case .fakeStep:
-            return .none
-        case .sideMenuDelegate(_):
-            return .none
+            return navigateToHome()
         case .sideShow:
             return showSideMenuView()
         case .sideDissmiss:
             return dismissSideMenuView()
-        case .profilePage:
-            return navigateToProfileViewController()
         default:
-            print("codestackStep: \(codestackStep)")
             return .none
         }
     }
     
-    
-    private func navigateToProblemList() -> FlowContributors{
-        let viewModel = CodeProblemViewModel(DummyData())
+    private func navigateToHome() -> FlowContributors{
+        let homeViewModel = HomeViewModel()
         
-        let viewController = CodeProblemViewController.create(with: .init(viewModel: viewModel))
+        let homeVC = ViewController.create(with: HomeViewController.Dependencies(homeViewModel: homeViewModel,
+                                                                                         sidemenuVC: sideVC))
         
-        self.rootViewController.navigationController?.pushViewController(viewController, animated: true)
+        rootViewController.pushViewController(homeVC, animated: false)
         
-        return .one(flowContributor: .contribute(withNextPresentable: viewController,
-                                                 withNextStepper: viewModel))
-    }
-    
-    private func navigateToCodeEditor() -> FlowContributors{
         
-        let editorvc = CodeEditorViewController()
-        self.rootViewController.navigationController?.pushViewController(editorvc, animated: true)
-        
-        return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: DefaultStepper()))
-        
+        return .one(flowContributor: .contribute(withNextPresentable: homeVC,
+                                                 withNextStepper: homeViewModel))
     }
     
     private func showSideMenuView() -> FlowContributors{
-        sideMenuViewController.show()
+        sideVC.show()
         return .none
     }
     
     private func dismissSideMenuView() -> FlowContributors{
-        sideMenuViewController.hide()
+        sideVC.hide()
         return .none
-    }
-    
-    
-    private func navigateToProfileViewController() -> FlowContributors{
-        let profileVC = MyPageViewController()
-        
-        self.rootViewController.navigationController?.pushViewController(profileVC, animated: true)
-        
-        return .one(flowContributor: .contribute(withNextPresentable: profileVC, withNextStepper: DefaultStepper()))
     }
 }
 

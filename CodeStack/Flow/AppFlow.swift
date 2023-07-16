@@ -46,9 +46,8 @@ class AppFlow: Flow{
             return .none
         }
     }
-    
+
     private func navigateToLoginVC() -> FlowContributors{
-        
         let loginStepper = LoginStepper()
         let loginFlow = LoginFlow(loginService: self.loginService,appleLogin: appleService, stepper: loginStepper)
         
