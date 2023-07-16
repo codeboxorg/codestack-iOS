@@ -89,11 +89,3 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
     
 }
 
-class HomeStepper: Stepper{
-    
-    var steps = PublishRelay<Step>()
-    
-    var initialStep: Step{
-        CodestackStep.firstHomeStep
-    }
-}
