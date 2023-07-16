@@ -15,11 +15,14 @@ final class LoginService: NSObject{
     
     var loginViewModel: (any LoginViewModelProtocol)?
     
+    
     var disposeBag = DisposeBag()
     
     init(_ session: URLSession = URLSession(configuration: .default)) {
         self.urlSession = session
         super.init()
+        
+        
         
     }
 }
@@ -29,10 +32,14 @@ extension LoginService: CodestackAuthorization{
     func request(name id: ID,password: Pwd) -> Maybe<CodestackResponseToken>{
         let request = postHeader(with: CodestackToken(id: id, password: password))
         
-        return URLSession.shared.rx
+        Log.debug(request)
+        
+        return urlSession.rx
             .response(request: request)
             .asMaybe()
             .map{ (response: HTTPURLResponse, data: Data) -> CodestackResponseToken in
+                Log.debug(response)
+                Log.debug(data)
                 if  (200..<300) ~= response.statusCode {
                     do{
                         let token = try JSONDecoder().decode(CodestackResponseToken.self, from: data)
@@ -63,7 +70,7 @@ extension LoginService: AppleAuthorization{
     func request(with token: AppleToken) -> Maybe<CodestackResponseToken>{
         let request = postHeader(with: token)
         
-        return URLSession.shared.rx
+        return urlSession.rx
             .response(request: request)
             .asMaybe()
             .map{ (response: HTTPURLResponse, data: Data) -> CodestackResponseToken in
@@ -71,7 +78,7 @@ extension LoginService: AppleAuthorization{
                     do{
                         let token = try JSONSerialization.jsonObject(with: data)
                         let resonseToken = try JSONDecoder().decode(CodestackResponseToken.self, from: data)
-                        print("token : \(token)")
+                 
                         return resonseToken
                     }catch{
                         throw CSError.decodingError
@@ -118,10 +125,8 @@ extension LoginService: GitOAuthorization{
             .map{ (response: HTTPURLResponse, data: Data) -> CodestackResponseToken in
                 if  (200..<300) ~= response.statusCode {
                     do{
-                        print(data)
-                        let json = try JSONSerialization.jsonObject(with: data)
-                        
-                        return .init(refreshToken: "", accessToken: "", expiresIn: 0, tokenType: "")
+                        let token = try JSONDecoder().decode(CodestackResponseToken.self, from: data)
+                        return token
                     }catch{
                         throw CSError.decodingError
                     }
