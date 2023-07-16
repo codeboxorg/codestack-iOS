@@ -47,25 +47,12 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
         self.service = service
         self.steps = stepper.steps
         (self.service as? LoginService)?.loginViewModel = self
-        
-        testSubject
-            .flatMapLatest{ Observable.just($0) }
-            .materialize()
-            .subscribe(onNext: { value in
-                print(value)
-            }).disposed(by: disposeBag)
-        
-        
-      
-        
     }
     
     
     private var loginFailAlert: PublishSubject<Bool> = PublishSubject<Bool>()
     private var loginLoadingEvent = PublishRelay<Bool>()
 
-    
-    private var testSubject: PublishSubject<Int> = PublishSubject<Int>()
     
     
     var value: Int = 0
@@ -74,7 +61,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
             .withUnretained(self)
             .do(onNext: { [weak self] _ in
                 guard let self else {return}
-//                self.loginLoadingEvent.accept(true)
+                self.loginLoadingEvent.accept(true)
             })
             .emit{ vm,type in
                 switch type{
@@ -87,11 +74,10 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                         Log.error("github 로그인 실패 : \(error)")
                     }
                 case .email((let id, let pwd)):
-                    vm.value += 1
-                    vm.testSubject.onNext(vm.value)
-                    vm.testSubject.onNext(vm.value)
                     #if DEBUG
-//                    vm.requestAuth(id: id, pwd: pwd)
+                    vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
+                    #else
+                    vm.requestAuth(id: id, pwd: pwd)
                     #endif
                 case .none:
                     break
@@ -177,6 +163,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     
     
     private func signUp(access t1: String, refresh t2: String){
+        Log.debug("\(t1) + \(t2)")
         KeychainItem.saveTokens(access: t1, refresh: t2)
         steps.accept(CodestackStep.userLoggedIn(nil, nil))
     }
