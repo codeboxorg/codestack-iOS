@@ -39,10 +39,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        Log.debug("\(URLContexts)")
+        Log.debug("\(URLContexts.first)")
+        Log.debug("\(URLContexts.first?.url)")
         if let url = URLContexts.first?.url {
             //MARK: - Github url open
+            
             let component = url.absoluteString.components(separatedBy: "?")
-            if let flag = component.first?.elementsEqual("codestackiosclient://login"),
+            if let flag = component.first?.elementsEqual("codestackios://git/auth"),
                flag,
                let code = component.last?.components(separatedBy: "=").last{
                 (serviceManager as GitOAuthorization).gitOAuthComplete(code: code)
