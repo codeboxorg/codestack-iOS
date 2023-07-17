@@ -31,7 +31,9 @@ class CodeProblemFlow: Flow{
         case .problemPick(_):
             return navigateToProblemPick()
         case .problemComplete:
-            return .end(forwardToParentFlowWithStep: CodestackStep.problemComplete)
+            rootViewController.setNavigationBarHidden(false, animated: true)
+            rootViewController.popViewController(animated: true)
+            return .none
         default:
             return .none
         }
@@ -47,12 +49,26 @@ class CodeProblemFlow: Flow{
                                                  withNextStepper: codeViewModel))
     }
     
-    func navigateToProblemPick() -> FlowContributors{        
+    
+    func navigateToProblemPick() -> FlowContributors{
         let editorvc = CodeEditorViewController()
         rootViewController.pushViewController(editorvc, animated: true)
         
-        return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: DefaultStepper()))
+        return .one(flowContributor: .contribute(withNext: editorvc))
     }
+    
 }
 
 
+class ProblemStepper: Stepper{
+    
+    var steps = PublishRelay<RxFlow.Step>()
+    
+    var initialStep: Step{
+        CodestackStep.problemList
+    }
+    
+    @objc func dissmissEditor(_ sender: Any){
+        steps.accept(CodestackStep.problemComplete)
+    }
+}
