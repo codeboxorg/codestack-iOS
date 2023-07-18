@@ -18,12 +18,10 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         var viewModel: (any ProblemViewModelProtocol)?
     }
     
-//    weak var delegate: SideMenuDelegate?
     var viewModel: (any ProblemViewModelProtocol)?
     
     static func create(with dependencies: Dependencies) -> Self{
         let code = CodeProblemViewController()
-//        code.delegate = dependencies.delegate
         code.viewModel = dependencies.viewModel
         return code as! Self
     }
@@ -61,8 +59,6 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         
         layoutConfigure()
         //moveFunc()
-        
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -195,7 +191,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     }
     
     @objc func segmentChanged(_ sender: UISegmentedControl){
-        sender.selectedSegmentIndex
+//        sender.selectedSegmentIndex
     }
 }
 
