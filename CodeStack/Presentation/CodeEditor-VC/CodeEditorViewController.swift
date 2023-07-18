@@ -37,6 +37,7 @@ class CodeEditorViewController: UIViewController,Stepper{
     lazy var codeUITextView: CodeUITextView = {
         let textStorage = CodeAttributedString()
         let layoutManager = NSLayoutManager()
+        
         textStorage.addLayoutManager(layoutManager)
         let textContainer = NSTextContainer()
         layoutManager.addTextContainer(textContainer)
@@ -44,7 +45,9 @@ class CodeEditorViewController: UIViewController,Stepper{
         highlightr = textStorage.highlightr
         
         layoutManager.delegate = self
+        
         let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
+        
         textView.delegate = self
         textView.isScrollEnabled = true
         textView.layer.borderColor = UIColor.systemGray6.cgColor
@@ -54,6 +57,7 @@ class CodeEditorViewController: UIViewController,Stepper{
         textView.autocorrectionType = UITextAutocorrectionType.no
         textView.autocapitalizationType = UITextAutocapitalizationType.none
         textView.alwaysBounceVertical = true
+        
         return textView
     }()
     
@@ -66,8 +70,8 @@ class CodeEditorViewController: UIViewController,Stepper{
     
     
     override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
         steps.accept(CodestackStep.problemComplete)
+        super.viewDidDisappear(animated)
     }
     
     deinit{
@@ -91,8 +95,7 @@ class CodeEditorViewController: UIViewController,Stepper{
 //                    self.problemPopUpView.backButton.sendActions(for: .touchUpInside)
 //                })
 //            })
-//        })
-//        
+//        }) 
 //        #endif
     }
     
@@ -113,17 +116,20 @@ class CodeEditorViewController: UIViewController,Stepper{
         
         // Dependency TextView injection in NumbersVIew
         self.numbersView.settingTextView(self.codeUITextView,contentSize: self)
+        
         self.view.bringSubviewToFront(problemPopUpView)
+        
         self.problemPopUpView.show()
     }
     
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
+    
     private func keyBoardLayoutManager(){
-        //        let output = KeyBoardManager.shared.getKeyBoardLifeCycle()
+        let _ = KeyBoardManager.shared.getKeyBoardLifeCycle()
     }
     
     private func layoutConfigure(){
@@ -161,9 +167,7 @@ class CodeEditorViewController: UIViewController,Stepper{
             make.height.equalTo(codeUITextView.bounds.height)
             make.width.equalTo(inset.left).priority(.high)
         }
-        
         // numbersView exclusionPath
-        
     }
     
     //MARK: - Code HighLiter
@@ -176,7 +180,6 @@ class CodeEditorViewController: UIViewController,Stepper{
 
 //MARK: TextView Size Tracker
 extension CodeEditorViewController: TextViewSizeTracker{
-
     func updateNumberViewsHeight(_ height: CGFloat){
         numbersView.snp.updateConstraints { make in
             make.height.equalTo(height)
@@ -187,13 +190,18 @@ extension CodeEditorViewController: TextViewSizeTracker{
 
 //MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
 extension CodeEditorViewController{
+
+    /// ProblemComplete
+    func spreadCompleteEvnet(){
+        steps.accept(CodestackStep.problemComplete)
+    }
+    
     func showProblemDiscription(){
         problemPopUpView.snp.remakeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(400)
         }
-//        numbersView.layer.isHidden = true
         numbersView.layer.setNeedsDisplay()
         self.codeUITextView.contentSize.height += problemPopUpView.bounds.height
     }
@@ -204,7 +212,6 @@ extension CodeEditorViewController{
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(height)
         }
-//        numbersView.layer.isHidden = true
         numbersView.layer.setNeedsDisplay()
         
     }
@@ -214,11 +221,9 @@ extension CodeEditorViewController{
 //MARK: - TextView delegate
 extension CodeEditorViewController: UITextViewDelegate{
     func textViewDidChange(_ textView: UITextView) {
-        
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        
         return true
     }
 }
@@ -227,7 +232,6 @@ extension CodeEditorViewController: NSLayoutManagerDelegate{
     func layoutManager(_ layoutManager: NSLayoutManager, paragraphSpacingAfterGlyphAt glyphIndex: Int, withProposedLineFragmentRect rect: CGRect) -> CGFloat {
         return 10
     }
-    
 }
 
 
