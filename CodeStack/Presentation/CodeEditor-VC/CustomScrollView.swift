@@ -10,7 +10,6 @@ import UIKit
 class CustomScrollView: UIScrollView{
     
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
