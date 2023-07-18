@@ -5,10 +5,12 @@
 //  Created by 박형환 on 2023/07/18.
 //
 
+g
 import UIKit
 import RxSwift
 import RxCocoa
 import RxRelay
+
 
 class HistoryViewModel: ViewModelType{
     
@@ -55,4 +57,3 @@ class HistoryViewModel: ViewModelType{
         }
     }
 }
-g
