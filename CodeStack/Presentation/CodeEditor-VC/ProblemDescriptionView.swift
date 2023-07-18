@@ -37,13 +37,6 @@ final class ProblemPopUpView: UIView{
         return button
     }()
     
-    @objc func backKeyPressed(_ sender: UIButton){
-        if let delegate {
-            delegate.navigationController?.popViewController(animated: true)
-        }
-    }
-    
-    
     private lazy var problemName_label: UILabel = {
         let label = UILabel()
         label.text = "Hellow World!"
@@ -154,7 +147,7 @@ final class ProblemPopUpView: UIView{
        let view = UIButton()
         return view
     }()
-    
+ 
     private weak var delegate: CodeEditorViewController?
     
     let button_width_height: CGFloat = 44
@@ -184,13 +177,23 @@ final class ProblemPopUpView: UIView{
         print("deinit")
     }
     
+    
+    @objc func backKeyPressed(_ sender: UIButton){
+        if let delegate {
+            delegate.spreadCompleteEvnet()
+        }
+    }
+    
+    
     @objc func hidebuttonTapped(_ sender: UIButton){
         popUpFlag == true ? show() : hide(completion: nil)
         popUpFlag.toggle()
     }
     
+    
     func show(){
         hideButton.setImage(UIImage(systemName: "chevron.up"), for: .normal)
+        
         self.delegate!.showProblemDiscription()
         
         hideButton.snp.remakeConstraints { make in
@@ -205,7 +208,6 @@ final class ProblemPopUpView: UIView{
             options: .curveEaseInOut,
             animations: {
                 self.popUpContainerView.backgroundColor = .tertiarySystemBackground
-                
                 self.popUpContainerView.alpha = 1
                 self.delegate!.view.layoutIfNeeded()
                 self.layoutIfNeeded()
@@ -228,6 +230,7 @@ final class ProblemPopUpView: UIView{
             make.width.equalTo(buttonHeight)
             make.height.equalTo(buttonHeight)
         }
+        
         UIView.animate(
             withDuration: 0.3,
             delay: 0,
@@ -372,7 +375,5 @@ private extension ProblemPopUpView{
             make.leading.trailing.equalToSuperview().inset(leading_trailing_spacing)
             make.bottom.equalToSuperview().inset(leading_trailing_spacing)
         }
-        
-        
     }
 }

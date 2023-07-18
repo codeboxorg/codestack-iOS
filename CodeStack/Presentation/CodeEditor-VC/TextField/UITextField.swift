@@ -20,6 +20,7 @@ class InsetTextField: UITextField {
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 12
     }
+    
     required init?(coder: NSCoder) {
         fatalError("insetTtextField fattalError!")
     }
