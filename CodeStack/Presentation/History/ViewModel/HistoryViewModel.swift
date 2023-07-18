@@ -6,3 +6,20 @@
 //
 
 import Foundation
+
+
+class HistoryViewModel: ViewModelType{
+    
+    struct Input{
+        
+    }
+    struct Output{
+        
+        
+    }
+    
+    func transform(input: Input) -> Output {
+        
+        return Output()
+    }
+}
