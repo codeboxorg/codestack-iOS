@@ -28,7 +28,7 @@ typealias HomeViewController = ViewController
 
 class ViewController: UIViewController{
     
-//    weak var delegate: SideMenuDelegate?
+    //    weak var delegate: SideMenuDelegate?
     
     struct Dependencies{
         var homeViewModel: any HomeViewModelProtocol
@@ -62,7 +62,7 @@ class ViewController: UIViewController{
     
     private lazy var recentPagesCollectionView: UICollectionView = {
         let collectionView = PRSubmissionHistoryCell.submissionHistoryCellSetting(item: CGSize(width: 140, height: 140),
-                                                                                       background: UIColor.systemBackground)
+                                                                                  background: UIColor.systemBackground)
         collectionView.register(PRSubmissionHistoryCell.self, forCellWithReuseIdentifier: PRSubmissionHistoryCell.identifier)
         return collectionView
     }()
@@ -78,21 +78,16 @@ class ViewController: UIViewController{
     }()
     
     
-    private lazy var caView: CAView = {
-        let view = CAView()
-        return view
-    }()
-    
     
     private var _viewDidLoad = PublishRelay<Void>()
     private var disposeBag = DisposeBag()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationSetting()
         layoutConfigure()
         binding()
-
+        
         view.gestureRecognizers?.forEach{
             $0.delegate = self
         }
@@ -104,35 +99,30 @@ class ViewController: UIViewController{
             sidemenuViewController.didMove(toParent: self)
         }
         
-        #if DEBUG
+#if DEBUG
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-//            self.mainView.move()
+            //            self.mainView.move()
         })
-        #endif
+#endif
         
         _viewDidLoad.accept(())
-        
     }
     
     private func binding(){
         let output = (homeViewModel as! HomeViewModel).transform(input: HomeViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(),
-                                                                                       problemButtonEvent: mainView.emitButtonEvents(),
-                                                                                       rightSwipeGesture: view.rx.gesture(.swipe(direction: .right)).when(.recognized).asObservable(),
-                                                                                       leftSwipeGesture: view.rx.gesture(.swipe(direction: .left)).when(.recognized).asObservable(),
-                                                                                       leftNavigationButtonEvent: navigationItem.leftBarButtonItem?.rx.tap.asSignal() ?? .never()))
-        
+                                                                                            problemButtonEvent: mainView.emitButtonEvents(),
+                                                                                            rightSwipeGesture: view.rx.gesture(.swipe(direction: .right)).when(.recognized).asObservable(),
+                                                                                            leftSwipeGesture: view.rx.gesture(.swipe(direction: .left)).when(.recognized).asObservable(),
+                                                                                            leftNavigationButtonEvent: navigationItem.leftBarButtonItem?.rx.tap.asSignal() ?? .never(),
+                                                                                            recentProblemPage: recentPagesCollectionView.rx.modelSelected(Submission.self).asSignal()))
         output.submissions
             .drive(recentPagesCollectionView.rx.items(cellIdentifier: PRSubmissionHistoryCell.identifier,
                                                       cellType: PRSubmissionHistoryCell.self))
-        { [weak self] index, item , cell in
-            guard let self else {return}
-            
+        {  index, item , cell in
             cell.onRecentPageData.accept(item)
             cell.onStatus.accept(SolveStatus.allCases.randomElement()!)
             
         }.disposed(by: disposeBag)
-        
-        
     }
     
     
@@ -153,6 +143,7 @@ class ViewController: UIViewController{
         
         UINavigationBar.appearance().standardAppearance = navigationBarAppearance
     }
+    
     
     //MARK: -추후 viewComponent 분리 필요
     private func layoutConfigure(){
@@ -200,8 +191,8 @@ class ViewController: UIViewController{
 
 extension ViewController: UIGestureRecognizerDelegate{
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer)
-           -> Bool {
-           return false
-       }
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer)
+    -> Bool {
+        return false
+    }
 }
