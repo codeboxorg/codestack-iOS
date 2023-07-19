@@ -48,5 +48,4 @@ class CodeProblemStepper: Stepper{
     var initialStep: Step{
         CodestackStep.problemList
     }
-    
 }
