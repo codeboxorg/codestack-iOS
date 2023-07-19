@@ -19,7 +19,8 @@ class HistoryFlow: Flow{
     
     private let rootViewController: UINavigationController = {
         let viewController = UINavigationController()
-        viewController.setNavigationBarHidden(true, animated: true)
+        
+        viewController.setNavigationBarHidden(false, animated: false)
         return viewController
     }()
     
@@ -34,8 +35,9 @@ class HistoryFlow: Flow{
     }
     
     func navigateToHistory() -> FlowContributors{
-        let testVC = TestViewController()
-        rootViewController.pushViewController(testVC, animated: false)
+        let history = HistoryViewController.create(with: HistoryViewModel())
+        history.navigationItem.title = "기록"
+        rootViewController.pushViewController(history, animated: false)
         return .none
     }
     

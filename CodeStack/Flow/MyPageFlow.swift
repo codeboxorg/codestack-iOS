@@ -19,7 +19,7 @@ class MyPageFlow: Flow{
     
     private let rootViewController: UINavigationController = {
         let viewController = UINavigationController()
-        viewController.setNavigationBarHidden(true, animated: true)
+        viewController.setNavigationBarHidden(false, animated: true)
         return viewController
     }()
     
@@ -34,8 +34,9 @@ class MyPageFlow: Flow{
     }
     
     func navigateToMyPage() -> FlowContributors {
-        Log.debug("navigateToMyPage")
         let profileVC = MyPageViewController()
+
+        profileVC.title = "마이페이지"
         self.rootViewController.pushViewController(profileVC, animated: true)
         return .one(flowContributor: .contribute(withNextPresentable: profileVC, withNextStepper: DefaultStepper()))
     }

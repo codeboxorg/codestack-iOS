@@ -19,7 +19,6 @@ class LoginFlow: Flow{
     private weak var loginService: OAuthrizationRequest?
     private weak var appleLoginManager: AppleLoginManager?
     private var disposeBag = DisposeBag()
-//    private let rootViewController = UINavigationController()
     
     var loginStepper: LoginStepper
     
@@ -47,33 +46,24 @@ class LoginFlow: Flow{
         case .logout:
             self.loginViewController.navigationController?.popViewController(animated: true)
             return .none
-        case .userLoggedIn(let _, let _):
+        case .userLoggedIn( _,  _):
             return navigateToHomeViewController()
         default:
             return .none
         }
     }
     
-//    private func navigateToLoginViewController() -> FlowContributors {
-//        let loginVC = loginViewController
-//        self.rootViewController.pushViewController(loginVC, animated: false)
-//        return .one(flowContributor: .contribute(withNext: loginVC))
-//    }
-
     
     private func navigateToHomeViewController() -> FlowContributors{
-        
         let flow = TabBarFlow()
-        let stepper = HomeStepper()
         
         Flows.use(flow, when: .ready, block: { root in
-//            self.loginViewController.navigationController?.setNavigationBarHidden(false, animated: true)
             Log.debug(root)
             self.loginViewController.navigationController?.pushViewController(root, animated: false)
         })
 
         return .one(flowContributor: .contribute(withNextPresentable: flow,
-                                                 withNextStepper: CompositeStepper(steppers: [stepper])))
+                                                 withNextStepper: OneStepper(withSingleStep: CodestackStep.firstHomeStep)))
     }
 }
 
