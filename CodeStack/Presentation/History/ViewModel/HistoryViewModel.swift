@@ -5,13 +5,12 @@
 //  Created by 박형환 on 2023/07/18.
 //
 
-g
+
 import UIKit
 import RxSwift
 import RxCocoa
 import RxRelay
-
-
+g
 class HistoryViewModel: ViewModelType{
     
     struct Input{
@@ -57,3 +56,4 @@ class HistoryViewModel: ViewModelType{
         }
     }
 }
+
