@@ -45,7 +45,6 @@ class HistoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         layoutConfigure()
         binding()
         _viewDidLoad.onNext(())
@@ -126,6 +125,7 @@ extension HistoryViewController{
             $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
+        
         self.view.backgroundColor = .tertiarySystemBackground
         
         container.snp.makeConstraints{
