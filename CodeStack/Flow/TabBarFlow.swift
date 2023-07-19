@@ -32,6 +32,9 @@ class TabBarFlow: Flow{
             return .none
         case .fakeStep:
             return .none
+        case .problemList:
+            rootViewTabController.selectedIndex = 1
+            return .none
         default:
             print("codestackStep: \(codestackStep)")
             return .none
@@ -39,7 +42,7 @@ class TabBarFlow: Flow{
     }
     
     private func navigateToTabBarController() -> FlowContributors{
-        let homeFlow = HomeFlow()
+        let homeFlow = HomeFlow(delegate: rootViewTabController)
         let problemFlow = CodeProblemFlow()
         let historyFlow = HistoryFlow()
         let myPageFlow = MyPageFlow()
@@ -60,11 +63,12 @@ class TabBarFlow: Flow{
                                                            problemVC,
                                                            historyVC,
                                                            myPageVC], animated: true)
+         
         }
         
         return .multiple(flowContributors: [
-            .contribute(withNextPresentable: homeFlow, withNextStepper: OneStepper(withSingleStep: CodestackStep.firstHomeStep)),
-            .contribute(withNextPresentable: problemFlow, withNextStepper: OneStepper(withSingleStep: CodestackStep.problemList)),
+            .contribute(withNextPresentable: homeFlow, withNextStepper: HomeStepper()),
+            .contribute(withNextPresentable: problemFlow, withNextStepper: ProblemStepper()),
             .contribute(withNextPresentable: historyFlow, withNextStepper: OneStepper(withSingleStep: CodestackStep.historyflow)),
             .contribute(withNextPresentable: myPageFlow, withNextStepper: OneStepper(withSingleStep: CodestackStep.profilePage))
         ])
@@ -72,12 +76,3 @@ class TabBarFlow: Flow{
 }
 
 
-
-class HomeStepper: Stepper{
-    
-    var steps = PublishRelay<Step>()
-    
-    var initialStep: Step{
-        CodestackStep.firstHomeStep
-    }
-}
