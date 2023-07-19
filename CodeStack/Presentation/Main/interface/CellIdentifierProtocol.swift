@@ -16,9 +16,10 @@ extension CellIdentifierProtocol{
     }
 }
 
-extension ProblemCell: CellIdentifierProtocol{}
+extension HistoryCell: CellIdentifierProtocol{ }
+extension ProblemCell: CellIdentifierProtocol{ }
+
 extension PRSubmissionHistoryCell: CellIdentifierProtocol{
-    
     static func submissionHistoryCellSetting(item size: CGSize,
                                       spacing: CGFloat = 16,
                                       insetValue: CGFloat = 15,
