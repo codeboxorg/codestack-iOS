@@ -67,38 +67,11 @@ class CodeEditorViewController: UIViewController,Stepper{
         return popView
     }()
     
-    
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        steps.accept(CodestackStep.problemComplete)
-        super.viewDidDisappear(animated)
-    }
-    
+
     deinit{
-        print("CodeEditorViewController : deinit")
+        Log.debug("CodeEditorViewController : deinit")
     }
    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-//        #if DEBUG
-//        DispatchQueue.main.asyncAfter(deadline: .now(), execute: { [weak self] in
-//            guard let self else { return }
-//            self.problemPopUpView.hideButton.sendActions(for: .touchUpInside)
-//            
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: { [weak self] in
-//                guard let self else { return }
-//                self.codeUITextView.setContentOffset(CGPoint(x: 0, y: Int.random(in: (300...1600))), animated: true)
-//                
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
-//                    guard let self else { return }
-//                    self.problemPopUpView.backButton.sendActions(for: .touchUpInside)
-//                })
-//            })
-//        }) 
-//        #endif
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         layoutConfigure()
