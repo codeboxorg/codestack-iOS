@@ -9,46 +9,70 @@
 import UIKit
 
 enum SolveStatus: CaseIterable{
+    
+    static var allCases: [SolveStatus] = [.temp,.fail,.favorite,.solve]
+    
     case temp
+    case favorite
     case solve
     case fail
+    case none
 }
 
 extension UILabel{
     
-    func pr_status_label(_ status: SolveStatus){
+    func pr_status_label(_ status: SolveStatus, default placeHolder: Bool = true){
         let attributedString = NSMutableAttributedString()
         
         var attributed: [NSAttributedString.Key : Any]
         
         switch status {
+        case .favorite:
+            attributed = [NSAttributedString.Key.foregroundColor : UIColor.systemYellow,
+                          .font : UIFont.preferredFont(forTextStyle: .largeTitle)]
+            attributedString.append(NSAttributedString(string: "•",attributes: attributed))
+            if placeHolder {
+                attributedString.append(NSAttributedString(string: "즐겨찾기",
+                                                           attributes: [.font : UIFont.systemFont(ofSize: 10),
+                                                                        .baselineOffset : 6 ]))
+            }
+            
         case .temp:
             attributed = [NSAttributedString.Key.foregroundColor : UIColor.lightGray,
                           .font : UIFont.preferredFont(forTextStyle: .largeTitle)]
             attributedString.append(NSAttributedString(string: "•",attributes: attributed))
-            attributedString.append(NSAttributedString(string: "임시 저장",
-                                                       attributes: [.font : UIFont.systemFont(ofSize: 10),
-                                                                    .baselineOffset : 5 ]))
+            if placeHolder {
+                attributedString.append(NSAttributedString(string: "임시저장",
+                                                           attributes: [.font : UIFont.systemFont(ofSize: 10),
+                                                                        .baselineOffset : 6 ]))
+            }
         case .solve:
             attributed = [NSAttributedString.Key.foregroundColor : UIColor.green,
                           .font : UIFont.preferredFont(forTextStyle: .largeTitle)]
             attributedString.append(NSAttributedString(string: "•",attributes: attributed))
-            attributedString.append(NSAttributedString(string: "성공",
-                                                       attributes: [.font : UIFont.systemFont(ofSize: 10),
-                                                                    .baselineOffset : 5 ]))
+            if placeHolder {
+                attributedString.append(NSAttributedString(string: "성공",
+                                                           attributes: [.font : UIFont.systemFont(ofSize: 10),
+                                                                        .baselineOffset : 6 ]))
+            }
         case .fail:
             attributed = [NSAttributedString.Key.foregroundColor : UIColor.red,
                           .font : UIFont.preferredFont(forTextStyle: .largeTitle)]
             attributedString.append(NSAttributedString(string: "•",attributes: attributed))
-            attributedString.append(NSAttributedString(string: "실패",
-                                                       attributes: [.font : UIFont.systemFont(ofSize: 10),
-                                                                    .baselineOffset : 5 ]))
+            if placeHolder{
+                attributedString.append(NSAttributedString(string: "실패",
+                                                           attributes: [.font : UIFont.systemFont(ofSize: 10),
+                                                                        .baselineOffset : 6 ]))
+            }
+        case .none:
+            break
         }
+        
         self.attributedText = attributedString
     }
     
     
-    func introduceLable(_ size: CGFloat, _ text: String) -> Self{
+    func introduceLable(_ size: CGFloat, _ text: String, style: UIFont.TextStyle = .headline) -> Self{
         let descriptor = self.create_descriptor(style: .headline)
         
         self.font = UIFont(descriptor: descriptor, size: size)
@@ -56,7 +80,7 @@ extension UILabel{
         self.text = "\(text)"
         self.textAlignment = .center
         self.numberOfLines = 0
-        self.textColor = .white
+        self.textColor = .label
         return self
     }
     
