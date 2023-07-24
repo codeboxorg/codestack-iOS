@@ -5,16 +5,14 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleIdentifier</key>
+			<string></string>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLIconFile</key>
-			<string>/Users/baghyeonghwan/Downloads/AppIcons 3/appstore.png</string>
+			<string>None</string>
 			<key>CFBundleURLName</key>
-			<string>kr.co.codestack_ios_client</string>
+			<string></string>
 			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>codestackiosclient://login</string>
-			</array>
+			<array/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
@@ -22,9 +20,15 @@
 			<key>CFBundleURLIconFile</key>
 			<string>appstore</string>
 			<key>CFBundleURLName</key>
-			<string>kr.co.codestack_ios_git</string>
+			<string>kr.co.codestack.ios.v2</string>
 			<key>CFBundleURLSchemes</key>
-			<array/>
+			<array>
+				<string>codestackios</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
 		</dict>
 	</array>
 	<key>NSAppTransportSecurity</key>
@@ -53,5 +57,7 @@
 	<string>$(client_id)</string>
 	<key>client_secret_git</key>
 	<string>$(client_secret_git)</string>
+	<key>graphql_endpoint</key>
+	<string>$(graphql_endpoint)</string>
 </dict>
 </plist>
