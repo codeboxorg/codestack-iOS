@@ -15,29 +15,49 @@ class HistoryViewModel: ViewModelType{
     
     struct Input{
         var viewDidLoad: Signal<Void>
-        var currentSegment: Signal<SegType>
+        var currentSegment: Signal<SolveStatus>
     }
     
     struct Output{
-        var segmentPage: Driver<SegType>
-        var historyData: Driver<[String]>
+        var segmentPage: Driver<SolveStatus>
+        var historyData: Driver<[Submission]>
     }
     
     private var disposeBag = DisposeBag()
     
-    private let selectedPage = PublishRelay<SegType>()
+    private let selectedPage = PublishRelay<SolveStatus>()
     
-    private let dummyData = PublishRelay<[String]>()
+    private let dummyData = PublishRelay<[Submission]>()
+    
+    #if DEBUG
+    private let testService: TestService = NetworkService()
+    #endif
     
     func transform(input: Input) -> Output {
         
         input.currentSegment
-            .map(getDummy(type:))
+            .compactMap{[weak self] value in
+                guard let self else { return nil}
+//                Log.debug("currentSegment: \()")
+                if value == .none{
+                    return self.testService.request().content
+                }else{
+                    return self.testService.request(type: value).content
+                }
+            }
             .emit(to: dummyData)
             .disposed(by: disposeBag)
         
         
-        return Output(segmentPage: selectedPage.asDriver(onErrorJustReturn: .all),
+        input.viewDidLoad
+            .compactMap{[weak self] _ in
+                guard let self else { return nil}
+                return self.testService.request(type: .temp).content
+            }.emit(to: dummyData)
+            .disposed(by: disposeBag)
+        
+        
+        return Output(segmentPage: selectedPage.asDriver(onErrorJustReturn: .none),
                       historyData: dummyData.asDriver(onErrorJustReturn: []))
     }
     
