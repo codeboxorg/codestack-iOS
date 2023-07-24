@@ -194,7 +194,6 @@ class LineNumberRulerView: UIView {
         context.restoreGState()
         
     }
-
 }
 
 
