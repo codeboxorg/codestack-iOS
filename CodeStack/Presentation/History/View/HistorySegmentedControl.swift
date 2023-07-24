@@ -14,6 +14,29 @@ enum SegType: String,CaseIterable{
     case success = "성공"
     case failure = "실패"
     case all = "전체"
+    
+    enum Value: Int{
+        case favorite = 0
+        case tempSave = 1
+        case success = 2
+        case failure = 3
+        case all = 4
+    }
+    
+    static func switchSegType(value: Value) -> SolveStatus{
+        switch value{
+        case .favorite:
+            return .favorite
+        case .tempSave:
+            return .temp
+        case .success:
+            return .solve
+        case .failure:
+            return .fail
+        default:
+            return .none
+        }
+    }
 }
 
 class HistorySegmentedControl: UISegmentedControl{
@@ -60,9 +83,6 @@ class HistorySegmentedControl: UISegmentedControl{
         
         /// String width with font
         let selectedSegWidth = segWidths[safe: selectedSegmentIndex] ?? 10
-        
-        guard let context = UIGraphicsGetCurrentContext() else {return}
-
         
         let layer = UIBezierPath()
         
