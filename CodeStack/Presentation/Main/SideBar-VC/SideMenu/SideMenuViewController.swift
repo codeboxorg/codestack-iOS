@@ -18,24 +18,8 @@ struct SideMenuItem {
 
 final class SideMenuViewController: UIViewController ,Stepper{
     
-    static func items() -> [SideMenuItem]{
-        return  [SideMenuItem(icon: UIImage(named: "problem"),
-                              name: "문제",
-                              presentation: .problemList),
-                 SideMenuItem(icon: UIImage(named: "submit"),
-                              name: "제출근황",
-                              presentation: .recentSolveList),
-                 SideMenuItem(icon: UIImage(named: "my"),
-                              name: "마이 페이지",
-                              presentation: .profilePage),
-                 SideMenuItem(icon: UIImage(named: "home"),
-                              name: "메인 페이지",
-                              presentation: .firstHomeStep),
-                 SideMenuItem(icon: nil,
-                              name: "추천",
-                              presentation: .recommendPage),
-                 SideMenuItem(icon: UIImage(systemName: "lock.open"),
-                              name: "logout", presentation: .logout)]
+    static func create(with items: [SideMenuItem]) -> SideMenuViewController{
+        return SideMenuViewController(sideMenuItems: items)
     }
     
     private var headerView: UIView = {
@@ -80,6 +64,11 @@ final class SideMenuViewController: UIViewController ,Stepper{
     private var shadowColor: UIColor = UIColor(red: 33/255, green: 33/255, blue: 33/255, alpha: 0.5)
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
+    
+    
+    deinit{
+        Log.debug("sideMenu Deinit")
+    }
     
     convenience init(sideMenuItems: [SideMenuItem]) {
         self.init()
@@ -229,16 +218,17 @@ extension SideMenuViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: false)
         let item = sideMenuItems[indexPath.row]
     
-        DispatchQueue.global().async { [weak self] in
-            guard let self else {return}
-            do{
-                try KeychainItem(service: .bundle, account: .access).deleteItem()
-                try KeychainItem(service: .bundle, account: .refresh).deleteItem()
-            }catch{
-                Log.error("logout but KeychainItem deleteError")
+        if item.presentation == .logout{
+            DispatchQueue.global().async {
+                do{
+                    try KeychainItem(service: .bundle, account: .access).deleteItem()
+                    try KeychainItem(service: .bundle, account: .refresh).deleteItem()
+                }catch{
+                    Log.error("logout but KeychainItem deleteError")
+                }
             }
-            self.steps.accept(item.presentation)
         }
+        steps.accept(item.presentation)
         hide()
     }
 }
