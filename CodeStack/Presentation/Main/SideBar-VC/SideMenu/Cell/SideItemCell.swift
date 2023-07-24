@@ -14,6 +14,7 @@ final class SideMenuItemCell: UITableViewCell {
 
     private var itemIcon: UIImageView = {
         let imageView = UIImageView()
+        imageView.tintColor = UIColor.black
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -57,7 +58,7 @@ final class SideMenuItemCell: UITableViewCell {
     }
 
     func configureCell(icon: UIImage?, text: String) {
-        itemIcon.image = icon
+        itemIcon.image =  icon
         itemLabel.text = text
     }
 }
