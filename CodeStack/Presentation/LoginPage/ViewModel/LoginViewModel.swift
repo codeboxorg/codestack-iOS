@@ -25,6 +25,7 @@ protocol LoginViewModelProtocol: AnyObject,ViewModelType{
 
 enum LoginError: Error{
     case gitOAuthError
+    case timeOut
 }
 
 class LoginViewModel: LoginViewModelProtocol,Stepper{
@@ -35,7 +36,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     }
     
     struct Output{
-        var loading: Driver<Bool>
+        var loading: Driver<Result<Bool,Error>>
     }
     
     var disposeBag = DisposeBag()
@@ -51,7 +52,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     
     
     private var loginFailAlert: PublishSubject<Bool> = PublishSubject<Bool>()
-    private var loginLoadingEvent = PublishRelay<Bool>()
+    private var loginLoadingEvent = PublishRelay<Result<Bool,Error>>()
 
     
     
@@ -59,10 +60,6 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     func transform(input: Input) -> Output {
         input.loginEvent
             .withUnretained(self)
-            .do(onNext: { [weak self] _ in
-                guard let self else {return}
-                self.loginLoadingEvent.accept(true)
-            })
             .emit{ vm,type in
                 switch type{
                 case .apple:
@@ -74,17 +71,20 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                         Log.error("github 로그인 실패 : \(error)")
                     }
                 case .email((let id, let pwd)):
+                    vm.loginLoadingEvent.accept(.success(true))
                     #if DEBUG
+//                    vm.requestAuth(id: id, pwd: pwd)
                     vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
                     #else
-                    vm.requestAuth(id: id, pwd: pwd)
+                    
                     #endif
                 case .none:
                     break
                 }
             }.disposed(by: disposeBag)
-        return Output(loading: loginLoadingEvent.asDriver(onErrorJustReturn: false))
+        return Output(loading: loginLoadingEvent.asDriver(onErrorJustReturn: .failure(LoginError.timeOut)))
     }
+    
     
     func requestOAuth() throws {
         do {
@@ -95,17 +95,14 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     }
 
     
-    var gitDisposable: Disposable?
-    
-    
     func oAuthComplte(apple token: AppleToken){
         _ = service?
             .request(with: token)
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
             .do(onNext: { [weak self] _ in
-                self?.loginLoadingEvent.accept(false)
+                self?.loginLoadingEvent.accept(.success(false))
             },onError: { [weak self] _ in
-                self?.loginLoadingEvent.accept(false)
+                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
             })
             .subscribe(with: self,onSuccess: {owner, token in
                 owner.signUp(access: token.accessToken, refresh: token.refreshToken)
@@ -125,9 +122,10 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
             .request(with: GitCode(code: code), provider: .github)
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
             .do(onNext: { [weak self] _ in
-                self?.loginLoadingEvent.accept(false)
-            },onError: { [weak self] _ in
-                self?.loginLoadingEvent.accept(false)
+                self?.loginLoadingEvent.accept(.success(false))
+            },onError: { [weak self] err in
+                Log.debug(err)
+                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
             })
             .subscribe(with: self,onSuccess: {owner, token in
                 owner.signUp(access: token.accessToken, refresh: token.refreshToken)
@@ -144,13 +142,12 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
         _ = service?.request(name: id, password: pwd)
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
             .do(onNext: { [weak self] _ in
-                self?.loginLoadingEvent.accept(false)
+                self?.loginLoadingEvent.accept(.success(false))
             },onError: { [weak self] _ in
-                self?.loginLoadingEvent.accept(false)
+                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
             })
             .subscribe(with: self,onSuccess: { owner, token in
-                
-             ApolloService.shared.request(header: token.accessToken)
+//             ApolloService.shared.request(header: token.accessToken)
                 owner.signUp(access: token.accessToken, refresh: token.refreshToken)
             },onError: { owner , err in
                 Log.error(err)
