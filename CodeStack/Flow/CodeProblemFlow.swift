@@ -29,8 +29,10 @@ class CodeProblemFlow: Flow{
         case .problemList:
             return navigateToProblemList()
         case .problemPick(_):
+            rootViewController.tabBarController?.tabBar.isHidden = true
             return navigateToProblemPick()
         case .problemComplete:
+            rootViewController.tabBarController?.tabBar.isHidden = false
             rootViewController.setNavigationBarHidden(false, animated: true)
             rootViewController.popViewController(animated: true)
             return .none
