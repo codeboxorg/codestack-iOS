@@ -50,10 +50,22 @@ class StatusView: UIView{
     }()
     
     
+    private lazy var solvedAllCount: UILabel = {
+        let label = UILabel()
+        label.text = "999"
+        label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        label.textColor = .powder_blue
+        label.textAlignment = .center
+        return label
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layoutConfigure()
+        
         self.backgroundColor = .tertiarySystemBackground
+        self.layer.borderColor = UIColor.lightGray.cgColor
+        self.layer.borderWidth = 1
         
         circleProgressView.progressColor = .juhwang
         circleProgressView.progressBackgroundColor = .gray
@@ -80,8 +92,8 @@ class StatusView: UIView{
         
         let statusBarSpacingTop: CGFloat = 35
         let circleWidthHeight: CGFloat = 100
-        
         let bottomInsetFromSuperView: CGFloat = 30
+        
         [titleLabel,
          circleProgressView,
          statusViewEasy,
@@ -89,6 +101,8 @@ class StatusView: UIView{
          statusViewHard].forEach{
             self.addSubview($0)
         }
+        
+        circleProgressView.addSubview(solvedAllCount)
         
         
         titleLabel.snp.makeConstraints{
@@ -100,6 +114,11 @@ class StatusView: UIView{
             $0.width.height.equalTo(circleWidthHeight)
             $0.centerY.equalTo(statusViewMedium.snp.centerY)
             $0.leading.equalToSuperview().inset(12)
+        }
+        
+        solvedAllCount.snp.makeConstraints{
+            $0.center.equalTo(circleProgressView.snp.center)
+            $0.leading.trailing.equalToSuperview().inset(12)
         }
         
         statusViewEasy.snp.makeConstraints{
