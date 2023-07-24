@@ -17,7 +17,7 @@ enum ButtonType{
 }
 
 
-enum CodestackStep: Step, CaseIterable{
+enum CodestackStep: Step, CaseIterable, Equatable{
     static var allCases: [CodestackStep] = []
     
     //onBoarding
