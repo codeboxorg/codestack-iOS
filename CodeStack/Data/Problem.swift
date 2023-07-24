@@ -18,6 +18,18 @@ struct _Problem: Codable{
     let accepted: Int
     let tags: [Tag]
     let languages: [Language]
+    
+    init(id: Int = 1, title: String, context: String = "", maxCpuTime: Int = 1, maxMemory: Int = 1, submission: Int = 1, accepted: Int = 1, tags: [Tag] = [], languages: [Language] = []) {
+        self.id = id
+        self.title = title
+        self.context = context
+        self.maxCpuTime = maxCpuTime
+        self.maxMemory = maxMemory
+        self.submission = submission
+        self.accepted = accepted
+        self.tags = tags
+        self.languages = languages
+    }
 }
 
 
