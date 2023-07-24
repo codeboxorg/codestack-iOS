@@ -22,20 +22,8 @@ class ContainerView: UIView{
     }
     
     override func draw(_ rect: CGRect) {
-        
-        let rect = rect
-        let path = UIBezierPath()
-        
-        path.lineWidth = 1
-        
-        path.move(to: CGPoint(x: 0, y: rect.origin.y))
-        path.addLine(to: CGPoint(x: rect.width, y: rect.origin.y))
-        path.addLine(to: CGPoint(x: rect.width, y: rect.origin.y + rect.height))
-        path.addLine(to: CGPoint(x: 0, y: rect.origin.y + rect.height))
-        path.addLine(to: CGPoint(x: 0, y: rect.origin.y))
-        
-        UIColor.lightGray.setStroke()
-        path.stroke()
+        self.layer.addBorder(side: .top, thickness: 1, color: UIColor.lightGray.cgColor)
+        self.layer.addBorder(side: .bottom, thickness: 1, color: UIColor.lightGray.cgColor)
     }
     
 }
