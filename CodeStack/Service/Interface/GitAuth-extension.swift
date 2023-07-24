@@ -9,8 +9,6 @@ import Foundation
 import RxSwift
 
 
-
-
 extension GitOAuthorization{
     
     func postHeader(with code: GitCode) -> URLRequest{
@@ -124,7 +122,7 @@ extension GitOAuthorization{
         var component = URLComponents(string: "https://github.com/login/oauth/authorize")
         component?.queryItems = [URLQueryItem(name: "client_id", value: client_id),
                                  URLQueryItem(name: "redirect_uri", value: "https://dev.codestack.co.kr/api/oauth/github?isMobile=true")]
-        Log.debug(component?.url)
+
         return component?.url
     }
     
