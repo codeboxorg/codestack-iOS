@@ -21,7 +21,6 @@ class HistoryViewController: UIViewController {
         return history
     }
     
-    
     private let container: ContainerView = {
         let view = ContainerView(frame: .zero)
         view.backgroundColor = .tertiarySystemBackground
@@ -36,11 +35,12 @@ class HistoryViewController: UIViewController {
     private let historyList: UITableView = {
         let table = UITableView(frame: .zero)
         table.register(HistoryCell.self, forCellReuseIdentifier: HistoryCell.identifier)
+        table.alwaysBounceVertical = false
         return table
     }()
     
     var _viewDidLoad = PublishSubject<Void>()
-
+    
     var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -51,24 +51,25 @@ class HistoryViewController: UIViewController {
     }
     
     func binding(){
-        
         let rightGesture = historyList.rx.gesture(.swipe(direction: .right))
             .withUnretained(self)
-            .map{ vc, _ in
+            .compactMap{ vc, _ in
                 if vc.historySegmentList.selectedSegmentIndex != 0{
                     vc.historySegmentList.selectedSegmentIndex -= 1
+                    return vc.historySegmentList.selectedSegmentIndex
                 }
-                return vc.historySegmentList.selectedSegmentIndex
+                return nil
             }.asDriver(onErrorJustReturn: 0)
         
         
         let leftGesture = historyList.rx.gesture(.swipe(direction: .left))
             .withUnretained(self)
-            .map{ vc, _ in
+            .compactMap{ vc, _ in
                 if vc.historySegmentList.selectedSegmentIndex != 4{
                     vc.historySegmentList.selectedSegmentIndex += 1
+                    return vc.historySegmentList.selectedSegmentIndex
                 }
-                return vc.historySegmentList.selectedSegmentIndex
+                return nil
             }.asDriver(onErrorJustReturn: 0)
         
         
@@ -86,8 +87,9 @@ class HistoryViewController: UIViewController {
         let currentSegment
         =
         historySegmentUtil.map{ value in
-            SegType.switchSegType(value: SegType.Value(rawValue: value) ?? SegType.Value.all)
-        }.asSignal(onErrorJustReturn: .all)
+            let solveStatus = SegType.switchSegType(value: SegType.Value(rawValue: value) ?? SegType.Value.all)
+            return solveStatus
+        }.asSignal(onErrorJustReturn: .none)
         
         
         guard let output = historyViewModel?
@@ -98,13 +100,14 @@ class HistoryViewController: UIViewController {
         output.historyData
             .drive(historyList.rx.items(cellIdentifier: HistoryCell.identifier,
                                         cellType: HistoryCell.self))
-        { index , value , cell in
-            cell.publishRelay.accept(value)
+        {  index , submission , cell in
+            cell.selectionStyle = .none
+            cell.separatorInset = UIEdgeInsets.zero
+            cell.onHistoryData.accept(submission)
+            cell.onStatus.accept(Submission.convertSolveStatus(submission.statusCode ?? ""))
         }.disposed(by: disposeBag)
-        
     }
 }
-
 
 //MARK: - Layout configure
 extension HistoryViewController{
@@ -132,7 +135,6 @@ extension HistoryViewController{
             $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
             $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
         }
-        
         
         historySegmentList.snp.makeConstraints{
             $0.top.equalToSuperview()
