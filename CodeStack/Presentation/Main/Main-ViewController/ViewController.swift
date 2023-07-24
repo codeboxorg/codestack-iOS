@@ -78,6 +78,11 @@ class ViewController: UIViewController{
     }()
     
     
+    private lazy var alramView: RightAlarmView = {
+        let view = RightAlarmView()
+        return view
+    }()
+    
     
     private var _viewDidLoad = PublishRelay<Void>()
     private var disposeBag = DisposeBag()
@@ -99,12 +104,6 @@ class ViewController: UIViewController{
             sidemenuViewController.didMove(toParent: self)
         }
         
-#if DEBUG
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-            //            self.mainView.move()
-        })
-#endif
-        
         _viewDidLoad.accept(())
     }
     
@@ -114,7 +113,8 @@ class ViewController: UIViewController{
                                                                                             rightSwipeGesture: view.rx.gesture(.swipe(direction: .right)).when(.recognized).asObservable(),
                                                                                             leftSwipeGesture: view.rx.gesture(.swipe(direction: .left)).when(.recognized).asObservable(),
                                                                                             leftNavigationButtonEvent: navigationItem.leftBarButtonItem?.rx.tap.asSignal() ?? .never(),
-                                                                                            recentProblemPage: recentPagesCollectionView.rx.modelSelected(Submission.self).asSignal()))
+                                                                                            recentProblemPage: recentPagesCollectionView.rx.modelSelected(Submission.self).asSignal(),
+                                                                                            alramTapped: alramView.rx.gesture(.tap()).when(.recognized).asObservable()))
         output.submissions
             .drive(recentPagesCollectionView.rx.items(cellIdentifier: PRSubmissionHistoryCell.identifier,
                                                       cellType: PRSubmissionHistoryCell.self))
@@ -130,6 +130,7 @@ class ViewController: UIViewController{
         //라지 타이틀 적용
         adjustLargeTitleSize()
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alramView)
         // 사이드바 보기 버튼 적용
         self.view.backgroundColor = UIColor.systemBackground
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: nil)
