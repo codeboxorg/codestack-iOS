@@ -57,7 +57,7 @@ class LoginViewController: UIViewController,Stepper{
     //MARK: LoginVC Life-Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
+//        self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         layoutConfigure()
         // Apple login buton setting
@@ -69,12 +69,6 @@ class LoginViewController: UIViewController,Stepper{
         
         loginView.binding(loading: output.loading)
     
-        #if DEBUG
-        DispatchQueue.main.async {
-            self.loginView.moveTomain?()
-        }
-        #endif
-        
     }
     
     fileprivate func layoutConfigure(){
