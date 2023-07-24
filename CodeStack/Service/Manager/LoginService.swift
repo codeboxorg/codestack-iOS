@@ -20,10 +20,8 @@ final class LoginService: NSObject{
     
     init(_ session: URLSession = URLSession(configuration: .default)) {
         self.urlSession = session
+        
         super.init()
-        
-        
-        
     }
 }
 
@@ -31,15 +29,12 @@ final class LoginService: NSObject{
 extension LoginService: CodestackAuthorization{
     func request(name id: ID,password: Pwd) -> Maybe<CodestackResponseToken>{
         let request = postHeader(with: CodestackToken(id: id, password: password))
-        
-        Log.debug(request)
-        
+     
         return urlSession.rx
             .response(request: request)
+            .timeout(.seconds(5), scheduler: ConcurrentDispatchQueueScheduler.init(qos: .background))
             .asMaybe()
             .map{ (response: HTTPURLResponse, data: Data) -> CodestackResponseToken in
-                Log.debug(response)
-                Log.debug(data)
                 if  (200..<300) ~= response.statusCode {
                     do{
                         let token = try JSONDecoder().decode(CodestackResponseToken.self, from: data)
@@ -72,11 +67,11 @@ extension LoginService: AppleAuthorization{
         
         return urlSession.rx
             .response(request: request)
+            .timeout(.seconds(5), scheduler: ConcurrentDispatchQueueScheduler.init(qos: .background))
             .asMaybe()
             .map{ (response: HTTPURLResponse, data: Data) -> CodestackResponseToken in
                 if  (200..<300) ~= response.statusCode {
                     do{
-                        let token = try JSONSerialization.jsonObject(with: data)
                         let resonseToken = try JSONDecoder().decode(CodestackResponseToken.self, from: data)
                  
                         return resonseToken
@@ -121,6 +116,7 @@ extension LoginService: GitOAuthorization{
         
         return URLSession.shared.rx
             .response(request: request)
+            .timeout(.seconds(5), scheduler: ConcurrentDispatchQueueScheduler.init(qos: .background))
             .asMaybe()
             .map{ (response: HTTPURLResponse, data: Data) -> CodestackResponseToken in
                 if  (200..<300) ~= response.statusCode {
@@ -146,6 +142,7 @@ extension LoginService: GitOAuthorization{
         guard let request = try? self.postGitRequest(code: code) else {return Maybe.error(CSError.badURLRequest)}
         return URLSession.shared.rx
             .response(request: request)
+            .timeout(.seconds(5), scheduler: ConcurrentDispatchQueueScheduler.init(qos: .background))
             .asMaybe()
             .map{ (response: HTTPURLResponse, data: Data) -> GitToken in
                 if  (200..<300) ~= response.statusCode {
