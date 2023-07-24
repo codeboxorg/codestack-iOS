@@ -19,6 +19,18 @@
 		960B83742A5DB236002753F6 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 960B83732A5DB236002753F6 /* RxSwift */; };
 		96123D0D2A39FEDB002160B9 /* CodeProblemListFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96123D0C2A39FEDB002160B9 /* CodeProblemListFlow.swift */; };
 		96123D122A3A088C002160B9 /* Collection+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96123D112A3A088C002160B9 /* Collection+extension.swift */; };
+		961773592A68036A00AFE287 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961773582A68036A00AFE287 /* HistoryCell.swift */; };
+		9629F85B2A6BDAB400019349 /* ToastMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F85A2A6BDAB400019349 /* ToastMessage.swift */; };
+		9629F85D2A6BDAD900019349 /* UIView-Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F85C2A6BDAD900019349 /* UIView-Ext.swift */; };
+		9629F85F2A6BDB0800019349 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F85E2A6BDB0800019349 /* Position.swift */; };
+		9629F8612A6C074300019349 /* RefreshTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8602A6C074300019349 /* RefreshTableView.swift */; };
+		9629F8632A6C09BA00019349 /* CustomBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8622A6C09BA00019349 /* CustomBottomView.swift */; };
+		9629F8652A6C11B300019349 /* RightAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8642A6C11B300019349 /* RightAlarmView.swift */; };
+		9629F8672A6C13FD00019349 /* UIImage-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8662A6C13FD00019349 /* UIImage-extension.swift */; };
+		9629F86A2A6D168D00019349 /* ApolloService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8692A6D168D00019349 /* ApolloService.swift */; };
+		9629F86C2A6D181900019349 /* ApolloClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86B2A6D181900019349 /* ApolloClient.swift */; };
+		9629F86E2A6D186700019349 /* RxApollo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86D2A6D186700019349 /* RxApollo.swift */; };
+		9629F8702A6D1C7200019349 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86F2A6D1C7200019349 /* API.swift */; };
 		964590992A4870350060BDCE /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964590982A4870350060BDCE /* StatusView.swift */; };
 		9645909B2A4873740060BDCE /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9645909A2A4873740060BDCE /* ProgressView.swift */; };
 		9645909D2A487D9F0060BDCE /* CircleLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9645909C2A487D9E0060BDCE /* CircleLayer.swift */; };
@@ -61,7 +73,7 @@
 		9653113C29EE9617006C3E18 /* go in Resources */ = {isa = PBXBuildFile; fileRef = 9653113B29EE9617006C3E18 /* go */; };
 		9653114029EE9637006C3E18 /* kotlin in Resources */ = {isa = PBXBuildFile; fileRef = 9653113F29EE9637006C3E18 /* kotlin */; };
 		9653114829EEA162006C3E18 /* KeyBoardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114729EEA162006C3E18 /* KeyBoardManager.swift */; };
-		9653114A29EEED69006C3E18 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114929EEED69006C3E18 /* TestViewController.swift */; };
+		9653114A29EEED69006C3E18 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114929EEED69006C3E18 /* HistoryViewController.swift */; };
 		9653114C29EEF1F9006C3E18 /* CustomLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114B29EEF1F9006C3E18 /* CustomLayoutManager.swift */; };
 		96564B432A5C26E30054193F /* codestackSchema.graphqls in Resources */ = {isa = PBXBuildFile; fileRef = 96564B422A5C26E30054193F /* codestackSchema.graphqls */; };
 		96564B452A5C30340054193F /* graphqlQueries.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 96564B442A5C30340054193F /* graphqlQueries.graphql */; };
@@ -76,10 +88,14 @@
 		9665D9A22A49BE38004CB33A /* ProblemCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9A12A49BE38004CB33A /* ProblemCalendar.swift */; };
 		9665D9A42A49BF64004CB33A /* OAuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9A32A49BF64004CB33A /* OAuthProvider.swift */; };
 		9665D9A82A49CC1F004CB33A /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9A72A49CC1F004CB33A /* GraphView.swift */; };
-		966972812A31FFE3004E0E8B /* HomeFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972802A31FFE3004E0E8B /* HomeFlow.swift */; };
+		966972812A31FFE3004E0E8B /* TabBarFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972802A31FFE3004E0E8B /* TabBarFlow.swift */; };
 		966972832A320370004E0E8B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972822A320370004E0E8B /* HomeViewModel.swift */; };
 		966972872A320DCE004E0E8B /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972862A320DCE004E0E8B /* ViewModelType.swift */; };
 		966972892A32104A004E0E8B /* LoginButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972882A32104A004E0E8B /* LoginButtonType.swift */; };
+		967678262A66838C00873404 /* HistorySegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678252A66838C00873404 /* HistorySegmentedControl.swift */; };
+		967678282A668C2200873404 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678272A668C2200873404 /* Container.swift */; };
+		9676782A2A66955800873404 /* String-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678292A66955800873404 /* String-extension.swift */; };
+		9676782F2A66ADCE00873404 /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9676782E2A66ADCE00873404 /* HistoryViewModel.swift */; };
 		96796A342A56E5390091F54F /* GitCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A332A56E5390091F54F /* GitCode.swift */; };
 		96796A362A56FCFE0091F54F /* KeychainItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A352A56FCFE0091F54F /* KeychainItem.swift */; };
 		96796A382A584C500091F54F /* Log-Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A372A584C500091F54F /* Log-Util.swift */; };
@@ -113,6 +129,13 @@
 		96C9F5B929FE9DEB008D48B9 /* RandomNonceString-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B829FE9DEB008D48B9 /* RandomNonceString-ext.swift */; };
 		96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */; };
 		96C9F5BF2A03C456008D48B9 /* FoldButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldButton.swift */; };
+		96D31B4E2A6174170018A5D4 /* OnBoardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B4D2A6174170018A5D4 /* OnBoardingFlow.swift */; };
+		96D31B502A617C2D0018A5D4 /* OnBoardingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B4F2A617C2D0018A5D4 /* OnBoardingVC.swift */; };
+		96D31B522A617DAB0018A5D4 /* OnBoardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B512A617DAB0018A5D4 /* OnBoardingViewModel.swift */; };
+		96D31B542A62C0CC0018A5D4 /* TestNetworkServicer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B532A62C0CC0018A5D4 /* TestNetworkServicer.swift */; };
+		96D31B562A62CC730018A5D4 /* TestRetruy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B552A62CC730018A5D4 /* TestRetruy.swift */; };
+		96D31B5B2A63D03B0018A5D4 /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B5A2A63D03B0018A5D4 /* MyPageViewModel.swift */; };
+		96D31B5D2A63D3EC0018A5D4 /* HomeFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B5C2A63D3EC0018A5D4 /* HomeFlow.swift */; };
 		96D4329F2A5263BF002403C4 /* PRSubmissionHistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D4329E2A5263BF002403C4 /* PRSubmissionHistoryCell.swift */; };
 		96D432A22A526A1D002403C4 /* OAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D432A12A526A1D002403C4 /* OAuthorization.swift */; };
 		96D432A72A52EFEB002403C4 /* CodestackToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D432A62A52EFEB002403C4 /* CodestackToken.swift */; };
@@ -122,7 +145,11 @@
 		96D638EA2A30B7A100AA95B5 /* CodestackStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E92A30B7A100AA95B5 /* CodestackStep.swift */; };
 		96D77C4A2A1C8AF90075E52E /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D77C492A1C8AF90075E52E /* MyPageViewController.swift */; };
 		96D77C4C2A1C8B160075E52E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D77C4B2A1C8B160075E52E /* ProfileView.swift */; };
-		96FF97842A5B111800405216 /* ApolloService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FF97832A5B111800405216 /* ApolloService.swift */; };
+		96EDAAAA2A6036E000125558 /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EDAAA92A6036E000125558 /* CustomTabBarController.swift */; };
+		96EDAAAC2A603E7800125558 /* CodeProblemFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EDAAAB2A603E7800125558 /* CodeProblemFlow.swift */; };
+		96EDAAAE2A603E8400125558 /* MyPageFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EDAAAD2A603E8400125558 /* MyPageFlow.swift */; };
+		96EDAAB02A603E8A00125558 /* HistoryFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EDAAAF2A603E8A00125558 /* HistoryFlow.swift */; };
+		96FF97842A5B111800405216 /* DefaultApolloService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96FF97832A5B111800405216 /* DefaultApolloService.swift */; };
 		96FF97872A5B1E7E00405216 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 96FF97862A5B1E7E00405216 /* Apollo */; };
 		E1F3D71A0B98C6459CE47F3E /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 888536A096FDB637B05C3E69 /* Pods_CodeStack_CodeStackUITests.framework */; };
 /* End PBXBuildFile section */
@@ -153,6 +180,18 @@
 		888536A096FDB637B05C3E69 /* Pods_CodeStack_CodeStackUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CodeStack_CodeStackUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		96123D0C2A39FEDB002160B9 /* CodeProblemListFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemListFlow.swift; sourceTree = "<group>"; };
 		96123D112A3A088C002160B9 /* Collection+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+extension.swift"; sourceTree = "<group>"; };
+		961773582A68036A00AFE287 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
+		9629F85A2A6BDAB400019349 /* ToastMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastMessage.swift; sourceTree = "<group>"; };
+		9629F85C2A6BDAD900019349 /* UIView-Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView-Ext.swift"; sourceTree = "<group>"; };
+		9629F85E2A6BDB0800019349 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
+		9629F8602A6C074300019349 /* RefreshTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshTableView.swift; sourceTree = "<group>"; };
+		9629F8622A6C09BA00019349 /* CustomBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBottomView.swift; sourceTree = "<group>"; };
+		9629F8642A6C11B300019349 /* RightAlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightAlarmView.swift; sourceTree = "<group>"; };
+		9629F8662A6C13FD00019349 /* UIImage-extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage-extension.swift"; sourceTree = "<group>"; };
+		9629F8692A6D168D00019349 /* ApolloService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloService.swift; sourceTree = "<group>"; };
+		9629F86B2A6D181900019349 /* ApolloClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloClient.swift; sourceTree = "<group>"; };
+		9629F86D2A6D186700019349 /* RxApollo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxApollo.swift; sourceTree = "<group>"; };
+		9629F86F2A6D1C7200019349 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		964590982A4870350060BDCE /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		9645909A2A4873740060BDCE /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		9645909C2A487D9E0060BDCE /* CircleLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleLayer.swift; sourceTree = "<group>"; };
@@ -198,7 +237,7 @@
 		9653113B29EE9617006C3E18 /* go */ = {isa = PBXFileReference; lastKnownFileType = folder; path = go; sourceTree = "<group>"; };
 		9653113F29EE9637006C3E18 /* kotlin */ = {isa = PBXFileReference; lastKnownFileType = folder; path = kotlin; sourceTree = "<group>"; };
 		9653114729EEA162006C3E18 /* KeyBoardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBoardManager.swift; sourceTree = "<group>"; };
-		9653114929EEED69006C3E18 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		9653114929EEED69006C3E18 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
 		9653114B29EEF1F9006C3E18 /* CustomLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLayoutManager.swift; sourceTree = "<group>"; };
 		96564B422A5C26E30054193F /* codestackSchema.graphqls */ = {isa = PBXFileReference; lastKnownFileType = text; path = codestackSchema.graphqls; sourceTree = "<group>"; };
 		96564B442A5C30340054193F /* graphqlQueries.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = graphqlQueries.graphql; sourceTree = "<group>"; };
@@ -213,10 +252,14 @@
 		9665D9A12A49BE38004CB33A /* ProblemCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemCalendar.swift; sourceTree = "<group>"; };
 		9665D9A32A49BF64004CB33A /* OAuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthProvider.swift; sourceTree = "<group>"; };
 		9665D9A72A49CC1F004CB33A /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
-		966972802A31FFE3004E0E8B /* HomeFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFlow.swift; sourceTree = "<group>"; };
+		966972802A31FFE3004E0E8B /* TabBarFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarFlow.swift; sourceTree = "<group>"; };
 		966972822A320370004E0E8B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		966972862A320DCE004E0E8B /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
 		966972882A32104A004E0E8B /* LoginButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginButtonType.swift; sourceTree = "<group>"; };
+		967678252A66838C00873404 /* HistorySegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistorySegmentedControl.swift; sourceTree = "<group>"; };
+		967678272A668C2200873404 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
+		967678292A66955800873404 /* String-extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String-extension.swift"; sourceTree = "<group>"; };
+		9676782E2A66ADCE00873404 /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
 		96796A332A56E5390091F54F /* GitCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCode.swift; sourceTree = "<group>"; };
 		96796A352A56FCFE0091F54F /* KeychainItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainItem.swift; sourceTree = "<group>"; };
 		96796A372A584C500091F54F /* Log-Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Log-Util.swift"; sourceTree = "<group>"; };
@@ -252,6 +295,14 @@
 		96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CodeStack.entitlements; sourceTree = "<group>"; };
 		96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemViewModel.swift; sourceTree = "<group>"; };
 		96C9F5BE2A03C456008D48B9 /* FoldButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldButton.swift; sourceTree = "<group>"; };
+		96D31B4D2A6174170018A5D4 /* OnBoardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingFlow.swift; sourceTree = "<group>"; };
+		96D31B4F2A617C2D0018A5D4 /* OnBoardingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingVC.swift; sourceTree = "<group>"; };
+		96D31B512A617DAB0018A5D4 /* OnBoardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingViewModel.swift; sourceTree = "<group>"; };
+		96D31B532A62C0CC0018A5D4 /* TestNetworkServicer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkServicer.swift; sourceTree = "<group>"; };
+		96D31B552A62CC730018A5D4 /* TestRetruy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRetruy.swift; sourceTree = "<group>"; };
+		96D31B5A2A63D03B0018A5D4 /* MyPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewModel.swift; sourceTree = "<group>"; };
+		96D31B5C2A63D3EC0018A5D4 /* HomeFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFlow.swift; sourceTree = "<group>"; };
+		96D31BF62A6529840018A5D4 /* CodeStack copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "CodeStack copy-Info.plist"; path = "/Users/baghyeonghwan/IOSPROJECT/CodeStack/CodeStack copy-Info.plist"; sourceTree = "<absolute>"; };
 		96D4329E2A5263BF002403C4 /* PRSubmissionHistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRSubmissionHistoryCell.swift; sourceTree = "<group>"; };
 		96D432A12A526A1D002403C4 /* OAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthorization.swift; sourceTree = "<group>"; };
 		96D432A62A52EFEB002403C4 /* CodestackToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackToken.swift; sourceTree = "<group>"; };
@@ -261,7 +312,11 @@
 		96D638E92A30B7A100AA95B5 /* CodestackStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackStep.swift; sourceTree = "<group>"; };
 		96D77C492A1C8AF90075E52E /* MyPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewController.swift; sourceTree = "<group>"; };
 		96D77C4B2A1C8B160075E52E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		96FF97832A5B111800405216 /* ApolloService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloService.swift; sourceTree = "<group>"; };
+		96EDAAA92A6036E000125558 /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
+		96EDAAAB2A603E7800125558 /* CodeProblemFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemFlow.swift; sourceTree = "<group>"; };
+		96EDAAAD2A603E8400125558 /* MyPageFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageFlow.swift; sourceTree = "<group>"; };
+		96EDAAAF2A603E8A00125558 /* HistoryFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryFlow.swift; sourceTree = "<group>"; };
+		96FF97832A5B111800405216 /* DefaultApolloService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultApolloService.swift; sourceTree = "<group>"; };
 		99BE444205AD935B6D2D57E3 /* Pods-CodeStack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack.release.xcconfig"; path = "Target Support Files/Pods-CodeStack/Pods-CodeStack.release.xcconfig"; sourceTree = "<group>"; };
 		9C18FCC8D5E5318956E25003 /* Pods-CodeStack-CodeStackUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.debug.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		A2EB9D7F2F5A8F1776F6BF28 /* Pods-CodeStack-CodeStackUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeStack-CodeStackUITests.release.xcconfig"; path = "Target Support Files/Pods-CodeStack-CodeStackUITests/Pods-CodeStack-CodeStackUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -343,6 +398,25 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
+		9629F8682A6D15C200019349 /* Apollo */ = {
+			isa = PBXGroup;
+			children = (
+				96FF97832A5B111800405216 /* DefaultApolloService.swift */,
+				9629F86B2A6D181900019349 /* ApolloClient.swift */,
+				9629F86D2A6D186700019349 /* RxApollo.swift */,
+			);
+			path = Apollo;
+			sourceTree = "<group>";
+		};
+		9629F8712A6EAD3F00019349 /* OnBoarding */ = {
+			isa = PBXGroup;
+			children = (
+				96D31B4F2A617C2D0018A5D4 /* OnBoardingVC.swift */,
+				96D31B512A617DAB0018A5D4 /* OnBoardingViewModel.swift */,
+			);
+			path = OnBoarding;
+			sourceTree = "<group>";
+		};
 		965310A429EA7A4F006C3E18 = {
 			isa = PBXGroup;
 			children = (
@@ -353,6 +427,7 @@
 				965310AE29EA7A4F006C3E18 /* Products */,
 				55099AAE04D17F2FB691F355 /* Pods */,
 				2C07342AAD050E547FAC2A75 /* Frameworks */,
+				96D31BF62A6529840018A5D4 /* CodeStack copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -373,9 +448,9 @@
 				96564B3F2A5C22370054193F /* Apollo */,
 				965310B029EA7A4F006C3E18 /* AppDelegate.swift */,
 				965310B229EA7A4F006C3E18 /* SceneDelegate.swift */,
-				96123D102A3A0866002160B9 /* Extension */,
 				96D638E12A30B51600AA95B5 /* Flow */,
 				9653110229EAE089006C3E18 /* App-Util */,
+				9665D9A52A49CB77004CB33A /* Common */,
 				965310EA29EA8F59006C3E18 /* Presentation */,
 				9653114629EEA133006C3E18 /* KeyBoardManager-Shared */,
 				9653111029EBCD8E006C3E18 /* Data */,
@@ -411,6 +486,8 @@
 			children = (
 				964590A02A488D970060BDCE /* Color.swift */,
 				965310E429EA855D006C3E18 /* Label-extension.swift */,
+				967678292A66955800873404 /* String-extension.swift */,
+				9629F8662A6C13FD00019349 /* UIImage-extension.swift */,
 			);
 			path = Style;
 			sourceTree = "<group>";
@@ -418,10 +495,12 @@
 		965310EA29EA8F59006C3E18 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				96C9F5B129FE86F8008D48B9 /* ViewModel */,
+				9629F8712A6EAD3F00019349 /* OnBoarding */,
 				96BA540529F6C70700B5BDD3 /* LoginPage */,
 				965310EB29EA8F68006C3E18 /* Main */,
-				9665D9A52A49CB77004CB33A /* Common */,
+				9653110B29EAF1B6006C3E18 /* CodeProblem */,
+				9653112A29EE6D7E006C3E18 /* CodeEditor */,
+				9676782B2A66ADA300873404 /* History */,
 				96D77C482A1C8ADF0075E52E /* MyPage */,
 			);
 			path = Presentation;
@@ -433,8 +512,6 @@
 				965310F529EADE5B006C3E18 /* interface */,
 				9653110629EAEFBE006C3E18 /* Main-ViewController */,
 				9653110829EAF044006C3E18 /* SideBar-VC */,
-				9653110B29EAF1B6006C3E18 /* CodeProblem-VC */,
-				9653112A29EE6D7E006C3E18 /* CodeEditor-VC */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -442,11 +519,13 @@
 		965310ED29EA9991006C3E18 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				965310E629EA8E96006C3E18 /* MainView.swift */,
-				9665D9A72A49CC1F004CB33A /* GraphView.swift */,
-				96D4329E2A5263BF002403C4 /* PRSubmissionHistoryCell.swift */,
 				96D432A82A52FE0D002403C4 /* PRPlaceholderView.swift */,
+				9629F8622A6C09BA00019349 /* CustomBottomView.swift */,
+				96EDAAA92A6036E000125558 /* CustomTabBarController.swift */,
 				96AE33B62A4C651900BB0817 /* CAVIew.swift */,
+				9629F85A2A6BDAB400019349 /* ToastMessage.swift */,
+				9629F85E2A6BDB0800019349 /* Position.swift */,
+				9629F85C2A6BDAD900019349 /* UIView-Ext.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -490,6 +569,10 @@
 			children = (
 				966972822A320370004E0E8B /* HomeViewModel.swift */,
 				965310B429EA7A4F006C3E18 /* ViewController.swift */,
+				96D4329E2A5263BF002403C4 /* PRSubmissionHistoryCell.swift */,
+				9665D9A72A49CC1F004CB33A /* GraphView.swift */,
+				9629F8642A6C11B300019349 /* RightAlarmView.swift */,
+				965310E629EA8E96006C3E18 /* MainView.swift */,
 			);
 			path = "Main-ViewController";
 			sourceTree = "<group>";
@@ -502,16 +585,17 @@
 			path = "SideBar-VC";
 			sourceTree = "<group>";
 		};
-		9653110B29EAF1B6006C3E18 /* CodeProblem-VC */ = {
+		9653110B29EAF1B6006C3E18 /* CodeProblem */ = {
 			isa = PBXGroup;
 			children = (
 				9653112829ED3481006C3E18 /* DummyData.swift */,
 				9653111729EBD7C7006C3E18 /* VIewModel */,
 				9653110C29EAF1DF006C3E18 /* CodeProblemViewController.swift */,
+				9629F8602A6C074300019349 /* RefreshTableView.swift */,
 				9653112529ED1AD6006C3E18 /* Cell */,
 				9653111E29ED1728006C3E18 /* Util */,
 			);
-			path = "CodeProblem-VC";
+			path = CodeProblem;
 			sourceTree = "<group>";
 		};
 		9653111029EBCD8E006C3E18 /* Data */ = {
@@ -581,7 +665,7 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
-		9653112A29EE6D7E006C3E18 /* CodeEditor-VC */ = {
+		9653112A29EE6D7E006C3E18 /* CodeEditor */ = {
 			isa = PBXGroup;
 			children = (
 				96BA53FE29F53DAB00B5BDD3 /* ProblemDescriptionView.swift */,
@@ -590,10 +674,9 @@
 				9653112B29EE6D9E006C3E18 /* CodeEditorViewController.swift */,
 				96BA53B029EFE0CE00B5BDD3 /* VIew */,
 				9653114B29EEF1F9006C3E18 /* CustomLayoutManager.swift */,
-				9653114929EEED69006C3E18 /* TestViewController.swift */,
 				9653112D29EE6E43006C3E18 /* CodeTextView.swift */,
 			);
-			path = "CodeEditor-VC";
+			path = CodeEditor;
 			sourceTree = "<group>";
 		};
 		9653114129EE9BFE006C3E18 /* Resources */ = {
@@ -639,6 +722,7 @@
 		9665D9A52A49CB77004CB33A /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				96123D102A3A0866002160B9 /* Extension */,
 				965310E329EA854C006C3E18 /* Style */,
 				9665D9A62A49CBA6004CB33A /* Button */,
 				965310ED29EA9991006C3E18 /* View */,
@@ -655,11 +739,40 @@
 			path = Button;
 			sourceTree = "<group>";
 		};
+		9676782B2A66ADA300873404 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				9676782C2A66ADB700873404 /* ViewModel */,
+				9676782D2A66ADBA00873404 /* View */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		9676782C2A66ADB700873404 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				9676782E2A66ADCE00873404 /* HistoryViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		9676782D2A66ADBA00873404 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				9653114929EEED69006C3E18 /* HistoryViewController.swift */,
+				961773582A68036A00AFE287 /* HistoryCell.swift */,
+				967678272A668C2200873404 /* Container.swift */,
+				967678252A66838C00873404 /* HistorySegmentedControl.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		96AE36F92A54459F0026DF49 /* HTTP-element */ = {
 			isa = PBXGroup;
 			children = (
 				96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */,
 				96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */,
+				9629F86F2A6D1C7200019349 /* API.swift */,
 			);
 			path = "HTTP-element";
 			sourceTree = "<group>";
@@ -668,9 +781,8 @@
 			isa = PBXGroup;
 			children = (
 				96C9F5A629FE7A7A008D48B9 /* LoginService.swift */,
-				96FF97832A5B111800405216 /* ApolloService.swift */,
 				96C9F5B629FE9CBF008D48B9 /* AppleLoginService.swift */,
-				96796A352A56FCFE0091F54F /* KeychainItem.swift */,
+				96D31B532A62C0CC0018A5D4 /* TestNetworkServicer.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -694,6 +806,7 @@
 		96BA540529F6C70700B5BDD3 /* LoginPage */ = {
 			isa = PBXGroup;
 			children = (
+				96C9F5B129FE86F8008D48B9 /* ViewModel */,
 				96BA540629F6C71400B5BDD3 /* LoginViewController.swift */,
 				966972882A32104A004E0E8B /* LoginButtonType.swift */,
 				96BA540829F6C71A00B5BDD3 /* CustomTextField.swift */,
@@ -709,6 +822,7 @@
 			children = (
 				96D432A02A526A00002403C4 /* Interface */,
 				96AE36FA2A5445B90026DF49 /* Manager */,
+				9629F8682A6D15C200019349 /* Apollo */,
 				96AE36F92A54459F0026DF49 /* HTTP-element */,
 				96C9F5AC29FE7EC8008D48B9 /* Util */,
 			);
@@ -718,6 +832,7 @@
 		96C9F5AC29FE7EC8008D48B9 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				96796A352A56FCFE0091F54F /* KeychainItem.swift */,
 				96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */,
 				96C9F5B829FE9DEB008D48B9 /* RandomNonceString-ext.swift */,
 				96796A372A584C500091F54F /* Log-Util.swift */,
@@ -735,9 +850,31 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		96D31B572A63D0220018A5D4 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				96D31B5A2A63D03B0018A5D4 /* MyPageViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		96D31B582A63D0250018A5D4 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				96D77C492A1C8AF90075E52E /* MyPageViewController.swift */,
+				96D77C4B2A1C8B160075E52E /* ProfileView.swift */,
+				964590982A4870350060BDCE /* StatusView.swift */,
+				9645909C2A487D9E0060BDCE /* CircleLayer.swift */,
+				9645909A2A4873740060BDCE /* ProgressView.swift */,
+				9645909E2A4886990060BDCE /* CircleProgressView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		96D432A02A526A00002403C4 /* Interface */ = {
 			isa = PBXGroup;
 			children = (
+				9629F8692A6D168D00019349 /* ApolloService.swift */,
 				96D432A12A526A1D002403C4 /* OAuthorization.swift */,
 				96AE36F12A54419F0026DF49 /* AppleAuthorization.swift */,
 				96AE36F32A5441F90026DF49 /* GitAuthorization.swift */,
@@ -753,10 +890,16 @@
 			isa = PBXGroup;
 			children = (
 				96D638E92A30B7A100AA95B5 /* CodestackStep.swift */,
+				96D31B552A62CC730018A5D4 /* TestRetruy.swift */,
 				96D638E42A30B5D900AA95B5 /* AppFlow.swift */,
+				96D31B4D2A6174170018A5D4 /* OnBoardingFlow.swift */,
 				96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */,
-				966972802A31FFE3004E0E8B /* HomeFlow.swift */,
+				966972802A31FFE3004E0E8B /* TabBarFlow.swift */,
+				96D31B5C2A63D3EC0018A5D4 /* HomeFlow.swift */,
+				96EDAAAB2A603E7800125558 /* CodeProblemFlow.swift */,
 				96123D0C2A39FEDB002160B9 /* CodeProblemListFlow.swift */,
+				96EDAAAD2A603E8400125558 /* MyPageFlow.swift */,
+				96EDAAAF2A603E8A00125558 /* HistoryFlow.swift */,
 			);
 			path = Flow;
 			sourceTree = "<group>";
@@ -764,12 +907,8 @@
 		96D77C482A1C8ADF0075E52E /* MyPage */ = {
 			isa = PBXGroup;
 			children = (
-				96D77C492A1C8AF90075E52E /* MyPageViewController.swift */,
-				96D77C4B2A1C8B160075E52E /* ProfileView.swift */,
-				964590982A4870350060BDCE /* StatusView.swift */,
-				9645909C2A487D9E0060BDCE /* CircleLayer.swift */,
-				9645909A2A4873740060BDCE /* ProgressView.swift */,
-				9645909E2A4886990060BDCE /* CircleProgressView.swift */,
+				96D31B572A63D0220018A5D4 /* ViewModel */,
+				96D31B582A63D0250018A5D4 /* View */,
 			);
 			path = MyPage;
 			sourceTree = "<group>";
@@ -1043,18 +1182,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96D31B4E2A6174170018A5D4 /* OnBoardingFlow.swift in Sources */,
 				9653112929ED3481006C3E18 /* DummyData.swift in Sources */,
 				96C9F5AE29FE7ED1008D48B9 /* URLRequest-ext.swift in Sources */,
+				96D31B522A617DAB0018A5D4 /* OnBoardingViewModel.swift in Sources */,
+				9629F8612A6C074300019349 /* RefreshTableView.swift in Sources */,
 				96AE33B72A4C651900BB0817 /* CAVIew.swift in Sources */,
 				96D638E32A30B5CE00AA95B5 /* LoginFlow.swift in Sources */,
 				9665D9A22A49BE38004CB33A /* ProblemCalendar.swift in Sources */,
 				9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */,
 				9645909D2A487D9F0060BDCE /* CircleLayer.swift in Sources */,
 				96123D0D2A39FEDB002160B9 /* CodeProblemListFlow.swift in Sources */,
+				96EDAAAC2A603E7800125558 /* CodeProblemFlow.swift in Sources */,
 				96796A362A56FCFE0091F54F /* KeychainItem.swift in Sources */,
 				9665D9982A49BC7D004CB33A /* Member.swift in Sources */,
+				9629F8702A6D1C7200019349 /* API.swift in Sources */,
 				96C9F5AB29FE7C30008D48B9 /* CuStomError.swift in Sources */,
 				96D4329F2A5263BF002403C4 /* PRSubmissionHistoryCell.swift in Sources */,
+				96D31B5D2A63D3EC0018A5D4 /* HomeFlow.swift in Sources */,
 				96AE36F62A5442240026DF49 /* CodestackAuthorization.swift in Sources */,
 				96AE36F42A5441F90026DF49 /* GitAuthorization.swift in Sources */,
 				9645909B2A4873740060BDCE /* ProgressView.swift in Sources */,
@@ -1062,14 +1207,16 @@
 				9653110D29EAF1DF006C3E18 /* CodeProblemViewController.swift in Sources */,
 				9653114829EEA162006C3E18 /* KeyBoardManager.swift in Sources */,
 				96AE36FE2A5452EA0026DF49 /* CodestackPostToken.swift in Sources */,
+				96D31B542A62C0CC0018A5D4 /* TestNetworkServicer.swift in Sources */,
 				965310B529EA7A4F006C3E18 /* ViewController.swift in Sources */,
 				96C9F5A729FE7A7A008D48B9 /* LoginService.swift in Sources */,
 				96D638EA2A30B7A100AA95B5 /* CodestackStep.swift in Sources */,
 				96D432A72A52EFEB002403C4 /* CodestackToken.swift in Sources */,
+				967678262A66838C00873404 /* HistorySegmentedControl.swift in Sources */,
 				96123D122A3A088C002160B9 /* Collection+extension.swift in Sources */,
 				9665D9942A49BC18004CB33A /* CreateSubmissionInput.swift in Sources */,
 				96D77C4A2A1C8AF90075E52E /* MyPageViewController.swift in Sources */,
-				96FF97842A5B111800405216 /* ApolloService.swift in Sources */,
+				96FF97842A5B111800405216 /* DefaultApolloService.swift in Sources */,
 				96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */,
 				96BA540929F6C71A00B5BDD3 /* CustomTextField.swift in Sources */,
 				96BA540B29F6C72100B5BDD3 /* LoginView.swift in Sources */,
@@ -1080,6 +1227,7 @@
 				96C9F5A929FE7C15008D48B9 /* HTTPHeaderFiled.swift in Sources */,
 				966972832A320370004E0E8B /* HomeViewModel.swift in Sources */,
 				9653112E29EE6E43006C3E18 /* CodeTextView.swift in Sources */,
+				9629F85B2A6BDAB400019349 /* ToastMessage.swift in Sources */,
 				96D638E52A30B5D900AA95B5 /* AppFlow.swift in Sources */,
 				9653112C29EE6D9E006C3E18 /* CodeEditorViewController.swift in Sources */,
 				9653114C29EEF1F9006C3E18 /* CustomLayoutManager.swift in Sources */,
@@ -1090,8 +1238,11 @@
 				96C9F5B729FE9CBF008D48B9 /* AppleLoginService.swift in Sources */,
 				9653110129EAE008006C3E18 /* SideItemCell.swift in Sources */,
 				966972872A320DCE004E0E8B /* ViewModelType.swift in Sources */,
-				9653114A29EEED69006C3E18 /* TestViewController.swift in Sources */,
+				9653114A29EEED69006C3E18 /* HistoryViewController.swift in Sources */,
 				965310B129EA7A4F006C3E18 /* AppDelegate.swift in Sources */,
+				96EDAAAE2A603E8400125558 /* MyPageFlow.swift in Sources */,
+				9629F85D2A6BDAD900019349 /* UIView-Ext.swift in Sources */,
+				9629F8652A6C11B300019349 /* RightAlarmView.swift in Sources */,
 				96C9F5B329FE871C008D48B9 /* LoginViewModel.swift in Sources */,
 				965310E529EA855D006C3E18 /* Label-extension.swift in Sources */,
 				96BA540229F6A0AE00B5BDD3 /* UITextField.swift in Sources */,
@@ -1099,18 +1250,24 @@
 				96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */,
 				96796A3A2A584D9F0091F54F /* Date-extension.swift in Sources */,
 				96C9F5A429FE751E008D48B9 /* GitHubLoginButton.swift in Sources */,
-				966972812A31FFE3004E0E8B /* HomeFlow.swift in Sources */,
+				9676782F2A66ADCE00873404 /* HistoryViewModel.swift in Sources */,
+				966972812A31FFE3004E0E8B /* TabBarFlow.swift in Sources */,
 				964590992A4870350060BDCE /* StatusView.swift in Sources */,
 				964590A12A488D970060BDCE /* Color.swift in Sources */,
 				9653112729ED1B5F006C3E18 /* LangugeView.swift in Sources */,
+				967678282A668C2200873404 /* Container.swift in Sources */,
 				9665D9A82A49CC1F004CB33A /* GraphView.swift in Sources */,
 				9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */,
+				9629F8672A6C13FD00019349 /* UIImage-extension.swift in Sources */,
+				96EDAAAA2A6036E000125558 /* CustomTabBarController.swift in Sources */,
 				9653110A29EAF0EA006C3E18 /* HighlightButton.swift in Sources */,
 				96C9F5B929FE9DEB008D48B9 /* RandomNonceString-ext.swift in Sources */,
 				96AE33B52A4C547500BB0817 /* ApplePostToken.swift in Sources */,
 				9653111929EBD7D0006C3E18 /* ProblemItemModel.swift in Sources */,
 				9653110429EAE092006C3E18 /* UIApplication-extension.swift in Sources */,
 				9653111429EBD176006C3E18 /* ProblemCell.swift in Sources */,
+				9676782A2A66955800873404 /* String-extension.swift in Sources */,
+				9629F8632A6C09BA00019349 /* CustomBottomView.swift in Sources */,
 				9665D9A42A49BF64004CB33A /* OAuthProvider.swift in Sources */,
 				9665D99E2A49BD6E004CB33A /* Submission.swift in Sources */,
 				96D77C4C2A1C8B160075E52E /* ProfileView.swift in Sources */,
@@ -1118,15 +1275,24 @@
 				9665D99A2A49BD0F004CB33A /* PageInfo.swift in Sources */,
 				966972892A32104A004E0E8B /* LoginButtonType.swift in Sources */,
 				9645909F2A4886990060BDCE /* CircleProgressView.swift in Sources */,
+				9629F86C2A6D181900019349 /* ApolloClient.swift in Sources */,
+				96D31B502A617C2D0018A5D4 /* OnBoardingVC.swift in Sources */,
 				96C9F5B029FE8238008D48B9 /* GitAuth-extension.swift in Sources */,
+				9629F86A2A6D168D00019349 /* ApolloService.swift in Sources */,
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
 				96C9F5BF2A03C456008D48B9 /* FoldButton.swift in Sources */,
 				96BA53FF29F53DAB00B5BDD3 /* ProblemDescriptionView.swift in Sources */,
+				9629F86E2A6D186700019349 /* RxApollo.swift in Sources */,
+				96D31B562A62CC730018A5D4 /* TestRetruy.swift in Sources */,
 				9665D99C2A49BD3A004CB33A /* Problem.swift in Sources */,
 				9653112029ED1730006C3E18 /* CALayer.swift in Sources */,
 				96BA540729F6C71400B5BDD3 /* LoginViewController.swift in Sources */,
+				96EDAAB02A603E8A00125558 /* HistoryFlow.swift in Sources */,
+				9629F85F2A6BDB0800019349 /* Position.swift in Sources */,
 				9653111229EBCD9A006C3E18 /* SourceModel.swift in Sources */,
+				96D31B5B2A63D03B0018A5D4 /* MyPageViewModel.swift in Sources */,
 				96D432A22A526A1D002403C4 /* OAuthorization.swift in Sources */,
+				961773592A68036A00AFE287 /* HistoryCell.swift in Sources */,
 				965310B329EA7A4F006C3E18 /* SceneDelegate.swift in Sources */,
 				96BA540429F6C64700B5BDD3 /* CustomScrollView.swift in Sources */,
 				96BA540D29F6CA1800B5BDD3 /* LoginButton.swift in Sources */,
@@ -1315,6 +1481,8 @@
 				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CodeStack/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "코드스택";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1347,6 +1515,8 @@
 				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CodeStack/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "코드스택";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1523,6 +1693,8 @@
 				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CodeStack/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "코드스택";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
