@@ -58,7 +58,7 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
             }).disposed(by: cellDisposeBag)
         
         onStatus
-            .asDriver(onErrorJustReturn: .temp)
+            .asDriver(onErrorJustReturn: .none)
             .drive(onNext: { [weak self] status in
                 guard let self = self else {return}
                 self.statusLabel.pr_status_label(status)
