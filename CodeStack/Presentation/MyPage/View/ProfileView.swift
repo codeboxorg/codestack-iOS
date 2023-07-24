@@ -23,7 +23,7 @@ class ProfileView: UIView{
     
     private let nameLabel: UILabel = {
        let label = UILabel()
-        label.text = "UserName"
+        label.text = "ParkHyeongHwan"
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.numberOfLines = 2
         label.textAlignment = .left
@@ -44,7 +44,7 @@ class ProfileView: UIView{
     
     private let rankLabel: UILabel = {
         let label = UILabel()
-         label.text = "3,412,232"
+         label.text = "120"
          label.font = UIFont.boldSystemFont(ofSize: 16)
          label.numberOfLines = 1
         label.textAlignment = .left
@@ -65,6 +65,9 @@ class ProfileView: UIView{
         super.init(frame: frame)
         
         self.backgroundColor = .tertiarySystemBackground
+        self.layer.borderColor = UIColor.lightGray.cgColor
+        self.layer.borderWidth = 1
+        
         addAutoLayout()
     }
     
@@ -109,7 +112,5 @@ class ProfileView: UIView{
             $0.bottom.equalToSuperview().inset(16).priority(.high)
         }
     }
-    
-    
 }
 
