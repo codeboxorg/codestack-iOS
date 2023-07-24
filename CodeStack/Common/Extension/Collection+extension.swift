@@ -15,6 +15,18 @@ extension Collection where Indices.Iterator.Element == Index {
         return indices.contains(index) ? self[index] : nil
     }
 }
+extension Array {
+    subscript(safe range: Range<Index>) -> ArraySlice<Element>? {
+        
+        if range.endIndex > endIndex {
+            if range.startIndex >= endIndex {return nil}
+            else {return self[range.startIndex..<endIndex]}
+        }
+        else {
+            return self[range]
+        }
+    }
+}
 ////MARK: - Array 에 접근할때 범위 체크 -> 안전배열
 //extension Array {
 //    subscript(safe index: Index) -> Element? {

@@ -17,10 +17,10 @@ class ApolloService{
     var record: RecordSet = RecordSet(dictionaryLiteral: ("",[:]),("",[:]),("",[:]))
     
     lazy var store = ApolloStore(cache: InMemoryNormalizedCache(records: record))
+    
     lazy var provider = DefaultInterceptorProvider(client: .init(sessionConfiguration: .default,
                                                                  callbackQueue: .current),
                                                    store: store)
-    
     
     var header: [String : String] = [:]
 
@@ -37,8 +37,6 @@ class ApolloService{
     }
     
     func request(header value: String){
-        
-        
         header = ["Authorization" : "Bearer \(value)"]
         Log.debug(client)
         Log.debug(network.endpointURL)
@@ -60,6 +58,5 @@ class ApolloService{
                 Log.error(error)
             }
         }
-        Log.error("ㅅㅂㅅㅂ")
     }
 }

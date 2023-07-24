@@ -30,7 +30,7 @@ struct DummyData{
         return (model,languese, true)
     }
     
-    func getAllModels() -> [DummyModel]{
+    func getAllModels(limit: Int = 15) -> [DummyModel]{
         let model = [getDummyDataModel(name: "hellow World"),
                      getDummyDataModel(name: "ABC"),
                      getDummyDataModel(name: "별찍기"),
@@ -50,17 +50,25 @@ struct DummyData{
                      getDummyDataModel(name: "BFS"),
                      getDummyDataModel(name: "Cell merge"),
                      getDummyDataModel(name: "CompactMap"),
-                     getDummyDataModel(name: "filter"),
-                     getDummyDataModel(name: "hellow World"),
-                     getDummyDataModel(name: "ABC"),
-                     getDummyDataModel(name: "별찍기"),
-                     getDummyDataModel(name: "Three Sum"),
-                     getDummyDataModel(name: "Dynamic safsdfasffds programmingDynamic programming"),
-                     getDummyDataModel(name: "DFS"),
-                     getDummyDataModel(name: "BFS"),
-                     getDummyDataModel(name: "Cell merge"),
-                     getDummyDataModel(name: "CompactMap"),
-                     getDummyDataModel(name: "filter")]
+                     getDummyDataModel(name: "filter")][0...limit].shuffled()
         return model
+    }
+    
+    func fetchModels(limit: Int = 15, currentPage: Int) -> [DummyModel]{
+        return [getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
+                getDummyDataModel(name: "안녕하세요 : \(currentPage)")]
     }
 }
