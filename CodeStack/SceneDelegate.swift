@@ -32,16 +32,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window.rootViewController = root
             window.makeKeyAndVisible()
         })
-        
-        
-        
         self.window = window
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         Log.debug("\(URLContexts)")
-        Log.debug("\(URLContexts.first)")
-        Log.debug("\(URLContexts.first?.url)")
         if let url = URLContexts.first?.url {
             //MARK: - Github url open
             
