@@ -33,10 +33,27 @@ class HomeFlow: Flow{
         return viewController
     }()
     
-    private var sideVC = SideMenuViewController()
+    private var sideVC = SideMenuViewController.create(with: [SideMenuItem(icon: UIImage(named: "problem"),
+                                                                           name: "문제",
+                                                                           presentation: .problemList),
+                                                              SideMenuItem(icon: UIImage(named: "submit"),
+                                                                           name: "제출근황",
+                                                                           presentation: .recentSolveList),
+                                                              SideMenuItem(icon: UIImage(named: "my"),
+                                                                           name: "마이 페이지",
+                                                                           presentation: .profilePage),
+                                                              SideMenuItem(icon: UIImage(named: "home"),
+                                                                           name: "메인 페이지",
+                                                                           presentation: .none),
+                                                              SideMenuItem(icon: UIImage(systemName: "hand.thumbsup"),
+                                                                           name: "추천",
+                                                                           presentation: .recommendPage),
+                                                              SideMenuItem(icon: UIImage(systemName: "lock.open"),
+                                                                           name: "logout", presentation: .logout)])
 
-    
     private weak var tabbarDelegate: TabBarDelegate?
+    
+    
     
     init(delegate: TabBarDelegate){
         tabbarDelegate = delegate
@@ -64,8 +81,16 @@ class HomeFlow: Flow{
             rootViewController.popViewController(animated: true)
             return .none
             
+        case .logout:
+            return .end(forwardToParentFlowWithStep: CodestackStep.logout)
+            
         case .recentSolveList:
             return navigateToRecentSolveList()
+            
+        case .historyflow:
+            tabbarDelegate?.setSelectedIndex(for: 2)
+            return .none
+            
         default:
             return .none
         }
@@ -79,7 +104,7 @@ class HomeFlow: Flow{
         rootViewController.pushViewController(homeVC, animated: false)
                 
         return .one(flowContributor: .contribute(withNextPresentable: homeVC,
-                                                 withNextStepper: homeViewModel))
+                                                 withNextStepper: CompositeStepper(steppers: [homeViewModel,sideVC])))
     }
     
     private func navigateToRecentSolveList() -> FlowContributors {
