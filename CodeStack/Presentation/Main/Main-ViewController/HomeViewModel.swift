@@ -24,6 +24,9 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
         var rightSwipeGesture: Observable<UIGestureRecognizer>
         var leftSwipeGesture: Observable<UIGestureRecognizer>
         var leftNavigationButtonEvent: Signal<Void>
+        var recentProblemPage: Signal<Submission>
+        
+        var alramTapped: Observable<UIGestureRecognizer>
     }
     
     struct Output{
@@ -70,6 +73,11 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
                 vm.steps.accept(CodestackStep.sideDissmiss)
             }).disposed(by: disposeBag)
         
+        input.alramTapped
+            .subscribe(with: self,onNext: { vm , value in
+                vm.steps.accept(CodestackStep.historyflow)
+            }).disposed(by: disposeBag)
+        
         input.leftNavigationButtonEvent
             .withUnretained(self)
             .emit(onNext: {vm, value in
@@ -80,9 +88,16 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
             .map{_ in self.service.request().content}
             .withUnretained(self)
             .emit(onNext: { vm, value in
-                
                 vm.submissions.accept(value)
             }).disposed(by: disposeBag)
+        
+        
+        //추후 모델 추가 예정
+        input.recentProblemPage
+            .map{ _ in CodestackStep.recentSolveList }
+            .emit(to: steps)
+            .disposed(by: disposeBag)
+
         
         return Output(submissions: self.submissions.asDriver(onErrorJustReturn: []))
     }
