@@ -103,8 +103,6 @@ class LoginView: UIView{
         button.setTitleColor(UIColor.black, for: .normal)
         button.backgroundColor = .white
         button.layer.cornerRadius = (button.titleLabel?.font.pointSize ?? 24) / 2
-        //        button.addTarget(self, action: #selector(addActions(_:)), for: .touchUpInside)
-        button.addTarget(self, action: #selector(isValidLogin(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -135,10 +133,6 @@ class LoginView: UIView{
     private lazy var placeOffset: CGFloat = (self.idTextField.font?.pointSize ?? 32) + 8
     
     
-//    weak var loginViewModel: (any LoginViewModelProtocol)?
-    
-    var completion: ((Bool) -> ())?
-    var moveTomain: (() -> ())?
     private var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
@@ -154,17 +148,22 @@ class LoginView: UIView{
     }
     
     
-    func binding(loading: Driver<Bool>){
+    func binding(loading: Driver<Result<Bool,Error>>){
         loading
             .drive(with: self, onNext: { owner, value in
-                owner.loginButton.isLoading = value
+                switch value{
+                case .success(let value):
+                    owner.loginButton.isLoading = value
+                case .failure(let error):
+                    owner.loginButton.isLoading = false
+                    Toast.toastMessage("서버에서 응답이 오지 않습니다.: \(error)",offset: 30)
+                }
                 Log.debug("login button value : \(value)")
             }).disposed(by: disposeBag)
     }
     
     //MARK: emit RX button Tap Event to login
     func emitButtonEvents() -> Signal<LoginButtonType>{
-        
         let git = githubLoginButton.rx.tap
             .map{ _ in return LoginButtonType.gitHub }
             .asSignal(onErrorJustReturn: .none)
@@ -194,18 +193,7 @@ class LoginView: UIView{
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
     }
-    
-  
-    @objc func addActions(_ sender: UIButton){
-        completion?(true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-            self.moveTomain?()
-        })
-    }
-    
-    @objc func isValidLogin(_ sender: UIButton){
-        
-    }
+
 }
 
 
