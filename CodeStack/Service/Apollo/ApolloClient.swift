@@ -12,7 +12,6 @@ import CodestackAPI
 
 
 
-
 final class ApolloAPI{
     
     static var shared = ApolloAPI()

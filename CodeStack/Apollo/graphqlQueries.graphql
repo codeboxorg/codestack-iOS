@@ -1,39 +1,74 @@
+# Write your query or mutation here
 
-query Problems($pageNum: Int) {
-problems(limit: 20, page: $pageNum) {
-    content {
+
+query GetSubmissionById($id: Float!){
+  getSubmissionById(id: $id){
+    id
+    memberId
+    language{
+      id
+    }
+  }
+}
+query GetAllSubmission($offset: Float,$sort: String, $order: String){
+  getAllSubmission(limit: 10,offset: $offset,sort: $sort, order: $order){
+    data{
+      id
+      problemId
+      memberId
+      languageId
+      problem{
+        title
+        context
+        solvedMemberCount
+      }
+    }
+    pageInfo{
+      totalPages
+    }
+  }
+}
+
+query GetAllLanguage{
+  getAllLanguage{
+    id
+    name
+    extension
+  }
+}
+
+query GetProblems($offset: Float,$sort: String,$order: String){
+    getProblems(limit: 10,offset: $offset,sort: $sort, order: $order){
+        data{
         id
         title
-        submission
-        accepted
+        context
+        solvedMemberCount
+        tags{
+          id
+          name
+        }
+      }
     }
-    pageInfo {
-        totalPage
-    }
-}}
+}
 
-query ProblemDetail($id: ID) {
-problem(id: $id) {
+query GetAllTag{
+  getAllTag(limit: 10, offset: 0){
+    data{
+      id
+      name
+    }
+    pageInfo{
+      offset
+      limit
+      totalPages
+    }
+  }
+}
+
+mutation ProblemSubmit($problemId: Float!,$languageId:Float!,$sourceCode: String!){
+  createSubmission(problemId: $problemId,languageId: $languageId,sourceCode:$sourceCode){
     id
-    maxCpuTime
-    maxMemory
-    title
-    context
-    submission
-    accepted
-    tags {
-        id
-        name
-    }
-    languages {
-        id
-        name
-        extension
-    }
-}}
-
-mutation ProblemSubmit($submit: CreateSubmissionInput!) {
-createSubmission(input: $submit) {
     sourceCode
-    id
-}}
+  }
+}
