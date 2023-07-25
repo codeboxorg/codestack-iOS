@@ -23,13 +23,15 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
   public static func objectType(forTypename typename: String) -> Object? {
     switch typename {
     case "Query": return CodestackAPI.Objects.Query
-    case "ProblemPagedResult": return CodestackAPI.Objects.ProblemPagedResult
+    case "Submission": return CodestackAPI.Objects.Submission
+    case "Language": return CodestackAPI.Objects.Language
+    case "SubmissionPage": return CodestackAPI.Objects.SubmissionPage
     case "Problem": return CodestackAPI.Objects.Problem
     case "PageInfo": return CodestackAPI.Objects.PageInfo
+    case "ProblemPage": return CodestackAPI.Objects.ProblemPage
     case "Tag": return CodestackAPI.Objects.Tag
-    case "Language": return CodestackAPI.Objects.Language
+    case "TagPage": return CodestackAPI.Objects.TagPage
     case "Mutation": return CodestackAPI.Objects.Mutation
-    case "Submission": return CodestackAPI.Objects.Submission
     default: return nil
     }
   }

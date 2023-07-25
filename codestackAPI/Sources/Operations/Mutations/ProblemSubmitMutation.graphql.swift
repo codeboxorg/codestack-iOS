@@ -8,23 +8,39 @@ public class ProblemSubmitMutation: GraphQLMutation {
   public static let document: ApolloAPI.DocumentType = .notPersisted(
     definition: .init(
       #"""
-      mutation ProblemSubmit($submit: CreateSubmissionInput!) {
-        createSubmission(input: $submit) {
+      mutation ProblemSubmit($problemId: Float!, $languageId: Float!, $sourceCode: String!) {
+        createSubmission(
+          problemId: $problemId
+          languageId: $languageId
+          sourceCode: $sourceCode
+        ) {
           __typename
-          sourceCode
           id
+          sourceCode
         }
       }
       """#
     ))
 
-  public var submit: CreateSubmissionInput
+  public var problemId: Double
+  public var languageId: Double
+  public var sourceCode: String
 
-  public init(submit: CreateSubmissionInput) {
-    self.submit = submit
+  public init(
+    problemId: Double,
+    languageId: Double,
+    sourceCode: String
+  ) {
+    self.problemId = problemId
+    self.languageId = languageId
+    self.sourceCode = sourceCode
   }
 
-  public var __variables: Variables? { ["submit": submit] }
+  public var __variables: Variables? { [
+    "problemId": problemId,
+    "languageId": languageId,
+    "sourceCode": sourceCode
+  ] }
 
   public struct Data: CodestackAPI.SelectionSet {
     public let __data: DataDict
@@ -32,10 +48,14 @@ public class ProblemSubmitMutation: GraphQLMutation {
 
     public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Mutation }
     public static var __selections: [ApolloAPI.Selection] { [
-      .field("createSubmission", CreateSubmission?.self, arguments: ["input": .variable("submit")]),
+      .field("createSubmission", CreateSubmission.self, arguments: [
+        "problemId": .variable("problemId"),
+        "languageId": .variable("languageId"),
+        "sourceCode": .variable("sourceCode")
+      ]),
     ] }
 
-    public var createSubmission: CreateSubmission? { __data["createSubmission"] }
+    public var createSubmission: CreateSubmission { __data["createSubmission"] }
 
     /// CreateSubmission
     ///
@@ -47,12 +67,12 @@ public class ProblemSubmitMutation: GraphQLMutation {
       public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Submission }
       public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
-        .field("sourceCode", String?.self),
-        .field("id", Int?.self),
+        .field("id", CodestackAPI.ID.self),
+        .field("sourceCode", String.self),
       ] }
 
-      public var sourceCode: String? { __data["sourceCode"] }
-      public var id: Int? { __data["id"] }
+      public var id: CodestackAPI.ID { __data["id"] }
+      public var sourceCode: String { __data["sourceCode"] }
     }
   }
 }

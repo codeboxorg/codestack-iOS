@@ -11,7 +11,6 @@ import CodestackAPI
 
 class ApolloService{
     
-    
     static let shared: ApolloService = ApolloService()
     
     var record: RecordSet = RecordSet(dictionaryLiteral: ("",[:]),("",[:]),("",[:]))

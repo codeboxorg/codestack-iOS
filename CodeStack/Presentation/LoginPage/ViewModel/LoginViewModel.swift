@@ -73,10 +73,9 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                 case .email((let id, let pwd)):
                     vm.loginLoadingEvent.accept(.success(true))
                     #if DEBUG
-//                    vm.requestAuth(id: id, pwd: pwd)
                     vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
                     #else
-                    
+                    vm.requestAuth(id: id, pwd: pwd)
                     #endif
                 case .none:
                     break

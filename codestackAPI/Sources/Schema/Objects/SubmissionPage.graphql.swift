@@ -4,8 +4,8 @@
 import ApolloAPI
 
 public extension Objects {
-  static let ProblemPagedResult = Object(
-    typename: "ProblemPagedResult",
+  static let SubmissionPage = Object(
+    typename: "SubmissionPage",
     implementedInterfaces: []
   )
 }
