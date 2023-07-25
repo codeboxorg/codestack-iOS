@@ -27,7 +27,6 @@
 		9629F8632A6C09BA00019349 /* CustomBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8622A6C09BA00019349 /* CustomBottomView.swift */; };
 		9629F8652A6C11B300019349 /* RightAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8642A6C11B300019349 /* RightAlarmView.swift */; };
 		9629F8672A6C13FD00019349 /* UIImage-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8662A6C13FD00019349 /* UIImage-extension.swift */; };
-		9629F86A2A6D168D00019349 /* ApolloService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8692A6D168D00019349 /* ApolloService.swift */; };
 		9629F86C2A6D181900019349 /* ApolloClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86B2A6D181900019349 /* ApolloClient.swift */; };
 		9629F86E2A6D186700019349 /* RxApollo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86D2A6D186700019349 /* RxApollo.swift */; };
 		9629F8702A6D1C7200019349 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86F2A6D1C7200019349 /* API.swift */; };
@@ -188,7 +187,6 @@
 		9629F8622A6C09BA00019349 /* CustomBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBottomView.swift; sourceTree = "<group>"; };
 		9629F8642A6C11B300019349 /* RightAlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightAlarmView.swift; sourceTree = "<group>"; };
 		9629F8662A6C13FD00019349 /* UIImage-extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage-extension.swift"; sourceTree = "<group>"; };
-		9629F8692A6D168D00019349 /* ApolloService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloService.swift; sourceTree = "<group>"; };
 		9629F86B2A6D181900019349 /* ApolloClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloClient.swift; sourceTree = "<group>"; };
 		9629F86D2A6D186700019349 /* RxApollo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxApollo.swift; sourceTree = "<group>"; };
 		9629F86F2A6D1C7200019349 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
@@ -874,7 +872,6 @@
 		96D432A02A526A00002403C4 /* Interface */ = {
 			isa = PBXGroup;
 			children = (
-				9629F8692A6D168D00019349 /* ApolloService.swift */,
 				96D432A12A526A1D002403C4 /* OAuthorization.swift */,
 				96AE36F12A54419F0026DF49 /* AppleAuthorization.swift */,
 				96AE36F32A5441F90026DF49 /* GitAuthorization.swift */,
@@ -1278,7 +1275,6 @@
 				9629F86C2A6D181900019349 /* ApolloClient.swift in Sources */,
 				96D31B502A617C2D0018A5D4 /* OnBoardingVC.swift in Sources */,
 				96C9F5B029FE8238008D48B9 /* GitAuth-extension.swift in Sources */,
-				9629F86A2A6D168D00019349 /* ApolloService.swift in Sources */,
 				965310E729EA8E96006C3E18 /* MainView.swift in Sources */,
 				96C9F5BF2A03C456008D48B9 /* FoldButton.swift in Sources */,
 				96BA53FF29F53DAB00B5BDD3 /* ProblemDescriptionView.swift in Sources */,
