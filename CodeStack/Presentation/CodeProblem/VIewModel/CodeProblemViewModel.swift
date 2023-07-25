@@ -85,6 +85,9 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
             .delay(.seconds(1))
             .emit(with: self, onNext: { vm, value in
                 let model = vm.service.fetchModels(currentPage: vm.currentPage)
+                
+                vm.requestProblem(offset: Double(vm.currentPage))
+                
                 vm.currentPage += 1
                 vm.fetchListModels.accept(model)
                 vm.isLoading = false
@@ -96,10 +99,15 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
             .withUnretained(self)
             .emit(onNext: { vm,_ in
                 let model = vm.service.getAllModels()
+                
+                vm.requestProblem(offset: Double(vm.currentPage))
+                
                 vm.currentPage += 1
                 vm.listModel.accept(model)
             })
             .disposed(by: disposeBag)
+        
+        
         
         _ = input.cellSelect
             .map{_ in CodestackStep.problemPick("")}
@@ -148,5 +156,34 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
         return Output(seg_list_model: seg_list_model.asDriver(onErrorJustReturn: []),
                       cell_temporary_content_update: foldButton.asDriver(onErrorJustReturn: (0,false)),
                       refreshEndEvnet: refreshEnd.asDriver(onErrorJustReturn: ()))
+    }
+    
+    private func requestProblem(offset: Double, sort: String = "id", order: String = "asc"){
+        
+        let query = GraphQuery.getProblems(offset: offset, sort: sort, order: order)
+
+        _ = ApolloAPI.shared.fetch(query: query)
+            .subscribe(onSuccess: { result in
+                if let data = result.getProblems.data{
+                    data.forEach{ datum in
+                            Log.debug("""
+                                🛠️💡---- API RESULT ---💡
+                                id -> \(datum.id)
+                                title -> \(datum.title)
+                                context -> \(datum.context)
+                                solvedMemberCount -> \(datum.solvedMemberCount)
+                                tags -> \(datum.tags)
+                                    💡------ END -------💡
+                                """)
+                    }
+                }
+                Log.debug("what is this : \(result.getProblems.data)")
+            }, onError: {
+                Log.debug("what is this error : \($0)")
+            }, onCompleted: {
+                Log.debug("what is this complted ")
+            }, onDisposed: {
+                Log.debug("what is this disposed ")
+            })
     }
 }
