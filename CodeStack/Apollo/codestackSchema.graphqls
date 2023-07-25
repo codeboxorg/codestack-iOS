@@ -1,114 +1,95 @@
+# tag
+type Tag {
+  id: ID!
+  name: String!
+  problems: [Problem!]!
+}
+
+# problem
+type Problem {
+  id: ID!
+  title: String!
+  context: String!
+  solvedMemberCount: Float!
+  tags: [Tag!]!
+}
+
+type Member {
+  username: ID!
+  profileImage: String!
+  solvedProblems: [Problem!]!
+}
+
+type PageInfo {
+  offset: Int!
+  limit: Int!
+  totalPages: Int!
+  totalContents: Int!
+}
+
+type ProblemPage {
+  data: [Problem!]
+  pageInfo: PageInfo!
+}
+
+type Language {
+  id: ID!
+  name: String!
+  extension: String!
+}
+
+# submission
+type Submission {
+  id: ID!
+  sourceCode: String!
+  cpuTime: Float
+  memoryUsage: Float
+  problemId: Float!
+  memberId: Float!
+  languageId: Float!
+  problem: Problem!
+  language: Language!
+}
+
+type SubmissionPage {
+  data: [Submission!]
+  pageInfo: PageInfo!
+}
+
+type TagPage {
+  data: [Tag!]
+  pageInfo: PageInfo!
+}
+
 type Query {
-    me: Member
-    tag(id: ID): Tag
-    tags(
-    limit: Int
-    page: Int
-    ): TagPagedResult
-    
-    matchedUser(username: String): Member
-    
-    problems(
-    limit: Int
-    page: Int
-    ): ProblemPagedResult
-    
-    problem(id: ID): Problem
-    
-    submissions(
-    limit: Int
-    page: Int
-    ): SubmissionPagedResult
-    
-    submission(id: ID): Submission
+  matchMember(username: String!): Member!
+  getProblems(
+    limit: Float! = 10
+    offset: Float! = 0
+    sort: String! = "id"
+    order: String! = "asc"
+  ): ProblemPage!
+  getProblemById(id: Float!): Problem!
+  getAllLanguage: [Language!]!
+  getAllTag(
+    limit: Float! = 10
+    offset: Float! = 0
+    sort: String! = "id"
+    order: String! = "asc"
+  ): TagPage!
+  getAllSubmission(
+    limit: Float! = 10
+    offset: Float! = 0
+    sort: String! = "id"
+    order: String! = "asc"
+  ): SubmissionPage!
+  getSubmissionById(id: Float!): Submission!
 }
 
 type Mutation {
-  createSubmission(input: CreateSubmissionInput!): Submission
-}
-
-
-input CreateSubmissionInput{
-    problemId: Int
-    languageId: Int
-    sourceCode: String
-}
-
-type Language{
-    id: Int
-    name: String
-    extension: String
-}
-
-type Member{
-    username: String
-    nickname: String
-    email: String
-    profileImage: String
-    problemCalendar(year: String): [ProblemCalendar!]!
-}
-
-
-enum OAuth2Provider{
-    NONE
-    APPLE
-    GITHUB
-}
-
-type PageInfo{
-    totalElement: Int
-    totalPage: Int
-}
-
-type Problem{
-    id: Int
-    title: String
-    context: String
-    maxCpuTime: Int
-    maxMemory: Int
-    submission: Int
-    accepted: Int
-    tags: [Tag]
-    languages: [Language]
-}
-
-
-
-
-type ProblemCalendar{
-    date: String
-    solved: Int
-}
-
-type ProblemPagedResult{
-    content: [Problem]
-    pageInfo: PageInfo
-}
-
-
-type Submission{
-    id: Int
-    sourceCode: String
-    problem: Problem
-    member: Member
-    language: Language
-    cpuTime: Int
-    memoryUsage: Int
-    statusCode: String
-    createdAt: String
-}
-
-type SubmissionPagedResult{
-    content: [Submission]
-    pageInfo: PageInfo
-}
-
-type Tag{
-    id: Int
-    name: String
-}
-
-type TagPagedResult{
-    content: [Tag]
-    pageInfo: PageInfo
+  createSubmission(
+    problemId: Float!
+    languageId: Float!
+    sourceCode: String!
+  ): Submission!
 }
