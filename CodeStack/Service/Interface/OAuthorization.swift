@@ -10,7 +10,6 @@ import RxSwift
 
 typealias OAuthrizationRequest = GitOAuthorization & AppleAuthorization & CodestackAuthorization
 
-
 //POST /v1/auth/token
 //body {
 //    "refreshToken": {refreshToken}
@@ -21,16 +20,19 @@ protocol OAuthorization{
 
 
 extension OAuthorization{
-    private var root: String{
-        return "https://api-dev.codestack.co.kr/v1/"
+    private var base: String{
+        guard
+            let base = Bundle.main.infoDictionary?["codestack_endpoint"] as? String
+        else {return "" }
+        return base
     }
     
     func getBaseURL(provider: OAuthProvider) -> String{
         switch provider {
         case .email:
-            return root + "auth/login"
+            return base + "auth/login"
         default:
-            return root + "oauth2/login/" + "\(provider.rawValue)"
+            return base + "oauth2/login/" + "\(provider.rawValue)"
         }
     }
 }
