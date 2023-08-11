@@ -12,7 +12,9 @@ struct Toast{
                              x position: CGFloat = 25 ,
                              offset: CGFloat = 120,
                              font: UIFont = UIFont.boldSystemFont(ofSize: 14),
-                             background color: UIColor = UIColor.sky_blue) {
+                             background color: UIColor = UIColor.sky_blue,
+                             boader b_color: CGColor = UIColor.clear.cgColor,
+                             boader width: CGFloat = 1) {
         
         let appearElement = Animation.appearElement
         
@@ -24,6 +26,8 @@ struct Toast{
                                            messgae: message,
                                            font: font,
                                            background: color)
+        messageView.layer.borderColor = b_color
+        messageView.layer.borderWidth = width
         
         UIApplication.shared.keyWindow?.addSubview(messageView)
         

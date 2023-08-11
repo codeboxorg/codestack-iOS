@@ -6,10 +6,18 @@
 //
 
 import UIKit
+import SwiftUI
 
 
 protocol TabBarDelegate: AnyObject{
-    func setSelectedIndex(for index: Int)
+    func setSelectedItem(for vc: TabBarItem)
+}
+
+enum TabBarItem: Int{
+    case home = 0
+    case problem = 1
+    case history = 2
+    case mypage = 3
 }
 
 class CustomTabBarController: UITabBarController,TabBarDelegate{
@@ -19,7 +27,11 @@ class CustomTabBarController: UITabBarController,TabBarDelegate{
         self.tabBar.tintColor = UIColor.sky_blue
     }
     
-    func setSelectedIndex(for index: Int) {
+    private func setSelectedIndex(for index: Int) {
         self.selectedIndex = index
+    }
+    
+    func setSelectedItem(for vc: TabBarItem){
+        setSelectedIndex(for: vc.rawValue)
     }
 }
