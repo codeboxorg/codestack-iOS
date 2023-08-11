@@ -15,6 +15,24 @@ class CodeEditorViewController: UIViewController,Stepper{
     
     var steps = PublishRelay<Step>()
     
+    private var editorViewModel: CodeEditorViewModel?
+    
+    var htmlString: String?
+    
+    private weak var highlightr: Highlightr?
+    
+    struct Dependency{
+        var viewModel: CodeEditorViewModel
+        var html: String
+    }
+    
+    static func create(with dependency: Dependency) -> CodeEditorViewController{
+        let vc = CodeEditorViewController()
+        vc.editorViewModel = dependency.viewModel
+        vc.htmlString = dependency.html
+        return vc
+    }
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
@@ -32,7 +50,6 @@ class CodeEditorViewController: UIViewController,Stepper{
         return view
     }()
     
-    weak var highlightr: Highlightr?
     
     lazy var codeUITextView: CodeUITextView = {
         let textStorage = CodeAttributedString()
@@ -43,9 +60,7 @@ class CodeEditorViewController: UIViewController,Stepper{
         layoutManager.addTextContainer(textContainer)
         
         highlightr = textStorage.highlightr
-        
         layoutManager.delegate = self
-        
         let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
         
         textView.delegate = self
@@ -57,13 +72,15 @@ class CodeEditorViewController: UIViewController,Stepper{
         textView.autocorrectionType = UITextAutocorrectionType.no
         textView.autocapitalizationType = UITextAutocapitalizationType.none
         textView.alwaysBounceVertical = true
-        
         return textView
     }()
     
     
     lazy var problemPopUpView: ProblemPopUpView = {
         let popView = ProblemPopUpView(frame: .zero,self)
+        if let htmlString{
+            popView.loadHTMLToWebView(html: htmlString)
+        }
         return popView
     }()
     
@@ -74,36 +91,62 @@ class CodeEditorViewController: UIViewController,Stepper{
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         layoutConfigure()
+        textViewHighLiterSetting()
+        lineNumberRulerViewSetting()
+        problemPopUpViewShow()
         
         self.view.backgroundColor = .systemBackground
         self.navigationController?.setNavigationBarHidden(true, animated: true)
-        
-        let storage = (self.codeUITextView.textStorage as! CodeAttributedString)
-        self.highlightr?.setTheme(to: "Chalk")
-        self.codeUITextView.backgroundColor = self.highlightr?.theme.themeBackgroundColor
-        storage.language = "swift"
-        guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
-        guard let strings = try? String(contentsOfFile: path) else {return}
-        self.codeUITextView.text = strings
-        
-        // Dependency TextView injection in NumbersVIew
-        self.numbersView.settingTextView(self.codeUITextView,contentSize: self)
-        
-        self.view.bringSubviewToFront(problemPopUpView)
-        
-        self.problemPopUpView.show()
     }
     
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    func binding(){
+//        let output = editorViewModel?.transform(input: <#T##CodeEditorViewModel.Input#>)
+        
     }
     
     
     private func keyBoardLayoutManager(){
         let _ = KeyBoardManager.shared.getKeyBoardLifeCycle()
     }
+    
+}
+
+
+//MARK: - layout setting
+extension CodeEditorViewController{
+    
+    private func textViewHighLiterSetting(){
+        let storage = (self.codeUITextView.textStorage as! CodeAttributedString)
+        self.highlightr?.setTheme(to: "Chalk")
+        self.codeUITextView.backgroundColor = self.highlightr?.theme.themeBackgroundColor
+        storage.language = "swift"
+        guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
+        guard let strings = try? String(contentsOfFile: path) else {return}
+        //        self.codeUITextView.text = strings
+        
+        self.codeUITextView.text =
+"""
+
+int main(){
+    print("Hello world!")
+    return 0;
+}
+"""
+    }
+    
+    private func lineNumberRulerViewSetting(){
+        self.numbersView.settingTextView(self.codeUITextView,tracker: self)
+    }
+    
+    private func problemPopUpViewShow(){
+        // Dependency TextView injection in NumbersVIew
+        self.view.bringSubviewToFront(problemPopUpView)
+        self.problemPopUpView.show()
+    }
+    
     
     private func layoutConfigure(){
         self.view.addSubview(problemPopUpView)
@@ -140,15 +183,7 @@ class CodeEditorViewController: UIViewController,Stepper{
             make.height.equalTo(codeUITextView.bounds.height)
             make.width.equalTo(inset.left).priority(.high)
         }
-        // numbersView exclusionPath
     }
-    
-    //MARK: - Code HighLiter
-    private func settingHighliter(){
-        let highlightr = Highlightr()
-        highlightr?.setTheme(to: "paraiso-dark")
-    }
-    
 }
 
 //MARK: TextView Size Tracker
@@ -164,10 +199,6 @@ extension CodeEditorViewController: TextViewSizeTracker{
 //MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
 extension CodeEditorViewController{
 
-    /// ProblemComplete
-    func spreadCompleteEvnet(){
-        steps.accept(CodestackStep.problemComplete)
-    }
     
     func showProblemDiscription(){
         problemPopUpView.snp.remakeConstraints { make in
