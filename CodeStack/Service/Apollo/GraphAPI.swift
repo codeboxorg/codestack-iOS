@@ -7,12 +7,13 @@
 
 import Foundation
 
-enum API{
+enum GraphAPI{
     private static var endpoint: String {
         return Bundle.main.infoDictionary!["graphql_endpoint"] as! String
     }
     
     static var baseURL: URL {
+        
         return URL(string: endpoint)!
     }
 }
