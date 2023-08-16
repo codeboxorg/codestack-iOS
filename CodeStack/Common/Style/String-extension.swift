@@ -36,10 +36,6 @@ extension String {
     
 
     func boxContainer() -> NSAttributedString{
-        
-        let paragraphStyle = NSMutableParagraphStyle()
-        
-        
         let attStr = NSAttributedString(string: self,
                                         attributes: [NSAttributedString.Key.backgroundColor : UIColor.juhwang,
                                                      NSAttributedString.Key.kern : CGFloat(1.4)])

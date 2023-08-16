@@ -13,7 +13,9 @@ class BackButton: UIButton{
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        self.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
+        self.tintColor = UIColor.systemGray
+        self.imageView?.contentMode = .scaleAspectFill
     }
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
