@@ -17,19 +17,20 @@ class CodeEditorViewController: UIViewController,Stepper{
     
     private var editorViewModel: CodeEditorViewModel?
     
-    var htmlString: String?
+    var problemItem: ProblemListItemModel?
     
     private weak var highlightr: Highlightr?
     
     struct Dependency{
         var viewModel: CodeEditorViewModel
-        var html: String
+        var problem: ProblemListItemModel
     }
     
     static func create(with dependency: Dependency) -> CodeEditorViewController{
         let vc = CodeEditorViewController()
         vc.editorViewModel = dependency.viewModel
-        vc.htmlString = dependency.html
+        vc.problemItem = dependency.problem
+        vc.problemPopUpView.setLangueMenu(languages: dependency.problem.language)
         return vc
     }
     
@@ -78,8 +79,8 @@ class CodeEditorViewController: UIViewController,Stepper{
     
     lazy var problemPopUpView: ProblemPopUpView = {
         let popView = ProblemPopUpView(frame: .zero,self)
-        if let htmlString{
-            popView.loadHTMLToWebView(html: htmlString)
+        if let html = problemItem?.contenxt{
+            popView.loadHTMLToWebView(html: html)
         }
         return popView
     }()
@@ -96,6 +97,7 @@ class CodeEditorViewController: UIViewController,Stepper{
         textViewHighLiterSetting()
         lineNumberRulerViewSetting()
         problemPopUpViewShow()
+        binding()
         
         self.view.backgroundColor = .systemBackground
         self.navigationController?.setNavigationBarHidden(true, animated: true)
@@ -103,10 +105,18 @@ class CodeEditorViewController: UIViewController,Stepper{
     
     
     func binding(){
-//        let output = editorViewModel?.transform(input: <#T##CodeEditorViewModel.Input#>)
+        let dissmissAction = problemPopUpView.dissmissAction()
         
+        if let id = problemItem?.problemNumber{
+            let sendSubmissionAction = problemPopUpView.sendSubmissionAction().map{_ in "\(id)" }.asDriver(onErrorJustReturn: "")
+            let languageAction = problemPopUpView.languageAction()
+            
+            let output = editorViewModel?.transform(input: .init(dismissAction: dissmissAction,
+                                                                 sendAction: sendSubmissionAction,
+                                                                 language: languageAction,
+                                                                 sourceCode: codeUITextView.rx.text.compactMap{ $0 }.asDriver(onErrorJustReturn: "")))
+        }
     }
-    
     
     private func keyBoardLayoutManager(){
         let _ = KeyBoardManager.shared.getKeyBoardLifeCycle()
@@ -124,16 +134,12 @@ extension CodeEditorViewController{
         self.codeUITextView.backgroundColor = self.highlightr?.theme.themeBackgroundColor
         storage.language = "swift"
         guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
-        guard let strings = try? String(contentsOfFile: path) else {return}
+//        guard let strings = try? String(contentsOfFile: path) else {return}
         //        self.codeUITextView.text = strings
         
         self.codeUITextView.text =
 """
-
-int main(){
-    print("Hello world!")
-    return 0;
-}
+#include <stdio.h> \n int main() \n { \n printf("Hello, world!\\n"); \n return 0; \n }
 """
     }
     
@@ -210,14 +216,14 @@ extension CodeEditorViewController{
         self.codeUITextView.contentSize.height += problemPopUpView.bounds.height
     }
     
-    func dismissProblemDiscription(button height: CGFloat ){
+    func dismissProblemDiscription(button height: CGFloat){
+        
         problemPopUpView.snp.remakeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(height)
+            make.height.equalTo(height).priority(.high)
         }
         numbersView.layer.setNeedsDisplay()
-        
     }
 }
 
