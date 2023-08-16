@@ -10,7 +10,12 @@ import SnapKit
 
 class NumberButton: UIButton{
     
-    private let container: UIView = {
+    var container: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    private let numberLayerContainer: UIView = {
         let number = UIView()
         number.layer.borderColor = UIColor.sky_blue.cgColor
         number.layer.borderWidth = 1
@@ -25,7 +30,7 @@ class NumberButton: UIButton{
     
     private let textlabel: UILabel = {
         let label = UILabel()
-        return label.headLineLabel(size: 16, text: "", color: .label)
+        return label.headLineLabel(size: 16, text: "결과", color: .label)
     }()
     
     
@@ -41,6 +46,7 @@ class NumberButton: UIButton{
     
     func settingNumber(for index: Int){
         numberLabel.text = "\(index)"
+
     }
     
     func settingText(for text: String){
@@ -49,15 +55,21 @@ class NumberButton: UIButton{
     
     private func layoutConfigure(){
         
-        [container,
+        addSubview(container)
+        
+        [numberLayerContainer,
          textlabel]
             .forEach{
-                self.addSubview($0)
+                container.addSubview($0)
         }
         
-        container.addSubview(numberLabel)
+        numberLayerContainer.addSubview(numberLabel)
         
         container.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        numberLayerContainer.snp.makeConstraints { make in
             make.top.leading.bottom.equalToSuperview().inset(5)
             make.width.height.equalTo(30)
         }
@@ -67,8 +79,8 @@ class NumberButton: UIButton{
         }
         
         textlabel.snp.makeConstraints { make in
-            make.leading.equalTo(container.snp.trailing).offset(5)
-            make.centerY.equalTo(container.snp.centerY)
+            make.leading.equalTo(numberLayerContainer.snp.trailing).offset(5)
+            make.centerY.equalTo(numberLayerContainer.snp.centerY)
             make.trailing.equalToSuperview().inset(5)
         }
     }

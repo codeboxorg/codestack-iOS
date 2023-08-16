@@ -8,16 +8,7 @@
 
 import UIKit
 
-enum SolveStatus: CaseIterable{
-    
-    static var allCases: [SolveStatus] = [.temp,.fail,.favorite,.solve]
-    
-    case temp
-    case favorite
-    case solve
-    case fail
-    case none
-}
+
 
 extension UILabel{
     
