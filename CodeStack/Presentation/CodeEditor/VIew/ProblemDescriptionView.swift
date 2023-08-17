@@ -37,6 +37,7 @@ final class ProblemPopUpView: UIView{
        let button = NumberButton()
         button.settingNumber(for: 1)
         button.settingText(for: "문제")
+        button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -46,6 +47,7 @@ final class ProblemPopUpView: UIView{
        let button = ResultButton()
         button.settingNumber(for: 2)
         button.settingText(for: "결과")
+        button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -57,6 +59,7 @@ final class ProblemPopUpView: UIView{
     
     lazy var backButton: BackButton = {
         let button = BackButton()
+        button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -67,11 +70,13 @@ final class ProblemPopUpView: UIView{
     }()
     
     /// 문제 제출 버튼
-    private let sendButton: SendButton = {
-        return UIButton().makeSendButton()
+    private lazy var sendButton: SendButton = {
+        let button = UIButton().makeSendButton()
+        button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
+        return button
     }()
     
-    private let languageButton: LanguageButton = {
+    private lazy var languageButton: LanguageButton = {
         let button = LanguageButton().makeLanguageButton()
         return button
     }()
@@ -86,6 +91,7 @@ final class ProblemPopUpView: UIView{
     // 문제 보여주는 웹뷰
     private lazy var wkWebView: WKWebView = {
         let webView = WKWebView().makeWebView()
+        webView.isOpaque = false
         webView.navigationDelegate = self
         webView.scrollView.isScrollEnabled = false
         return webView
@@ -100,6 +106,10 @@ final class ProblemPopUpView: UIView{
     private let leading_trailing_spacing: CGFloat = 8
     
     lazy var languageRelay = BehaviorRelay<Language>(value: languages.first!)
+    
+    let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    
+    private var webViewHeight: CGFloat = 0
     
     var disposeBag = DisposeBag()
     
@@ -126,8 +136,12 @@ final class ProblemPopUpView: UIView{
         Log.debug("deinit")
     }
     
-    let pageValue = PublishRelay<SolveResultType>()
+    let pageValue = BehaviorRelay<SolveResultType>(value: .problem)
     
+    
+    @objc func feedBackGenerate(_ button: UIButton){
+        feedbackGenerator.impactOccurred()
+    }
     
     //MARK: - Observing Event
     private func observingPage(){
@@ -137,9 +151,21 @@ final class ProblemPopUpView: UIView{
             case .problem:
                 vm.wkWebView.isHidden = false
                 vm.resultStatusView.isHidden = true
+                vm.problemStepButton.alpha = 1
+                vm.resultStepButton.alpha = 0.5
+                vm.problemStepButton.isEnabled = false
+                vm.resultStepButton.isEnabled = true
+                vm.remakeWkWebViewHeight(height: vm.webViewHeight)
+                
             case .result(let submission):
                 vm.wkWebView.isHidden = true
                 vm.resultStatusView.isHidden = false
+                vm.problemStepButton.alpha = 0.5
+                vm.resultStepButton.alpha = 1
+                vm.problemStepButton.isEnabled = true
+                vm.resultStepButton.isEnabled = false
+                vm.remakeResultStatus(height: 300,priority: .high)
+                vm.scrollView.contentOffset = CGPoint.zero
                 guard let submission else { return }
                 vm.resultStatusView.status.onNext(submission)
             }
@@ -148,10 +174,12 @@ final class ProblemPopUpView: UIView{
     
     
     private func problemGestureAction() {
+        
         problemStepButton.container.rx.gesture(.tap())
             .when(.recognized).asDriver(onErrorJustReturn: .init())
             .drive(with: self,
                    onNext: { view, _ in
+                view.feedbackGenerator.impactOccurred()
                 view.pageValue.accept(.problem)
             }).disposed(by: disposeBag)
     }
@@ -161,6 +189,7 @@ final class ProblemPopUpView: UIView{
             .when(.recognized).asDriver(onErrorJustReturn: .init())
             .drive(with: self,
                    onNext: { view, _ in
+                view.feedbackGenerator.impactOccurred()
                 view.pageValue.accept(.result(nil))
             }).disposed(by: disposeBag)
     }
@@ -225,13 +254,9 @@ extension ProblemPopUpView: WKNavigationDelegate{
                                    completionHandler: { [weak self] (height, error) in
             
             guard let self else { return }
-            
-            self.wkWebView.snp.remakeConstraints{
-                $0.top.equalToSuperview()
-                $0.leading.trailing.equalToSuperview()
-                $0.height.equalTo(height as! CGFloat)
-                $0.bottom.equalToSuperview()
-            }
+            let float = height as! CGFloat
+            self.webViewHeight = float
+            self.remakeWkWebViewHeight(height: float)
         })
         
         webView.evaluateJavaScript("document.documentElement.outerHTML.toString()",
@@ -255,6 +280,7 @@ extension ProblemPopUpView{
     }
     
     @objc func hidebuttonTapped(_ sender: UIButton){
+        feedbackGenerator.impactOccurred()
         flag == true ? show() : hide(completion: nil)
         flag.toggle()
     }
@@ -288,7 +314,6 @@ extension ProblemPopUpView{
         
         self.delegate!.dismissProblemDiscription(button: buttonHeight)
         
-        
         UIView.animate(
             withDuration: 0.3,
             delay: 0,
@@ -310,6 +335,49 @@ extension ProblemPopUpView{
     
     private func configure() {
         self.backgroundColor = .tertiarySystemBackground
+    }
+    
+    private func remakeWkWebViewHeight(height: CGFloat){
+        let height = self.webViewHeight
+        
+        popUpContainerView.snp.remakeConstraints{
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(44)
+            $0.height.equalTo(434).priority(.low)
+            $0.width.equalTo(UIScreen.main.bounds.width)
+        }
+        
+        self.wkWebView.snp.remakeConstraints{
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(height)
+            $0.bottom.equalToSuperview()
+        }
+    
+        self.popUpContainerView.layoutIfNeeded()
+    }
+    
+    private func remakeResultStatus(height: CGFloat = 300, priority: ConstraintPriority = .medium){
+        
+        popUpContainerView.snp.remakeConstraints{
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(44)
+            $0.height.equalTo(300)
+            $0.width.equalTo(UIScreen.main.bounds.width)
+        }
+        
+        resultStatusView.snp.remakeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        
+        UIView.animate(withDuration: 1.0) {
+            self.resultStatusView.layoutIfNeeded()
+        }
+        
     }
     
     private func autoLayout() {
