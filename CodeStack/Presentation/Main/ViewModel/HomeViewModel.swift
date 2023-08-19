@@ -12,11 +12,12 @@ import RxCocoa
 import RxFlow
 
 
-protocol HomeViewModelProtocol: ViewModelType{
-    
+protocol HomeViewModelType: ViewModelType, Stepper{
+//    var submissions: PublishRelay<[Submission]> { get }
+    var sendSubmission: PublishRelay<Submission> { get }
 }
 
-class HomeViewModel: HomeViewModelProtocol,Stepper{
+class HomeViewModel: HomeViewModelType{
     
     struct Input{
         var viewDidLoad: Signal<Void>
@@ -40,12 +41,29 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
     private var service: TestService = NetworkService()
     
     
+    //MARK: - Input
+    var sendSubmission = PublishRelay<Submission>()
+    
     //MARK: -output
     private var submissions = PublishRelay<[Submission]>()
     
     init(_ service: TestService = NetworkService()){
         self.service = service
+        sendSubmissionBinding()
     }
+    
+    func sendSubmissionBinding(){
+        sendSubmission
+            .map{ [$0] }
+            .withLatestFrom(submissions){ sub, subs in
+                let result = sub + subs
+                return Array(result.prefix(10))
+            }
+            .subscribe(with: self,onNext: { vm, submission in
+                vm.submissions.accept(submission)
+            }).disposed(by: disposeBag)
+    }
+    
     
     func transform(input: Input) -> Output {
         input.problemButtonEvent
@@ -84,7 +102,7 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
                 vm.steps.accept(CodestackStep.sideShow)
             }).disposed(by: disposeBag)
         
-       input.viewDidLoad
+        input.viewDidLoad
             .map{_ in self.service.request().content}
             .withUnretained(self)
             .emit(onNext: { vm, value in
@@ -94,10 +112,20 @@ class HomeViewModel: HomeViewModelProtocol,Stepper{
         
         //추후 모델 추가 예정
         input.recentProblemPage
-            .map{ _ in CodestackStep.recentSolveList }
+            .compactMap{submission in submission.problem}
+            .map{ problem in
+                let rate = Double(problem.submission).toRate(second: problem.accepted)
+                let listItem = ProblemListItemModel(problemNumber: problem.id,
+                                                    problemTitle: problem.title,
+                                                    submitCount: problem.submission,
+                                                    correctAnswer: problem.accepted,
+                                                    correctRate: rate,
+                                                    languages: problem.languages)
+                return CodestackStep.recentSolveList(listItem)
+            }
             .emit(to: steps)
             .disposed(by: disposeBag)
-
+        
         
         return Output(submissions: self.submissions.asDriver(onErrorJustReturn: []))
     }

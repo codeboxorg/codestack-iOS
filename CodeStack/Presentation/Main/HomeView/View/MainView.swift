@@ -62,7 +62,7 @@ class MainView: UIView{
     }
     
     //MARK: - Events merge to Signal
-    func emitButtonEvents() -> Signal<ButtonType>{
+    func emitTodayAndRecommendBtnEvent() -> Signal<ButtonType>{
         
 //        #if DEBUG
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
