@@ -74,7 +74,7 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         path.addLine(to: CGPoint(x: rect.size.width, y: yPoint))
         
         path.lineWidth = 2
-        UIColor.lightGray.setStroke()
+        UIColor.systemGray.setStroke()
         path.stroke()
         
     }
@@ -98,6 +98,9 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         
         let pinch = UIPinchGestureRecognizer(target: self, action: #selector(dopinch(_:)))
         self.contentView.addGestureRecognizer(pinch)
+        
+        self.backgroundColor = UIColor.systemBackground
+        contentView.backgroundColor = UIColor.systemBackground
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = UIColor.label.cgColor
         contentView.layer.cornerRadius = 10

@@ -15,7 +15,8 @@ import RxGesture
 
 extension UIViewController {
     func adjustLargeTitleSize() {
-        self.title = "CodeStack"
+//        self.title =
+        self.navigationItem.title = "CodeStack"
         self.navigationController?.navigationBar.tintColor = UIColor.label
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.largeTitleDisplayMode = .automatic
@@ -31,12 +32,12 @@ class ViewController: UIViewController{
     //    weak var delegate: SideMenuDelegate?
     
     struct Dependencies{
-        var homeViewModel: any HomeViewModelProtocol
+        var homeViewModel: any HomeViewModelType
         var sidemenuVC: SideMenuViewController
     }
     
     //ViewController
-    private var homeViewModel: (any HomeViewModelProtocol)?
+    private var homeViewModel: (any HomeViewModelType)?
     private weak var sidemenuViewController: SideMenuViewController?
     
     static func create(with dependencies: Dependencies) -> ViewController{
@@ -63,12 +64,13 @@ class ViewController: UIViewController{
     private lazy var recentPagesCollectionView: UICollectionView = {
         let collectionView = PRSubmissionHistoryCell.submissionHistoryCellSetting(item: CGSize(width: 140, height: 140),
                                                                                   background: UIColor.systemBackground)
+        
         collectionView.register(PRSubmissionHistoryCell.self, forCellWithReuseIdentifier: PRSubmissionHistoryCell.identifier)
         return collectionView
     }()
     
     private let mainView: MainView = {
-        let view = MainView(frame: .zero, stepType: [.problemList,.fakeStep])
+        let view = MainView(frame: .zero, stepType: [.problemList,.recommendPage])
         return view
     }()
     
@@ -109,7 +111,7 @@ class ViewController: UIViewController{
     
     private func binding(){
         let output = (homeViewModel as! HomeViewModel).transform(input: HomeViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(),
-                                                                                            problemButtonEvent: mainView.emitButtonEvents(),
+                                                                                            problemButtonEvent: mainView.emitTodayAndRecommendBtnEvent(),
                                                                                             rightSwipeGesture: view.rx.gesture(.swipe(direction: .right)).when(.recognized).asObservable(),
                                                                                             leftSwipeGesture: view.rx.gesture(.swipe(direction: .left)).when(.recognized).asObservable(),
                                                                                             leftNavigationButtonEvent: navigationItem.leftBarButtonItem?.rx.tap.asSignal() ?? .never(),

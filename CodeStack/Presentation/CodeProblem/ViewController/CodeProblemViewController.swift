@@ -75,7 +75,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     //MARK: - View Layout Configure
     private func layoutConfigure(){
         self.view.backgroundColor = UIColor.systemBackground
-        self.title = "Problem List"
+        self.navigationItem.title = "문제"
         self.view.addSubview(problemTableView)
         problemTableView.snp.makeConstraints{
             $0.edges.equalTo(self.view.safeAreaLayoutGuide.snp.edges)
@@ -89,7 +89,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     var _viewDidLoad = PublishRelay<Void>()
     var _viewDissapear = PublishRelay<Void>()
     var _foldButtonSeleted = PublishRelay<(Int,Bool)>()
-    var _cellSelect = PublishRelay<Void>()
+    var _cellSelect = PublishRelay<DummyModel>()
     
     var _fetchProblemList = PublishRelay<Void>()
         
@@ -108,7 +108,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     func cellClickedEvent(){
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: { [weak self] in
             guard let self else {return}
-            self._cellSelect.accept(())
+//            self._cellSelect.accept(())
         })
     }
     #endif
@@ -176,7 +176,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
             cell.problemCell_tapGesture?.rx.event
                 .asSignal()
                 .emit(onNext: { [weak self] _ in
-                    self?._cellSelect.accept(())
+                    self?._cellSelect.accept(model)
                 }).disposed(by: cell.disposeBag)
             
         }.disposed(by: disposeBag)
