@@ -11,13 +11,13 @@ import RxSwift
 import RxCocoa
 import RxGesture
 
-class HistoryViewController: UIViewController {
+class HistoryViewController: UIViewController, UITableViewDelegate {
     
-    var historyViewModel: HistoryViewModel?
+    var historyViewModel: (any HistoryViewModelType)?
     
-    static func create(with dependency: HistoryViewModel) -> HistoryViewController{
+    static func create(with dependency: any HistoryViewModelType) -> HistoryViewController{
         let history = HistoryViewController()
-        history.historyViewModel = dependency
+        history.historyViewModel = dependency as? HistoryViewModel
         return history
     }
     
@@ -32,6 +32,13 @@ class HistoryViewController: UIViewController {
         return seg
     }()
     
+    private let refreshButton: UIButton = {
+        let button = UIButton(frame: .zero)
+        button.tintColor = UIColor.sky_blue
+        button.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
+        return button
+    }()
+    
     private let historyList: UITableView = {
         let table = UITableView(frame: .zero)
         table.register(HistoryCell.self, forCellReuseIdentifier: HistoryCell.identifier)
@@ -39,9 +46,12 @@ class HistoryViewController: UIViewController {
         return table
     }()
     
-    var _viewDidLoad = PublishSubject<Void>()
+    
     
     var disposeBag = DisposeBag()
+    private var _viewDidLoad = PublishSubject<Void>()
+    private var fetchHistoryList = PublishRelay<Void>()
+    private var paginationLoadingInput = PublishRelay<Bool>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +61,7 @@ class HistoryViewController: UIViewController {
     }
     
     func binding(){
+        
         let rightGesture = historyList.rx.gesture(.swipe(direction: .right))
             .withUnretained(self)
             .compactMap{ vc, _ in
@@ -87,16 +98,20 @@ class HistoryViewController: UIViewController {
         let currentSegment
         =
         historySegmentUtil.map{ value in
-            let solveStatus = SegType.switchSegType(value: SegType.Value(rawValue: value) ?? SegType.Value.all)
-            return solveStatus
-        }.asSignal(onErrorJustReturn: .none)
+            let segTypeValue = SegType.Value(rawValue: value) ?? SegType.Value.all
+            return segTypeValue
+        }.asDriver()
         
         
-        guard let output = historyViewModel?
+        let output
+        =
+        (historyViewModel as! HistoryViewModel)
             .transform(input:
                         HistoryViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(onErrorJustReturn: ()),
-                                               currentSegment: currentSegment)) else { return }
-        
+                                               currentSegment: currentSegment,
+                                               refreshTap: refreshButton.rx.tap.asSignal(),
+                                               fetchHistoryList: fetchHistoryList.asSignal(),
+                                               paginationLoadingInput: paginationLoadingInput.asSignal()))
         output.historyData
             .drive(historyList.rx.items(cellIdentifier: HistoryCell.identifier,
                                         cellType: HistoryCell.self))
@@ -104,8 +119,36 @@ class HistoryViewController: UIViewController {
             cell.selectionStyle = .none
             cell.separatorInset = UIEdgeInsets.zero
             cell.onHistoryData.accept(submission)
-            cell.onStatus.accept(Submission.convertSolveStatus(submission.statusCode ?? ""))
+            cell.onStatus.accept(submission.statusCode?.convertSolveStatus() ?? .none)
         }.disposed(by: disposeBag)
+        
+        
+        output.refreshEndEvnet
+            .emit(with: self,onNext: { vc, _ in
+                vc.historyList.removeBottomRefresh()
+            }).disposed(by: disposeBag)
+        
+        
+        let paginationLoding = output.paginationLoading.asObservable()
+        let scroll = historyList.rx.didScroll.asDriver()
+        
+        historyList.rx.setDelegate(self)
+            .disposed(by: disposeBag)
+        
+
+        Driver.combineLatest(scroll, currentSegment)
+            .throttle(.milliseconds(500))
+            .filter{ $1.isAll() }
+            .flatMapLatest{ _ in paginationLoding.take(1).asDriver(onErrorJustReturn: false) }
+            .filter{ !$0 }
+            .drive(with: self,onNext: { vc , _ in
+                let table = vc.historyList
+                if table.contentOffset.y > table.contentSize.height - table.bounds.height{
+                    table.addBottomRefresh(width: vc.view.frame.width)
+                    vc.paginationLoadingInput.accept(true)
+                    vc.fetchHistoryList.accept(())
+                }
+            }).disposed(by: disposeBag)
     }
 }
 
@@ -113,13 +156,14 @@ class HistoryViewController: UIViewController {
 extension HistoryViewController{
     
     func layoutConfigure(){
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: refreshButton)
         self.view.backgroundColor = .tertiarySystemBackground
         
         view.addSubview(container)
         view.addSubview(historyList)
         container.addSubview(historySegmentList)
-        historySegmentList.selectedSegmentIndex = 0
-        
+        historySegmentList.selectedSegmentIndex = 4
         
         
         historyList.snp.makeConstraints{
