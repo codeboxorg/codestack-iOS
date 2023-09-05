@@ -36,7 +36,7 @@ class MyPageFlow: Flow{
     func navigateToMyPage() -> FlowContributors {
         let profileVC = MyPageViewController()
 
-        profileVC.title = "마이페이지"
+        profileVC.navigationItem.title = "마이페이지"
         self.rootViewController.pushViewController(profileVC, animated: true)
         return .one(flowContributor: .contribute(withNextPresentable: profileVC, withNextStepper: DefaultStepper()))
     }
