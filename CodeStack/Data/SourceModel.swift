@@ -51,15 +51,3 @@ struct Lanaguage{
     }
 }
 
-//struct Member{
-//    let memberID: Int
-//    var userName: String?
-//    var nickname: String?
-//    
-//    enum CodingKeys: String,CodingKey{
-//        case memberID = "id"
-//        case userName
-//        case nickname
-//    }
-//
-//}

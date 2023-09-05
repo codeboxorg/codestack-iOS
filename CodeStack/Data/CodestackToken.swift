@@ -13,4 +13,11 @@ struct CodestackResponseToken: Codable{
     let accessToken: String
     let expiresIn: TimeInterval
     let tokenType: String
+    
+    init(refreshToken: String, accessToken: String, expiresIn: TimeInterval, tokenType: String) {
+        self.refreshToken = refreshToken
+        self.accessToken = accessToken
+        self.expiresIn = expiresIn
+        self.tokenType = tokenType
+    }
 }

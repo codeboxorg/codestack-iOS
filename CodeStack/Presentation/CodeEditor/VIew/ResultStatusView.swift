@@ -15,20 +15,26 @@ class ReusltStatusView: UIView{
     lazy var status = Binder<Submission>(self)
     { target, submission in
         
-        target.problemID.text = submission.id
-        target.problemName.text = submission.problem?.title
-        target.member.text = submission.member?.nickname ?? submission.member?.username
-        target.memoryUsage.text = "\(submission.memoryUsage ?? -1)"
-        target.cpuTime.text = "\(submission.cpuTime ?? -1)"
-        target.statuscode.text = "\(submission.statusCode ?? "N/A")"
-
+        let propertyLoop = [submission.id,
+                            submission.problem?.title,
+                            submission.member?.nickname ?? submission.member?.username,
+                            "\(submission.memoryUsage ?? -1)",
+                            "\(submission.cpuTime ?? -1)",
+                            "\(submission.statusCode ?? "N/A")"]
+        
+        zip(target.H_stackViews,propertyLoop).forEach { value in
+            let (view,pro) = value
+            if let box = view.subviews.last as? BoxContainerLabel{
+                box.setContainer(ReusltStatusView.font, pro ?? "N/A")
+            }
+        }
     }
     
     private lazy var V_stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.alignment = .leading
         stackView.distribution = .equalSpacing
-        stackView.spacing = 0
+        stackView.spacing = 10
         stackView.axis = .vertical
         return stackView
     }()
@@ -97,7 +103,7 @@ class ReusltStatusView: UIView{
         
         V_stackView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(50)
+            make.bottom.lessThanOrEqualToSuperview()
             make.trailing.leading.equalToSuperview().inset(16)
         }
         
@@ -130,7 +136,7 @@ class ReusltStatusView: UIView{
             stack.addArrangedSubview(label)
             
             label.snp.makeConstraints { make in
-                make.width.equalTo(maxWidth)
+                make.width.equalTo(maxWidth * 2)
                 make.height.equalTo(maxHeight)
             }
             

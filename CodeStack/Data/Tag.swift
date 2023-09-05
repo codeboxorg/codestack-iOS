@@ -6,10 +6,22 @@
 //
 
 import Foundation
+import CodestackAPI
 
-struct Tag: Codable{
-    let id: String
+struct Tag: Codable,Equatable{
+    let id: Double
     let name: String
+    
+    init(id: Double,name: String){
+        self.id = id
+        self.name = name
+    }
+    
+    init(with tag: CreateSubmissionMutation.Data.CreateSubmission.Problem.Tag){
+        self.id = 0
+        self.name = tag.name
+    }
+    
 }
 
 struct _TagPagedResult: Codable{
