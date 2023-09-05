@@ -8,18 +8,18 @@
 import Foundation
 import CodestackAPI
 
-struct _Problem: Codable,Equatable{
-    let id: Int
+struct Problem: Codable,Equatable{
+    let id: String
     let title: String
     let context: String
     let maxCpuTime: Int
     let maxMemory: Int
-    let submission: Int
-    let accepted: Int
+    let submission: Double
+    let accepted: Double
     let tags: [Tag]
     let languages: [Language]
     
-    init(id: Int = 1, title: String, context: String = "", maxCpuTime: Int = 1, maxMemory: Int = 1, submission: Int = 1, accepted: Int = 1, tags: [Tag] = [], languages: [Language] = []) {
+    init(id: String = "", title: String, context: String = "", maxCpuTime: Int = 1, maxMemory: Int = 1, submission: Double = 1, accepted: Double = 1, tags: [Tag] = [], languages: [Language] = []) {
         self.id = id
         self.title = title
         self.context = context
@@ -30,19 +30,17 @@ struct _Problem: Codable,Equatable{
         self.tags = tags
         self.languages = languages
     }
-    
-    init(id: ID, title: String){
-        self.init(id: Int(id) ?? -1 ,title: title)
-    }
-    
-    
-    
-    init(create problem: CreateSubmissionMutation.Data.CreateSubmission.Problem){
-        self.id = Int(problem.id) ?? 0
+}
+
+
+//MARK: - Submission Mutation Response Problem initializer
+extension Problem {
+    init(create problem: SubmissionProblem){
+        self.id = problem.id
         self.title = problem.title
         self.context = problem.context
         self.maxCpuTime = Int(problem.maxCpuTime) ?? 0
-        self.maxMemory = Int(problem.maxMemory) 
+        self.maxMemory = Int(problem.maxMemory)
         self.submission = 0
         self.accepted = 0
         self.tags = problem.tags.map{ Tag(with: $0)}
@@ -51,13 +49,30 @@ struct _Problem: Codable,Equatable{
 }
 
 
-extension _Problem{
+//MARK: - GetProblem Query Response initializer
+extension Problem {
+    init(problem: ProblemContent) {
+        self.id = problem.id
+        self.title = problem.title
+        self.context = problem.context
+        self.maxCpuTime = 0
+        self.maxMemory = 0
+        self.submission = problem.submission
+        self.accepted = problem.accepted
+        self.tags = problem.tags.map{ Tag(id: $0.id, name: $0.name) }
+        self.languages = problem.languages.map{ Language(id: $0.id, name: $0.name, _extension: $0.extension)}
+    }
+}
+
+
+//MARK: - To View Model
+extension Problem{
     func toProblemList() -> ProblemListItemModel{
         return ProblemListItemModel(problemNumber: self.id,
-                                    problemTitle: self.title,
-                                    submitCount: self.submission,
-                                    correctAnswer: self.accepted,
-                                    correctRate: Double(self.submission).toRate(second: self.accepted),
+                                    problemTitle: self.title ,
+                                    submitCount: Int(self.submission) ,
+                                    correctAnswer: Int(self.accepted) ,
+                                    correctRate: self.submission.toRate(second: self.accepted),
                                     contenxt: self.context,
                                     tags: self.tags,
                                     languages: self.languages)
@@ -67,7 +82,8 @@ extension _Problem{
 
 
 
+//MARK: Page info
 struct _ProblemPagedResult: Codable{
-    let content: [_Problem]
+    let content: [Problem]
     let pageInfo: _PageInfo
 }
