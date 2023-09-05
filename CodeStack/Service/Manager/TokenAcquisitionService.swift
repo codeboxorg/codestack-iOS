@@ -16,30 +16,18 @@ extension ObservableConvertibleType where Element == Error {
     ///
     /// - Parameter service: A `TokenAcquisitionService` object that is being used to store the auth token for the request.
     /// - Returns: A trigger that will emit when it's safe to retry the request.
-    public func renewToken<T>(with service: TokenAcquisitionService<T>) -> Observable<Void> {
+    func renewToken<T>(with service: TokenAcquisitionService<T>) -> Observable<Void> {
         return service.trackErrors(for: self)
     }
 }
 
-/// Errors recognized by the `TokenAcquisitionService`.
-///
-/// - unauthorized: It listens for and activates when it receives an `.unauthorized` error.
-/// - refusedToken: It emits a `.refusedToken` error if the `getToken` request fails.
-public enum TokenAcquisitionError: Error, Equatable {
-    case undefinedURL
-    case unauthorized
-    case unowned
-    case undefined
-    case refusedToken(response: HTTPURLResponse, data: Data)
-}
 
-
-public final class TokenAcquisitionService<T> {
+final class TokenAcquisitionService<T> {
     
     /// responds with the current token immediatly and emits a new token whenver a new one is aquired. You can, for
     /// example, subscribe to it in order to save the token as it's updated. If token acquisition fails, this will emit a
     /// `.next(.failure)` event.
-    public var token: Observable<Result<T, Error>> {
+    var token: Observable<Result<T, Error>> {
         return _token.asObservable()
     }
     
@@ -48,7 +36,7 @@ public final class TokenAcquisitionService<T> {
     private let lock = NSRecursiveLock()
     private let disposeBag = DisposeBag()
     
-
+    
     public typealias GetToken = (T) -> Observable<(response: HTTPURLResponse, data: Data)>
     /// Creates a `TokenAcquisitionService` object that will store the most recent authorization token acquired and will
     /// acquire new ones as needed.
@@ -58,10 +46,10 @@ public final class TokenAcquisitionService<T> {
     ///                   represting a missing token, if one has not been aquired yet.
     ///   - getToken: A function responsable for aquiring new tokens when needed.
     ///   - extractToken: A function that can extract a token from the data returned by `getToken`.
-    public init(initialToken: T,
-                getToken: @escaping GetToken,
-                max retry: Int = 2,
-                extractToken: @escaping (Data) throws -> T) {
+    init(initialToken: T,
+         getToken: @escaping GetToken,
+         max retry: Int = 2,
+         extractToken: @escaping (Data) throws -> T) {
         
         let maxCount = retry
         var count: Int = 0
@@ -134,8 +122,8 @@ public final class TokenAcquisitionService<T> {
                 relay.onNext(token)
                 lock.unlock()
             })
-                .filter { _ in false }
-                .map { _ in }
+            .filter { _ in false }
+            .map { _ in }
         
         return Observable.merge(token.skip(1).map { _ in }, error)
     }
