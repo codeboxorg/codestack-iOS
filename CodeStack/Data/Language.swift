@@ -20,3 +20,10 @@ extension Language{
     }
 }
 
+extension Language{
+    init(with language: SubmissionMutation.Language){
+        self.init(id: "", name: language.name, _extension: language.extension)
+    }
+}
+
+

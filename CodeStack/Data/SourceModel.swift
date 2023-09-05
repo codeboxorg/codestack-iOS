@@ -17,7 +17,7 @@ struct _SourceModel{
     var sourceCode: String?
     var problem: ProblemModel
     var language: Lanaguage
-    var member: _Member
+    var member: User
     
     enum CodingKeys: String, CodingKey {
         case id
