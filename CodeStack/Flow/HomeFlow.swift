@@ -38,7 +38,7 @@ class HomeFlow: Flow{
                                                                            presentation: .problemList),
                                                               SideMenuItem(icon: UIImage(named: "submit"),
                                                                            name: "제출근황",
-                                                                           presentation: .recentSolveList),
+                                                                           presentation: .recentSolveList(nil)),
                                                               SideMenuItem(icon: UIImage(named: "my"),
                                                                            name: "마이 페이지",
                                                                            presentation: .profilePage),
@@ -49,15 +49,28 @@ class HomeFlow: Flow{
                                                                            name: "추천",
                                                                            presentation: .recommendPage),
                                                               SideMenuItem(icon: UIImage(systemName: "lock.open"),
-                                                                           name: "logout", presentation: .logout)])
+                                                                           name: "로그아웃", presentation: .logout)])
 
-    private weak var tabbarDelegate: TabBarDelegate?
     
-    
-    
-    init(delegate: TabBarDelegate){
-        tabbarDelegate = delegate
+    struct Dependency{
+        var tabbarDelegate: TabBarDelegate
+        var apolloService: ApolloService
+        var homeViewModel: (any HomeViewModelType)
+        var historyViewModel: (any HistoryViewModelType)
     }
+    
+    private weak var tabbarDelegate: TabBarDelegate?
+    private let apolloService: ApolloService
+    private let homeViewModel: (any HomeViewModelType)
+    private let historyViewModel: (any HistoryViewModelType)
+    
+    init(dependency: Dependency){
+        self.apolloService = dependency.apolloService
+        self.homeViewModel = dependency.homeViewModel
+        self.tabbarDelegate = dependency.tabbarDelegate
+        self.historyViewModel = dependency.historyViewModel
+    }
+    
     
     func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
@@ -71,9 +84,16 @@ class HomeFlow: Flow{
         case .sideDissmiss:
             return dismissSideMenuView()
             
+        case .recommendPage:
+            Toast.toastMessage("...현재 지원하지 않는 기능입니다...",
+                               offset: UIScreen.main.bounds.height - 250,
+                               background: .sky_blue,
+                               boader: UIColor.black.cgColor)
+            return .none
+            
         case .problemList:
             //main -> problem (Move Tab 1)
-            tabbarDelegate?.setSelectedIndex(for: 1)
+            tabbarDelegate?.setSelectedItem(for: .problem)
             return .none
             
         case .problemComplete:
@@ -84,11 +104,13 @@ class HomeFlow: Flow{
         case .logout:
             return .end(forwardToParentFlowWithStep: CodestackStep.logout)
             
-        case .recentSolveList:
-            return navigateToRecentSolveList()
+        case .recentSolveList(let item):
+            
+            guard let item else {return .none}
+            return navigateToRecentSolveList(problem: item)
             
         case .historyflow:
-            tabbarDelegate?.setSelectedIndex(for: 2)
+            tabbarDelegate?.setSelectedItem(for: .history)
             return .none
             
         default:
@@ -97,7 +119,7 @@ class HomeFlow: Flow{
     }
     
     private func navigateToHome() -> FlowContributors{
-        let homeViewModel = HomeViewModel()
+        let homeViewModel = self.homeViewModel
         
         let homeVC = ViewController.create(with: HomeViewController.Dependencies(homeViewModel: homeViewModel,
                                                                                          sidemenuVC: sideVC))
@@ -107,11 +129,17 @@ class HomeFlow: Flow{
                                                  withNextStepper: CompositeStepper(steppers: [homeViewModel,sideVC])))
     }
     
-    private func navigateToRecentSolveList() -> FlowContributors {
-        let editorvc = CodeEditorViewController()
+    private func navigateToRecentSolveList(problem item: ProblemListItemModel) -> FlowContributors
+    {
+        let viewModelDependency = CodeEditorViewModel.Dependency(service: apolloService,
+                                                                 homeViewModel: homeViewModel,
+                                                                 historyViewModel: historyViewModel)
+        let viewModel = CodeEditorViewModel(dependency: viewModelDependency)
+        let dependency = CodeEditorViewController.Dependency(viewModel: viewModel, problem: item)
+        let editorvc = CodeEditorViewController.create(with: dependency)
+        editorvc.hidesBottomBarWhenPushed = true
         rootViewController.pushViewController(editorvc, animated: true)
-        
-        return .one(flowContributor: .contribute(withNext: editorvc))
+        return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: viewModel))
     }
     
     private func showSideMenuView() -> FlowContributors {
