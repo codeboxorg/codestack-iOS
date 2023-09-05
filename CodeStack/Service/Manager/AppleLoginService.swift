@@ -52,7 +52,6 @@ class AppleLoginManager:NSObject,ASAuthorizationControllerDelegate{
                     },onDisposed: {
                         print("ondispose")
                     }).disposed(by: disposebag)
-                    
             }
             break
         default:

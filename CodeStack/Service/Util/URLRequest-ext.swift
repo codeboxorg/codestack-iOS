@@ -12,22 +12,21 @@ extension URLRequest{
     static func request(url: URL,
                         headers: [String: String] = [:],
                         body: [String : String] = [:],
-                        method: String = "GET") -> URLRequest {
+                        method: String) -> URLRequest {
         
-        let components = URLComponents(string: url.absoluteString)!
-        
-        var queryItems: [URLQueryItem] = []
-        
-        body.forEach{ key, value in
-            queryItems.append(URLQueryItem(name: key, value: value))
-        }
-        
-        var request = URLRequest(url: components.url! )
+        var request = URLRequest(url: url )
         
         request.httpMethod = method
         
         headers.forEach { header in
             request.addValue(header.value, forHTTPHeaderField: header.key)
+        }
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: body,
+                                                             options: [])
+        }catch{
+            fatalError("postHeader(with token: GitToken) -> URLRequest: \(error)")
         }
         
         return request

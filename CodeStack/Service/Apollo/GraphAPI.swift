@@ -13,7 +13,6 @@ enum GraphAPI{
     }
     
     static var baseURL: URL {
-        
         return URL(string: endpoint)!
     }
 }

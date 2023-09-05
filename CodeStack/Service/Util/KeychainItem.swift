@@ -159,7 +159,7 @@ extension KeychainItem{
         }
         
         do{
-            try KeychainItem(service: .bundle, account: .refresh).saveItem(access)
+            try KeychainItem(service: .bundle, account: .refresh).saveItem(refresh)
         }catch{
             Log.error("Refresh Token 저장 실패")
         }
