@@ -40,12 +40,17 @@ class OnBoardingFlow: Flow{
     }
     
     func navigateToOnBoardingVC() -> FlowContributors{
-        let onBoarding = OnBoardingVC()
-        
-        Log.debug(rootViewController.isNavigationBarHidden)
+        let onBoarding = PagingOnboardingViewController()
         
         rootViewController.pushViewController(onBoarding, animated: false)
-        
         return .one(flowContributor: .contribute(withNext: onBoarding))
+        
+//        let onBoarding = OnBoardingVC()
+//
+//        Log.debug(rootViewController.isNavigationBarHidden)
+//
+//        rootViewController.pushViewController(onBoarding, animated: false)
+//
+//        return .one(flowContributor: .contribute(withNext: onBoarding))
     }
 }

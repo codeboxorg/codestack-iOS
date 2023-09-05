@@ -17,7 +17,24 @@ class TabBarFlow: Flow{
     }
     
     
+    init(dependency: CodestackAuthorization){
+        self.loginService = dependency
+    }
+    
     private var rootViewTabController = CustomTabBarController()
+    
+    private let loginService: CodestackAuthorization
+    
+    private var initialToken = CodestackResponseToken(refreshToken: KeychainItem.currentAccessToken,
+                                                      accessToken: KeychainItem.currentRefreshToken,
+                                                      expiresIn: UserDefaults.standard.value(forKey: "expiresIn") as! TimeInterval,
+                                                      tokenType: UserDefaults.standard.value(forKey: "tokenType") as! String)
+    
+    private lazy var tokenAquizitionService
+    =
+    TokenAcquisitionService<CodestackResponseToken>(initialToken: initialToken,
+                                                    getToken: loginService.reissueToken,
+                                                    extractToken: loginService.extractToken)
     
     
     func navigate(to step: RxFlow.Step) -> RxFlow.FlowContributors {
@@ -42,9 +59,24 @@ class TabBarFlow: Flow{
     }
     
     private func navigateToTabBarController() -> FlowContributors{
-        let homeFlow = HomeFlow(delegate: rootViewTabController)
-        let problemFlow = CodeProblemFlow()
-        let historyFlow = HistoryFlow()
+        let homeViewModel = HomeViewModel()
+        let tabBarDelegate = rootViewTabController
+        let apollo = ApolloService(dependency: tokenAquizitionService)
+        
+        let historyViewModel = HistoryViewModel(service: apollo)
+        
+        let codeDependency = CodeProblemFlow.Dependency(apolloService: apollo,
+                                                        homeViewModel: homeViewModel,
+                                                        historyViewModel: historyViewModel)
+        
+        let homeDependency = HomeFlow.Dependency(tabbarDelegate: tabBarDelegate,
+                                                 apolloService: apollo,
+                                                 homeViewModel: homeViewModel,
+                                                 historyViewModel: historyViewModel)
+        
+        let homeFlow = HomeFlow(dependency: homeDependency)
+        let problemFlow = CodeProblemFlow(dependency: codeDependency)
+        let historyFlow = HistoryFlow(historyViewModel: historyViewModel)
         let myPageFlow = MyPageFlow()
         
         Flows.use(homeFlow,problemFlow,historyFlow,myPageFlow, when: .created)
@@ -54,16 +86,26 @@ class TabBarFlow: Flow{
             let historyVC = histoty
             let myPageVC = myPage
             
-            homeVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
-            problemVC.tabBarItem = UITabBarItem(title: "문제", image: UIImage(systemName: "list.bullet.rectangle.portrait"), tag: 1)
-            historyVC.tabBarItem = UITabBarItem(title: "기록", image: UIImage(systemName: "clock"), tag: 2)
-            myPageVC.tabBarItem = UITabBarItem(title: "프로필", image: UIImage(systemName: "person"), tag: 3)
+            homeVC.tabBarItem = UITabBarItem(title: nil,
+                                             image: UIImage(systemName: "house")?.baseOffset(),
+                                             tag: 0)
+            
+            problemVC.tabBarItem = UITabBarItem(title: nil,
+                                                image: UIImage(systemName: "list.bullet.rectangle.portrait")?.baseOffset(),
+                                                tag: 1)
+            
+            historyVC.tabBarItem = UITabBarItem(title: nil,
+                                                image: UIImage(systemName: "clock")?.baseOffset(),
+                                                tag: 2)
+            
+            myPageVC.tabBarItem = UITabBarItem(title: nil,
+                                               image: UIImage(systemName: "person")?.baseOffset(),
+                                               tag: 3)
             
             self.rootViewTabController.setViewControllers([homeVC,
                                                            problemVC,
                                                            historyVC,
                                                            myPageVC], animated: true)
-         
         }
         
         return .multiple(flowContributors: [
