@@ -11,45 +11,65 @@ import CodestackAPI
 
 
 
-protocol ApolloServiceProtocol{
-    func request(query: GetAllLanguageQuery, completion: @escaping (Result<[Language],Error>) -> () )
-    func request(query: GetSubmissionsQuery, completion: @escaping (Result<[Submission],Error>) -> () )
+protocol ApolloServiceType{
+    func getAllLanguage(query: GetAllLanguageQuery, completion: @escaping (Result<[Language],Error>) -> () )
+    func getMeSubmissions(query: GetMeSubmissionsQuery) -> Maybe<GetMeSubmissions>
+    func getSubmission(query: GetSubmissionsQuery) -> Maybe<GetSubmissions>
     func request(query: GetAllTagQuery, completion: @escaping (Result<[Tag],Error>) -> () )
     func request(query: GetProblemsQuery,_ completion: @escaping (Result<[_Problem],Error>) -> () )
-    
-    func perform(mutation: CreateSubmissionMutation) -> Maybe<CreateSubmissionMutation.Data>
+    func request(query: GetMeQuery) -> Maybe<GetMeQuery.Data.GetMe>
+    func request(query: GetSolvedProblemQuery) -> Maybe<SolvedProblems>
+    func perform(mutation: CreateSubmissionMutation, max retry: Int) -> Maybe<CreateSubmissionMutation.Data>
 }
 
 
-//if (status === 'AC') return <Tag color='green'>정답</Tag>
-//   if (status === 'WA') return <Tag color='red'>오답</Tag>
-//   if (status === 'PE') return <Tag color='yellow'>출력 형식 다름</Tag>
-//   if (status === 'TLE') return <Tag color='red'>시간 초과</Tag>
-//   if (status === 'MLE') return <Tag color='red'>메모리 초과</Tag>
-//   if (status === 'OLE') return <Tag color='yellow'>값 출력 초과</Tag>
 
-class ApolloService: ApolloServiceProtocol{
+public typealias Token = String
+public typealias SolvedProblems = [GetSolvedProblemQuery.Data.MatchMember.SolvedProblem]
+public typealias GetSubmissions = GetSubmissionsQuery.Data.GetSubmissions
+public typealias GetMeSubmissions = [GetMeSubmissionsQuery.Data.GetMe.Submission]
+
+class ApolloService: ApolloServiceType{
     
+    private var tokenAcquizition: TokenAcquisitionService<CodestackResponseToken>
+    private var repository: Repository
     
-    private var repository: Repository = ApolloRepository.shared
+    init(dependency: TokenAcquisitionService<CodestackResponseToken> ){
+        self.tokenAcquizition = dependency
+        self.repository = ApolloRepository(dependency: self.tokenAcquizition)
+    }
 
     
-    func perform(mutation: CreateSubmissionMutation) -> Maybe<CreateSubmissionMutation.Data>
-    {
-        return repository.perform(query: mutation, cachePolichy: .default, queue: .main)
+    func request(query: GetSolvedProblemQuery) -> Maybe<SolvedProblems> {
+        repository.fetch(query: query, cachePolicy: .default, queue: .main)
+            .map { data in
+                data.matchMember.solvedProblems
+            }
     }
     
-    //.perform(query: mutation, cachePolichy: .default, queue: .main)
-//            .subscribe(onSuccess: { data in
-//                let submission = ConvertUtil.converting(submission: data.createSubmission)
-//                completion(.success(submission))
-//            },onError: { err in
-//                completion(.failure(err))
-//            },onCompleted: {
-//
-//            },onDisposed: {
-//
-//            })
+    
+    func request(query: GetMeQuery) -> Maybe<GetMeQuery.Data.GetMe>{
+        repository.fetch(query: query, cachePolicy: .default, queue: .main)
+            .map{ data in
+                data.getMe
+            }
+    }
+    
+    
+    func perform(mutation: CreateSubmissionMutation, max retry: Int = 3) -> Maybe<CreateSubmissionMutation.Data>
+    {
+        return repository.perform(query: mutation, cachePolichy: .default, queue: .main)
+            .retry(when: { [unowned self] errorObservable in
+                return errorObservable.renewToken(with: self.tokenAcquizition)
+            })// retry
+    }
+    
+    func request<Query,Response>(query: Query,
+                                 type: Response.Type,
+                                 completion: @escaping ((Result<Response, Error>) -> Void))
+    where Query: GraphQLQuery, Response: Decodable, Response: Encodable {
+        
+    }
     
     
     func request(query: GetProblemsQuery,
@@ -76,6 +96,7 @@ class ApolloService: ApolloServiceProtocol{
         //tag: 완전 탐색
         //tag: 4
         //tag: 자료 구조
+        
         _ = repository
             .fetch(query: query, cachePolicy: .default, queue: DispatchQueue.main)
             .subscribe(with: self, onSuccess: { service, data in
@@ -93,7 +114,7 @@ class ApolloService: ApolloServiceProtocol{
     
     
     
-    func request(query: GetAllLanguageQuery,
+    func getAllLanguage(query: GetAllLanguageQuery,
                  completion: @escaping (Result<[Language],Error>) -> () )
     {
         _ = repository
@@ -111,22 +132,28 @@ class ApolloService: ApolloServiceProtocol{
             })
     }
     
-    
-    func request(query: GetSubmissionsQuery,
-                 completion: @escaping (Result<[Submission],Error>) -> () )
-    {
-        _ = repository
-            .fetch(query: query, cachePolicy: .default, queue: DispatchQueue.main)
-            .subscribe(onSuccess: { sub in
-                let submissions = ConvertUtil.converting(all: sub.getSubmissions)
-            }, onError: { err in
-                
-            }, onCompleted: {
-                
-            }, onDisposed: {
-                
-            })
+    func getMeSubmissions(query: GetMeSubmissionsQuery) -> Maybe<GetMeSubmissions>{
+        repository
+            .fetch(query: query, cachePolicy: .default, queue: .main)
+            .map{ $0.getMe.submissions }
     }
+    
+    
+    func getSubmission(query: GetSubmissionsQuery) -> Maybe<GetSubmissions>{
+        let op = GetSubmissionsQuery.operationName.lowercased()
+        return repository
+            .fetch(query: query, cachePolicy: .default, queue: DispatchQueue.main)
+            .map{ data in
+//                let dict = data.__data[op]
+//                if let dict{
+//                    print(dict)
+//                }
+                return data.getSubmissions
+                
+            }
+    }
+    
+    
     
     func send(mutation: CreateSubmissionMutation){
         _ = repository

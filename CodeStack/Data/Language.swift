@@ -6,10 +6,17 @@
 //
 
 import Foundation
+import CodestackAPI
 
-
-struct Language: Codable{
-    let id: Int
+struct Language: Codable,Equatable{
+    let id: String
     let name: String
     let _extension: String
 }
+
+extension Language{
+    init(with lang: CreateSubmissionMutation.Data.CreateSubmission.Problem.Language){
+        self.init(id: lang.id, name: lang.name, _extension: lang.extension)
+    }
+}
+

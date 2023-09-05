@@ -8,9 +8,4 @@
 import Foundation
 import CodestackAPI
 
-enum GraphMutation{
-    static func problemSubmit(problemId: Double, languageId: Double, sourceCode: String) -> ProblemSubmitMutation {
-        return ProblemSubmitMutation(problemId: problemId, languageId: languageId, sourceCode: sourceCode)
-    }
-}
 
