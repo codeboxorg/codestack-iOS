@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct _ProblemCalendar: Codable{
+struct ProblemCalendar: Codable{
     let date: String
     let solved: Int
 }

@@ -27,14 +27,13 @@ struct User: Codable{
     //MARK: 나중에 데이터 타입 확인 필요
     let year: String?
     
-    init(username: String? = nil,
-         nickname: String? = nil, email: String? = nil, profileImage: String? = nil, problemCalendar: [ProblemCalendar?] = [], year: String? = nil) {
-        self.username = username
-        self.nickname = nickname
-        self.email = email
-        self.profileImage = profileImage
-        self.problemCalendar = problemCalendar
-        self.year = year
+    init() {
+        self.username = nil
+        self.nickname = nil
+        self.email = nil
+        self.profileImage = nil
+        self.problemCalendar = []
+        self.year = nil
     }
 }
 
