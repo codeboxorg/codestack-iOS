@@ -42,6 +42,7 @@ enum CodestackStep: Step, CaseIterable{
     
     //myPage
     case profilePage
+    case profileEdit
     
     //Home Step
     case firstHomeStep

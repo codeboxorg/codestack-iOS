@@ -98,6 +98,20 @@ class ReusltStatusView: UIView{
         fatalError("required init fatalError")
     }
     
+    
+    
+    /// setting subviews Label Color
+    /// - Parameter color: 라벨 컬러   
+    func setting(color: UIColor){
+        H_stackViews.forEach { stackviews in
+            stackviews.subviews.forEach { label in
+                if let box = label as? BoxContainerLabel{
+                    box.label.textColor = color
+                }
+            }
+        }
+    }
+    
     private func addAutoLayout(){
         addSubview(V_stackView)
         
@@ -119,13 +133,16 @@ class ReusltStatusView: UIView{
         
         zip(map,H_stackViews).forEach { map, hstack in
             let (title,label) = map
+            
             hstack.addArrangedSubview(label)
             V_stackView.addArrangedSubview(hstack)
             label.snp.makeConstraints { make in
                 make.width.equalTo(maxWidth)
                 make.height.equalTo(maxHeight)
             }
+            
             label.layer.borderColor = UIColor.sky_blue.cgColor
+            
             label.setContainer(ReusltStatusView.font, "\(title)")
             label.settingBorader(color: UIColor.sky_blue.cgColor)
         }
@@ -141,7 +158,7 @@ class ReusltStatusView: UIView{
             }
             
             label.setContainer(ReusltStatusView.font, "N/A")
-            label.settingBorader(color: UIColor.juhwang.cgColor,corner: 0)
+            label.settingBorader(color: UIColor.juhwang.cgColor)
         }
     }
     

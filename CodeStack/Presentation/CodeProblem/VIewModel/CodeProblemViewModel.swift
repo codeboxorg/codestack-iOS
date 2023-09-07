@@ -15,7 +15,7 @@ protocol ProblemViewModelProtocol{
     associatedtype Output = CodeProblemViewModel.Output
     
     var isLoading: Bool { get set }
-    
+    var animationSelected: [String : Bool] { get set }
     func transform(_ input: Input) -> Output
 }
 
@@ -29,7 +29,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
         var viewDissapear: Signal<Void>
         var segmentIndex: Signal<Int>
         var foldButtonSeleted: Signal<(Int,Bool)>
-        var cellSelect: Signal<Void>
+        var cellSelect: Signal<DummyModel>
         var fetchProblemList: Signal<Void>
     }
     
@@ -39,10 +39,15 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
         var refreshEndEvnet: Driver<Void>
     }
     
-    private var service: DummyData
+    private var dummy: DummyData
     
-    init(_ service: DummyData){
-        self.service = service
+    private var apollo: ApolloServiceType
+    
+    var animationSelected: [String : Bool] = [:]
+    
+    init(_ dummy: DummyData, _ service: ApolloServiceType){
+        self.dummy = dummy
+        self.apollo = service
     }
     
     deinit{
@@ -71,55 +76,24 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
     func transform(_ input: Input) -> Output{
         
         
-        //fetch logic
-        _ = input.fetchProblemList
-            .withUnretained(self)
-            .filter{ vm,_ in
-                if vm.currentPage >= vm.totalPage{
-                    vm.isLoading = false
-                    vm.refreshEnd.accept(())
-                    return false
-                }
-                return true
-            }
-            .delay(.seconds(1))
-            .emit(with: self, onNext: { vm, value in
-                let model = vm.service.fetchModels(currentPage: vm.currentPage)
-                
-                vm.requestProblem(offset: Double(vm.currentPage))
-                
-                vm.currentPage += 1
-                vm.fetchListModels.accept(model)
-                vm.isLoading = false
-                vm.refreshEnd.accept(())
-            }).disposed(by: disposeBag)
+        fetchWhenPagination(input: input.fetchProblemList)
+        
+        fetchWhenViewDidLoad(load: input.viewDidLoad)
         
         
-        _ = input.viewDidLoad
-            .withUnretained(self)
-            .emit(onNext: { vm,_ in
-                let model = vm.service.getAllModels()
-                
-                vm.requestProblem(offset: Double(vm.currentPage))
-                
-                vm.currentPage += 1
-                vm.listModel.accept(model)
-            })
-            .disposed(by: disposeBag)
-        
-        
-        
+        //MARK: - Cell Select
         _ = input.cellSelect
-            .map{_ in CodestackStep.problemPick("")}
+            .map{model in CodestackStep.problemPick(model.model)}
             .emit(to: steps)
             .disposed(by: disposeBag)
         
-        
+        //MARK: - Segment action = Index ? strech OR Fold (all presented Problem Cell)
         _ = input.segmentIndex
             .emit(to: segmentIndex)
             .disposed(by: disposeBag)
         
         
+        //MARK: - Problem Cell Fold Button
         _ = input.foldButtonSeleted
             .withUnretained(self)
             .emit(onNext: { vm, model in
@@ -127,6 +101,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
             })
             .disposed(by: disposeBag)
         
+        //MARK: - Problem Cell Fold Button
         foldButton
             .withLatestFrom(seg_list_model){data, originals in
                 let (index, flag) = data
@@ -138,6 +113,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
             .disposed(by: disposeBag)
         
         
+        //MARK: - Add Fetched Data -> to listModel
         fetchListModels
             .withLatestFrom(listModel){ model, originals in
                 return originals + model
@@ -145,9 +121,17 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
             .disposed(by: disposeBag)
         
         
-        Observable.combineLatest(listModel, segmentIndex, resultSelector: { model, index  in
+        //MARK: CombinLatest (list,seg)
+        Observable
+            .combineLatest(listModel, segmentIndex, resultSelector: { [weak self] model, index  in
+                guard let self else {return .init()}
             let flag = index == 0 ? true : false
-            return model.map{ problem, lang, _ in DummyModel(model: problem,language: lang, flag: flag )}
+            let model = model.map
+            { problem, lang, _ in
+                self.animationSelected[problem.problemNumber] = flag
+                return DummyModel(model: problem,language: lang, flag: flag )
+            }
+            return model
         })
         .bind(to: seg_list_model)
         .disposed(by: disposeBag)
@@ -158,32 +142,78 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
                       refreshEndEvnet: refreshEnd.asDriver(onErrorJustReturn: ()))
     }
     
-    private func requestProblem(offset: Double, sort: String = "id", order: String = "asc"){
-        
-        let query = GraphQuery.getProblems(offset: offset, sort: sort, order: order)
+    
+    private func fetchWhenPagination(input list: Signal<Void>) {
+        //fetch logic
+        _ = list
+            .withUnretained(self)
+            .filter{ vm,_ in
+                if vm.currentPage >= vm.totalPage{
+                    vm.isLoading = false
+                    vm.refreshEnd.accept(())
+                    return false
+                }
+                return true
+            }
+            .delay(.milliseconds(300))
+            .emit(with: self, onNext: { vm, value in
+                vm.requestProblem(offset: vm.currentPage) { problems in
+                    let dummyModel = problems.map { problem in
+                        let list = problem.toProblemList()
+                        return (model: list,language: problem.languages, flag: false)
+                    }
+                    vm.currentPage += 1
+                    vm.isLoading = false
+                    vm.refreshEnd.accept(())
+                    
+                    if dummyModel.isEmpty {
+                        let tempModel = vm.dummy.getAllModels(index: vm.currentPage)
+                        
+                        tempModel.forEach { model in
+                            vm.animationSelected[model.model.problemNumber] = model.flag
+                        }
 
-        _ = ApolloAPI.shared.fetch(query: query)
-            .subscribe(onSuccess: { result in
-                if let data = result.getProblems.data{
-                    data.forEach{ datum in
-                            Log.debug("""
-                                🛠️💡---- API RESULT ---💡
-                                id -> \(datum.id)
-                                title -> \(datum.title)
-                                context -> \(datum.context)
-                                solvedMemberCount -> \(datum.solvedMemberCount)
-                                tags -> \(datum.tags)
-                                    💡------ END -------💡
-                                """)
+                        vm.fetchListModels.accept(tempModel)
+                    } else {
+                        dummyModel.forEach { model in
+                            vm.animationSelected[model.model.problemNumber] = model.flag
+                        }
+                        vm.fetchListModels.accept(dummyModel)
                     }
                 }
-                Log.debug("what is this : \(result.getProblems.data)")
-            }, onError: {
-                Log.debug("what is this error : \($0)")
-            }, onCompleted: {
-                Log.debug("what is this complted ")
-            }, onDisposed: {
-                Log.debug("what is this disposed ")
+            }).disposed(by: disposeBag)
+    }
+    
+    
+    private func fetchWhenViewDidLoad(load: Signal<Void>) {
+        _ = load
+            .withUnretained(self)
+            .emit(onNext: { vm,_ in
+                vm.requestProblem(offset: vm.currentPage){ problems in
+                    let dummyModel = problems.map { problem in
+                        let list = problem.toProblemList()
+                        return (model: list,language: problem.languages, flag: false)
+                    }
+                    
+                    dummyModel.forEach{model in
+                        vm.animationSelected[model.model.problemNumber] = model.flag
+                    }
+                    
+                    Log.debug("dummyModel : \(dummyModel)")
+                    vm.currentPage += 1
+                    vm.listModel.accept(dummyModel)
+                }
             })
+            .disposed(by: disposeBag)
+    }
+    
+    private func requestProblem(offset: Int,
+                                sort: String = "id",
+                                order: String = "asc",
+                                completion: @escaping ([Problem]) -> Void ) {
+        
+        _ = apollo
+            .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
+            .subscribe( onSuccess: { completion($0) })
     }
 }

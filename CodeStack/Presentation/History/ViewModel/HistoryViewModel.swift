@@ -142,9 +142,9 @@ class HistoryViewModel: HistoryViewModelType{
         //TODO: - 현재 SolvedProblem만 가지고 온다.
         // 에러나 성공 실패 했을때의 결과에 대한 Submission을 가지고 오기 위해서는
         // Submission에 조건을 달아서 query를 날려야 하나?
-        _ = service.request(query: Query.getMe())
-            .subscribe(with: self,onSuccess: { vm, data in
-                Log.debug(data.solvedProblems)
+        service.getMe(query: Query.getMe())
+            .subscribe(with: self, onSuccess: { vm , me in
+                Log.debug(me)
             })
     }
     
@@ -157,23 +157,15 @@ class HistoryViewModel: HistoryViewModelType{
                 
             },onError: { vm , error in
                 Log.error(error)
-            },onCompleted: { vm in
-                Log.debug("completed")
-            },onDisposed: { vm in
-                Log.debug("disposed")
             })
     }
     
     private func requestSubmission(offset: Int = 0){
         _ = service.getSubmission(query: Query.getSubmission(offest: offset))
             .subscribe(with: self,onSuccess: { vm, data in
-                let data = data.content?.compactMap{ Submission(submission: $0)}
-                
-                if let data{
-                    vm.dummyData.accept(data)
-                    vm.refreshEndEvent.accept(())
-                    vm.paginationLoading.accept(false)
-                }
+                vm.dummyData.accept(data)
+                vm.refreshEndEvent.accept(())
+                vm.paginationLoading.accept(false)
             },onError: { vm , error in
                 vm.refreshEndEvent.accept(())
                 vm.paginationLoading.accept(false)

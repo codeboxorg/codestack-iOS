@@ -12,7 +12,7 @@ import RxCocoa
 import RxSwift
 
 final class PRSubmissionHistoryCell: UICollectionViewCell {
-    
+
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -27,6 +27,8 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         imageView.image = UIImage(systemName: "list.clipboard.fill")
         imageView.contentMode = .scaleToFill
         imageView.tintColor = UIColor.sky_blue
+        // LAYER 계층을 위로 올린다
+        imageView.layer.zPosition = 1
         return imageView
     }()
     
@@ -37,6 +39,12 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         return label
     }()
     
+    private lazy var dateLabel: UILabel = {
+        let label = UILabel()
+        return label.descriptionLabel(size: 13, text: "", color: .systemGray)
+    }()
+    
+    
     var onRecentPageData = PublishRelay<Submission>()
     var onStatus = PublishRelay<SolveStatus>()
     
@@ -45,16 +53,23 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
     
     
     override init(frame: CGRect) {
-   
+        
         super.init(frame: frame)
         
         addAutoLayout()
         
         onRecentPageData
-            .asDriver(onErrorJustReturn: .init(_problem: _Problem(title: "")))
+            .asDriver(onErrorJustReturn: .init(_problem: Problem(title: "")))
             .drive(onNext: {[weak self] submission in
                 guard let self = self else {return}
                 self.titleLabel.text = submission.problem?.title
+                
+                if let solvedDate = submission.createdAt?.toDateString(format: .FULL){
+                    Log.debug("solvedDate : \(solvedDate)")
+                    let dateString = DateCalculator().caluculateTime(solvedDate)
+                    self.dateLabel.text = dateString
+                }
+                
             }).disposed(by: cellDisposeBag)
         
         onStatus
@@ -65,18 +80,23 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
             }).disposed(by: cellDisposeBag)
     }
     
+    
+    
     override func draw(_ rect: CGRect) {
         super.draw(rect)
+        let layer = CAShapeLayer()
         
         let path = UIBezierPath()
         let yPoint = rect.size.height * 2 / 3
         path.move(to: CGPoint(x: .zero, y: yPoint))
         path.addLine(to: CGPoint(x: rect.size.width, y: yPoint))
+
+        layer.path = path.cgPath
+        layer.strokeColor = UIColor.lightGray.cgColor
+        layer.fillColor = UIColor.clear.cgColor
+        layer.lineWidth = 3
         
-        path.lineWidth = 2
-        UIColor.systemGray.setStroke()
-        path.stroke()
-        
+        contentView.layer.addSublayer(layer)
     }
     
     override func prepareForReuse() {
@@ -84,7 +104,7 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         self.disposeBag = DisposeBag()
     }
     
-
+    
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
     }
@@ -99,7 +119,7 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         let pinch = UIPinchGestureRecognizer(target: self, action: #selector(dopinch(_:)))
         self.contentView.addGestureRecognizer(pinch)
         
-        self.backgroundColor = UIColor.systemBackground
+        self.backgroundColor = UIColor.clear
         contentView.backgroundColor = UIColor.systemBackground
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = UIColor.label.cgColor
@@ -110,6 +130,7 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         self.contentView.addSubview(titleLabel)
         self.contentView.addSubview(statusLabel)
         self.contentView.addSubview(contentImageView)
+        self.contentView.addSubview(dateLabel)
         
         statusLabel.snp.makeConstraints{
             $0.top.equalToSuperview().offset(-4)
@@ -127,6 +148,10 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
             $0.centerY.equalToSuperview().offset(25)
             $0.leading.equalToSuperview().inset(12)
             $0.width.height.equalTo(50)
+        }
+        
+        dateLabel.snp.makeConstraints{
+            $0.bottom.trailing.equalToSuperview().inset(10)
         }
     }
     

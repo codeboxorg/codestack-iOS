@@ -20,6 +20,13 @@ class CodeUITextView: UITextView{
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         addDoneButtonOnKeyboard()
+        self.isScrollEnabled = true
+        self.layer.borderWidth = 1
+        self.spellCheckingType = .no
+        self.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        self.autocorrectionType = UITextAutocorrectionType.no
+        self.autocapitalizationType = UITextAutocapitalizationType.none
+        self.alwaysBounceVertical = true
         
     }
     required init?(coder: NSCoder) {

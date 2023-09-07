@@ -23,13 +23,18 @@ class ProblemCell: UITableViewCell{
         problemCell_tapGesture = tapGesture
         return view
     }()
-
     
-    private lazy var problem_number: UIButton = {
+    
+    private let horizontalTitleContainer: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    
+    private let problem_number: UIButton = {
         var configuration = UIButton.Configuration.filled()
         configuration.titlePadding = 8
         let button = UIButton(configuration: configuration)
-        button.tintColor = UIColor.getRandomColor()
         button.setTitle("1", for: .normal)
         return button
     }()
@@ -42,19 +47,26 @@ class ProblemCell: UITableViewCell{
         return label
     }()
     
-    private lazy var graphCollectionView: UICollectionView = {
-        let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        flowLayout.minimumLineSpacing = 0 // 상하간격
-        flowLayout.estimatedItemSize = CGSize(width: 50.0, height: 50.0)
-        let collection = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collection.delegate = self
-        collection.dataSource = self
-        collection.register(GraphCell.self, forCellWithReuseIdentifier: GraphCell.identifier)
-        return collection
+    
+    //TODO: CollectionView에서 UIView로 변경해야댐
+    private let graphSubmit: GraphSubmitView = {
+        let view = GraphSubmitView()
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderWidth = 1
+        return view
     }()
+//        private lazy var graphCollectionView: UICollectionView = {
+//            let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+//            flowLayout.minimumLineSpacing = 0 // 상하간격
+//            flowLayout.estimatedItemSize = CGSize(width: 50.0, height: 50.0)
+//            let collection = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+//            collection.delegate = self
+//            collection.dataSource = self
+//            collection.register(GraphCell.self, forCellWithReuseIdentifier: GraphCell.identifier)
+//            return collection
+//        }()
     
-    
-    private lazy var languageContainerContainer: UIView = {
+    private let languageContainerContainer: UIView = {
         let view = UIView()
         return view
     }()
@@ -66,14 +78,14 @@ class ProblemCell: UITableViewCell{
     
     //MARK: - Binding to VC
     // using ControlProperty when seletedChange
-    lazy var foldButton: FoldButton = {
+    let foldButton: FoldButton = {
         let view = FoldButton(frame: .zero)
         view.tintColor = .label
         view.contentMode = .scaleAspectFit
         return view
     }()
     
-    var languages: PMLanguage? {
+    private var languages: [Language]? {
         didSet{
             if let languages{
                 self.langugeContainer.setLanguage(languages)
@@ -91,6 +103,7 @@ class ProblemCell: UITableViewCell{
     
     var styleFlag = PublishSubject<Bool>()
     
+    var flag: Bool = false
     
     //foldButton Tap
     lazy var foldButtonTap: ControlEvent<Void>? = foldButton.rx.tap
@@ -101,7 +114,7 @@ class ProblemCell: UITableViewCell{
     
     var disposeBag = DisposeBag()
     var cellDisposeBag = DisposeBag()
-        
+    
     
     var binder: Binder<DummyModel> {
         return Binder(self){ cell , dummy in
@@ -109,7 +122,15 @@ class ProblemCell: UITableViewCell{
             cell.problem_number.setTitle("\(model.problemNumber)", for: .normal)
             cell.problem_title.text = "\(model.problemTitle)"
             cell.model = model
-            cell.languages = language
+            cell.languages = language + model.tags.map{tag in Language(id: "none",
+                                                                       name: tag.name ,
+                                                                       _extension: "none")}
+            
+            cell.graphSubmit.bind(.init(submitCount: String(describing: model.submitCount),
+                                        correctAnswer: String(describing: model.correctAnswer),
+                                        correctRate: String(format: "%.\(2)f", model.correctRate)))
+    
+            cell.flag = flag
             cell.styleFlag.onNext(flag)
         }
     }
@@ -127,12 +148,6 @@ class ProblemCell: UITableViewCell{
         
     }
     
-//    lazy var subscription: Driver<Bool> =
-//    lazy var foldButtonTap: Observable<Void> = self.foldView.rx.tap.share()
-//    func getEvnetTap() -> ControlEvent<Void>{
-////        return self
-//    }
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -140,21 +155,19 @@ class ProblemCell: UITableViewCell{
         
         layoutConfigure()
         
-        _ = self.styleFlag
-            .asDriver(onErrorJustReturn: true)
-            .drive(onNext: { [weak self] value in
-                self?.foldButton.rx.isSelected.onNext(value)
-            })
-            .disposed(by: cellDisposeBag)
+        foldButtonTap?
+            .subscribe(with:self,onNext: { cell,_ in
+                cell.foldButton.isSelected.toggle()
+                let flag = cell.foldButton.isSelected
+                flag ? cell.strechTableView() : cell.foldTableView()
+                self.layoutIfNeeded()
+            }).disposed(by: cellDisposeBag)
         
         _ = self.styleFlag
             .asDriver(onErrorJustReturn: true)
-            .drive(onNext: {[weak self] layoutFlag in
-                if layoutFlag {
-                    self?.strechTableView()
-                }else if !layoutFlag{
-                    self?.foldTableView()
-                }
+            .drive(with: self,onNext: {cell,layoutFlag in
+                layoutFlag ? cell.strechTableView() : cell.foldTableView()
+                cell.foldButton.isSelected = layoutFlag
             }).disposed(by: cellDisposeBag)
     }
     
@@ -164,83 +177,77 @@ class ProblemCell: UITableViewCell{
     
     
     private func strechTableView(){
-
-        self.graphCollectionView.isHidden = false
+        
+        //        self.graphCollectionView.isHidden = false
         self.langugeContainer.isHidden = false
-        
-        problem_number.snp.remakeConstraints { make in
-            make.top.left.equalToSuperview().inset(12)
-            make.height.equalTo(25)
-            make.width.equalTo(25).priority(.low)
+        self.graphSubmit.isHidden = false
+        horizontalTitleContainer.snp.remakeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(52)
         }
         
-        problem_title.snp.remakeConstraints { make in
-            make.centerY.equalTo(problem_number.snp.centerY)
-            make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.trailing.equalTo(foldButton.snp.leading).offset(-8)
-        }
-        setViewPriority()
+//        problem_number.snp.remakeConstraints { make in
+//            make.top.left.equalToSuperview().inset(12)
+//            make.height.equalTo(25)
+//            make.width.equalTo(25).priority(.low)
+//        }
         
-        foldButton.snp.remakeConstraints { make in
-            make.width.height.equalTo(30)
-            make.trailing.equalToSuperview().inset(12)
-            make.centerY.equalTo(problem_number.snp.centerY)
-        }
-        containerViewHiddenAnimation()
     }
     
     
     
     //MARK: - Fold Action
     private func foldTableView(){
-
-        self.graphCollectionView.isHidden = true
+        
+        
+        //        self.graphCollectionView.isHidden = true
         self.langugeContainer.isHidden = true
+        self.graphSubmit.isHidden = true
         
-        problem_number.snp.remakeConstraints { make in
-            make.top.left.equalToSuperview().inset(12)
-            make.height.equalTo(25).priority(.high)
-            make.width.equalTo(25).priority(.low)
-            make.bottom.equalToSuperview().offset(-12)
-        }
-        problem_title.snp.remakeConstraints { make in
-            make.centerY.equalTo(problem_number.snp.centerY)
-            make.leading.equalTo(problem_number.snp.trailing).offset(8)
-            make.trailing.equalTo(foldButton.snp.leading).offset(-8)
+//        problem_number.snp.remakeConstraints { make in
+//            make.top.equalToSuperview().inset(12)
+//            make.left.equalToSuperview().inset(12)
+//            make.centerY.equalToSuperview()
+//            make.height.equalTo(30).priority(.high)
+//            make.width.equalTo(30).priority(.low)
+//        }
+        
+        horizontalTitleContainer.snp.remakeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(52).priority(.high)
+            make.bottom.equalToSuperview()
         }
         
-        setViewPriority()
-        
-        foldButton.snp.remakeConstraints { make in
-            make.width.height.equalTo(30)
-            make.trailing.equalToSuperview().inset(12)
-            make.centerY.equalTo(problem_number.snp.centerY)
-        }
-        containerViewHiddenAnimation()
+//        problem_number.snp.remakeConstraints { make in
+//            make.top.left.equalToSuperview().inset(12)
+//            make.height.equalTo(25).priority(.high)
+//            make.width.equalTo(25).priority(.low)
+//            make.bottom.equalToSuperview().offset(-12)
+//            make.bottom.lessThanOrEqualToSuperview().inset(12)
+//        }
+        //        UIView.animate(withDuration: 0.3, animations: {
+        //            self.layoutIfNeeded()
+        //        })
+        //        problem_title.snp.remakeConstraints { make in
+        //            make.centerY.equalTo(problem_number.snp.centerY)
+        //            make.leading.equalTo(problem_number.snp.trailing).offset(8)
+        //            make.trailing.equalTo(foldButton.snp.leading).offset(-8)
+        //        }
+        //
+        //        setViewPriority()
+        //
+        //        foldButton.snp.remakeConstraints { make in
+        //            make.width.height.equalTo(30)
+        //            make.trailing.equalToSuperview().inset(12)
+        //            make.centerY.equalTo(problem_number.snp.centerY)
+        //        }
     }
-    
-    private func containerViewHiddenAnimation(){
-        UIView.animate(withDuration: 0.15, animations: {
-            self.containerView.alpha = 1
-        }) { (finished) in
-            self.containerView.isHidden = finished
-        }
-        
-        UIView.animate(withDuration: 0.15, animations: {
-            self.containerView.alpha = 1
-        }) { (finished) in
-            self.containerView.isHidden = !finished
-        }
-    }
-    
-   
     
     // MARK: - SubView array Property
     private lazy var subviewsToBeAdded: [UIView] = [
-        problem_number,
-        foldButton,
-        problem_title,
-        graphCollectionView,
+        horizontalTitleContainer,
+        graphSubmit,
+        //        graphCollectionView,
         languageContainerContainer
     ]
     
@@ -249,6 +256,13 @@ class ProblemCell: UITableViewCell{
         subviewsToBeAdded.forEach { subview in
             containerView.addSubview(subview)
         }
+        
+        [problem_number,
+         foldButton,
+         problem_title].forEach{
+            horizontalTitleContainer.addSubview($0)
+        }
+        
         languageContainerContainer.addSubview(langugeContainer)
     }
     
@@ -258,8 +272,11 @@ class ProblemCell: UITableViewCell{
         addSubviewsToContentView()
         makeConfigure()
     }
- 
+    
     fileprivate func setViewPriority() {
+        // 추가 Vertical
+        problem_number.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+        
         problem_number.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         problem_title.setContentHuggingPriority(.defaultLow, for: .horizontal)
         problem_title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -274,12 +291,17 @@ class ProblemCell: UITableViewCell{
         
         containerView.layer.cornerRadius = 16
         containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = UIColor.getRandomColor().cgColor
+        containerView.layer.borderColor = UIColor.sky_blue.cgColor
+        
+        horizontalTitleContainer.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(52)
+        }
         
         problem_number.snp.makeConstraints { make in
             make.top.left.equalToSuperview().inset(12)
-            make.height.equalTo(25)
-            make.width.equalTo(25).priority(.low)
+            make.height.equalTo(30) //.priority(.high)
+            make.width.equalTo(30).priority(.low)
         }
         
         problem_title.snp.makeConstraints { make in
@@ -290,22 +312,34 @@ class ProblemCell: UITableViewCell{
         
         setViewPriority()
         
+        
+        foldButton.layer.borderColor = UIColor.purple.cgColor
+        foldButton.layer.borderWidth = 2
+        
         foldButton.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
+            //아 이거때문에 하ㅏㅏ
+//            make.top.equalToSuperview()
             make.trailing.equalToSuperview().inset(12)
+            make.width.height.equalTo(30)
             make.centerY.equalTo(problem_number.snp.centerY)
         }
         
-        graphCollectionView.snp.makeConstraints{ make in
-            make.top.equalTo(problem_number.snp.bottom).offset(8)
-            make.leading.equalTo(problem_number.snp.leading)
-            make.trailing.equalToSuperview().offset(-16)
-            make.height.equalTo(50)
+        //        graphCollectionView.snp.makeConstraints{ make in
+        //            make.top.equalTo(problem_number.snp.bottom).offset(8)
+        //            make.leading.equalTo(problem_number.snp.leading)
+        //            make.trailing.equalToSuperview().offset(-16)
+        //            make.height.equalTo(50)
+        //        }
+        
+        graphSubmit.snp.makeConstraints { make in
+            make.top.equalTo(horizontalTitleContainer.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.height.equalTo(60)
         }
         
         //view의 우선순위 살펴보기
         languageContainerContainer.snp.makeConstraints{make in
-            make.top.equalTo(graphCollectionView.snp.bottom).offset(8)
+            make.top.equalTo(graphSubmit.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(100).priority(.low)
             // 왜 .high 를 해야 자리를 잡지?
@@ -318,46 +352,45 @@ class ProblemCell: UITableViewCell{
     }
 }
 
-extension ProblemCell: UICollectionViewDelegateFlowLayout{
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let cell = GraphCell(frame: .zero)
-        let width = collectionView.frame.size.width
-        
-        cell.contentView.bounds.size.width = width
-        
-        cell.contentView.setNeedsLayout()
-        cell.contentView.layoutIfNeeded()
-        
-        let height = cell.contentView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)).height
-        
-        return CGSize(width: width, height: height)
-    }
-}
+//extension ProblemCell: UICollectionViewDelegateFlowLayout{
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        let cell = GraphCell(frame: .zero)
+//        let width = collectionView.frame.size.width
+//
+//        cell.contentView.bounds.size.width = width
+//
+//        cell.contentView.setNeedsLayout()
+//        cell.contentView.layoutIfNeeded()
+//
+//        let height = cell.contentView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)).height
+//
+//        return CGSize(width: width, height: height)
+//    }
+//}
 
-extension ProblemCell: UICollectionViewDelegate{
-    
-}
-
-
-extension ProblemCell: UICollectionViewDataSource{
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GraphCell.identifier, for: indexPath) as? GraphCell else {return UICollectionViewCell()}
-        if indexPath.row == 1{
-            if let model = model{
-                
-                cell.bind(GraphCell.GraphModel(submitCount: "\(model.submitCount)",
-                                               correctAnswer: "\(model.correctAnswer)",
-                                               correctRate: "\(round(model.correctRate * 100) / 100)"))
-            }
-            
-            return cell
-        }
-        
-        return cell
-    }
-}
+//extension ProblemCell: UICollectionViewDelegate{
+//
+//}
+//
+//
+//extension ProblemCell: UICollectionViewDataSource{
+//
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return 2
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GraphCell.identifier, for: indexPath) as? GraphCell else {return UICollectionViewCell()}
+//        if indexPath.row == 1{
+//            if let model = model{
+//                cell.bind(GraphCell.GraphModel(submitCount: "\(model.submitCount)",
+//                                               correctAnswer: "\(model.correctAnswer)",
+//                                               correctRate: "\(model.correctRate)"))
+//            }
+//
+//            return cell
+//        }
+//
+//        return cell
+//    }
+//}

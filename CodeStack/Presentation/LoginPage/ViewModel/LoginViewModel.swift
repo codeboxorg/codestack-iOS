@@ -15,7 +15,6 @@ import RxCocoa
 protocol LoginViewModelProtocol: AnyObject,ViewModelType{
     func requestOAuth() throws
     
-    
     /// Git Auth Complte
     /// - Parameter code: git Authorize code
     func oAuthComplete(code: String)
@@ -33,6 +32,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     
     struct Input{
         var loginEvent: Signal<LoginButtonType>
+        var registerEvent: Signal<Void>
     }
     
     struct Output{
@@ -73,14 +73,22 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                 case .email((let id, let pwd)):
                     vm.loginLoadingEvent.accept(.success(true))
                     #if DEBUG
-                    vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
-                    #else
+//                    vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
                     vm.requestAuth(id: id, pwd: pwd)
+                    #else
+                    
                     #endif
                 case .none:
                     break
                 }
             }.disposed(by: disposeBag)
+        
+        
+        input.registerEvent
+            .map{_ in CodestackStep.register}
+            .emit(to: steps)
+            .disposed(by: disposeBag)
+        
         return Output(loading: loginLoadingEvent.asDriver(onErrorJustReturn: .failure(LoginError.timeOut)))
     }
     
@@ -104,7 +112,8 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                 self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
             })
             .subscribe(with: self,onSuccess: {owner, token in
-                owner.signUp(access: token.accessToken, refresh: token.refreshToken)
+                
+                owner.signUp(token: token)
             },onError: { owner , err in
                 Log.error(err)
             },onCompleted: { _ in
@@ -127,7 +136,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                 self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
             })
             .subscribe(with: self,onSuccess: {owner, token in
-                owner.signUp(access: token.accessToken, refresh: token.refreshToken)
+                owner.signUp(token: token)
             },onError: { owner , err in
                 Log.error(err)
             },onCompleted: { _ in
@@ -147,7 +156,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
             })
             .subscribe(with: self,onSuccess: { owner, token in
 //             ApolloService.shared.request(header: token.accessToken)
-                owner.signUp(access: token.accessToken, refresh: token.refreshToken)
+                owner.signUp(token: token)
             },onError: { owner , err in
                 Log.error(err)
             },onCompleted: { _ in
@@ -158,9 +167,14 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     }
     
     
-    private func signUp(access t1: String, refresh t2: String){
-        Log.debug("\(t1) + \(t2)")
-        KeychainItem.saveTokens(access: t1, refresh: t2)
+    private func signUp(token: CodestackResponseToken){
+        Log.debug("\(token.accessToken) + \(token.refreshToken)")
+        
+        KeychainItem.saveTokens(access: token.accessToken, refresh: token.refreshToken)
+        
+        UserDefaults.standard.set(token.expiresIn, forKey: "expiresIn")
+        UserDefaults.standard.set(token.tokenType, forKey: "tokenType")
+        
         steps.accept(CodestackStep.userLoggedIn(nil, nil))
     }
 }

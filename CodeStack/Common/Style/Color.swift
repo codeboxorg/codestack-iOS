@@ -8,6 +8,54 @@
 import UIKit
 
 
+
+// CustomColor
+
+typealias Color = CustomColor
+
+enum CustomColor{
+    
+    case juhwang
+    case juhwang_2
+    case red
+    case red_up
+    case whiteGray
+    case powder_blue
+    case sky_blue
+    case label
+    case green
+    case black
+    
+    var color: UIColor {
+        switch self {
+        case .juhwang:
+            return UIColor(hexCode: "#ff7f00")
+        case .juhwang_2:
+            return UIColor(hexCode: "#FC4F08")
+        case .red:
+            return UIColor(hexCode: "#FAE9DE")
+        case .whiteGray:
+            return UIColor(hexCode: "F4EEEE")
+        case .green:
+            return UIColor(hexCode: "A2FF86")
+        case .powder_blue:
+            return UIColor(hexCode: "#B0E0E6")
+        case .sky_blue:
+            return UIColor(hexCode: "#87CEEB")
+        case .red_up:
+            return UIColor(hexCode: "FF6B6B")
+        case .label:
+            return .label
+        case .black:
+            return UIColor(hexCode: "19282F")
+            
+        }
+    }
+    var cgColor: CGColor{
+        return self.color.cgColor
+    }
+}
+
 extension UIColor {
     static func getRandomColor() -> UIColor{
         let randomRed:CGFloat = CGFloat(drand48())
@@ -22,7 +70,7 @@ extension UIColor {
 
 extension UIColor{
     static let juhwang: UIColor = UIColor(hexCode: "#ff7f00")
-    
+    static let whiteGray: UIColor = UIColor(hexCode: "F4EEEE")
     static let red_c: UIColor = UIColor(hexCode: "#FAE9DE")
     static let juhwang_2: UIColor = UIColor(hexCode: "#FC4F08")
     static let powder_blue: UIColor = UIColor(hexCode: "#B0E0E6")

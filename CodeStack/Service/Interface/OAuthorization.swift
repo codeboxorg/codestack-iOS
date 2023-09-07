@@ -27,7 +27,7 @@ extension OAuthorization{
         return base
     }
     
-    var commonHeader: [String: String]{
+    var commonHeader: [String: String] {
         ["content-type" : "application/json; charset=utf-8",
          "accept" : "application/json"]
     }
@@ -58,7 +58,7 @@ extension OAuthorization{
         }
     }
     
-    var extractTokenWithStatusCode: (_ response: HTTPURLResponse, _ data: Data) throws -> CodestackResponseToken{
+    var extractTokenWithStatusCode: (_ response: HTTPURLResponse, _ data: Data) throws -> CodestackResponseToken {
         { response, data in
             if  (200..<300) ~= response.statusCode {
                 do{

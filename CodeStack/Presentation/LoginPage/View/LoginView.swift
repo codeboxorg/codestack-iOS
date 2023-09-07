@@ -12,37 +12,26 @@ import RxSwift
 
 class LoginView: UIView{
     
-    private lazy var containerView: UIView = {
+    private let containerView: UIView = {
         let view = UIView()
         return view
     }()
     
-    
-    private lazy var codestackLogo: UIImageView = {
+    private let codestackLogo: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "codeStack")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    private lazy var loginLabel: UILabel = {
-        let label = UILabel()
-        var font = UIFont.preferredFont(forTextStyle: .headline)
-        font = font.withSize(30)
-        label.font = font
-        label.textColor = .label
-        label.text = "코드스택"
-        return label
-    }()
-    
-    private lazy var loginCheckButton: UIButton = {
+    private let loginCheckButton: UIButton = {
         let view = UIButton()
         view.setImage(UIImage(systemName: "envelope"), for: .normal)
         view.tintColor = UIColor.label
         return view
     }()
     
-    private lazy var passwordCheckButton: UIButton = {
+    private let passwordCheckButton: UIButton = {
         let view = UIButton()
         view.setImage(UIImage(systemName: "lock"), for: .normal)
         view.tintColor = UIColor.label
@@ -55,30 +44,30 @@ class LoginView: UIView{
         return textField
     }()
     
-    private lazy var buttomLayoutLine: UIView = {
+    private let buttomLayoutLine: UIView = {
         let view = UIView()
         view.backgroundColor = .label
         return view
     }()
-    private lazy var buttomLayoutLine2: UIView = {
+    private let buttomLayoutLine2: UIView = {
         let view = UIView()
         view.backgroundColor = .label
         return view
     }()
     
-    private lazy var loginPlaceHolderView: UILabel = {
+    private let loginPlaceHolderView: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 18)
         label.text = "이메일을 입력해주세요"
-        label.textColor = .label
+        label.textColor = .placeholderText
         return label
     }()
     
-    private lazy var passwordPlaceHolderView: UILabel = {
+    private let passwordPlaceHolderView: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 18)
         label.text = "비밀번호를 입력해주세요"
-        label.textColor = .label
+        label.textColor = .placeholderText
         return label
     }()
     
@@ -88,14 +77,15 @@ class LoginView: UIView{
         return textField
     }()
     
-    private lazy var rememberCheckBox: UIButton = {
+    private let rememberCheckBox: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "rectangle"), for: .selected)
+        button.tintColor = .label
+        button.setImage(UIImage(systemName: "rectangle"), for: .normal)
         button.setImage(UIImage(systemName: "checkmark.rectangle"), for: .selected)
         return button
     }()
     
-    private lazy var rememberLabel: UILabel = {
+    private let rememberLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.text = "아이디 / 비밀번호 찾기"
@@ -288,7 +278,6 @@ extension LoginView {
          passwordTextField,
          buttomLayoutLine2,
          codestackLogo,
-         loginLabel,
          loginCheckButton,
          passwordCheckButton,
          rememberCheckBox,
@@ -318,61 +307,65 @@ extension LoginView {
         let info_top_constant: CGFloat = 16
         
         
-        let bottomInset: CGFloat = 20
-        var subviewsHeight: CGFloat = (3 * idTop) + 10 + (4 * info_top_constant) + bottomInset
-        
+        //        let bottomInset: CGFloat = 20
+        // var subviewsHeight: CGFloat = (3 * idTop) + 10 + (5 * info_top_constant) + bottomInset
         // Update the containerView height constraint constant
-        let containerViewHeightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
-        [containerView.widthAnchor.constraint(equalTo: self.widthAnchor)].forEach{
-            $0.isActive = true
-        }
+        //        let containerViewHeightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
+        //        [containerView.widthAnchor.constraint(equalTo: self.widthAnchor)].forEach{
+        //            $0.isActive = true
+        //        }
+        //        containerViewHeightConstraint.isActive = true
         
-        containerViewHeightConstraint.isActive = true
+        let heightAnchor = containerView.heightAnchor.constraint(equalToConstant: 300)
+        
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalTo: self.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            heightAnchor
+        ])
+        
+        heightAnchor.priority = .defaultLow
+
         
         
         NSLayoutConstraint.activate([
             codestackLogo.topAnchor.constraint(equalTo: containerView.topAnchor, constant: idTop),
             codestackLogo.widthAnchor.constraint(equalToConstant: 60),
-            codestackLogo.heightAnchor.constraint(equalToConstant: 60)
+            codestackLogo.heightAnchor.constraint(equalToConstant: 60),
+            codestackLogo.centerXAnchor.constraint(equalTo: containerView.centerXAnchor)
         ])
         
-        [loginLabel.centerYAnchor.constraint(equalTo: codestackLogo.centerYAnchor),
-         loginLabel.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-         loginLabel.leadingAnchor.constraint(equalTo: codestackLogo.trailingAnchor,constant: 12)].forEach{
-            $0.isActive = true
-        }
         
-        
-        [idTextField.topAnchor.constraint(equalTo: codestackLogo.bottomAnchor, constant: idTop + 10),
-         idTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
-         idTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant - button_Width_height),
-         idTextField.heightAnchor.constraint(equalToConstant: idHeight)].forEach{
-            $0.isActive = true
-        }
+        NSLayoutConstraint.activate([
+            idTextField.topAnchor.constraint(equalTo: codestackLogo.bottomAnchor, constant: idTop + 10),
+            idTextField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
+            idTextField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant - button_Width_height),
+            idTextField.heightAnchor.constraint(equalToConstant: idHeight)
+        ])
         
         idPlaceHolder_Center_Constraint = loginPlaceHolderView.centerYAnchor.constraint(equalTo: idTextField.centerYAnchor)
         
-        [loginPlaceHolderView.leadingAnchor.constraint(equalTo: idTextField.leadingAnchor,constant: place_constant),
-         idPlaceHolder_Center_Constraint!].forEach{
-            $0.isActive = true
-        }
+        NSLayoutConstraint.activate([
+            loginPlaceHolderView.leadingAnchor.constraint(equalTo: idTextField.leadingAnchor,constant: place_constant),
+            idPlaceHolder_Center_Constraint!
+        ])
+        
+        NSLayoutConstraint.activate([
+            buttomLayoutLine.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
+            buttomLayoutLine.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
+            buttomLayoutLine.centerYAnchor.constraint(equalTo: idTextField.bottomAnchor),
+            buttomLayoutLine.heightAnchor.constraint(equalToConstant: lineHeight)
+        ])
         
         
-        
-        [  buttomLayoutLine.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
-           buttomLayoutLine.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
-           buttomLayoutLine.centerYAnchor.constraint(equalTo: idTextField.bottomAnchor),
-           buttomLayoutLine.heightAnchor.constraint(equalToConstant: lineHeight)].forEach{
-            $0.isActive = true
-        }
-        
-        
-        [loginCheckButton.leadingAnchor.constraint(equalTo: idTextField.trailingAnchor, constant: place_constant),
-         loginCheckButton.centerYAnchor.constraint(equalTo: idTextField.centerYAnchor),
-         loginCheckButton.widthAnchor.constraint(equalToConstant: button_Width_height),
-         loginCheckButton.heightAnchor.constraint(equalToConstant: button_Width_height)].forEach{
-            $0.isActive = true
-        }
+        NSLayoutConstraint.activate([
+            loginCheckButton.leadingAnchor.constraint(equalTo: idTextField.trailingAnchor, constant: place_constant),
+            loginCheckButton.centerYAnchor.constraint(equalTo: idTextField.centerYAnchor),
+            loginCheckButton.widthAnchor.constraint(equalToConstant: button_Width_height),
+            loginCheckButton.heightAnchor.constraint(equalToConstant: button_Width_height)
+        ])
         
         
         NSLayoutConstraint.activate([
@@ -383,56 +376,48 @@ extension LoginView {
         ])
         
         
-        
         passwordPlaceHolder_Center_Constraint = passwordPlaceHolderView.centerYAnchor.constraint(equalTo: passwordTextField.centerYAnchor)
         
-        [passwordPlaceHolderView.leadingAnchor.constraint(equalTo: passwordTextField.leadingAnchor,constant: place_constant),
-         passwordPlaceHolder_Center_Constraint!].forEach{
-            $0.isActive = true
-        }
-        
-        [  buttomLayoutLine2.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
-           buttomLayoutLine2.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
-           buttomLayoutLine2.centerYAnchor.constraint(equalTo: passwordTextField.bottomAnchor),
-           buttomLayoutLine2.heightAnchor.constraint(equalToConstant: lineHeight)].forEach{
-            $0.isActive = true
-        }
-        
-        
-        [passwordCheckButton.leadingAnchor.constraint(equalTo: passwordTextField.trailingAnchor, constant: place_constant),
-         passwordCheckButton.centerYAnchor.constraint(equalTo: passwordTextField.centerYAnchor),
-         passwordCheckButton.widthAnchor.constraint(equalToConstant: button_Width_height),
-         passwordCheckButton.heightAnchor.constraint(equalToConstant: button_Width_height)].forEach{
-            $0.isActive = true
-        }
-        
-        [rememberLabel.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-         rememberLabel.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: info_top_constant)].forEach{
-            $0.isActive = true
-        }
-        
-        
-        [rememberCheckBox.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: info_top_constant),
-         rememberCheckBox.trailingAnchor.constraint(equalTo: rememberLabel.leadingAnchor, constant: -(info_top_constant / 2))].forEach{
-            $0.isActive = true
-        }
-        
-        [loginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
-         loginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
-         loginButton.topAnchor.constraint(equalTo: rememberLabel.bottomAnchor, constant: info_top_constant)].forEach{
-            $0.isActive = true
-        }
-        
         NSLayoutConstraint.activate([
-            githubLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,constant: leading_Trailing_contant),
-            githubLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,constant: -leading_Trailing_contant),
-            githubLoginButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor,constant: info_top_constant),
-            githubLoginButton.heightAnchor.constraint(equalToConstant: 55)
+            passwordPlaceHolderView.leadingAnchor.constraint(equalTo: passwordTextField.leadingAnchor,constant: place_constant),
+            passwordPlaceHolder_Center_Constraint!
         ])
         
+        NSLayoutConstraint.activate([
+            buttomLayoutLine2.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
+            buttomLayoutLine2.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
+            buttomLayoutLine2.centerYAnchor.constraint(equalTo: passwordTextField.bottomAnchor),
+            buttomLayoutLine2.heightAnchor.constraint(equalToConstant: lineHeight)
+        ])
         
         NSLayoutConstraint.activate([
-            loginProviderStackView.topAnchor.constraint(equalTo: githubLoginButton.bottomAnchor, constant: 12),
+            passwordCheckButton.leadingAnchor.constraint(equalTo: passwordTextField.trailingAnchor, constant: place_constant),
+            passwordCheckButton.centerYAnchor.constraint(equalTo: passwordTextField.centerYAnchor),
+            passwordCheckButton.widthAnchor.constraint(equalToConstant: button_Width_height),
+            passwordCheckButton.heightAnchor.constraint(equalToConstant: button_Width_height)
+        ])
+        
+        NSLayoutConstraint.activate([
+            rememberLabel.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+             rememberLabel.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: info_top_constant)
+        ])
+        
+        NSLayoutConstraint.activate([
+            rememberCheckBox.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: info_top_constant),
+            rememberCheckBox.widthAnchor.constraint(equalToConstant: 24),
+            rememberCheckBox.heightAnchor.constraint(equalToConstant: 24),
+            rememberCheckBox.trailingAnchor.constraint(equalTo: rememberLabel.leadingAnchor, constant: -(info_top_constant / 2))
+        ])
+        
+        NSLayoutConstraint.activate([
+            loginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
+            loginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
+            loginButton.topAnchor.constraint(equalTo: rememberLabel.bottomAnchor, constant: info_top_constant),
+            loginButton.heightAnchor.constraint(equalToConstant: 55)
+        ])
+        
+        NSLayoutConstraint.activate([
+            loginProviderStackView.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 12),
             loginProviderStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
             loginProviderStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
             loginProviderStackView.heightAnchor.constraint(equalToConstant: 55)
@@ -440,31 +425,38 @@ extension LoginView {
         
         
         NSLayoutConstraint.activate([
-            registerButton.topAnchor.constraint(equalTo: loginProviderStackView.bottomAnchor, constant: info_top_constant - 8),
+            githubLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,constant: leading_Trailing_contant),
+            githubLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,constant: -leading_Trailing_contant),
+            githubLoginButton.topAnchor.constraint(equalTo: loginProviderStackView.bottomAnchor,constant: info_top_constant),
+            githubLoginButton.heightAnchor.constraint(equalToConstant: 55)
+        ])
+        
+    
+        NSLayoutConstraint.activate([
+            registerButton.topAnchor.constraint(equalTo: githubLoginButton.bottomAnchor, constant: info_top_constant - 8),
             registerButton.trailingAnchor.constraint(equalTo: infoLabel.leadingAnchor,constant: -6)
         ])
         
         
-        [infoLabel.topAnchor.constraint(equalTo: loginProviderStackView.bottomAnchor, constant: info_top_constant),
-         infoLabel.centerYAnchor.constraint(equalTo: registerButton.centerYAnchor),
-         infoLabel.centerXAnchor.constraint(equalTo: loginProviderStackView.centerXAnchor,constant: 24)].forEach{
-            $0.isActive = true
-        }
-        
+        NSLayoutConstraint.activate([
+            infoLabel.topAnchor.constraint(equalTo: githubLoginButton.bottomAnchor, constant: info_top_constant),
+            infoLabel.centerYAnchor.constraint(equalTo: registerButton.centerYAnchor),
+            infoLabel.centerXAnchor.constraint(equalTo: githubLoginButton.centerXAnchor,constant: 24),
+            infoLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,constant: -12)
+        ])
+      
         // Update the containerView height constraint
         
         // Calculate the height of the subviews
-        subviewsHeight += [loginLabel,idTextField,passwordTextField,infoLabel,loginButton,rememberLabel,loginProviderStackView].reduce(0) { $0 + $1.systemLayoutSizeFitting(CGSize(width: containerView.bounds.width, height: UIView.layoutFittingCompressedSize.height)).height
-        }
-        
-        containerViewHeightConstraint.constant = subviewsHeight
+//        subviewsHeight += [codestackLogo,idTextField,passwordTextField,infoLabel,loginButton,rememberLabel,registerButton,loginProviderStackView].reduce(0) { $0 + $1.systemLayoutSizeFitting(CGSize(width: containerView.bounds.width, height: UIView.layoutFittingCompressedSize.height)).height
+//        }
+//
+//        containerViewHeightConstraint.constant = subviewsHeight
     }
     
-    
-    
-    
-    func containerViewLayoutIfNeeded(){
-        containerView.layoutIfNeeded()
-    }
+//
+//    func containerViewLayoutIfNeeded(){
+//        containerView.layoutIfNeeded()
+//    }
 }
 

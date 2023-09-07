@@ -27,8 +27,8 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         return code as! Self
     }
     
-    lazy var problemTableView: RefreshTableView = {
-        let tableView = RefreshTableView(frame: .zero, style: .plain)
+    lazy var problemTableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(ProblemCell.self, forCellReuseIdentifier: ProblemCell.identifier)
         tableView.estimatedRowHeight = 200
         tableView.separatorColor = UIColor.clear
@@ -105,12 +105,12 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
     var output: CodeProblemViewModel.Output?
     
     #if DEBUG
-    func cellClickedEvent(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: { [weak self] in
-            guard let self else {return}
+//    func cellClickedEvent(){
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: { [weak self] in
+//            guard let self else {return}
 //            self._cellSelect.accept(())
-        })
-    }
+//        })
+//    }
     #endif
     
     private func bindingModel(){
@@ -123,19 +123,18 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         
         output?.refreshEndEvnet
             .drive(with: self,onNext: { vc, _ in
-                vc.removeBottomRefresh()
+                vc.problemTableView.removeBottomRefresh()
             }).disposed(by: disposeBag)
         
-        dragging
-            .drive(with: self,onNext: { vc, value in
-                let table = vc.problemTableView
-                guard let vm = vc.viewModel else { return }
-                if table.contentOffset.y > table.contentSize.height - table.bounds.height,
-                   vm.isLoading{
-                    vc.addBottomRefresh()
-                }
-            }).disposed(by: disposeBag)
-        
+//        dragging
+//            .drive(with: self,onNext: { vc, value in
+//                let table = vc.problemTableView
+//                guard let vm = vc.viewModel else { return }
+//                if table.contentOffset.y >= table.contentSize.height - table.bounds.height,
+//                   vm.isLoading{
+//                    vc.addBottomRefresh()
+//                }
+//            }).disposed(by: disposeBag)
         
         scroll
             .filter{[weak self] _ in
@@ -148,6 +147,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
                 let table = vc.problemTableView
                 if table.contentOffset.y > table.contentSize.height - table.bounds.height{
                     vc.viewModel?.isLoading = true
+                    table.addBottomRefresh(width: vc.view.frame.width)
                     vc._fetchProblemList.accept(())
                 }
             }).disposed(by: disposeBag)
@@ -164,13 +164,25 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         {
             (index: Int, model : DummyModel ,cell: ProblemCell) in
         
-            cell.binder.onNext(model)
+            var dummyModel = model
             
-            let isSelected = cell.foldButton.isSelected
+            if let viewmodel{
+                dummyModel.flag = viewmodel.animationSelected[dummyModel.model.problemNumber] ?? false
+            }
+            
+            cell.binder.onNext(dummyModel)
+            
+            self.problemTableView.showsVerticalScrollIndicator = true
             
             cell.foldButtonTap?.asObservable().bind(onNext: { [weak self] in
                 guard let self = self else {return}
-                self._foldButtonSeleted.accept((index,isSelected))
+                self.problemTableView.showsVerticalScrollIndicator = false
+                let buttonSelected = cell.foldButton.isSelected
+                self.viewModel?.animationSelected[dummyModel.model.problemNumber] = buttonSelected
+                
+                self.problemTableView.performBatchUpdates({}){ _ in
+                    self.problemTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
+                }
             }).disposed(by: cell.disposeBag)
 
             cell.problemCell_tapGesture?.rx.event
@@ -180,34 +192,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
                 }).disposed(by: cell.disposeBag)
             
         }.disposed(by: disposeBag)
-            
     }
-    
-    
-    
-    fileprivate var animationDuration: Double = 0.2
-    
-    fileprivate var bottomView = CustomBottomView()
-    
-    private func addBottomRefresh(){
-        self.bottomView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 50)
-        self.problemTableView.tableFooterView = bottomView
-        
-        UIView.animate(withDuration: animationDuration) {
-            self.problemTableView.contentInset.bottom = 50
-        }
-    }
-    
-    private func removeBottomRefresh(){
-        DispatchQueue.main.async { [weak self] in
-            if let self = self{
-                UIView.animate(withDuration: self.animationDuration) {
-                    self.problemTableView.tableFooterView = nil
-                }
-            }
-        }
-    }
-    
     
     func moveFunc(){
 #if DEBUG
