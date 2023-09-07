@@ -9,7 +9,6 @@ import UIKit
 
 
 class SubmissionCell: UITableViewCell{
-    
 
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

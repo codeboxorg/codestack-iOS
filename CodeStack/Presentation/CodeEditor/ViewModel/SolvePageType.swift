@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+
+enum SolveResultType{
+    case problem
+    case result(Submission?)
+}

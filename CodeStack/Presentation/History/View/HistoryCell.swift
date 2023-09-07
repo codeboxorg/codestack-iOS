@@ -63,7 +63,7 @@ class HistoryCell: UITableViewCell{
         
         layoutConfigure()
 
-        Driver.zip(onHistoryData.asDriver(onErrorJustReturn: .init(_problem: _Problem(title: "error"))),
+        Driver.zip(onHistoryData.asDriver(onErrorJustReturn: .init(_problem: Problem(title: "error"))),
                    onStatus.asDriver(onErrorJustReturn: .none))
         .drive(with: self,onNext: { cell, data in
             
@@ -74,7 +74,7 @@ class HistoryCell: UITableViewCell{
             cell.problemName.text = submission.problem?.title
             cell.languageBtn.setTitle(submission.language?.name ?? "N/A", for: .disabled)
             if let date = submission.createdAt?.toDateString(format: .FULL){
-                let dateString = DateCalculate().caluculateTime(date)
+                let dateString = DateCalculator().caluculateTime(date)
                 cell.timeLabel.text = dateString
             }
         })

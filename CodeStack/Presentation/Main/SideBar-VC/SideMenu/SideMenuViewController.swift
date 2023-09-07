@@ -15,7 +15,7 @@ struct SideMenuItem {
     let presentation: CodestackStep
 }
 
-
+//TODO: - SideTabBar Color 정하기
 final class SideMenuViewController: UIViewController ,Stepper{
     
     static func create(with items: [SideMenuItem]) -> SideMenuViewController{
@@ -25,7 +25,7 @@ final class SideMenuViewController: UIViewController ,Stepper{
     private var headerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        view.backgroundColor = .whiteGray
         return view
     }()
     
@@ -165,7 +165,7 @@ final class SideMenuViewController: UIViewController ,Stepper{
     }
 
     private func configureTableView() {
-        tableView.backgroundColor = .lightGray
+        tableView.backgroundColor = UIColor.whiteGray
         tableView.dataSource = self
         tableView.delegate = self
         tableView.bounces = false

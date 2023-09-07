@@ -8,23 +8,24 @@ public class GetSubmissionByIdQuery: GraphQLQuery {
   public static let document: ApolloAPI.DocumentType = .notPersisted(
     definition: .init(
       #"""
-      query GetSubmissionById($id: Float!) {
+      query GetSubmissionById($id: ID!) {
         getSubmissionById(id: $id) {
           __typename
+          cpuTime
           id
-          memberId
-          language {
+          member {
             __typename
-            id
+            nickname
+            username
           }
         }
       }
       """#
     ))
 
-  public var id: Double
+  public var id: ID
 
-  public init(id: Double) {
+  public init(id: ID) {
     self.id = id
   }
 
@@ -51,29 +52,31 @@ public class GetSubmissionByIdQuery: GraphQLQuery {
       public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Submission }
       public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
+        .field("cpuTime", Double?.self),
         .field("id", CodestackAPI.ID.self),
-        .field("memberId", Double.self),
-        .field("language", Language.self),
+        .field("member", Member.self),
       ] }
 
+      public var cpuTime: Double? { __data["cpuTime"] }
       public var id: CodestackAPI.ID { __data["id"] }
-      public var memberId: Double { __data["memberId"] }
-      public var language: Language { __data["language"] }
+      public var member: Member { __data["member"] }
 
-      /// GetSubmissionById.Language
+      /// GetSubmissionById.Member
       ///
-      /// Parent Type: `Language`
-      public struct Language: CodestackAPI.SelectionSet {
+      /// Parent Type: `Member`
+      public struct Member: CodestackAPI.SelectionSet {
         public let __data: DataDict
         public init(_dataDict: DataDict) { __data = _dataDict }
 
-        public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Language }
+        public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Member }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("id", CodestackAPI.ID.self),
+          .field("nickname", String.self),
+          .field("username", CodestackAPI.ID.self),
         ] }
 
-        public var id: CodestackAPI.ID { __data["id"] }
+        public var nickname: String { __data["nickname"] }
+        public var username: CodestackAPI.ID { __data["username"] }
       }
     }
   }

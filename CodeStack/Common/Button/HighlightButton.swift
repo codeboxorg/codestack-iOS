@@ -28,10 +28,10 @@ class HighlightButton: UIButton{
         configuration.titlePadding = 10
         self.tintColor = UIColor.white
         self.configuration = configuration
-        self.layer.borderColor = UIColor.white.cgColor
+        self.layer.borderColor = UIColor.sky_blue.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
-        self.setTitleColor(.lightGray, for: .highlighted)
-        self.setTitleColor(.white, for: .normal)
+        self.setTitleColor(.sky_blue, for: .highlighted)
+        self.setTitleColor(.label, for: .normal)
     }
 }

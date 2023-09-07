@@ -8,26 +8,31 @@ public class GetAllTagQuery: GraphQLQuery {
   public static let document: ApolloAPI.DocumentType = .notPersisted(
     definition: .init(
       #"""
-      query GetAllTag {
-        getAllTag(limit: 10, offset: 0) {
+      query GetAllTag($offset: Int) {
+        getAllTag(limit: 10, offset: $offset, sort: "id", order: "asc") {
           __typename
-          data {
+          content {
             __typename
             id
             name
           }
           pageInfo {
             __typename
-            offset
-            limit
-            totalPages
+            totalPage
+            totalContent
           }
         }
       }
       """#
     ))
 
-  public init() {}
+  public var offset: GraphQLNullable<Int>
+
+  public init(offset: GraphQLNullable<Int>) {
+    self.offset = offset
+  }
+
+  public var __variables: Variables? { ["offset": offset] }
 
   public struct Data: CodestackAPI.SelectionSet {
     public let __data: DataDict
@@ -37,7 +42,9 @@ public class GetAllTagQuery: GraphQLQuery {
     public static var __selections: [ApolloAPI.Selection] { [
       .field("getAllTag", GetAllTag.self, arguments: [
         "limit": 10,
-        "offset": 0
+        "offset": .variable("offset"),
+        "sort": "id",
+        "order": "asc"
       ]),
     ] }
 
@@ -53,28 +60,28 @@ public class GetAllTagQuery: GraphQLQuery {
       public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.TagPage }
       public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
-        .field("data", [Datum]?.self),
+        .field("content", [Content]?.self),
         .field("pageInfo", PageInfo.self),
       ] }
 
-      public var data: [Datum]? { __data["data"] }
+      public var content: [Content]? { __data["content"] }
       public var pageInfo: PageInfo { __data["pageInfo"] }
 
-      /// GetAllTag.Datum
+      /// GetAllTag.Content
       ///
       /// Parent Type: `Tag`
-      public struct Datum: CodestackAPI.SelectionSet {
+      public struct Content: CodestackAPI.SelectionSet {
         public let __data: DataDict
         public init(_dataDict: DataDict) { __data = _dataDict }
 
         public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Tag }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("id", CodestackAPI.ID.self),
+          .field("id", Double.self),
           .field("name", String.self),
         ] }
 
-        public var id: CodestackAPI.ID { __data["id"] }
+        public var id: Double { __data["id"] }
         public var name: String { __data["name"] }
       }
 
@@ -88,14 +95,12 @@ public class GetAllTagQuery: GraphQLQuery {
         public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.PageInfo }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("offset", Int.self),
-          .field("limit", Int.self),
-          .field("totalPages", Int.self),
+          .field("totalPage", Int.self),
+          .field("totalContent", Int.self),
         ] }
 
-        public var offset: Int { __data["offset"] }
-        public var limit: Int { __data["limit"] }
-        public var totalPages: Int { __data["totalPages"] }
+        public var totalPage: Int { __data["totalPage"] }
+        public var totalContent: Int { __data["totalContent"] }
       }
     }
   }

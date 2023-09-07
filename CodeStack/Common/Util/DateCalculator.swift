@@ -7,10 +7,13 @@
 
 import Foundation
 
+class Fommater {
+    static let formatter: DateFormatter = DateFormatter()
+}
 
-struct DateCalculate{
+struct DateCalculator{
     private var date: Date = Date()
-    private var formatter: DateFormatter = DateFormatter()
+    private var formatter = Fommater.formatter
     
     init(){
         formatter.locale = Locale(identifier: "ko_kr")
@@ -22,7 +25,6 @@ struct DateCalculate{
         let kr = formatter.string(from: date)
         return kr
     }
-    
     
     /// 인자로 주어진 Date String을 계산하여 특정한 형식으로 변경
     /// - Parameter dateString: DateString

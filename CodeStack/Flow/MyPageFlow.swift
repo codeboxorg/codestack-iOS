@@ -9,12 +9,19 @@ import UIKit
 import RxFlow
 import RxSwift
 import RxCocoa
-
+import PhotosUI
+import Photos
 
 class MyPageFlow: Flow{
     
     var root: Presentable{
         rootViewController
+    }
+    
+    private var codestackService: CodestackAuthorization
+    
+    init(codestackService: CodestackAuthorization) {
+        self.codestackService = codestackService
     }
     
     private let rootViewController: UINavigationController = {
@@ -34,11 +41,18 @@ class MyPageFlow: Flow{
     }
     
     func navigateToMyPage() -> FlowContributors {
-        let profileVC = MyPageViewController()
+        let viewmodel = MyPageViewModel(service: self.codestackService)
+        let profileVC = MyPageViewController.create(with: viewmodel)
 
         profileVC.navigationItem.title = "마이페이지"
         self.rootViewController.pushViewController(profileVC, animated: true)
-        return .one(flowContributor: .contribute(withNextPresentable: profileVC, withNextStepper: DefaultStepper()))
+        return .one(flowContributor: .contribute(withNextPresentable: profileVC,
+                                                 withNextStepper: CompositeStepper(steppers: [DefaultStepper(),
+                                                                                              viewmodel])))
     }
     
+    func navigateToEditProfile() -> FlowContributors {
+        
+        return .none
+    }
 }

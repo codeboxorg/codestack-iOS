@@ -22,9 +22,22 @@ enum TabBarItem: Int{
 
 class CustomTabBarController: UITabBarController,TabBarDelegate{
     
+    var borderView: UIView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tabBar.tintColor = UIColor.sky_blue
+        
+        tabBar.isTranslucent = false
+        tabBar.tintColor = .sky_blue
+
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithTransparentBackground()
+        tabBarAppearance.backgroundColor = UIColor.systemBackground
+        tabBarAppearance.shadowColor = nil
+        
+        tabBar.scrollEdgeAppearance = tabBarAppearance
+        tabBar.standardAppearance = tabBarAppearance
+        
     }
     
     private func setSelectedIndex(for index: Int) {

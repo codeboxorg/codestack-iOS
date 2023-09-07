@@ -59,7 +59,7 @@ class LanguageTag: UIView {
                      background color: UIColor,
                      text color_t: UIColor) {
         self.init(frame: frame)
-        self.backgroundColor = UIColor.getRandomColor()
+        self.backgroundColor = color
         self.layer.cornerRadius = radius
         self.featureLabel.textColor = color_t
         

@@ -8,8 +8,33 @@
 import UIKit
 
 
+extension String{
+    func getColor() -> UIColor{
+        switch self{
+        case "C":
+            return .red_c
+        case "C++":
+            return .juhwang_2
+        case "Python3":
+            return .magenta
+        case "Node.js":
+            return .systemGreen
+        case "GO":
+            return .systemMint
+        case "구현":
+            return .purple
+        case "수학":
+            return .yellow
+        default:
+            return .magenta
+        }
+    }
+}
+
 class LanguageTagContainer: UIView {
     
+    
+    //TODO: - Backgournd Error ?
     private var maxWidth = UIApplication.shared.keyWindow!.frame.width
     
     private var currentWidth: CGFloat = 0
@@ -54,8 +79,8 @@ class LanguageTagContainer: UIView {
         invalidateIntrinsicContentSize()
     }
     
-    func setLanguage(_ language: PMLanguage){
-        fetures = language.languages
+    func setLanguage(_ language: [Language]){
+        fetures = language.map{$0.name}
         feturesUpdate()
     }
     
@@ -66,7 +91,7 @@ class LanguageTagContainer: UIView {
     
     private func feturesUpdate(){
         self.fetures.forEach{ string in
-            let tag = LanguageTag(frame: .zero, corner: 8, background: .systemBlue, text: .white)
+            let tag = LanguageTag(frame: .zero, corner: 8, background: string.getColor(), text: .black)
             self.addSubview(tag)
             tag.setText(text: string)
             tag.bounds = CGRect(x: 0, y: 0,
@@ -109,6 +134,4 @@ class LanguageTagContainer: UIView {
         }
         self.fetures = features
     }
-    
-    
 }

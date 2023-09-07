@@ -19,7 +19,7 @@ class ToastMessageView: UIView {
     
     private lazy var toastLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
+        label.textColor = .black
         label.numberOfLines = 0
         label.textAlignment = .center
         return label

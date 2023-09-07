@@ -13,7 +13,6 @@ import RxFlow
 
 
 protocol HomeViewModelType: ViewModelType, Stepper{
-//    var submissions: PublishRelay<[Submission]> { get }
     var sendSubmission: PublishRelay<Submission> { get }
 }
 
@@ -27,11 +26,12 @@ class HomeViewModel: HomeViewModelType{
         var leftNavigationButtonEvent: Signal<Void>
         var recentProblemPage: Signal<Submission>
         
+        var emptyDataButton: Signal<Void>
         var alramTapped: Observable<UIGestureRecognizer>
     }
     
     struct Output{
-        var submissions: Driver<[Submission]>
+        var submissions: Driver<[RecentSubmission]>
     }
     
     var steps = PublishRelay<Step>()
@@ -45,7 +45,7 @@ class HomeViewModel: HomeViewModelType{
     var sendSubmission = PublishRelay<Submission>()
     
     //MARK: -output
-    private var submissions = PublishRelay<[Submission]>()
+    private var submissions = PublishRelay<[RecentSubmission]>()
     
     init(_ service: TestService = NetworkService()){
         self.service = service
@@ -56,8 +56,11 @@ class HomeViewModel: HomeViewModelType{
         sendSubmission
             .map{ [$0] }
             .withLatestFrom(submissions){ sub, subs in
-                let result = sub + subs
-                return Array(result.prefix(10))
+                let data = subs.flatMap{ $0.items }
+                let result = sub + data
+                let ten = Array(result.prefix(10))
+                let section = ten.toRecentModels()
+                return section
             }
             .subscribe(with: self,onNext: { vm, submission in
                 vm.submissions.accept(submission)
@@ -96,39 +99,41 @@ class HomeViewModel: HomeViewModelType{
                 vm.steps.accept(CodestackStep.historyflow)
             }).disposed(by: disposeBag)
         
+        
+        input.emptyDataButton
+            .emit(with: self, onNext: { vm, _ in
+                vm.steps.accept(CodestackStep.problemList)
+            }).disposed(by: disposeBag)
+        
+        
         input.leftNavigationButtonEvent
             .withUnretained(self)
             .emit(onNext: {vm, value in
                 vm.steps.accept(CodestackStep.sideShow)
             }).disposed(by: disposeBag)
         
+        
         input.viewDidLoad
             .map{_ in self.service.request().content}
             .withUnretained(self)
             .emit(onNext: { vm, value in
-                vm.submissions.accept(value)
+                if value.isEmpty{
+                    Log.debug("value isEmpty")
+                }
+                vm.submissions.accept(value.toRecentModels())
             }).disposed(by: disposeBag)
         
         
         //추후 모델 추가 예정
         input.recentProblemPage
-            .compactMap{submission in submission.problem}
-            .map{ problem in
-                let rate = Double(problem.submission).toRate(second: problem.accepted)
-                let listItem = ProblemListItemModel(problemNumber: problem.id,
-                                                    problemTitle: problem.title,
-                                                    submitCount: problem.submission,
-                                                    correctAnswer: problem.accepted,
-                                                    correctRate: rate,
-                                                    languages: problem.languages)
-                return CodestackStep.recentSolveList(listItem)
-            }
+            .compactMap { $0.problem }
+            .map { $0.toProblemList() }
+            .map { CodestackStep.recentSolveList($0)}
             .emit(to: steps)
             .disposed(by: disposeBag)
         
         
         return Output(submissions: self.submissions.asDriver(onErrorJustReturn: []))
     }
-    
 }
 

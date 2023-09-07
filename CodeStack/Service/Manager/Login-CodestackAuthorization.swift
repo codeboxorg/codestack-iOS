@@ -13,19 +13,45 @@ import RxCocoa
 extension LoginService: CodestackAuthorization{
 //    TokenAcquisitionService<RefreshToken>.GetToken
     
+    
+    func editProfile(image: Data) -> Maybe<Bool> {
+        guard let request = editProfileRequest(image: image) else { return Maybe.just(false) }
+        
+        return urlSession.rx
+            .response(request: request)
+            .timeout(.seconds(5), scheduler: ConcurrentDispatchQueueScheduler.init(qos: .background))
+            .asMaybe()
+            .map { (response: HTTPURLResponse, data: Data) throws -> Bool in
+                guard (200..<300) ~= response.statusCode else { return false }
+                Log.debug("response statusCode: \(response.statusCode)")
+                Log.debug("data: \(data)")
+                return true
+            }
+        
+    }
+    
     func reissueToken(token: CodestackResponseToken) -> Observable<(response: HTTPURLResponse, data: Data)>{
         
         Log.debug(token.accessToken)
         Log.debug(token.refreshToken)
-        
-        let request = reissueHeader(with: token.refreshToken)
+        let request = reissueURLRequest(with: token.refreshToken)
         
         return urlSession.rx
             .response(request: request)
     }
     
-    func signUp(id: ID, password: Pwd) -> Maybe<Bool> {
-        return Maybe.empty()
+    func signUp(member: MemberDTO) -> Maybe<Bool> {
+        guard let request = signUpRequest(member: member) else { return .empty() }
+        return urlSession.rx
+            .response(request: request)
+            .timeout(.seconds(5), scheduler: ConcurrentDispatchQueueScheduler.init(qos: .background))
+            .asMaybe()
+            .map { (response: HTTPURLResponse, data: Data) throws -> Bool in
+                guard (200..<300) ~= response.statusCode else { return false }
+                Log.debug("response statusCode: \(response.statusCode)")
+                Log.debug("data: \(data)")
+                return true
+            }
     }
     
     func request(name id: ID,password: Pwd) -> Maybe<CodestackResponseToken>{
