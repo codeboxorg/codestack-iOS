@@ -4,7 +4,7 @@ codestack를 제작하기 위한 ios 클라이언트입니다.
 
 ### Codestack Architecture
 ---
-<img width="682" alt="Codestack 전체 Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/c2376b1d-d7b9-4928-a0a1-c8775052bee8">
+<img width="682" alt="Codestack 전체 Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/ed34c3ca-2c24-46e1-a343-5cc6b734cd01">
 
 - App (Codestack) : Coordinator, ApolloGraphQL, Login, RxFlow, RxSwift, RxCocoa
 - Flow : RxFlow를 활용하여 화면 전환 의존성을 ViewController에서 분리
@@ -29,20 +29,25 @@ codestack를 제작하기 위한 ios 클라이언트입니다.
 
 ## Flow
 작성중..
-<img width="753" alt="Codestack Flow Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/cdb7f55e-a090-4932-b5ad-c901832de4e7">
+<img width="753" alt="Codestack Flow Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/e3cf87b5-f470-469f-8aab-1371389bf10b">
+
+<br></br>
+## Presentation
+작성중..
+<img width="888" alt="Codestack Presentation Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/74b61e4b-ad19-4ca4-9c54-79f7e82ed0a8">
 
 <br></br>
 ## Service
 작성중..
-<img width="634" alt="Codestack Service Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/755f6f13-bd0f-43ed-aab6-786a283077cb">
+<img width="634" alt="Codestack Service Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/01eeff89-fe66-4b69-bc28-92edcdcb69df">
 
 <br></br>
 ## Repository
 작성중..
-<img width="722" alt="Codestack Repository Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/c39d6cd8-539d-4b16-89f9-7006d653c87e">
+<img width="722" alt="Codestack Repository Architecture" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/542df1eb-0ea7-4ee2-b1f2-df6d45d6656d">
 
 <br></br>
 ## 전체
 작성중..
-<img width="1060" alt="Codestack 전체 구조도" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/bf44155f-6124-435d-ba08-089939a27555">
+<img width="1060" alt="Codestack 전체 구조도" src="https://github.com/codeboxorg/codestack-iOS/assets/46890291/ed4f2403-a122-4321-8b53-7d285e7d7ea1">
 
