@@ -25,8 +25,8 @@ final class ProblemPopUpView: UIView{
         return tableView
     }()
     
-    lazy var scrollView: CustomScrollView = {
-        let scrollView = CustomScrollView()
+    lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.isScrollEnabled = true
         return scrollView
@@ -120,10 +120,26 @@ final class ProblemPopUpView: UIView{
     convenience init(frame: CGRect, _ delegate: CodeEditorViewController) {
         self.init(frame: frame)
         self.delegate = delegate
-        self.backgroundColor = .clear
         problemGestureAction()
         resultGestureAction()
         observingPage()
+        settingColor()
+    }
+    
+    
+    //MARK: - View Color
+    func settingColor() {
+        self.backgroundColor = .clear
+        resultStatusView.backgroundColor = .clear
+        let color = Color.whiteGray.color
+        problemStepButton.setTextColor(color: color)
+        resultStepButton.setTextColor(color: color)
+        sendButton.setTitleColor(color, for: .normal)
+        languageButton.setTitleColor(color, for: .normal)
+        backButton.tintColor = color
+        hideButton.tintColor = color
+        sendButton.tintColor = color
+        resultStatusView.setting(color: color)
     }
     
     required init?(coder: NSCoder) {
@@ -145,8 +161,7 @@ final class ProblemPopUpView: UIView{
     private func observingPage(){
         pageValue.skip(1).subscribe(with: self,
                             onNext: { vm, page in
-            
-            Log.debug("pageValue : \(page)")
+//            Log.debug("pageValue : \(page)")
             switch page{
             case .problem:
                 

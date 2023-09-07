@@ -10,12 +10,15 @@ import Highlightr
 import SnapKit
 import RxFlow
 import RxCocoa
+import RxSwift
 
 class CodeEditorViewController: UIViewController,Stepper{
     
     var steps = PublishRelay<Step>()
     
     private var editorViewModel: CodeEditorViewModel?
+    
+    private var disposeBag = DisposeBag()
     
     var problemItem: ProblemListItemModel?
     
@@ -34,19 +37,13 @@ class CodeEditorViewController: UIViewController,Stepper{
         return vc
     }
     
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.showsHorizontalScrollIndicator = false
-        return scrollView
-    }()
     
-    private lazy var numberTextViewContainer: UIView = {
+    private let numberTextViewContainer: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray6
         return view
     }()
     
-    private lazy var numbersView: LineNumberRulerView = {
+    private let numbersView: LineNumberRulerView = {
         let view = LineNumberRulerView(frame: .zero, textView: nil)
         return view
     }()
@@ -61,24 +58,18 @@ class CodeEditorViewController: UIViewController,Stepper{
         layoutManager.addTextContainer(textContainer)
         
         highlightr = textStorage.highlightr
-        layoutManager.delegate = self
-        let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
         
+        let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
+        layoutManager.delegate = self
         textView.delegate = self
-        textView.isScrollEnabled = true
-        textView.layer.borderColor = UIColor.systemGray6.cgColor
-        textView.layer.borderWidth = 1
-        textView.spellCheckingType = .no
-        textView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        textView.autocorrectionType = UITextAutocorrectionType.no
-        textView.autocapitalizationType = UITextAutocapitalizationType.none
-        textView.alwaysBounceVertical = true
+        
         return textView
     }()
     
     
     lazy var problemPopUpView: ProblemPopUpView = {
         let popView = ProblemPopUpView(frame: .zero,self)
+        
         if let html = problemItem?.contenxt{
             popView.loadHTMLToWebView(html: html)
         }
@@ -94,13 +85,36 @@ class CodeEditorViewController: UIViewController,Stepper{
         super.viewDidLoad()
         
         layoutConfigure()
+        
         textViewHighLiterSetting()
+        settingBackground()
+        
         lineNumberRulerViewSetting()
         problemPopUpViewShow()
         binding()
         
-        self.view.backgroundColor = .systemBackground
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    func settingBackground() {
+        let black = self.highlightr?.theme.themeBackgroundColor
+        
+        let white = Color.whiteGray.color
+        
+        self.codeUITextView.backgroundColor = black
+        self.codeUITextView.layer.borderColor = black?.cgColor
+        self.codeUITextView.tintColor = white
+        
+        numberTextViewContainer.backgroundColor = black
+        self.view.backgroundColor = black
+    }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.problemPopUpView.show()
+        
     }
     
     
@@ -111,10 +125,14 @@ class CodeEditorViewController: UIViewController,Stepper{
             let sendSubmissionAction = problemPopUpView.sendSubmissionAction().map{_ in "\(id)" }.asDriver(onErrorJustReturn: "")
             let languageAction = problemPopUpView.languageAction()
             
-            let output = editorViewModel?.transform(input: .init(dismissAction: dissmissAction,
-                                                                 sendAction: sendSubmissionAction,
-                                                                 language: languageAction,
-                                                                 sourceCode: codeUITextView.rx.text.compactMap{ $0 }.asDriver(onErrorJustReturn: "")))
+            let output = editorViewModel?.transform(input:.init(dismissAction: dissmissAction,
+                                                                sendAction: sendSubmissionAction,
+                                                                language: languageAction,
+                                                                sourceCode: codeUITextView.rx.text.compactMap{ $0 }.asDriver(onErrorJustReturn: "")))
+            output?.solvedResult
+                .drive(with: self,onNext: { vc, submission in
+                    vc.problemPopUpView.pageValue.accept(.result(submission))
+                }).disposed(by: disposeBag)
         }
     }
     
@@ -125,15 +143,56 @@ class CodeEditorViewController: UIViewController,Stepper{
 }
 
 
+//MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
+extension CodeEditorViewController{
+
+    
+    func showProblemDiscription(){
+        problemPopUpView.snp.remakeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(400)
+        }
+        numbersView.layer.setNeedsDisplay()
+        self.codeUITextView.contentSize.height += problemPopUpView.bounds.height
+    }
+    
+    //이거 먼저 선언
+    func dismissProblemDiscription(button height: CGFloat = 44){
+        problemPopUpView.snp.remakeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(height).priority(.high)
+        }
+        numbersView.layer.setNeedsDisplay()
+    }
+}
+
+
+//MARK: - TextView delegate
+extension CodeEditorViewController: UITextViewDelegate{
+    func textViewDidChange(_ textView: UITextView) {
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        return true
+    }
+}
+
+extension CodeEditorViewController: NSLayoutManagerDelegate{
+    func layoutManager(_ layoutManager: NSLayoutManager, paragraphSpacingAfterGlyphAt glyphIndex: Int, withProposedLineFragmentRect rect: CGRect) -> CGFloat {
+        return 10
+    }
+}
+
 //MARK: - layout setting
 extension CodeEditorViewController{
     
     private func textViewHighLiterSetting(){
         let storage = (self.codeUITextView.textStorage as! CodeAttributedString)
         self.highlightr?.setTheme(to: "Chalk")
-        self.codeUITextView.backgroundColor = self.highlightr?.theme.themeBackgroundColor
         storage.language = "swift"
-        guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
+//        guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
 //        guard let strings = try? String(contentsOfFile: path) else {return}
         //        self.codeUITextView.text = strings
         
@@ -149,8 +208,9 @@ extension CodeEditorViewController{
     
     private func problemPopUpViewShow(){
         // Dependency TextView injection in NumbersVIew
+        
         self.view.bringSubviewToFront(problemPopUpView)
-        self.problemPopUpView.show()
+        
     }
     
     
@@ -160,14 +220,20 @@ extension CodeEditorViewController{
         numberTextViewContainer.addSubview(codeUITextView)
         codeUITextView.addSubview(numbersView)
         
+        
+        let initialHeight = 44
         problemPopUpView.snp.makeConstraints { make in
-            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(60)
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+//            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(60)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(400)
+            make.height.equalTo(initialHeight)
         }
         
         numberTextViewContainer.snp.makeConstraints { make in
-            make.edges.equalTo(self.view.safeAreaLayoutGuide.snp.edges)
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            make.leading.equalTo(self.view.safeAreaLayoutGuide.snp.leading)
+            make.trailing.equalTo(self.view.safeAreaLayoutGuide.snp.trailing)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
             make.height.equalTo(self.view.snp.height).priority(.low)
         }
         
@@ -200,48 +266,3 @@ extension CodeEditorViewController: TextViewSizeTracker{
         }
     }
 }
-
-
-//MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
-extension CodeEditorViewController{
-
-    
-    func showProblemDiscription(){
-        problemPopUpView.snp.remakeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(400)
-        }
-        numbersView.layer.setNeedsDisplay()
-        self.codeUITextView.contentSize.height += problemPopUpView.bounds.height
-    }
-    
-    func dismissProblemDiscription(button height: CGFloat){
-        
-        problemPopUpView.snp.remakeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(height).priority(.high)
-        }
-        numbersView.layer.setNeedsDisplay()
-    }
-}
-
-
-//MARK: - TextView delegate
-extension CodeEditorViewController: UITextViewDelegate{
-    func textViewDidChange(_ textView: UITextView) {
-    }
-    
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        return true
-    }
-}
-
-extension CodeEditorViewController: NSLayoutManagerDelegate{
-    func layoutManager(_ layoutManager: NSLayoutManager, paragraphSpacingAfterGlyphAt glyphIndex: Int, withProposedLineFragmentRect rect: CGRect) -> CGFloat {
-        return 10
-    }
-}
-
-

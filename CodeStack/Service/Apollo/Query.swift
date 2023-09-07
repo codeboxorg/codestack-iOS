@@ -9,8 +9,6 @@ import Foundation
 import CodestackAPI
 
 
-
-
 enum Mutation{
     static func problemSubmit(problemId: String, languageId: String, sourceCode: String) -> CreateSubmissionMutation {
         return CreateSubmissionMutation(languageId: languageId,problemId: problemId,sourceCode: sourceCode)

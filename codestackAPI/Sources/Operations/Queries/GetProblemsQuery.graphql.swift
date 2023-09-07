@@ -8,32 +8,46 @@ public class GetProblemsQuery: GraphQLQuery {
   public static let document: ApolloAPI.DocumentType = .notPersisted(
     definition: .init(
       #"""
-      query GetProblems($offset: Float, $sort: String, $order: String) {
+      query GetProblems($offset: Int, $sort: String, $order: String) {
         getProblems(limit: 10, offset: $offset, sort: $sort, order: $order) {
           __typename
-          data {
+          content {
             __typename
             id
             title
             context
-            solvedMemberCount
+            submission
+            accepted
             tags {
               __typename
               id
               name
             }
+            languages {
+              __typename
+              id
+              name
+              extension
+            }
+          }
+          pageInfo {
+            __typename
+            offset
+            limit
+            totalPage
+            totalContent
           }
         }
       }
       """#
     ))
 
-  public var offset: GraphQLNullable<Double>
+  public var offset: GraphQLNullable<Int>
   public var sort: GraphQLNullable<String>
   public var order: GraphQLNullable<String>
 
   public init(
-    offset: GraphQLNullable<Double>,
+    offset: GraphQLNullable<Int>,
     sort: GraphQLNullable<String>,
     order: GraphQLNullable<String>
   ) {
@@ -74,15 +88,17 @@ public class GetProblemsQuery: GraphQLQuery {
       public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.ProblemPage }
       public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
-        .field("data", [Datum]?.self),
+        .field("content", [Content]?.self),
+        .field("pageInfo", PageInfo.self),
       ] }
 
-      public var data: [Datum]? { __data["data"] }
+      public var content: [Content]? { __data["content"] }
+      public var pageInfo: PageInfo { __data["pageInfo"] }
 
-      /// GetProblems.Datum
+      /// GetProblems.Content
       ///
       /// Parent Type: `Problem`
-      public struct Datum: CodestackAPI.SelectionSet {
+      public struct Content: CodestackAPI.SelectionSet {
         public let __data: DataDict
         public init(_dataDict: DataDict) { __data = _dataDict }
 
@@ -92,17 +108,21 @@ public class GetProblemsQuery: GraphQLQuery {
           .field("id", CodestackAPI.ID.self),
           .field("title", String.self),
           .field("context", String.self),
-          .field("solvedMemberCount", Double.self),
+          .field("submission", Double.self),
+          .field("accepted", Double.self),
           .field("tags", [Tag].self),
+          .field("languages", [Language].self),
         ] }
 
         public var id: CodestackAPI.ID { __data["id"] }
         public var title: String { __data["title"] }
         public var context: String { __data["context"] }
-        public var solvedMemberCount: Double { __data["solvedMemberCount"] }
+        public var submission: Double { __data["submission"] }
+        public var accepted: Double { __data["accepted"] }
         public var tags: [Tag] { __data["tags"] }
+        public var languages: [Language] { __data["languages"] }
 
-        /// GetProblems.Datum.Tag
+        /// GetProblems.Content.Tag
         ///
         /// Parent Type: `Tag`
         public struct Tag: CodestackAPI.SelectionSet {
@@ -112,13 +132,55 @@ public class GetProblemsQuery: GraphQLQuery {
           public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Tag }
           public static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
+            .field("id", Double.self),
+            .field("name", String.self),
+          ] }
+
+          public var id: Double { __data["id"] }
+          public var name: String { __data["name"] }
+        }
+
+        /// GetProblems.Content.Language
+        ///
+        /// Parent Type: `Language`
+        public struct Language: CodestackAPI.SelectionSet {
+          public let __data: DataDict
+          public init(_dataDict: DataDict) { __data = _dataDict }
+
+          public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Language }
+          public static var __selections: [ApolloAPI.Selection] { [
+            .field("__typename", String.self),
             .field("id", CodestackAPI.ID.self),
             .field("name", String.self),
+            .field("extension", String.self),
           ] }
 
           public var id: CodestackAPI.ID { __data["id"] }
           public var name: String { __data["name"] }
+          public var `extension`: String { __data["extension"] }
         }
+      }
+
+      /// GetProblems.PageInfo
+      ///
+      /// Parent Type: `PageInfo`
+      public struct PageInfo: CodestackAPI.SelectionSet {
+        public let __data: DataDict
+        public init(_dataDict: DataDict) { __data = _dataDict }
+
+        public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.PageInfo }
+        public static var __selections: [ApolloAPI.Selection] { [
+          .field("__typename", String.self),
+          .field("offset", Int.self),
+          .field("limit", Int.self),
+          .field("totalPage", Int.self),
+          .field("totalContent", Int.self),
+        ] }
+
+        public var offset: Int { __data["offset"] }
+        public var limit: Int { __data["limit"] }
+        public var totalPage: Int { __data["totalPage"] }
+        public var totalContent: Int { __data["totalContent"] }
       }
     }
   }

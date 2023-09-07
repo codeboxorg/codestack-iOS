@@ -19,7 +19,7 @@ enum ConvertUtil{
         return Submission(id: Int(id)!, sourceCode: "", problem: .init(title: "test"), member: .init(), language: .init(id: "", name: "", _extension: ""), cpuTime: 0, memoryUsage: 0, statusCode: status!, createdAt: "")
     }
     
-    static func converting(problems: GetProblemsQuery.Data.GetProblems) -> [_Problem]{
+    static func converting(problems: GetProblemsQuery.Data.GetProblems) -> [Problem]{
         let datas = problems.content.map {
             $0.map { data in
                 
@@ -32,8 +32,8 @@ enum ConvertUtil{
                 }
                
                 
-                let problem = _Problem(id: Int(data.id)!, title: data.title, context: data.context, maxCpuTime: 0, maxMemory: 0,
-                                       submission: Int(data.submission), accepted: Int(data.accepted), tags: tag, languages: languages)
+                let problem = Problem(id: data.id, title: data.title, context: data.context, maxCpuTime: 0, maxMemory: 0,
+                                       submission: data.submission, accepted: data.accepted, tags: tag, languages: languages)
                 return problem
             }
         }
@@ -50,13 +50,13 @@ enum ConvertUtil{
         return []
     }
     
-    static func converting(data: [GetAllLanguageQuery.Data.GetAllLanguage]) -> [Language]{
+    static func converting(data: [GetAllLanguageQuery.Data.GetAllLanguage]) -> [Language] {
         return data.map { lan in
             return Language(id: lan.id, name: lan.name, _extension: lan.extension)
         }
     }
     
-    static func converting(all submission: GetSubmissionsQuery.Data.GetSubmissions) -> [Submission]{
+    static func converting(all submission: GetSubmissionsQuery.Data.GetSubmissions) -> [Submission] { 
         submission.content.map{ content in
             Log.debug("content: \(content)")
             return content.map{value in

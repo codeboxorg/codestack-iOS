@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+/// Errors recognized by the `TokenAcquisitionService`.
+///
+/// - unauthorized: It listens for and activates when it receives an `.unauthorized` error.
+/// - refusedToken: It emits a `.refusedToken` error if the `getToken` request fails.
+enum TokenAcquisitionError: Error, Equatable {
+    case undefinedURL
+    case unauthorized
+    case unowned
+    case undefined
+    case refusedToken(response: HTTPURLResponse, data: Data)
+}

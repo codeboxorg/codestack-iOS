@@ -77,7 +77,7 @@ class TabBarFlow: Flow{
         let homeFlow = HomeFlow(dependency: homeDependency)
         let problemFlow = CodeProblemFlow(dependency: codeDependency)
         let historyFlow = HistoryFlow(historyViewModel: historyViewModel)
-        let myPageFlow = MyPageFlow()
+        let myPageFlow = MyPageFlow(codestackService: loginService as CodestackAuthorization)
         
         Flows.use(homeFlow,problemFlow,historyFlow,myPageFlow, when: .created)
         { [unowned self] home,problem,histoty,myPage in

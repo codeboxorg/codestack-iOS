@@ -9,6 +9,13 @@ import UIKit
 import WebKit
 
 extension WKWebView{
+    
+    func htmlSetting(string: String) -> String{
+        let htmlStart = "<!DOCTYPE html><head> <meta charset=\"utf-8\"> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, shrink-to-fit=no\"></head><body>"
+        let htmlEnd = "</body></html>"
+        return "\(htmlStart)\(string)\(htmlEnd)"
+    }
+    
     func makeWebView() -> WKWebView{
         guard let path = Bundle.main.path(forResource: "style", ofType: "css") else {
             return WKWebView()

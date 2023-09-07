@@ -34,6 +34,12 @@ class NumberButton: UIButton{
     }()
     
     
+    func setTextColor(color: UIColor) {
+        numberLabel.textColor = color
+        textlabel.textColor = color
+    }
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         layoutConfigure()

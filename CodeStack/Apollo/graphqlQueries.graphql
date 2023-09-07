@@ -1,30 +1,172 @@
 # Write your query or mutation here
 
-
-query GetSubmissionById($id: Float!){
-  getSubmissionById(id: $id){
+query GetProblemById($id: ID!){
+  getProblemById(id: $id){
+    accepted
+    context
     id
-    memberId
-    language{
+    languages{
       id
+      name
+      extension
     }
+    maxCpuTime
+    maxMemory
+    submission
+    tags{
+      id
+      name
+    }
+    title
   }
 }
-query GetAllSubmission($offset: Float,$sort: String, $order: String){
-  getAllSubmission(limit: 10,offset: $offset,sort: $sort, order: $order){
-    data{
+
+query GetProblems($offset: Int,$sort: String, $order: String){
+  getProblems(limit: 10,offset: $offset, sort: $sort, order: $order){
+    content{
       id
-      problemId
-      memberId
-      languageId
-      problem{
-        title
-        context
-        solvedMemberCount
+      title
+      context
+      submission
+      accepted
+      tags{
+        id
+        name
+      }
+      languages{
+        id
+        name
+        extension
       }
     }
     pageInfo{
-      totalPages
+      offset
+      limit
+      totalPage
+      totalContent
+    }
+  }
+}
+
+
+query GetSearchproblems($keyword: String!,$limit: Int! = 10, $order: String! = "asc", $sort: String! = "id"){
+  getSearchProblems(keyword: $keyword, limit: $limit, order: $order,sort: $sort){
+    content{
+      id
+      title
+      context
+      languages{
+        id
+        name
+        extension
+      }
+    }
+  }
+}
+
+
+query GetSubmissionByProblemId($offset: Int! = 0,$problemId: Float!){
+  getSubmissionsByProblemId(limit: 20, offset: $offset, order: "asc",problemId: $problemId,sort: "id"){
+    content{
+      id
+      sourceCode
+      statusCode
+      language{
+        name
+        extension
+      }
+      problem{
+        id
+        title
+      }
+      updatedAt
+      createdAt
+    }
+  }
+}
+
+query GetMeSubmissions{
+  getMe{
+    submissions{
+      id
+      statusCode
+      sourceCode
+      cpuTime
+      memoryUsage
+      createdAt
+      problem{
+        id
+        title
+      }
+      language{
+        name
+      }
+    }
+  }
+}
+
+
+query GetMe{
+  getMe{
+    email
+    nickname
+    profileImage
+    solvedProblems{
+      id
+    }
+    username
+  }
+}
+
+query GetSolvedProblem($username: String!){
+  matchMember(username: $username){
+    nickname
+    email
+    profileImage
+    solvedProblems{
+      id
+      title
+      languages{
+        name
+        extension
+      }
+    }
+  }
+}
+query GetSubmissionById($id: ID!){
+   getSubmissionById(id: $id){
+    cpuTime
+    id
+    member{
+      nickname
+      username
+    }
+  }
+}
+
+query GetSubmissions($offset: Int,$sort: String, $order: String){
+  getSubmissions(limit: 20,offset: $offset,sort: $sort, order: $order){
+    content{
+      id
+      sourceCode
+      statusCode
+      problem{
+        id
+        title
+      }
+      language{
+        id
+        name
+        extension
+      }
+      createdAt
+      updatedAt
+    }
+    pageInfo{
+      offset
+      limit
+      totalPage
+      totalContent
     }
   }
 }
@@ -37,38 +179,47 @@ query GetAllLanguage{
   }
 }
 
-query GetProblems($offset: Float,$sort: String,$order: String){
-    getProblems(limit: 10,offset: $offset,sort: $sort, order: $order){
-        data{
-        id
-        title
-        context
-        solvedMemberCount
-        tags{
-          id
-          name
-        }
-      }
-    }
-}
 
-query GetAllTag{
-  getAllTag(limit: 10, offset: 0){
-    data{
+query GetAllTag($offset: Int){
+  getAllTag(limit: 10, offset: $offset,sort: "id",order: "asc"){
+    content{
       id
       name
     }
     pageInfo{
-      offset
-      limit
-      totalPages
+      totalPage
+      totalContent
     }
   }
 }
 
-mutation ProblemSubmit($problemId: Float!,$languageId:Float!,$sourceCode: String!){
-  createSubmission(problemId: $problemId,languageId: $languageId,sourceCode:$sourceCode){
+mutation CreateSubmission($languageId: ID!,$problemId:ID!,$sourceCode: String!){
+  createSubmission(languageId: $languageId,problemId: $problemId,sourceCode:$sourceCode){
     id
+    language{
+      name
+      extension
+    }
+    member{
+      nickname
+    }
     sourceCode
+    problem{
+      id
+      title
+      context
+      languages{
+        id
+        name
+        extension
+      }
+      maxCpuTime
+      maxMemory
+      tags{
+        name
+      }
+    }
+    statusCode
+    createdAt
   }
 }

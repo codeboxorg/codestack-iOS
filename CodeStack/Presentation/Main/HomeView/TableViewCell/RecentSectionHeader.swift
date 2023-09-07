@@ -13,7 +13,8 @@ class RecentSectionHeader: UICollectionReusableView{
     
     let label: UILabel = {
         let label = UILabel()
-        return label.descriptionLabel(size: 16, text: "", color: UIColor.lightGray)
+        
+        return label.descriptionLabel(size: 14, text: "", color: UIColor.label)
     }()
     
     override init(frame: CGRect) {
@@ -21,14 +22,18 @@ class RecentSectionHeader: UICollectionReusableView{
         addAutoLayout()
     }
     
-    func addAutoLayout(){
+    func settingHeader(_ text: String ){
+        self.label.text = "\(text) 🔥"
+    }
+    
+    private func addAutoLayout(){
         self.addSubview(label)
         
         label.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            label.leadingAnchor.constraint(equalTo: self.leadingAnchor,constant: 12),
+            label.centerYAnchor.constraint(equalTo: self.centerYAnchor)
         ])
     }
     

@@ -113,7 +113,7 @@ class LineNumberRulerView: UIView {
     
     
     //MARK: textView setting
-    func settingTextView(_ textView: UITextView,contentSize delegate: TextViewSizeTracker ){
+    func settingTextView(_ textView: UITextView,tracker delegate: TextViewSizeTracker ){
         self.textView = textView
         self.tracker = delegate
         self.backgroundColor = textView.backgroundColor
@@ -146,14 +146,11 @@ class LineNumberRulerView: UIView {
                              line point: LinePoint,
                              context: CGContext){
         context.saveGState()
-        
         context.setStrokeColor(color)
         context.setLineWidth(width)
         context.move(to: point.start)
         context.addLine(to: point.end)
         context.strokePath()
-        
-        
         context.restoreGState()
     }
     
@@ -175,8 +172,6 @@ class LineNumberRulerView: UIView {
                            y: rect.origin.y + textView.textContainerInset.top,
                            width: rect.width,
                            height: rect.height)
-        
-     
         context.saveGState()
         
         if number < 100{
@@ -186,11 +181,7 @@ class LineNumberRulerView: UIView {
         }
         
         let ctline = CTLineCreateWithAttributedString(CFAttributedStringCreate(nil, "\(number)" as CFString, attributes as CFDictionary))
-        
-        
         CTLineDraw(ctline, context)
-        
-        
         context.restoreGState()
         
     }

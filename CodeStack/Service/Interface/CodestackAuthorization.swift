@@ -13,7 +13,9 @@ protocol CodestackAuthorization: OAuthorization{
     
     func reissueToken(token: CodestackResponseToken) -> Observable<(response: HTTPURLResponse, data: Data)>
     
-    func signUp(id: ID, password: Pwd) -> Maybe<Bool>
+    func signUp(member: MemberDTO) -> Maybe<Bool>
+    
+    func editProfile(image: Data) -> Maybe<Bool>
 }
 
 
@@ -21,9 +23,28 @@ typealias RefreshToken = String
 
 extension CodestackAuthorization{
     
-    func reissueHeader(with token: RefreshToken) -> URLRequest{
+    func editProfileRequest(image: Data) -> URLRequest? {
+        let endpoint = getBaseURL(path: .profile)
+        guard let url = URL(string: endpoint) else { return nil }
+        return URLRequest.requestMultipart(url: url, image: image)
+    }
+
+    func signUpRequest(member: MemberDTO) -> URLRequest? {
+        let endpoint = getBaseURL(path: .regitster)
+        guard let url = URL(string: endpoint) else { return nil }
+        return URLRequest.request(url: url,
+                                  headers: commonHeader,
+                                  body: ["username": member.id,
+                                         "email" : member.email,
+                                         "password" : member.password,
+                                         "nickname" : member.nickName],
+                                  method: "POST")
+    }
+    
+    func reissueURLRequest(with token: RefreshToken) -> URLRequest {
         let endpoint = getBaseURL(path: .reissueToken)
         let url = URL(string: endpoint)!
+        Log.debug(url)
         return URLRequest.request(url: url,
                                   headers: commonHeader,
                                   body: ["refreshToken" : token],
