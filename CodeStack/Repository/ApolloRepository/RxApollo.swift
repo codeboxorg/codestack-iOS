@@ -44,6 +44,7 @@ extension Reactive where Base: ApolloClientProtocol {
                     switch result {
                     case let .success(gqlResult):
                         if let errors = gqlResult.errors {
+                             Log.error("\(errors)")
                             observer(.error(ApolloError.gqlErrors(errors)))
                         } else if let data = gqlResult.data {
                              
@@ -52,6 +53,7 @@ extension Reactive where Base: ApolloClientProtocol {
                             observer(.completed)
                         }
                     case let .failure(error):
+                         Log.error("error : \(error)")
                         observer(.error(error))
                     }
                 }

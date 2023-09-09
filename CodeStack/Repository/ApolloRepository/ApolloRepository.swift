@@ -15,62 +15,48 @@ final class ApolloRepository {
     
 //    static var shared: ApolloRepository = ApolloRepository()
     
-    private var tokenService: TokenAcquisitionService<CodestackResponseToken>?
+    struct Dependency {
+        var tokenService: TokenAcquisitionService<ReissueAccessToken>
+        var baseURL: URL
+    }
     
+    private var tokenService: TokenAcquisitionService<ReissueAccessToken>?
     private let client: ApolloClient
-    
-    private let baseURL = GraphAPI.baseURL
-    
-    private var accessToken: String = KeychainItem.currentAccessToken
     
     private var disposeBag = DisposeBag()
     
-    private init() {
-        let configuration: URLSessionConfiguration = .default
+    private let store = ApolloStore(cache: InMemoryNormalizedCache())
+    
+    private init(base url: URL, session client: URLSessionClient) {
+    
+        self.client = ApolloClient(
+            networkTransport: RequestChainNetworkTransport(
+                interceptorProvider: NetworkInterceptorProvider(
+                    client: client,
+                    shouldInvalidateClientOnDeinit: true,
+                    store: store
+                ),
+                endpointURL: url
+            ),
+            store: store
+        )
+    }
+
+    convenience init(dependency: Dependency){
         
-        configuration.httpAdditionalHeaders = ["Authorization": "Bearer \(accessToken)"]
+        let configuration: URLSessionConfiguration = .default
         
         let sessionClient = URLSessionClient(
             sessionConfiguration: configuration,
             callbackQueue: .main
         )
-        
-        let store = ApolloStore(cache: InMemoryNormalizedCache())
-        
-        self.client = ApolloClient(
-            networkTransport: RequestChainNetworkTransport(
-                interceptorProvider: DefaultInterceptorProvider(
-                    client: sessionClient,
-                    shouldInvalidateClientOnDeinit: true,
-                    store: store
-                ),
-                endpointURL: baseURL
-            ),
-            store: store
-        )
-    }
-    
-    convenience init(dependency: TokenAcquisitionService<CodestackResponseToken>){
-        
-        self.init()
-        self.tokenService = dependency
-        
-        tokenService?.token
-            .subscribe(onNext: { result in
-                switch result{
-                case .success(let token):
-                    Log.debug("token : \(token)")
-                case .failure(let error):
-                    Log.error("failure: \(error)")
-                }
-            },onError: { error in
-                Log.error("Repository error: \(error)")
-            },onDisposed: {
-                Log.error("disposed")
-            }).disposed(by: disposeBag)
+
+        self.init(base: dependency.baseURL,session: sessionClient)
     }
 }
 
+
+//MARK: - ApolloRepository Extension
 extension ApolloRepository: Repository{
     func fetch<Query: GraphQLQuery>(
         query: Query,
@@ -89,16 +75,37 @@ extension ApolloRepository: Repository{
         cachePolichy: CachePolicy = .default,
         queue: DispatchQueue = DispatchQueue.main) -> Maybe<Query.Data>
     {
-        Observable.deferred{ [weak self] in
-            guard
-                let self,
-                let service = self.tokenService
-            else { throw TokenAcquisitionError.undefined }
-            return service.token.take(1)
-        }
-        .flatMap{ value in
-            Log.debug("ㅣ\(value)")
-            return self.client.rx.perform(mutation: query, queue: queue)
-        }.asMaybe()
+        return self.client.rx.perform(mutation: query, queue: queue)
     }
 }
+
+
+//let config1 = configuration
+//let p1: UnsafeMutableRawPointer = Unmanaged.passUnretained(configuration).toOpaque()
+//let p2: UnsafeMutableRawPointer = Unmanaged.passUnretained(config1).toOpaque()
+//Log.debug(String(describing: p1))
+//Log.debug(String(describing: p2))
+//
+//let config2 = sessionClient.session.configuration
+//let config3 = sessionClient.session.configuration
+//
+//let copy1_pointer: UnsafeMutableRawPointer = Unmanaged.passUnretained(config1).toOpaque()
+//let copy2_Pointer: UnsafeMutableRawPointer = Unmanaged.passUnretained(config2).toOpaque()
+//let copy3_Pointer: UnsafeMutableRawPointer = Unmanaged.passUnretained(config3).toOpaque()
+//
+//Log.debug("copy1_pointer address : \(String(describing: copy1_pointer))")
+//Log.debug("copy2_Pointer address : \(String(describing: copy2_Pointer))")
+//Log.debug("copy3_Pointer address : \(String(describing: copy3_Pointer))")
+//
+//Log.debug("header: \(String(describing: sessionClient.session.configuration.httpAdditionalHeaders))")
+//
+//sessionClient.session.configuration.httpAdditionalHeaders = ["Authorization": "Bearer \(token.accessToken)"]
+//
+//
+//Log.debug("token : \(["Authorization": "Bearer \(token.accessToken)"])")
+//
+//Log.debug("header: \(String(describing: sessionClient.session.configuration.httpAdditionalHeaders))")
+//
+////                    let urlConfiguration = URLSessionConfiguration()
+////                    urlConfiguration.httpAdditionalHeaders = ["Authorization": "Bearer \(token.accessToken)"]
+////                    let urlSessionClient = URLSessionClient(sessionConfiguration: urlConfiguration)
