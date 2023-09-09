@@ -16,24 +16,39 @@ class LoginFlow: Flow{
         return self.loginViewController
     }
     
-    private weak var loginService: OAuthrizationRequest?
-    private weak var appleLoginManager: AppleLoginManager?
+    struct Dependency {
+        let loginService: OAuthrizationRequest
+        let appleLoginManager: AppleLoginManager
+        let apolloService: ApolloServiceType
+        let authService: AuthServiceType
+    }
+    
+    private let loginService: OAuthrizationRequest
+    private let appleLoginManager: AppleLoginManager
+    private let apolloService: ApolloServiceType
+    private let authService: AuthServiceType
+    
     private var disposeBag = DisposeBag()
     
-    var loginStepper: LoginStepper
+    private var loginStepper: LoginStepper
     
     private lazy var loginViewController: LoginViewController = {
-        let viewModel = LoginViewModel(service: self.loginService,stepper: loginStepper)
+        let dependency = LoginViewModel.Dependency(loginService: self.loginService,
+                                                   apolloService: self.apolloService,
+                                                   stepper: self.loginStepper)
+        let viewModel = LoginViewModel(dependency: dependency)
         let dp = LoginViewController.Dependencies(viewModel: viewModel,appleManager: appleLoginManager)
         let vc = LoginViewController.create(with: dp)
         return vc
     }()
     
-    init(loginService: OAuthrizationRequest,
-         appleLogin: AppleLoginManager,
-         stepper: LoginStepper){
-        self.appleLoginManager = appleLogin
-        self.loginService = loginService
+    init(dependency: Dependency,
+         stepper: LoginStepper) {
+        
+        self.appleLoginManager = dependency.appleLoginManager
+        self.loginService = dependency.loginService
+        self.authService = dependency.authService
+        self.apolloService = dependency.apolloService
         self.loginStepper = stepper
     }
     
@@ -41,13 +56,15 @@ class LoginFlow: Flow{
         guard let _step = step as? CodestackStep else {return .none}
         switch _step{
         case .loginNeeded:
-            print("loginFLow navigate  .loginNeeded")
             return .none
+            
         case .logout:
             self.loginViewController.navigationController?.popViewController(animated: true)
             return .none
+            
         case .userLoggedIn( _,  _):
             return navigateToHomeViewController()
+            
         case .register:
             return navigateToRegisterViewController()
             
@@ -58,8 +75,7 @@ class LoginFlow: Flow{
     
     private func navigateToRegisterViewController() -> FlowContributors {
         
-        guard let service = self.loginService else { return .none }
-        let registerViewController = RegisterViewController.create(with: service)
+        let registerViewController = RegisterViewController.create(with: self.authService)
         
         registerViewController.adjustLargeTitleSize(title: "회원가입")
         self.loginViewController.navigationController?.isNavigationBarHidden = false
@@ -69,8 +85,12 @@ class LoginFlow: Flow{
     
     
     private func navigateToHomeViewController() -> FlowContributors{
-        guard let loginService else {return .none}
-        let flow = TabBarFlow(dependency: loginService)
+        
+        let dependency = TabBarFlow.Dependency(loginservice: self.loginService,
+                                               authService: self.authService,
+                                               apolloService: self.apolloService)
+        
+        let flow = TabBarFlow(dependency: dependency)
         
         Flows.use(flow, when: .ready, block: { root in
             self.loginViewController.navigationController?.isNavigationBarHidden = true
@@ -92,6 +112,12 @@ class LoginStepper: Stepper{
     }
     
     func readyToEmitSteps() {
+        
+        let accessToken = KeychainItem.currentAccessToken
+        let refreshToken = KeychainItem.currentRefreshToken
+        
+        Log.debug("accessToken: \(accessToken)")
+        Log.debug("accessToken: \(refreshToken)")
         
         if KeychainItem.currentAccessToken.isEmpty{
             steps.accept(CodestackStep.none)

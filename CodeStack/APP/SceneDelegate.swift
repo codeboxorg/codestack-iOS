@@ -13,11 +13,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    private let serviceManager: OAuthrizationRequest = LoginService()
-    
     var coordinator: FlowCoordinator = FlowCoordinator()
     var disposeBag: DisposeBag = DisposeBag()
-    lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.serviceManager as AppleAuthorization)
+
+    
+    private let loginService: OAuthrizationRequest = LoginService()
+    private let authService: AuthServiceType = AuthService()
+    private lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.loginService as AppleAuthorization)
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
@@ -25,7 +27,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windoScene)
 
         
-        let flow = AppFlow(loginService: self.serviceManager,appleService: appleLoginManger)
+        let appDependency = AppFlow.Dependency(loginService: self.loginService,
+                                               appleService: self.appleLoginManger,
+                                               authService: self.authService)
+        
+        let flow = AppFlow(dependency: appDependency)
+        
         self.coordinator.coordinate(flow: flow, with: AppStepper())
         
         Flows.use(flow, when: .created, block: { root in
@@ -35,6 +42,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
     }
     
+    
+    
+    /// Git Auth 과정에서 redirect 되었을때 호출되는 함수
+    /// - Parameters:
+    ///   - scene: 현재의 scene
+    ///   - URLContexts: app build setting에서 정의한 URL Type으로 redirect 된다.
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         Log.debug("\(URLContexts)")
         if let url = URLContexts.first?.url {
@@ -44,7 +57,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             if let flag = component.first?.elementsEqual("codestackios://git/auth"),
                flag,
                let code = component.last?.components(separatedBy: "=").last{
-                (serviceManager as GitOAuthorization).gitOAuthComplete(code: code)
+                (loginService as GitOAuthorization).gitOAuthComplete(code: code)
             }
         }
     }

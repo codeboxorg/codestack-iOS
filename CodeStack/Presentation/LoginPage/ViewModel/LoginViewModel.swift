@@ -28,6 +28,7 @@ enum LoginError: Error{
 }
 
 class LoginViewModel: LoginViewModelProtocol,Stepper{
+    
     var steps: PublishRelay<RxFlow.Step>
     
     struct Input{
@@ -39,26 +40,40 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
         var loading: Driver<Result<Bool,Error>>
     }
     
-    var disposeBag = DisposeBag()
-    
-    
-    private weak var service: OAuthrizationRequest?
-    
-    init(service: OAuthrizationRequest?, stepper: LoginStepper){
-        self.service = service
-        self.steps = stepper.steps
-        (self.service as? LoginService)?.loginViewModel = self
+    struct Dependency {
+        let loginService: OAuthrizationRequest
+        let apolloService: ApolloServiceType
+        let stepper: LoginStepper
     }
     
+    private var loginService: OAuthrizationRequest
+    private var apolloService: ApolloServiceType
+    private var disposeBag = DisposeBag()
+    
+    init(dependency: Dependency){
+        self.loginService = dependency.loginService
+        self.apolloService = dependency.apolloService
+        self.steps = dependency.stepper.steps
+        
+        (self.loginService as? LoginService)?.loginViewModel = self
+    }
     
     private var loginFailAlert: PublishSubject<Bool> = PublishSubject<Bool>()
     private var loginLoadingEvent = PublishRelay<Result<Bool,Error>>()
-
-    
     
     var value: Int = 0
+    
     func transform(input: Input) -> Output {
-        input.loginEvent
+      
+        loginEventBinding(login: input.loginEvent)
+        registerBinding(register: input.registerEvent)
+        
+        return Output(loading: loginLoadingEvent.asDriver(onErrorJustReturn: .failure(LoginError.timeOut)))
+    }
+    
+    
+    private func loginEventBinding(login event: Signal<LoginButtonType>) {
+        event
             .withUnretained(self)
             .emit{ vm,type in
                 switch type{
@@ -66,115 +81,86 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                     break
                 case .gitHub:
                     do{
-                        try vm.service?.gitOAuthrization()
+                        try vm.loginService.gitOAuthrization()
                     }catch{
                         Log.error("github 로그인 실패 : \(error)")
                     }
                 case .email((let id, let pwd)):
                     vm.loginLoadingEvent.accept(.success(true))
                     #if DEBUG
-//                    vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
                     vm.requestAuth(id: id, pwd: pwd)
-                    #else
-                    
                     #endif
                 case .none:
                     break
                 }
             }.disposed(by: disposeBag)
-        
-        
-        input.registerEvent
+    }
+    
+    private func registerBinding(register event: Signal<Void>) {
+        event
             .map{_ in CodestackStep.register}
             .emit(to: steps)
             .disposed(by: disposeBag)
-        
-        return Output(loading: loginLoadingEvent.asDriver(onErrorJustReturn: .failure(LoginError.timeOut)))
     }
     
     
     func requestOAuth() throws {
         do {
-            try service?.gitOAuthrization()
+            try loginService.gitOAuthrization()
         }catch{
             throw LoginError.gitOAuthError
         }
     }
 
     
-    func oAuthComplte(apple token: AppleToken){
-        _ = service?
+    func oAuthComplte(apple token: AppleToken) {
+        _ = loginService
             .request(with: token)
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
-            .do(onNext: { [weak self] _ in
-                self?.loginLoadingEvent.accept(.success(false))
-            },onError: { [weak self] _ in
-                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
-            })
-            .subscribe(with: self,onSuccess: {owner, token in
-                
-                owner.signUp(token: token)
-            },onError: { owner , err in
-                Log.error(err)
-            },onCompleted: { _ in
-                Log.error("complte")
-            },onDisposed: { _ in
-                Log.error("disposed")
-            })
+            .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false)) })
+            .do(onError: { [weak self] _ in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
+            .flatMap { token in self.saveToken(token: token) }
+            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(user: user) },
+                                    onError: { owner , err in Log.error(err) })
     }
     
     /// gitHub OAuh 가 끝나고 다시 서버로 token 요청하는 함수
     /// - Parameter code: github code
-    func oAuthComplete(code: String){
-        _ = service?
-            .request(with: GitCode(code: code), provider: .github)
+    func oAuthComplete(code: GitCode){
+        _ = loginService
+            .request(with: code)
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
-            .do(onNext: { [weak self] _ in
-                self?.loginLoadingEvent.accept(.success(false))
-            },onError: { [weak self] err in
-                Log.debug(err)
-                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
-            })
-            .subscribe(with: self,onSuccess: {owner, token in
-                owner.signUp(token: token)
-            },onError: { owner , err in
-                Log.error(err)
-            },onCompleted: { _ in
-                Log.error("complte")
-            },onDisposed: { _ in
-                Log.error("disposed")
-            })
+            .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false))})
+            .do(onError: { [weak self] err in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
+            .flatMap { token in self.saveToken(token: token) }
+            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(user: user)},
+                                    onError: { owner , err in Log.error(err) })
     }
     
     private func requestAuth(id: String, pwd: String){
-        _ = service?.request(name: id, password: pwd)
+        _ = loginService.request(name: id, password: pwd)
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
-            .do(onNext: { [weak self] _ in
-                self?.loginLoadingEvent.accept(.success(false))
-            },onError: { [weak self] _ in
-                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
-            })
-            .subscribe(with: self,onSuccess: { owner, token in
-//             ApolloService.shared.request(header: token.accessToken)
-                owner.signUp(token: token)
-            },onError: { owner , err in
-                Log.error(err)
-            },onCompleted: { _ in
-                Log.debug("complte")
-            },onDisposed: { _ in
-                Log.debug("disposed")
-            })
+            .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false)) })
+            .do(onError: { [weak self] _ in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
+            .flatMap { token in self.saveToken(token: token) }
+            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(user: user) },
+                                    onError: { owner , err in Log.error(err) })
     }
     
     
-    private func signUp(token: CodestackResponseToken){
-        Log.debug("\(token.accessToken) + \(token.refreshToken)")
-        
+    private func saveToken(token: CodestackResponseToken) -> Maybe<User> {
+        UserManager.shared.saveTokenInfo(with: TokenInfo(expiresIn: token.expiresIn,
+                                                         tokenType: token.tokenType))
         KeychainItem.saveTokens(access: token.accessToken, refresh: token.refreshToken)
         
-        UserDefaults.standard.set(token.expiresIn, forKey: "expiresIn")
-        UserDefaults.standard.set(token.tokenType, forKey: "tokenType")
+        Log.debug("\(token.accessToken) + \(token.refreshToken)")
         
+        return apolloService.getMe(query: Query.getMe())
+    }
+    
+    private func saveUserInfo(user: User){
+        Log.debug("userInfo : \(user)")
+        UserManager.shared.saveUser(with: user)
         steps.accept(CodestackStep.userLoggedIn(nil, nil))
     }
 }
