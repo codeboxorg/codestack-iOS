@@ -18,12 +18,12 @@ class CodeProblemFlow: Flow{
     }
     
     struct Dependency{
-        var apolloService: ApolloService
+        var apolloService: ApolloServiceType
         var homeViewModel: (any HomeViewModelType)
         var historyViewModel: (any HistoryViewModelType)
     }
     
-    private let apolloService: ApolloService
+    private let apolloService: ApolloServiceType
     private let homeViewModel: any HomeViewModelType
     private let historyViewModel: any HistoryViewModelType
     

@@ -16,12 +16,22 @@ class AppFlow: Flow{
         self.rootViewController
     }
     
+    struct Dependency {
+        let loginService: OAuthrizationRequest
+        let appleService: AppleLoginManager
+        let authService: AuthServiceType
+    }
+    
     private let loginService: OAuthrizationRequest
     private let appleService: AppleLoginManager
+    private let authService: AuthServiceType
+    private lazy var apolloService: ApolloServiceType = ApolloService(dependency: authService.tokenService)
     
-    init(loginService: OAuthrizationRequest,appleService: AppleLoginManager){
-        self.loginService = loginService
-        self.appleService = appleService
+    
+    init(dependency: Dependency){
+        self.loginService = dependency.loginService
+        self.appleService = dependency.appleService
+        self.authService = dependency.authService
     }
 
     private lazy var rootViewController: UINavigationController = {
@@ -32,8 +42,6 @@ class AppFlow: Flow{
     
     func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
-        
-        Log.debug(step)
         
         switch codestackStep{
         case .loginNeeded:
@@ -49,7 +57,13 @@ class AppFlow: Flow{
 
     private func navigateToLoginVC() -> FlowContributors{
         let loginStepper = LoginStepper()
-        let loginFlow = LoginFlow(loginService: self.loginService,appleLogin: appleService, stepper: loginStepper)
+        
+        let dependecy = LoginFlow.Dependency(loginService: self.loginService,
+                                             appleLoginManager: self.appleService,
+                                             apolloService: self.apolloService,
+                                             authService: self.authService)
+        
+        let loginFlow = LoginFlow(dependency: dependecy, stepper: loginStepper)
         
         Flows.use(loginFlow, when: .created, block: { root in
             self.rootViewController.pushViewController(root, animated: false)

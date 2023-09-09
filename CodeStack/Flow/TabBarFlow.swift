@@ -16,25 +16,23 @@ class TabBarFlow: Flow{
         self.rootViewTabController
     }
     
+    struct Dependency {
+        let loginservice: OAuthrizationRequest
+        let authService: AuthServiceType
+        let apolloService: ApolloServiceType
+    }
     
-    init(dependency: CodestackAuthorization){
-        self.loginService = dependency
+    init(dependency: Dependency){
+        self.loginService = dependency.loginservice
+        self.authService = dependency.authService
+        self.apolloService = dependency.apolloService
     }
     
     private var rootViewTabController = CustomTabBarController()
     
     private let loginService: CodestackAuthorization
-    
-    private var initialToken = CodestackResponseToken(refreshToken: KeychainItem.currentAccessToken,
-                                                      accessToken: KeychainItem.currentRefreshToken,
-                                                      expiresIn: UserDefaults.standard.value(forKey: "expiresIn") as! TimeInterval,
-                                                      tokenType: UserDefaults.standard.value(forKey: "tokenType") as! String)
-    
-    private lazy var tokenAquizitionService
-    =
-    TokenAcquisitionService<CodestackResponseToken>(initialToken: initialToken,
-                                                    getToken: loginService.reissueToken,
-                                                    extractToken: loginService.extractToken)
+    private let authService: AuthServiceType
+    private let apolloService: ApolloServiceType
     
     
     func navigate(to step: RxFlow.Step) -> RxFlow.FlowContributors {
@@ -61,23 +59,25 @@ class TabBarFlow: Flow{
     private func navigateToTabBarController() -> FlowContributors{
         let homeViewModel = HomeViewModel()
         let tabBarDelegate = rootViewTabController
-        let apollo = ApolloService(dependency: tokenAquizitionService)
         
-        let historyViewModel = HistoryViewModel(service: apollo)
+        let historyViewModel = HistoryViewModel(service: apolloService)
         
-        let codeDependency = CodeProblemFlow.Dependency(apolloService: apollo,
+        let codeDependency = CodeProblemFlow.Dependency(apolloService: apolloService,
                                                         homeViewModel: homeViewModel,
                                                         historyViewModel: historyViewModel)
         
         let homeDependency = HomeFlow.Dependency(tabbarDelegate: tabBarDelegate,
-                                                 apolloService: apollo,
+                                                 apolloService: apolloService,
                                                  homeViewModel: homeViewModel,
                                                  historyViewModel: historyViewModel)
+        
+        let myPageDependency = MyPageFlow.Dependency(apolloService: apolloService,
+                                                     authService: authService)
         
         let homeFlow = HomeFlow(dependency: homeDependency)
         let problemFlow = CodeProblemFlow(dependency: codeDependency)
         let historyFlow = HistoryFlow(historyViewModel: historyViewModel)
-        let myPageFlow = MyPageFlow(codestackService: loginService as CodestackAuthorization)
+        let myPageFlow = MyPageFlow(dependency: myPageDependency)
         
         Flows.use(homeFlow,problemFlow,historyFlow,myPageFlow, when: .created)
         { [unowned self] home,problem,histoty,myPage in

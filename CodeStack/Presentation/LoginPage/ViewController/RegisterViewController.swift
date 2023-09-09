@@ -26,9 +26,9 @@ class RegisterViewController: UIViewController, Stepper{
         case wrong
     }
     
-    var service: CodestackAuthorization?
+    var service: AuthServiceType?
     
-    static func create(with dependency: CodestackAuthorization ) -> RegisterViewController {
+    static func create(with dependency: AuthServiceType) -> RegisterViewController {
         let vc = RegisterViewController()
         vc.service = dependency
         return vc
@@ -267,15 +267,15 @@ class RegisterViewController: UIViewController, Stepper{
         
         let register = registerButton.rx.tap
         
-        let zip = Observable.combineLatest(idSubject.asObservable(),
-                                           passwordSubject.asObservable(),
-                                           isCorrectPasswordSubject.asObservable(),
-                                           emailSubject.asObservable(),
-                                           nickNameSubject.asObservable())
+        let combineLatest = Observable.combineLatest(idSubject.asObservable(),
+                                                     passwordSubject.asObservable(),
+                                                     isCorrectPasswordSubject.asObservable(),
+                                                     emailSubject.asObservable(),
+                                                     nickNameSubject.asObservable())
         
         register
             .withUnretained(self)
-            .withLatestFrom(zip) { value, flag in
+            .withLatestFrom(combineLatest) { value, flag in
                 let vc = value.0
                 let (id , password, isCorrect, email, nickname) = flag
                 return vc.isValid(id , password, isCorrect, email, nickname)
