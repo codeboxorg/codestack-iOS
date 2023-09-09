@@ -11,21 +11,23 @@ import RxSwift
 import RxCocoa
 
 class ProfileView: UIView{
+
+    private let activityIndicator = UIActivityIndicatorView(style: .medium)
     
+    private let imageContainerView: UIView = {
+        let view = UIView()
+        return view
+    }()
     
-    struct Profile {
-        let imageURL: String?
-        let name: String
-        let rank: String?
-    }
-    
-    private let imageView: UIImageView = {
+    let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person")
         imageView.tintColor = UIColor.gray
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 12
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.layer.borderWidth = 0.1
+        imageView.layer.borderWidth = 1
         return imageView
     }()
     
@@ -69,34 +71,83 @@ class ProfileView: UIView{
         return button
     }()
     
+    
+    private var beforeImage: UIImage?
+    
+    var disposeBag = DisposeBag()
+    
     /// Binder   뷰에 프로필 데이터 바인딩
-    var profileBinder: Binder<Profile> {
+    var profileBinder: Binder<User> {
         Binder(self){ [weak self] target ,value  in
             guard let self else { return }
             
-            self.nameLabel.text = value.name
+            self.nameLabel.text = value.username
             self.rank.text = value.rank
-            
-            if let imageURL = value.imageURL,
-            let url = URL(string: imageURL) {
-                self.imageView.load(url: url)
-            }
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         addAutoLayout()
         settingColor()
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    
+    enum LoadingState: Equatable {
+        case notLoading
+        case loading
+        case loaded(String?)
     }
     
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
-        
+    }
+    
+    func loadingBinding(_ loading: Driver<LoadingState>) {
+        loading
+            .drive(with: self, onNext: { view, state in
+                view.stateAnimating(state: state)
+            }).disposed(by: disposeBag)
+    }
+    
+    func stateAnimating(state: LoadingState){
+        switch state {
+        case .notLoading:
+            Log.debug("notLoading")
+            self.imageView.image = nil
+            self.activityIndicator.isHidden = false
+            self.activityIndicator.startAnimating()
+            
+        case .loading:
+            Log.debug("loading")
+            self.imageView.image = nil
+            self.activityIndicator.isHidden = false
+            self.activityIndicator.startAnimating()
+            
+        case .loaded(let urlstring):
+            Log.debug("loaded")
+            if urlstring == nil {
+                self.imageView.image = beforeImage
+            } else {
+                //TODO: 이미지 로컬 저장소에 저장해야함
+                //TODO: Cache 처리 해야되는데 .....
+                if let urlstring,
+                   let url = URL(string: urlstring) {
+                    self.imageView.load(url: url, completion: { [weak self] _ in
+                        self?.imageView.stopAnimating()
+                        self?.activityIndicator.isHidden = true
+                    })
+                }
+            }
+            self.activityIndicator.stopAnimating()
+            self.activityIndicator.isHidden = true
+        }
     }
     
     func editProfileEvent() -> Signal<Void> {
-        editButton.rx.tap.asSignal()
+        editButton.rx.tap.share().asSignal(onErrorJustReturn: ())
     }
 }
 
@@ -113,14 +164,26 @@ private extension ProfileView {
     
     func addAutoLayout() {
         
-        [imageView,nameLabel,rank,rankLabel,editButton].forEach {
+        [imageContainerView,nameLabel,rank,rankLabel,editButton].forEach {
             self.addSubview($0)
         }
         
-        imageView.snp.makeConstraints {
+        imageContainerView.addSubview(imageView)
+        imageContainerView.addSubview(activityIndicator)
+        
+        imageContainerView.snp.makeConstraints {
             $0.width.height.equalTo(80)
             $0.top.leading.equalToSuperview().inset(16)
         }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.center.equalTo(imageContainerView.snp.center)
+        }
+        
+        imageView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
         nameLabel.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.top).offset(12)
             $0.leading.equalTo(imageView.snp.trailing).offset(12)
@@ -131,6 +194,7 @@ private extension ProfileView {
             $0.top.equalTo(imageView.snp.bottom).offset(-25)
             $0.leading.equalTo(nameLabel.snp.leading)
         }
+        
         rank.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         rank.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
@@ -150,15 +214,24 @@ private extension ProfileView {
 }
 
 extension UIImageView {
-    func load(url: URL) {
+    
+    func load(url: URL, completion: @escaping (UIImage) -> () ) {
         DispatchQueue.global().async { [weak self] in
+            guard let self else { return }
             if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
+                self.load(data: data, completion: completion)
             }
         }
     }
+    
+    func load(data: Data, completion: @escaping (UIImage) -> ()) {
+        if let image = UIImage(data: data) {
+            DispatchQueue.main.async {
+                self.image = image
+                
+                completion(image)
+            }
+        }
+    }
+    
 }

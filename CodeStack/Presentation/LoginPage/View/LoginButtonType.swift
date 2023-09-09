@@ -7,8 +7,6 @@
 
 import Foundation
 
-typealias ID = String
-typealias Pwd = String
 
 enum LoginButtonType{
     case gitHub
