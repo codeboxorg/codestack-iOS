@@ -5,27 +5,9 @@
 
 public class GetSearchproblemsQuery: GraphQLQuery {
   public static let operationName: String = "GetSearchproblems"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetSearchproblems($keyword: String!, $limit: Int! = 10, $order: String! = "asc", $sort: String! = "id") {
-        getSearchProblems(keyword: $keyword, limit: $limit, order: $order, sort: $sort) {
-          __typename
-          content {
-            __typename
-            id
-            title
-            context
-            languages {
-              __typename
-              id
-              name
-              extension
-            }
-          }
-        }
-      }
-      """#
+      #"query GetSearchproblems($keyword: String!, $limit: Int! = 10, $order: String! = "asc", $sort: String! = "id") { getSearchProblems(keyword: $keyword, limit: $limit, order: $order, sort: $sort) { __typename content { __typename id title context languages { __typename id name extension } } } }"#
     ))
 
   public var keyword: String

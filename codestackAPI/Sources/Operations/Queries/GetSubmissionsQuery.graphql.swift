@@ -5,41 +5,9 @@
 
 public class GetSubmissionsQuery: GraphQLQuery {
   public static let operationName: String = "GetSubmissions"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetSubmissions($offset: Int, $sort: String, $order: String) {
-        getSubmissions(limit: 20, offset: $offset, sort: $sort, order: $order) {
-          __typename
-          content {
-            __typename
-            id
-            sourceCode
-            statusCode
-            problem {
-              __typename
-              id
-              title
-            }
-            language {
-              __typename
-              id
-              name
-              extension
-            }
-            createdAt
-            updatedAt
-          }
-          pageInfo {
-            __typename
-            offset
-            limit
-            totalPage
-            totalContent
-          }
-        }
-      }
-      """#
+      #"query GetSubmissions($offset: Int, $sort: String, $order: String) { getSubmissions(limit: 20, offset: $offset, sort: $sort, order: $order) { __typename content { __typename id sourceCode statusCode problem { __typename id title } language { __typename id name extension } createdAt updatedAt } pageInfo { __typename offset limit totalPage totalContent } } }"#
     ))
 
   public var offset: GraphQLNullable<Int>
