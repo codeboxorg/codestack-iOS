@@ -3,20 +3,28 @@
 
 @_exported import ApolloAPI
 
-public class GetAllTagQuery: GraphQLQuery {
-  public static let operationName: String = "GetAllTag"
+public class GetMeSubmissionHistoryQuery: GraphQLQuery {
+  public static let operationName: String = "GetMeSubmissionHistory"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query GetAllTag($offset: Int) { getAllTag(limit: 10, offset: $offset, sort: "id", order: "asc") { __typename content { __typename id name } pageInfo { __typename totalPage totalContent } } }"#
+      #"query GetMeSubmissionHistory($limit: Int = 100, $offset: Int) { getSubmissions(limit: $limit, offset: $offset) { __typename content { __typename createdAt } pageInfo { __typename limit offset totalContent } } }"#
     ))
 
+  public var limit: GraphQLNullable<Int>
   public var offset: GraphQLNullable<Int>
 
-  public init(offset: GraphQLNullable<Int>) {
+  public init(
+    limit: GraphQLNullable<Int> = 100,
+    offset: GraphQLNullable<Int>
+  ) {
+    self.limit = limit
     self.offset = offset
   }
 
-  public var __variables: Variables? { ["offset": offset] }
+  public var __variables: Variables? { [
+    "limit": limit,
+    "offset": offset
+  ] }
 
   public struct Data: CodestackAPI.SelectionSet {
     public let __data: DataDict
@@ -24,24 +32,22 @@ public class GetAllTagQuery: GraphQLQuery {
 
     public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Query }
     public static var __selections: [ApolloAPI.Selection] { [
-      .field("getAllTag", GetAllTag.self, arguments: [
-        "limit": 10,
-        "offset": .variable("offset"),
-        "sort": "id",
-        "order": "asc"
+      .field("getSubmissions", GetSubmissions.self, arguments: [
+        "limit": .variable("limit"),
+        "offset": .variable("offset")
       ]),
     ] }
 
-    public var getAllTag: GetAllTag { __data["getAllTag"] }
+    public var getSubmissions: GetSubmissions { __data["getSubmissions"] }
 
-    /// GetAllTag
+    /// GetSubmissions
     ///
-    /// Parent Type: `TagPage`
-    public struct GetAllTag: CodestackAPI.SelectionSet {
+    /// Parent Type: `SubmissionPage`
+    public struct GetSubmissions: CodestackAPI.SelectionSet {
       public let __data: DataDict
       public init(_dataDict: DataDict) { __data = _dataDict }
 
-      public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.TagPage }
+      public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.SubmissionPage }
       public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
         .field("content", [Content]?.self),
@@ -51,25 +57,23 @@ public class GetAllTagQuery: GraphQLQuery {
       public var content: [Content]? { __data["content"] }
       public var pageInfo: PageInfo { __data["pageInfo"] }
 
-      /// GetAllTag.Content
+      /// GetSubmissions.Content
       ///
-      /// Parent Type: `Tag`
+      /// Parent Type: `Submission`
       public struct Content: CodestackAPI.SelectionSet {
         public let __data: DataDict
         public init(_dataDict: DataDict) { __data = _dataDict }
 
-        public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Tag }
+        public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Submission }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("id", Double.self),
-          .field("name", String.self),
+          .field("createdAt", CodestackAPI.DateTime.self),
         ] }
 
-        public var id: Double { __data["id"] }
-        public var name: String { __data["name"] }
+        public var createdAt: CodestackAPI.DateTime { __data["createdAt"] }
       }
 
-      /// GetAllTag.PageInfo
+      /// GetSubmissions.PageInfo
       ///
       /// Parent Type: `PageInfo`
       public struct PageInfo: CodestackAPI.SelectionSet {
@@ -79,11 +83,13 @@ public class GetAllTagQuery: GraphQLQuery {
         public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.PageInfo }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("totalPage", Int.self),
+          .field("limit", Int.self),
+          .field("offset", Int.self),
           .field("totalContent", Int.self),
         ] }
 
-        public var totalPage: Int { __data["totalPage"] }
+        public var limit: Int { __data["limit"] }
+        public var offset: Int { __data["offset"] }
         public var totalContent: Int { __data["totalContent"] }
       }
     }

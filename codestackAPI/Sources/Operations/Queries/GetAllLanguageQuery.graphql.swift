@@ -5,18 +5,9 @@
 
 public class GetAllLanguageQuery: GraphQLQuery {
   public static let operationName: String = "GetAllLanguage"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetAllLanguage {
-        getAllLanguage {
-          __typename
-          id
-          name
-          extension
-        }
-      }
-      """#
+      #"query GetAllLanguage { getAllLanguage { __typename id name extension } }"#
     ))
 
   public init() {}
