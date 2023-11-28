@@ -5,41 +5,9 @@
 
 public class GetProblemsQuery: GraphQLQuery {
   public static let operationName: String = "GetProblems"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetProblems($offset: Int, $sort: String, $order: String) {
-        getProblems(limit: 10, offset: $offset, sort: $sort, order: $order) {
-          __typename
-          content {
-            __typename
-            id
-            title
-            context
-            submission
-            accepted
-            tags {
-              __typename
-              id
-              name
-            }
-            languages {
-              __typename
-              id
-              name
-              extension
-            }
-          }
-          pageInfo {
-            __typename
-            offset
-            limit
-            totalPage
-            totalContent
-          }
-        }
-      }
-      """#
+      #"query GetProblems($offset: Int, $sort: String, $order: String) { getProblems(limit: 10, offset: $offset, sort: $sort, order: $order) { __typename content { __typename id title context submission accepted tags { __typename id name } languages { __typename id name extension } } pageInfo { __typename offset limit totalPage totalContent } } }"#
     ))
 
   public var offset: GraphQLNullable<Int>

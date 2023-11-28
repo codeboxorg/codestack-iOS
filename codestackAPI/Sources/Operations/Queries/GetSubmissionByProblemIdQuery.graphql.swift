@@ -5,39 +5,9 @@
 
 public class GetSubmissionByProblemIdQuery: GraphQLQuery {
   public static let operationName: String = "GetSubmissionByProblemId"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetSubmissionByProblemId($offset: Int! = 0, $problemId: Float!) {
-        getSubmissionsByProblemId(
-          limit: 20
-          offset: $offset
-          order: "asc"
-          problemId: $problemId
-          sort: "id"
-        ) {
-          __typename
-          content {
-            __typename
-            id
-            sourceCode
-            statusCode
-            language {
-              __typename
-              name
-              extension
-            }
-            problem {
-              __typename
-              id
-              title
-            }
-            updatedAt
-            createdAt
-          }
-        }
-      }
-      """#
+      #"query GetSubmissionByProblemId($offset: Int! = 0, $problemId: Float!) { getSubmissionsByProblemId( limit: 20 offset: $offset order: "asc" problemId: $problemId sort: "id" ) { __typename content { __typename id sourceCode statusCode language { __typename name extension } problem { __typename id title } updatedAt createdAt } } }"#
     ))
 
   public var offset: Int
