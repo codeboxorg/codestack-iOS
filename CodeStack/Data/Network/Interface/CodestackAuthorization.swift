@@ -11,7 +11,3 @@ import RxSwift
 protocol CodestackAuthorization: OAuthorization{
     func request(name id: ID,password: Pwd) -> Maybe<CodestackResponseToken>
 }
-
-extension CodestackAuthorization{
-    
-}

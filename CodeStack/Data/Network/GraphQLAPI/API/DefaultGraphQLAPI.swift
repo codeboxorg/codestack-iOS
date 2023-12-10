@@ -11,9 +11,7 @@ import RxSwift
 import CodestackAPI
 
 
-final class ApolloRepository {
-    
-//    static var shared: ApolloRepository = ApolloRepository()
+final class DefaultGraphQLAPI {
     
     struct Dependency {
         var tokenService: TokenAcquisitionService<ReissueAccessToken>
@@ -42,7 +40,7 @@ final class ApolloRepository {
         )
     }
 
-    convenience init(dependency: Dependency){
+    convenience init(dependency: Dependency) {
         
         let configuration: URLSessionConfiguration = .default
         
@@ -57,7 +55,7 @@ final class ApolloRepository {
 
 
 //MARK: - ApolloRepository Extension
-extension ApolloRepository: Repository{
+extension DefaultGraphQLAPI: GraphQLAPI {
     func fetch<Query: GraphQLQuery>(
         query: Query,
         cachePolicy: CachePolicy = .default,
@@ -78,34 +76,3 @@ extension ApolloRepository: Repository{
         return self.client.rx.perform(mutation: query, queue: queue)
     }
 }
-
-
-//let config1 = configuration
-//let p1: UnsafeMutableRawPointer = Unmanaged.passUnretained(configuration).toOpaque()
-//let p2: UnsafeMutableRawPointer = Unmanaged.passUnretained(config1).toOpaque()
-//Log.debug(String(describing: p1))
-//Log.debug(String(describing: p2))
-//
-//let config2 = sessionClient.session.configuration
-//let config3 = sessionClient.session.configuration
-//
-//let copy1_pointer: UnsafeMutableRawPointer = Unmanaged.passUnretained(config1).toOpaque()
-//let copy2_Pointer: UnsafeMutableRawPointer = Unmanaged.passUnretained(config2).toOpaque()
-//let copy3_Pointer: UnsafeMutableRawPointer = Unmanaged.passUnretained(config3).toOpaque()
-//
-//Log.debug("copy1_pointer address : \(String(describing: copy1_pointer))")
-//Log.debug("copy2_Pointer address : \(String(describing: copy2_Pointer))")
-//Log.debug("copy3_Pointer address : \(String(describing: copy3_Pointer))")
-//
-//Log.debug("header: \(String(describing: sessionClient.session.configuration.httpAdditionalHeaders))")
-//
-//sessionClient.session.configuration.httpAdditionalHeaders = ["Authorization": "Bearer \(token.accessToken)"]
-//
-//
-//Log.debug("token : \(["Authorization": "Bearer \(token.accessToken)"])")
-//
-//Log.debug("header: \(String(describing: sessionClient.session.configuration.httpAdditionalHeaders))")
-//
-////                    let urlConfiguration = URLSessionConfiguration()
-////                    urlConfiguration.httpAdditionalHeaders = ["Authorization": "Bearer \(token.accessToken)"]
-////                    let urlSessionClient = URLSessionClient(sessionConfiguration: urlConfiguration)

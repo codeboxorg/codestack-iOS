@@ -12,8 +12,3 @@ protocol AppleAuthorization: AnyObject,OAuthorization{
     func request(with token: AppleToken) -> Maybe<CodestackResponseToken>
     func oAuthComplte(token: AppleToken)
 }
-
-
-extension AppleAuthorization{
-    
-}
