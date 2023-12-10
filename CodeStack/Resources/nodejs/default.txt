@@ -1,0 +1,6 @@
+const readline = require("readline");
+    
+function sayHello() {
+    console.log("Hello, World!");
+}
+    
