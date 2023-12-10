@@ -5,25 +5,9 @@
 
 public class GetAllTagQuery: GraphQLQuery {
   public static let operationName: String = "GetAllTag"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetAllTag($offset: Int) {
-        getAllTag(limit: 10, offset: $offset, sort: "id", order: "asc") {
-          __typename
-          content {
-            __typename
-            id
-            name
-          }
-          pageInfo {
-            __typename
-            totalPage
-            totalContent
-          }
-        }
-      }
-      """#
+      #"query GetAllTag($offset: Int) { getAllTag(limit: 10, offset: $offset, sort: "id", order: "asc") { __typename content { __typename id name } pageInfo { __typename totalPage totalContent } } }"#
     ))
 
   public var offset: GraphQLNullable<Int>

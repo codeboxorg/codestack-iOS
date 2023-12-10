@@ -1,0 +1,250 @@
+# Write your query or mutation here
+
+
+query GetMeSubmissionHistory($limit: Int = 100,$offset: Int) {
+  getSubmissions(limit: $limit,offset: $offset) {
+    content {
+      createdAt
+    }
+    pageInfo {
+      limit
+      offset
+      totalContent
+    }
+  }
+}
+
+
+query GetProblemById($id: ID!){
+  getProblemById(id: $id){
+    accepted
+    context
+    id
+    languages{
+      id
+      name
+      extension
+    }
+    maxCpuTime
+    maxMemory
+    submission
+    tags{
+      id
+      name
+    }
+    title
+  }
+}
+
+query GetProblems($offset: Int,$sort: String, $order: String){
+  getProblems(limit: 10,offset: $offset, sort: $sort, order: $order){
+    content{
+      id
+      title
+      context
+      submission
+      accepted
+      tags{
+        id
+        name
+      }
+      languages{
+        id
+        name
+        extension
+      }
+    }
+    pageInfo{
+      offset
+      limit
+      totalPage
+      totalContent
+    }
+  }
+}
+
+
+query GetSearchproblems($keyword: String!,$limit: Int! = 10, $order: String! = "asc", $sort: String! = "id"){
+  getSearchProblems(keyword: $keyword, limit: $limit, order: $order,sort: $sort){
+    content{
+      id
+      title
+      context
+      languages{
+        id
+        name
+        extension
+      }
+    }
+  }
+}
+
+
+query GetSubmissionByProblemId($offset: Int! = 0,$problemId: Float!){
+  getSubmissionsByProblemId(limit: 20, offset: $offset, order: "asc",problemId: $problemId,sort: "id"){
+    content{
+      id
+      sourceCode
+      statusCode
+      language{
+        name
+        extension
+      }
+      problem{
+        id
+        title
+      }
+      updatedAt
+      createdAt
+    }
+  }
+}
+
+query GetMeSubmissions{
+  getMe{
+    submissions{
+      id
+      statusCode
+      sourceCode
+      cpuTime
+      memoryUsage
+      createdAt
+      problem{
+        id
+        title
+      }
+      language{
+        name
+      }
+    }
+  }
+}
+
+
+query GetMe{
+  getMe{
+    email
+    nickname
+    profileImage
+    solvedProblems{
+      id
+    }
+    username
+  }
+}
+
+query GetSolvedProblem($username: String!){
+  matchMember(username: $username){
+    nickname
+    email
+    profileImage
+    solvedProblems{
+      id
+      title
+      languages{
+        name
+        extension
+      }
+    }
+  }
+}
+query GetSubmissionById($id: ID!){
+   getSubmissionById(id: $id){
+    cpuTime
+    id
+    member{
+      nickname
+      username
+    }
+  }
+}
+
+query GetSubmissions($offset: Int,$sort: String, $order: String){
+  getSubmissions(limit: 20,offset: $offset,sort: $sort, order: $order){
+    content{
+      id
+      sourceCode
+      statusCode
+      problem{
+        id
+        title
+      }
+      language{
+        id
+        name
+        extension
+      }
+      createdAt
+      updatedAt
+    }
+    pageInfo{
+      offset
+      limit
+      totalPage
+      totalContent
+    }
+  }
+}
+
+query GetAllLanguage{
+  getAllLanguage{
+    id
+    name
+    extension
+  }
+}
+
+
+query GetAllTag($offset: Int){
+  getAllTag(limit: 10, offset: $offset,sort: "id",order: "asc"){
+    content{
+      id
+      name
+    }
+    pageInfo{
+      totalPage
+      totalContent
+    }
+  }
+}
+
+mutation UpdateNickName($nickname:String!){
+  updateNickname(nickname: $nickname) {
+    email
+    nickname
+    username
+    profileImage
+  }
+}
+
+mutation CreateSubmission($languageId: ID!,$problemId:ID!,$sourceCode: String!){
+  createSubmission(languageId: $languageId,problemId: $problemId,sourceCode:$sourceCode){
+    id
+    language{
+      id
+      name
+      extension
+    }
+    member{
+      nickname
+    }
+    sourceCode
+    problem{
+      id
+      title
+      context
+      languages{
+        id
+        name
+        extension
+      }
+      maxCpuTime
+      maxMemory
+      tags{
+        name
+      }
+    }
+    statusCode
+    createdAt
+  }
+}

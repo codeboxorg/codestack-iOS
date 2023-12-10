@@ -1,0 +1,122 @@
+# A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+scalar DateTime
+
+type Language {
+  extension: String!
+  id: ID!
+  name: String!
+}
+
+type Member {
+  email: String
+  nickname: String!
+  profileImage: String
+  solvedProblems: [Problem!]!
+  submissions: [Submission!]!
+  username: ID!
+}
+
+type Mutation {
+  createSubmission(
+    languageId: ID!
+    problemId: ID!
+    sourceCode: String!
+  ): Submission!
+  updateNickname(nickname: String!): Member!
+}
+
+type PageInfo {
+  limit: Int!
+  offset: Int!
+  totalContent: Int!
+  totalPage: Int!
+}
+
+type Problem {
+  accepted: Float!
+  context: String!
+  id: ID!
+  languages: [Language!]!
+  maxCpuTime: String!
+  maxMemory: Float!
+  submission: Float!
+  tags: [Tag!]!
+  title: String!
+}
+
+type ProblemPage {
+  content: [Problem!]
+  pageInfo: PageInfo!
+}
+
+type Query {
+  existEmail(email: String!): Boolean!
+  existUsername(username: String!): Boolean!
+  getAllLanguage: [Language!]!
+  getAllTag(
+    limit: Int! = 10
+    offset: Int! = 0
+    order: String! = "asc"
+    sort: String! = "id"
+  ): TagPage!
+  getMe: Member!
+  getProblemById(id: ID!): Problem!
+  getProblems(
+    limit: Int! = 10
+    offset: Int! = 0
+    order: String! = "asc"
+    sort: String! = "id"
+  ): ProblemPage!
+  getSearchProblems(
+    keyword: String!
+    limit: Int! = 10
+    offset: Int! = 0
+    order: String! = "asc"
+    sort: String! = "id"
+  ): ProblemPage!
+  getSubmissionById(id: ID!): Submission!
+  getSubmissions(
+    limit: Int! = 10
+    offset: Int! = 0
+    order: String! = "asc"
+    sort: String! = "id"
+  ): SubmissionPage!
+  getSubmissionsByProblemId(
+    limit: Int! = 10
+    offset: Int! = 0
+    order: String! = "asc"
+    problemId: Float!
+    sort: String! = "id"
+  ): SubmissionPage!
+  matchMember(username: String!): Member!
+}
+
+# submission
+type Submission {
+  cpuTime: Float
+  createdAt: DateTime!
+  id: ID!
+  language: Language!
+  member: Member!
+  memoryUsage: Float
+  problem: Problem!
+  sourceCode: String!
+  statusCode: String
+  updatedAt: DateTime!
+}
+
+type SubmissionPage {
+  content: [Submission!]
+  pageInfo: PageInfo!
+}
+
+type Tag {
+  id: Float!
+  name: String!
+  problemCount: String!
+}
+
+type TagPage {
+  content: [Tag!]
+  pageInfo: PageInfo!
+}

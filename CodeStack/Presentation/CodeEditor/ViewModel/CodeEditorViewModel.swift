@@ -133,7 +133,7 @@ class CodeEditorViewModel: CodeEditorViewModelType,Stepper{
                                                    languageId: model.languageID,
                                                    sourceCode: model.sourceCode)
         Log.debug("perform send : \(model.problemID)")
-        _ = apolloService?.perform(mutation: mutation,max: 3)
+        _ = apolloService?.perform(mutation: mutation,max: 2)
             .subscribe(with: self,
                        onSuccess: { vm, result in
                 let submission = Submission(with: result.createSubmission)

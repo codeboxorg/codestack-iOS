@@ -5,33 +5,9 @@
 
 public class GetProblemByIdQuery: GraphQLQuery {
   public static let operationName: String = "GetProblemById"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetProblemById($id: ID!) {
-        getProblemById(id: $id) {
-          __typename
-          accepted
-          context
-          id
-          languages {
-            __typename
-            id
-            name
-            extension
-          }
-          maxCpuTime
-          maxMemory
-          submission
-          tags {
-            __typename
-            id
-            name
-          }
-          title
-        }
-      }
-      """#
+      #"query GetProblemById($id: ID!) { getProblemById(id: $id) { __typename accepted context id languages { __typename id name extension } maxCpuTime maxMemory submission tags { __typename id name } title } }"#
     ))
 
   public var id: ID

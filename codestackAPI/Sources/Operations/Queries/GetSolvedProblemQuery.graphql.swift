@@ -5,28 +5,9 @@
 
 public class GetSolvedProblemQuery: GraphQLQuery {
   public static let operationName: String = "GetSolvedProblem"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetSolvedProblem($username: String!) {
-        matchMember(username: $username) {
-          __typename
-          nickname
-          email
-          profileImage
-          solvedProblems {
-            __typename
-            id
-            title
-            languages {
-              __typename
-              name
-              extension
-            }
-          }
-        }
-      }
-      """#
+      #"query GetSolvedProblem($username: String!) { matchMember(username: $username) { __typename nickname email profileImage solvedProblems { __typename id title languages { __typename name extension } } } }"#
     ))
 
   public var username: String

@@ -18,10 +18,17 @@ class MyPageFlow: Flow{
         rootViewController
     }
     
-    private var codestackService: CodestackAuthorization
+    struct Dependency {
+        let apolloService: ApolloServiceType
+        let authService: AuthServiceType
+    }
     
-    init(codestackService: CodestackAuthorization) {
-        self.codestackService = codestackService
+    private let authService: AuthServiceType
+    private let apolloService: ApolloServiceType
+    
+    init(dependency: Dependency) {
+        self.authService = dependency.authService
+        self.apolloService = dependency.apolloService
     }
     
     private let rootViewController: UINavigationController = {
@@ -35,13 +42,16 @@ class MyPageFlow: Flow{
         switch codestackStep{
         case .profilePage:
             return navigateToMyPage()
+        case .profileEdit:
+            return navigateToEditProfile()
         default:
             return .none
         }
     }
     
     func navigateToMyPage() -> FlowContributors {
-        let viewmodel = MyPageViewModel(service: self.codestackService)
+        let viewmodel = MyPageViewModel(dependency: .init(authService: self.authService,
+                                                          apolloService: self.apolloService))
         let profileVC = MyPageViewController.create(with: viewmodel)
 
         profileVC.navigationItem.title = "마이페이지"
@@ -52,7 +62,9 @@ class MyPageFlow: Flow{
     }
     
     func navigateToEditProfile() -> FlowContributors {
-        
+        let vc = ProfileImageViewController.create(with: UIImage(systemName: "heart"))
+        vc.modalPresentationStyle = .fullScreen
+        self.rootViewController.present(vc, animated: true)
         return .none
     }
 }
