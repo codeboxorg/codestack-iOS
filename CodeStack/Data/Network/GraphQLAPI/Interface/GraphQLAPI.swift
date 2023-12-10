@@ -10,7 +10,7 @@ import CodestackAPI
 import Apollo
 import RxSwift
 
-protocol Repository{
+protocol GraphQLAPI {
 
     func fetch<Query: GraphQLQuery>(
         query: Query,

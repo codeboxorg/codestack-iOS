@@ -39,17 +39,19 @@ extension Reactive where Base: ApolloClientProtocol {
                 query: query,
                 cachePolicy: cachePolicy,
                 contextIdentifier: contextIdentifier,
+                context: nil,
                 queue: queue,
                 resultHandler: { result in
                     switch result {
                     case let .success(gqlResult):
                         if let errors = gqlResult.errors {
-                             Log.error("\(errors)")
+                             Log.error("gqlResult.extensions : \(gqlResult.extensions)")
                             observer(.error(ApolloError.gqlErrors(errors)))
                         } else if let data = gqlResult.data {
-                             
+                             Log.error("gqlResult.data : \(gqlResult.data)")
                             observer(.success(data))
                         } else {
+                             Log.error("gqlResult.complete")
                             observer(.completed)
                         }
                     case let .failure(error):
@@ -81,7 +83,8 @@ extension Reactive where Base: ApolloClientProtocol {
         return Observable.create { [weak base] observer in
             let watcher = base?.watch(
                 query: query,
-                cachePolicy: cachePolicy,
+                cachePolicy: cachePolicy, 
+                context: nil,
                 callbackQueue: callbackQueue,
                 resultHandler: { result in
                     switch result {
@@ -121,19 +124,24 @@ extension Reactive where Base: ApolloClientProtocol {
             let cancellable = base?.perform(
                 mutation: mutation,
                 publishResultToStore: publishResultToStore,
+                context: nil,
                 queue: queue,
                 resultHandler: { result in
                     switch result {
                     case let .success(gqlResult):
                         if let errors = gqlResult.errors {
+                             Log.error(errors)
+                             Log.error(" SUCCESS error\(ApolloError.gqlErrors(errors))")
                             observer(.error(ApolloError.gqlErrors(errors)))
                         } else if let data = gqlResult.data {
+                             Log.error(" SUCCESS data \(data)")
                             observer(.success(data))
                         } else {
                             observer(.completed)
                         }
                         
                     case let .failure(error):
+                         Log.error(" failure: \(error)")
                         observer(.error(error))
                     }
                 }
@@ -164,6 +172,7 @@ extension Reactive where Base: ApolloClientProtocol {
             let cancellable = base?.upload(
                 operation: operation,
                 files: files,
+                context: nil,
                 queue: queue,
                 resultHandler: { result in
                     switch result {
@@ -202,6 +211,7 @@ extension Reactive where Base: ApolloClientProtocol {
         return Observable.create { [weak base] observer in
             let cancellable = base?.subscribe(
                 subscription: subscription,
+                context: nil,
                 queue: queue,
                 resultHandler: { result in
                     switch result {
