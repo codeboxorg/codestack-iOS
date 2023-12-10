@@ -62,13 +62,14 @@ class BoxContainerLabel: UILabel{
     func setContainer(_ font: UIFont = UIFont.boldSystemFont(ofSize: 16),
                       _ text: String)
     {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else {return }
-            self.label.font = font
-            self.label.text = text
-            self.label.sizeToFit()
-            self.label.center = container.center
-        }
+//        DispatchQueue.main.async { [weak self] in
+//            guard let self else {return }
+        self.layoutIfNeeded()
+        self.label.font = font
+        self.label.text = text
+        self.label.sizeToFit()
+        self.label.center = container.center
+//        }
     }
     
 }

@@ -52,12 +52,21 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
+            BlueprintIdentifier = "96964A4C2B241C35005753BE"
+            BuildableName = "CodeStack.DEV.app"
+            BlueprintName = "CodeStack.DEV"
+            ReferencedContainer = "container:CodeStack.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
             BlueprintIdentifier = "965310AC29EA7A4F006C3E18"
             BuildableName = "CodeStack.app"
             BlueprintName = "CodeStack"
             ReferencedContainer = "container:CodeStack.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

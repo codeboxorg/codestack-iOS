@@ -11,7 +11,7 @@ class Fommater {
     static let formatter: DateFormatter = DateFormatter()
 }
 
-struct DateCalculator{
+struct DateCalculator {
     private var date: Date = Date()
     private var formatter = Fommater.formatter
     

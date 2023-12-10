@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CustomTextField: UITextField{
+class CustomTextField: UITextField {
     
     enum FieldType{
         case ID
@@ -35,9 +35,6 @@ class CustomTextField: UITextField{
         return super.resignFirstResponder()
     }
     
-    
-   
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -52,11 +49,8 @@ class CustomTextField: UITextField{
         if fieldType == .PassWord {
             self.isSecureTextEntry = true
         }
-        layoutConfigure()
-        
+        layoutConfigure()   
     }
-    
-    
     
     private func layoutConfigure(){
         self.tintColor = UIColor.black
@@ -70,8 +64,6 @@ class CustomTextField: UITextField{
         case .none:
             return
         }
-        
-        
     }
     
     fileprivate func addDoneButtonOnKeyboard() {

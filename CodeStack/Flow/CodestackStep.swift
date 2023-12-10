@@ -43,15 +43,18 @@ enum CodestackStep: Step, CaseIterable{
     //myPage
     case profilePage
     case profileEdit
+    case profileEditDissmiss
     
     //Home Step
     case firstHomeStep
+    case projectHomeStep
     
     //problemSolve VC
     case problemComplete
     case problemList
     case problemPick(ProblemListItemModel)
     case recentSolveList(ProblemListItemModel?)
+    case toastMessage(String)
     case recommendPage
     
     case sideMenuDelegate(String)
@@ -59,8 +62,9 @@ enum CodestackStep: Step, CaseIterable{
     case sideDissmiss
     
     
-    case historyflow
+    case codestack
     
+    case historyflow
     case richText([Problem])
     
     case none

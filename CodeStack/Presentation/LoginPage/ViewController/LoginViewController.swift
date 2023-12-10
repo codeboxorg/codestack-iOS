@@ -10,7 +10,7 @@ import RxFlow
 import RxCocoa
 import RxSwift
 
-class LoginViewController: UIViewController,Stepper{
+class LoginViewController: UIViewController,Stepper {
     
     
     //MARK: - RXFLow

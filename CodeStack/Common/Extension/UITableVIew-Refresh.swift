@@ -8,7 +8,7 @@
 import UIKit
 
 
-extension UITableView{
+extension UITableView {
     
     private var animationDuration: Double {
         0.2

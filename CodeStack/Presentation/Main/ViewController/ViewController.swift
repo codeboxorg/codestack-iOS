@@ -15,15 +15,12 @@ import RxDataSources
 
 
 
-
 extension UIViewController {
     func adjustLargeTitleSize(title: String = "Codestack") {
-        //        self.title =
         self.navigationItem.title = title
         self.navigationController?.navigationBar.tintColor = UIColor.label
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationItem.largeTitleDisplayMode = .automatic
-        
     }
 }
 
@@ -34,17 +31,20 @@ class ViewController: UIViewController{
     
     struct Dependencies{
         var homeViewModel: any HomeViewModelType
+        var contiributionViewModel: ContributionViewModel?
         var sidemenuVC: SideMenuViewController
     }
     
-    //ViewController
+    // ViewController
     private var homeViewModel: (any HomeViewModelType)?
+    private(set) var contiributionViewModel: ContributionViewModel?
     private weak var sidemenuViewController: SideMenuViewController?
     
     static func create(with dependencies: Dependencies) -> ViewController{
         let vc = ViewController()
         vc.homeViewModel = dependencies.homeViewModel
         vc.sidemenuViewController = dependencies.sidemenuVC
+        vc.contiributionViewModel = dependencies.contiributionViewModel
         return vc
     }
     
@@ -66,9 +66,14 @@ class ViewController: UIViewController{
     }()
     
     private lazy var graphView: GraphView = {
-        let graph = GraphView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width - 24, height: .zero))
-        graph.backgroundColor = UIColor.systemBackground
+        let graph = GraphView(frame: .zero)
+        graph.backgroundColor = graphBackground
         return graph
+    }()
+    
+    let graphContainerView: UIView = {
+       let view = UIView()
+        return view
     }()
     
     private let alramView: RightAlarmView = {
@@ -81,14 +86,14 @@ class ViewController: UIViewController{
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 50, weight: .semibold)
         let image = UIImage(systemName: "plus.circle", withConfiguration: imageConfig)
         button.setImage(image, for: .normal)
-        button.tintColor = UIColor.sky_blue
+        button.tintColor = buttonTintColor
         return button
     }()
     
     
     private lazy var emptyLabel: UILabel = {
         let label = UILabel()
-        return label.headLineLabel(size: 16, text: "💡문제를 풀러 가볼까요?", color: .label)
+        return label.headLineLabel(size: 16, text: "💡문제를 풀러 가볼까요?", color: labelColor)
     }()
     
     
@@ -96,8 +101,6 @@ class ViewController: UIViewController{
         let collectionView = PRSubmissionHistoryCell.submissionHistoryCellSetting(background: UIColor.systemBackground)
         return collectionView
     }()
- 
-    
     
     private lazy var imgView: UIImageView = {
         let view = UIImageView()
@@ -108,10 +111,35 @@ class ViewController: UIViewController{
     private var _viewDidLoad = PublishRelay<Void>()
     private var disposeBag = DisposeBag()
     
+    
+    private var titleTextAttributesColor: UIColor { .clear }
+    
+    var graphBackground: UIColor {
+        .systemBackground
+    }
+    
+    private var buttonTintColor: UIColor {
+        .sky_blue
+    }
+    
+    private var labelColor: UIColor {
+        .label
+    }
+    
+    func settingColor() {
+        self.view.backgroundColor = .systemBackground
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        settingColor()
         navigationSetting()
         layoutConfigure()
+        
+        //MARK: This is SwiftUI View
+        calendarView()
+        
         binding()
         
         view.gestureRecognizers?.forEach{
@@ -129,16 +157,32 @@ class ViewController: UIViewController{
     }
     
     private func binding(){
+        let viewDidLoad = _viewDidLoad.asSignal()
+        let problemButtonEvent = mainView.emitTodayAndRecommendBtnEvent()
+        let rightSwipeGesture = view.rx.gesture(.swipe(direction: .right)).when(.recognized).asObservable().map { _ in  }
+        let leftSwipeGesture = view.rx.gesture(.swipe(direction: .left)).when(.recognized).asObservable().map { _ in  }
+        let leftNavigationButtonEvent = navigationItem.leftBarButtonItem?.rx.tap.asSignal() ?? .never()
+        
+        let recentModelSelected
+        =
+        recentPagesCollectionView.rx
+            .modelSelected(Submission.self)
+            .asSignal()
+            .throttle(.seconds(1), latest: false)
+        
+        let emptyDataButton = emptyDataButton.rx.tap.asSignal()
+        let alramTapped = alramView.rx.gesture(.tap()).when(.recognized).asObservable().map { _ in}
+        
         let output =
         (homeViewModel as! HomeViewModel)
-            .transform(input: HomeViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(),
-                                                  problemButtonEvent: mainView.emitTodayAndRecommendBtnEvent(),
-                                                  rightSwipeGesture: view.rx.gesture(.swipe(direction: .right)).when(.recognized).asObservable(),
-                                                  leftSwipeGesture: view.rx.gesture(.swipe(direction: .left)).when(.recognized).asObservable(),
-                                                  leftNavigationButtonEvent: navigationItem.leftBarButtonItem?.rx.tap.asSignal() ?? .never(),
-                                                  recentProblemPage: recentPagesCollectionView.rx.modelSelected(Submission.self).asSignal(),
-                                                  emptyDataButton: emptyDataButton.rx.tap.asSignal(),
-                                                  alramTapped: alramView.rx.gesture(.tap()).when(.recognized).asObservable()))
+            .transform(input: HomeViewModel.Input(viewDidLoad: viewDidLoad,
+                                                  problemButtonEvent: problemButtonEvent,
+                                                  rightSwipeGesture: rightSwipeGesture,
+                                                  leftSwipeGesture: leftSwipeGesture,
+                                                  leftNavigationButtonEvent: leftNavigationButtonEvent,
+                                                  recentModelSelected: recentModelSelected,
+                                                  emptyDataButton: emptyDataButton,
+                                                  alramTapped: alramTapped))
         
         let dataSource =
         RxCollectionViewSectionedReloadDataSource<RecentSubmission>(
@@ -152,10 +196,14 @@ class ViewController: UIViewController{
                 },
             configureSupplementaryView:
                 { dataSource, collectionView, section, indexPath in
-                    switch section{
+                    switch section {
                     case UICollectionView.elementKindSectionHeader:
-                        guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: section, withReuseIdentifier: RecentSectionHeader.identifier, for: indexPath)
-                                as? RecentSectionHeader else { return UICollectionReusableView() }
+                        guard 
+                            let header = collectionView
+                                .dequeueReusableSupplementaryView(ofKind: section,
+                                                                  withReuseIdentifier: RecentSectionHeader.identifier,
+                                                                  for: indexPath) as? RecentSectionHeader
+                        else { return UICollectionReusableView() }
                         let title = dataSource.sectionModels[indexPath.section].headerTitle
                         header.settingHeader("\(title)")
                         return header
@@ -166,8 +214,8 @@ class ViewController: UIViewController{
         )
         
         output.submissions
-            .compactMap{ $0.first?.items.isEmpty }
-            .drive(with: self,onNext: {vc, flag in
+            .compactMap { $0.first?.items.isEmpty }
+            .drive(with: self, onNext: {vc, flag in
                 flag == true ? vc.makeEmptyView() : vc.restoreEmptyView()
             }).disposed(by: disposeBag)
         
@@ -225,12 +273,12 @@ extension ViewController{
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alramView)
         // 사이드바 보기 버튼 적용
-        self.view.backgroundColor = UIColor.systemBackground
+        
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: nil)
         
         // back navigtion 백버튼 타이틀 숨기기
         let backButtonAppearance = UIBarButtonItemAppearance(style: .plain)
-        backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
+        backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: titleTextAttributesColor]
         
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.backButtonAppearance = backButtonAppearance
@@ -245,10 +293,12 @@ extension ViewController{
         view.addSubview(scrollView)
         
         scrollView.addSubview(containerView)
-        containerView.addSubview(graphView)
+        containerView.addSubview(graphContainerView)
         containerView.addSubview(mainView)
         containerView.addSubview(recentPagesCollectionView)
         containerView.addSubview(imgView)
+        
+        graphContainerView.addSubview(graphView)
         
         scrollView.snp.makeConstraints { make in
             make.edges.equalTo(self.view.safeAreaLayoutGuide.snp.edges)
@@ -260,14 +310,21 @@ extension ViewController{
             make.height.equalTo(1000).priority(.low)
         }
         
-        graphView.snp.makeConstraints { make in
+        //TODO: 추후 Line graph와 비교 해서 change 할 수 있게 구성 고려
+        graphView.isHidden = true
+        graphContainerView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(12)
-            make.leading.trailing.equalToSuperview().inset(12)
-            make.height.equalTo(200)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview().inset(12)
+            make.height.equalTo(300)
+        }
+        
+        graphView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         
         recentPagesCollectionView.snp.makeConstraints{
-            $0.top.equalTo(graphView.snp.bottom).offset(24)
+            $0.top.equalTo(graphContainerView.snp.bottom).offset(24)
             $0.leading.equalTo(self.view.safeAreaLayoutGuide.snp.leading)
             $0.trailing.equalTo(self.view.safeAreaLayoutGuide.snp.trailing)
             $0.height.equalTo(200)
@@ -280,7 +337,6 @@ extension ViewController{
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-12)
         }
-        
     }
 }
 

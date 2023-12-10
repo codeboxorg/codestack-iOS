@@ -24,7 +24,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
     
     var steps = PublishRelay<Step>()
     
-    struct Input{
+    struct Input {
         var viewDidLoad: Signal<Void>
         var viewDissapear: Signal<Void>
         var segmentIndex: Signal<Int>
@@ -41,11 +41,11 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
     
     private var dummy: DummyData
     
-    private var apollo: ApolloServiceType
+    private var apollo: WebRepository
     
     var animationSelected: [String : Bool] = [:]
     
-    init(_ dummy: DummyData, _ service: ApolloServiceType){
+    init(_ dummy: DummyData, _ service: WebRepository){
         self.dummy = dummy
         self.apollo = service
     }
@@ -156,30 +156,28 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
                 return true
             }
             .delay(.milliseconds(300))
-            .emit(with: self, onNext: { vm, value in
-                vm.requestProblem(offset: vm.currentPage) { problems in
-                    let dummyModel = problems.map { problem in
-                        let list = problem.toProblemList()
-                        return (model: list,language: problem.languages, flag: false)
+            .flatMap { vm, _ in  vm.requestProblem(offset: vm.currentPage) }
+            .emit(with: self, onNext: { vm, problems in
+                let dummyModel = problems.map { problem in
+                    let list = problem.toProblemList()
+                    return (model: list,language: problem.languages, flag: false)
+                }
+                vm.currentPage += 1
+                vm.isLoading = false
+                vm.refreshEnd.accept(())
+                
+                // Data fetch 실패시 기본 default 값 fetch
+                if dummyModel.isEmpty {
+                    let tempModel = vm.dummy.getAllModels(index: vm.currentPage)
+                    tempModel.forEach { model in
+                        vm.animationSelected[model.model.problemNumber] = model.flag
                     }
-                    vm.currentPage += 1
-                    vm.isLoading = false
-                    vm.refreshEnd.accept(())
-                    
-                    if dummyModel.isEmpty {
-                        let tempModel = vm.dummy.getAllModels(index: vm.currentPage)
-                        
-                        tempModel.forEach { model in
-                            vm.animationSelected[model.model.problemNumber] = model.flag
-                        }
-
-                        vm.fetchListModels.accept(tempModel)
-                    } else {
-                        dummyModel.forEach { model in
-                            vm.animationSelected[model.model.problemNumber] = model.flag
-                        }
-                        vm.fetchListModels.accept(dummyModel)
+                    vm.fetchListModels.accept(tempModel)
+                } else {
+                    dummyModel.forEach { model in
+                        vm.animationSelected[model.model.problemNumber] = model.flag
                     }
+                    vm.fetchListModels.accept(dummyModel)
                 }
             }).disposed(by: disposeBag)
     }
@@ -188,32 +186,28 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
     private func fetchWhenViewDidLoad(load: Signal<Void>) {
         _ = load
             .withUnretained(self)
-            .emit(onNext: { vm,_ in
-                vm.requestProblem(offset: vm.currentPage){ problems in
-                    let dummyModel = problems.map { problem in
-                        let list = problem.toProblemList()
-                        return (model: list,language: problem.languages, flag: false)
-                    }
-                    
-                    dummyModel.forEach{model in
-                        vm.animationSelected[model.model.problemNumber] = model.flag
-                    }
-                    
-                    Log.debug("dummyModel : \(dummyModel)")
-                    vm.currentPage += 1
-                    vm.listModel.accept(dummyModel)
+            .flatMap { vm, _ in vm.requestProblem(offset: vm.currentPage) }
+            .emit(with: self, onNext: { vm, problems in
+                let dummyModel = problems.map { problem in
+                    let list = problem.toProblemList()
+                    return (model: list,language: problem.languages, flag: false)
                 }
+                
+                dummyModel.forEach { model in
+                    vm.animationSelected[model.model.problemNumber] = model.flag
+                }
+                
+                vm.currentPage += 1
+                vm.listModel.accept(dummyModel)
             })
             .disposed(by: disposeBag)
     }
     
     private func requestProblem(offset: Int,
                                 sort: String = "id",
-                                order: String = "asc",
-                                completion: @escaping ([Problem]) -> Void ) {
-        
-        _ = apollo
+                                order: String = "asc") -> Signal<[Problem]> {
+        apollo
             .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
-            .subscribe( onSuccess: { completion($0) })
+            .asSignal(onErrorJustReturn: [])
     }
 }

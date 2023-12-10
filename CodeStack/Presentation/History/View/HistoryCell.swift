@@ -10,7 +10,7 @@ import SnapKit
 import RxCocoa
 import RxSwift
 
-class HistoryCell: UITableViewCell{
+class HistoryCell: UITableViewCell {
 
     private let boxContainer: UIView = {
        let view = UIView()
@@ -73,9 +73,17 @@ class HistoryCell: UITableViewCell{
             cell.descriptionSetting(status: solveStatus, problem: submission.problem?.title ?? "hellow world ")
             cell.problemName.text = submission.problem?.title
             cell.languageBtn.setTitle(submission.language?.name ?? "N/A", for: .disabled)
-            if let date = submission.createdAt?.toDateString(format: .FULL){
+            
+            if let date = submission.createdAt?.toDateStringUTC(format: .FULL) {
                 let dateString = DateCalculator().caluculateTime(date)
                 cell.timeLabel.text = dateString
+                return
+            }
+            
+            if let date = submission.createdAt?.toDateStringKST(format: .FULL) {
+                let dateString = DateCalculator().caluculateTime(date)
+                cell.timeLabel.text = dateString
+                return
             }
         })
         .disposed(by: disposeBag)

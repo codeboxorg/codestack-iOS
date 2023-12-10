@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 
-class HistoryFlow: Flow{
+class HistoryFlow: Flow {
     
     var root: Presentable{
         rootViewController
