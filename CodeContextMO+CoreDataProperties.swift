@@ -1,5 +1,5 @@
 //
-//  CodeContext+CoreDataProperties.swift
+//  CodeContextMO+CoreDataProperties.swift
 //  
 //
 //  Created by 박형환 on 11/22/23.
@@ -10,10 +10,10 @@ import Foundation
 import CoreData
 
 
-extension CodeContext {
+extension CodeContextMO {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<CodeContext> {
-        return NSFetchRequest<CodeContext>(entityName: "CodeContext")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<CodeContextMO> {
+        return NSFetchRequest<CodeContextMO>(entityName: "CodeContext")
     }
 
     @NSManaged public var code: String?
