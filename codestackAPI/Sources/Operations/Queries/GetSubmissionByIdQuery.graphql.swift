@@ -5,22 +5,9 @@
 
 public class GetSubmissionByIdQuery: GraphQLQuery {
   public static let operationName: String = "GetSubmissionById"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetSubmissionById($id: ID!) {
-        getSubmissionById(id: $id) {
-          __typename
-          cpuTime
-          id
-          member {
-            __typename
-            nickname
-            username
-          }
-        }
-      }
-      """#
+      #"query GetSubmissionById($id: ID!) { getSubmissionById(id: $id) { __typename cpuTime id member { __typename nickname username } } }"#
     ))
 
   public var id: ID

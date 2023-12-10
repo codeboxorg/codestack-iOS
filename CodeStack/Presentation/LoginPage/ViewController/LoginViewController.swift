@@ -19,7 +19,7 @@ class LoginViewController: UIViewController,Stepper{
     //MARK: -Dependency
     
     private var loginViewModel: (any LoginViewModelProtocol)?
-    private weak var appleManager: AppleLoginManager?
+    private var appleManager: AppleLoginManager?
     
     struct Dependencies{
         var viewModel: (any LoginViewModelProtocol)?

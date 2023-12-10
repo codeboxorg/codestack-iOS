@@ -5,23 +5,9 @@
 
 public class GetMeQuery: GraphQLQuery {
   public static let operationName: String = "GetMe"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetMe {
-        getMe {
-          __typename
-          email
-          nickname
-          profileImage
-          solvedProblems {
-            __typename
-            id
-          }
-          username
-        }
-      }
-      """#
+      #"query GetMe { getMe { __typename email nickname profileImage solvedProblems { __typename id } username } }"#
     ))
 
   public init() {}

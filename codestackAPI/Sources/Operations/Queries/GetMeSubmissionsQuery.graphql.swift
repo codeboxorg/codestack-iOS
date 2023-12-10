@@ -5,33 +5,9 @@
 
 public class GetMeSubmissionsQuery: GraphQLQuery {
   public static let operationName: String = "GetMeSubmissions"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      query GetMeSubmissions {
-        getMe {
-          __typename
-          submissions {
-            __typename
-            id
-            statusCode
-            sourceCode
-            cpuTime
-            memoryUsage
-            createdAt
-            problem {
-              __typename
-              id
-              title
-            }
-            language {
-              __typename
-              name
-            }
-          }
-        }
-      }
-      """#
+      #"query GetMeSubmissions { getMe { __typename submissions { __typename id statusCode sourceCode cpuTime memoryUsage createdAt problem { __typename id title } language { __typename name } } } }"#
     ))
 
   public init() {}

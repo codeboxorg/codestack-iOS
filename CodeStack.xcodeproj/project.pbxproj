@@ -19,7 +19,6 @@
 		960358A92A9B2EE500C14D68 /* Login-CodestackAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358A82A9B2EE500C14D68 /* Login-CodestackAuthorization.swift */; };
 		960358AB2A9B2F0900C14D68 /* Login-AppleAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358AA2A9B2F0900C14D68 /* Login-AppleAuthorization.swift */; };
 		960358AD2A9B2F4200C14D68 /* Login-GitAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358AC2A9B2F4200C14D68 /* Login-GitAuthorization.swift */; };
-		960358AF2A9B317A00C14D68 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358AE2A9B317A00C14D68 /* API.swift */; };
 		960B836A2A5DAE8D002753F6 /* RxFlow in Frameworks */ = {isa = PBXBuildFile; productRef = 960B83692A5DAE8D002753F6 /* RxFlow */; };
 		960B836D2A5DB1AF002753F6 /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = 960B836C2A5DB1AF002753F6 /* RxGesture */; };
 		960B83702A5DB236002753F6 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 960B836F2A5DB236002753F6 /* RxCocoa */; };
@@ -35,8 +34,15 @@
 		9629F8652A6C11B300019349 /* RightAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8642A6C11B300019349 /* RightAlarmView.swift */; };
 		9629F86C2A6D181900019349 /* ApolloRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86B2A6D181900019349 /* ApolloRepository.swift */; };
 		9629F86E2A6D186700019349 /* RxApollo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86D2A6D186700019349 /* RxApollo.swift */; };
-		9629F8702A6D1C7200019349 /* GraphAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86F2A6D1C7200019349 /* GraphAPI.swift */; };
+		96410E542AAA214A004C5313 /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E532AAA214A004C5313 /* UserManager.swift */; };
+		96410E602AAAFB5F004C5313 /* ApolloServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E5F2AAAFB5F004C5313 /* ApolloServiceType.swift */; };
+		96410E632AAB0213004C5313 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E622AAB0213004C5313 /* API.swift */; };
+		96410E662AAB0B2F004C5313 /* MemberDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E652AAB0B2F004C5313 /* MemberDTO.swift */; };
+		96410E692AAB197B004C5313 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E682AAB197B004C5313 /* AuthService.swift */; };
 		96440DA22AA646E400C016F0 /* TokenAcquisitionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96440DA12AA646E400C016F0 /* TokenAcquisitionError.swift */; };
+		96441C042AAC72BE001D4DC3 /* TokenInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96441C032AAC72BE001D4DC3 /* TokenInterceptor.swift */; };
+		96441C062AAC817C001D4DC3 /* NetworkInterceptorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96441C052AAC817C001D4DC3 /* NetworkInterceptorProvider.swift */; };
+		96441C082AAC98D5001D4DC3 /* ProfileImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96441C072AAC98D5001D4DC3 /* ProfileImageViewController.swift */; };
 		964590992A4870350060BDCE /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964590982A4870350060BDCE /* StatusView.swift */; };
 		9645909B2A4873740060BDCE /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9645909A2A4873740060BDCE /* ProgressView.swift */; };
 		9645909D2A487D9F0060BDCE /* CircleLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9645909C2A487D9E0060BDCE /* CircleLayer.swift */; };
@@ -93,20 +99,19 @@
 		9665D99E2A49BD6E004CB33A /* Submission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D99D2A49BD6E004CB33A /* Submission.swift */; };
 		9665D9A02A49BE21004CB33A /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D99F2A49BE21004CB33A /* Tag.swift */; };
 		9665D9A22A49BE38004CB33A /* ProblemCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9A12A49BE38004CB33A /* ProblemCalendar.swift */; };
-		9665D9A42A49BF64004CB33A /* OAuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9A32A49BF64004CB33A /* OAuthProvider.swift */; };
 		9665D9A82A49CC1F004CB33A /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9A72A49CC1F004CB33A /* GraphView.swift */; };
 		966972812A31FFE3004E0E8B /* TabBarFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972802A31FFE3004E0E8B /* TabBarFlow.swift */; };
 		966972832A320370004E0E8B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972822A320370004E0E8B /* HomeViewModel.swift */; };
 		966972872A320DCE004E0E8B /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972862A320DCE004E0E8B /* ViewModelType.swift */; };
 		966972892A32104A004E0E8B /* LoginButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972882A32104A004E0E8B /* LoginButtonType.swift */; };
+		966B59D22AAC505400165775 /* ReissuedAccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966B59D12AAC505400165775 /* ReissuedAccessToken.swift */; };
 		966D6D122A8E436800F3EEE0 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966D6D112A8E436800F3EEE0 /* UIImage.swift */; };
 		967678262A66838C00873404 /* HistorySegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678252A66838C00873404 /* HistorySegmentedControl.swift */; };
 		967678282A668C2200873404 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678272A668C2200873404 /* Container.swift */; };
 		9676782A2A66955800873404 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678292A66955800873404 /* String.swift */; };
 		9676782F2A66ADCE00873404 /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9676782E2A66ADCE00873404 /* HistoryViewModel.swift */; };
-		96796A342A56E5390091F54F /* GitCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A332A56E5390091F54F /* GitCode.swift */; };
 		96796A362A56FCFE0091F54F /* KeychainItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A352A56FCFE0091F54F /* KeychainItem.swift */; };
-		96796A382A584C500091F54F /* Log-Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A372A584C500091F54F /* Log-Util.swift */; };
+		96796A382A584C500091F54F /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A372A584C500091F54F /* Log.swift */; };
 		968EB33F2A8FA3650000B8E6 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EB33E2A8FA3650000B8E6 /* Double.swift */; };
 		968EB3442A8FCBBB0000B8E6 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 968EB3432A8FCBBB0000B8E6 /* RxDataSources */; };
 		968EB3462A8FCFD10000B8E6 /* RecentSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EB3452A8FCFD10000B8E6 /* RecentSectionHeader.swift */; };
@@ -134,7 +139,7 @@
 		96AE36F22A54419F0026DF49 /* AppleAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36F12A54419F0026DF49 /* AppleAuthorization.swift */; };
 		96AE36F42A5441F90026DF49 /* GitAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36F32A5441F90026DF49 /* GitAuthorization.swift */; };
 		96AE36F62A5442240026DF49 /* CodestackAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36F52A5442240026DF49 /* CodestackAuthorization.swift */; };
-		96AE36FE2A5452EA0026DF49 /* CodestackPostToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36FD2A5452EA0026DF49 /* CodestackPostToken.swift */; };
+		96AE36FE2A5452EA0026DF49 /* CodestackIDPwd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36FD2A5452EA0026DF49 /* CodestackIDPwd.swift */; };
 		96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA53B129EFE0DA00B5BDD3 /* NumberLinesView.swift */; };
 		96BA53FF29F53DAB00B5BDD3 /* ProblemPopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA53FE29F53DAB00B5BDD3 /* ProblemPopUpView.swift */; };
 		96BA540229F6A0AE00B5BDD3 /* InsetTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540129F6A0AE00B5BDD3 /* InsetTextField.swift */; };
@@ -147,12 +152,12 @@
 		96C9F5A429FE751E008D48B9 /* GitHubLoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A329FE751E008D48B9 /* GitHubLoginButton.swift */; };
 		96C9F5A729FE7A7A008D48B9 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A629FE7A7A008D48B9 /* LoginService.swift */; };
 		96C9F5A929FE7C15008D48B9 /* HTTPHeaderFiled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */; };
-		96C9F5AB29FE7C30008D48B9 /* CuStomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */; };
-		96C9F5AE29FE7ED1008D48B9 /* URLRequest-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */; };
+		96C9F5AB29FE7C30008D48B9 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AA29FE7C30008D48B9 /* APIError.swift */; };
+		96C9F5AE29FE7ED1008D48B9 /* URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AD29FE7ED1008D48B9 /* URLRequest.swift */; };
 		96C9F5B329FE871C008D48B9 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */; };
 		96C9F5B529FE90EC008D48B9 /* GitPostToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B429FE90EC008D48B9 /* GitPostToken.swift */; };
 		96C9F5B729FE9CBF008D48B9 /* AppleLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B629FE9CBF008D48B9 /* AppleLoginService.swift */; };
-		96C9F5B929FE9DEB008D48B9 /* RandomNonceString-ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B829FE9DEB008D48B9 /* RandomNonceString-ext.swift */; };
+		96C9F5B929FE9DEB008D48B9 /* RandomNonceString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B829FE9DEB008D48B9 /* RandomNonceString.swift */; };
 		96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */; };
 		96C9F5BF2A03C456008D48B9 /* FoldButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldButton.swift */; };
 		96D31B4E2A6174170018A5D4 /* OnBoardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B4D2A6174170018A5D4 /* OnBoardingFlow.swift */; };
@@ -164,7 +169,7 @@
 		96D31B5D2A63D3EC0018A5D4 /* HomeFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B5C2A63D3EC0018A5D4 /* HomeFlow.swift */; };
 		96D4329F2A5263BF002403C4 /* PRSubmissionHistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D4329E2A5263BF002403C4 /* PRSubmissionHistoryCell.swift */; };
 		96D432A22A526A1D002403C4 /* OAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D432A12A526A1D002403C4 /* OAuthorization.swift */; };
-		96D432A72A52EFEB002403C4 /* CodestackToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D432A62A52EFEB002403C4 /* CodestackToken.swift */; };
+		96D432A72A52EFEB002403C4 /* CodestackResponseToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D432A62A52EFEB002403C4 /* CodestackResponseToken.swift */; };
 		96D638E32A30B5CE00AA95B5 /* LoginFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */; };
 		96D638E52A30B5D900AA95B5 /* AppFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E42A30B5D900AA95B5 /* AppFlow.swift */; };
 		96D638EA2A30B7A100AA95B5 /* CodestackStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E92A30B7A100AA95B5 /* CodestackStep.swift */; };
@@ -222,7 +227,6 @@
 		960358A82A9B2EE500C14D68 /* Login-CodestackAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Login-CodestackAuthorization.swift"; sourceTree = "<group>"; };
 		960358AA2A9B2F0900C14D68 /* Login-AppleAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Login-AppleAuthorization.swift"; sourceTree = "<group>"; };
 		960358AC2A9B2F4200C14D68 /* Login-GitAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Login-GitAuthorization.swift"; sourceTree = "<group>"; };
-		960358AE2A9B317A00C14D68 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		96123D0C2A39FEDB002160B9 /* CodeProblemListFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemListFlow.swift; sourceTree = "<group>"; };
 		96123D112A3A088C002160B9 /* Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
 		961773582A68036A00AFE287 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
@@ -233,8 +237,15 @@
 		9629F8642A6C11B300019349 /* RightAlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightAlarmView.swift; sourceTree = "<group>"; };
 		9629F86B2A6D181900019349 /* ApolloRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloRepository.swift; sourceTree = "<group>"; };
 		9629F86D2A6D186700019349 /* RxApollo.swift */ = {isa = PBXFileReference; indentWidth = 5; lastKnownFileType = sourcecode.swift; path = RxApollo.swift; sourceTree = "<group>"; };
-		9629F86F2A6D1C7200019349 /* GraphAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphAPI.swift; sourceTree = "<group>"; };
+		96410E532AAA214A004C5313 /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
+		96410E5F2AAAFB5F004C5313 /* ApolloServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ApolloServiceType.swift; path = ../../../../../../../Documents/ApolloServiceType.swift; sourceTree = "<group>"; };
+		96410E622AAB0213004C5313 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = API.swift; path = ../../../../../../Documents/API.swift; sourceTree = "<group>"; };
+		96410E652AAB0B2F004C5313 /* MemberDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberDTO.swift; sourceTree = "<group>"; };
+		96410E682AAB197B004C5313 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		96440DA12AA646E400C016F0 /* TokenAcquisitionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAcquisitionError.swift; sourceTree = "<group>"; };
+		96441C032AAC72BE001D4DC3 /* TokenInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenInterceptor.swift; sourceTree = "<group>"; };
+		96441C052AAC817C001D4DC3 /* NetworkInterceptorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterceptorProvider.swift; sourceTree = "<group>"; };
+		96441C072AAC98D5001D4DC3 /* ProfileImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageViewController.swift; sourceTree = "<group>"; };
 		964590982A4870350060BDCE /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		9645909A2A4873740060BDCE /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		9645909C2A487D9E0060BDCE /* CircleLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleLayer.swift; sourceTree = "<group>"; };
@@ -294,20 +305,19 @@
 		9665D99D2A49BD6E004CB33A /* Submission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Submission.swift; sourceTree = "<group>"; };
 		9665D99F2A49BE21004CB33A /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		9665D9A12A49BE38004CB33A /* ProblemCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemCalendar.swift; sourceTree = "<group>"; };
-		9665D9A32A49BF64004CB33A /* OAuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthProvider.swift; sourceTree = "<group>"; };
 		9665D9A72A49CC1F004CB33A /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		966972802A31FFE3004E0E8B /* TabBarFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarFlow.swift; sourceTree = "<group>"; };
 		966972822A320370004E0E8B /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		966972862A320DCE004E0E8B /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
 		966972882A32104A004E0E8B /* LoginButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginButtonType.swift; sourceTree = "<group>"; };
+		966B59D12AAC505400165775 /* ReissuedAccessToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReissuedAccessToken.swift; sourceTree = "<group>"; };
 		966D6D112A8E436800F3EEE0 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		967678252A66838C00873404 /* HistorySegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistorySegmentedControl.swift; sourceTree = "<group>"; };
 		967678272A668C2200873404 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
 		967678292A66955800873404 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		9676782E2A66ADCE00873404 /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
-		96796A332A56E5390091F54F /* GitCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitCode.swift; sourceTree = "<group>"; };
 		96796A352A56FCFE0091F54F /* KeychainItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainItem.swift; sourceTree = "<group>"; };
-		96796A372A584C500091F54F /* Log-Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Log-Util.swift"; sourceTree = "<group>"; };
+		96796A372A584C500091F54F /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		968EB33E2A8FA3650000B8E6 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		968EB3452A8FCFD10000B8E6 /* RecentSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSectionHeader.swift; sourceTree = "<group>"; };
 		968EB3472A90B3D80000B8E6 /* RecentPageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentPageModel.swift; sourceTree = "<group>"; };
@@ -329,7 +339,7 @@
 		96AE36F12A54419F0026DF49 /* AppleAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAuthorization.swift; sourceTree = "<group>"; };
 		96AE36F32A5441F90026DF49 /* GitAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitAuthorization.swift; sourceTree = "<group>"; };
 		96AE36F52A5442240026DF49 /* CodestackAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackAuthorization.swift; sourceTree = "<group>"; };
-		96AE36FD2A5452EA0026DF49 /* CodestackPostToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackPostToken.swift; sourceTree = "<group>"; };
+		96AE36FD2A5452EA0026DF49 /* CodestackIDPwd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackIDPwd.swift; sourceTree = "<group>"; };
 		96BA53B129EFE0DA00B5BDD3 /* NumberLinesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberLinesView.swift; sourceTree = "<group>"; };
 		96BA53FE29F53DAB00B5BDD3 /* ProblemPopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemPopUpView.swift; sourceTree = "<group>"; };
 		96BA540129F6A0AE00B5BDD3 /* InsetTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsetTextField.swift; sourceTree = "<group>"; };
@@ -343,12 +353,12 @@
 		96C9F5A329FE751E008D48B9 /* GitHubLoginButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubLoginButton.swift; sourceTree = "<group>"; };
 		96C9F5A629FE7A7A008D48B9 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeaderFiled.swift; sourceTree = "<group>"; };
-		96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuStomError.swift; sourceTree = "<group>"; };
-		96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest-ext.swift"; sourceTree = "<group>"; };
+		96C9F5AA29FE7C30008D48B9 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		96C9F5AD29FE7ED1008D48B9 /* URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequest.swift; sourceTree = "<group>"; };
 		96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		96C9F5B429FE90EC008D48B9 /* GitPostToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitPostToken.swift; sourceTree = "<group>"; };
 		96C9F5B629FE9CBF008D48B9 /* AppleLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLoginService.swift; sourceTree = "<group>"; };
-		96C9F5B829FE9DEB008D48B9 /* RandomNonceString-ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RandomNonceString-ext.swift"; sourceTree = "<group>"; };
+		96C9F5B829FE9DEB008D48B9 /* RandomNonceString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomNonceString.swift; sourceTree = "<group>"; };
 		96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CodeStack.entitlements; sourceTree = "<group>"; };
 		96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeProblemViewModel.swift; sourceTree = "<group>"; };
 		96C9F5BE2A03C456008D48B9 /* FoldButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldButton.swift; sourceTree = "<group>"; };
@@ -362,7 +372,7 @@
 		96D31BF62A6529840018A5D4 /* CodeStack copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "CodeStack copy-Info.plist"; path = "/Users/baghyeonghwan/IOSPROJECT/CodeStack/CodeStack copy-Info.plist"; sourceTree = "<absolute>"; };
 		96D4329E2A5263BF002403C4 /* PRSubmissionHistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRSubmissionHistoryCell.swift; sourceTree = "<group>"; };
 		96D432A12A526A1D002403C4 /* OAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthorization.swift; sourceTree = "<group>"; };
-		96D432A62A52EFEB002403C4 /* CodestackToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackToken.swift; sourceTree = "<group>"; };
+		96D432A62A52EFEB002403C4 /* CodestackResponseToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackResponseToken.swift; sourceTree = "<group>"; };
 		96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFlow.swift; sourceTree = "<group>"; };
 		96D638E42A30B5D900AA95B5 /* AppFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlow.swift; sourceTree = "<group>"; };
 		96D638E92A30B7A100AA95B5 /* CodestackStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackStep.swift; sourceTree = "<group>"; };
@@ -502,15 +512,14 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
-		9629F8682A6D15C200019349 /* Apollo */ = {
+		9629F8682A6D15C200019349 /* ApolloService */ = {
 			isa = PBXGroup;
 			children = (
-				960162DE2A6FF0A7006E43F8 /* Query.swift */,
-				9629F86F2A6D1C7200019349 /* GraphAPI.swift */,
-				960162E52A70064B006E43F8 /* ApolloService.swift */,
-				9692B2422A71256100404F6D /* ConvertUtil.swift */,
+				96410E5C2AAAFB3B004C5313 /* Interface */,
+				96410E5D2AAAFB44004C5313 /* Service */,
+				96410E5E2AAAFB4E004C5313 /* Util */,
 			);
-			path = Apollo;
+			path = ApolloService;
 			sourceTree = "<group>";
 		};
 		9629F8712A6EAD3F00019349 /* OnBoarding */ = {
@@ -524,10 +533,102 @@
 			path = OnBoarding;
 			sourceTree = "<group>";
 		};
+		96410E572AAAF608004C5313 /* LoginService */ = {
+			isa = PBXGroup;
+			children = (
+				96C9F5A629FE7A7A008D48B9 /* LoginService.swift */,
+				960358AA2A9B2F0900C14D68 /* Login-AppleAuthorization.swift */,
+				960358AC2A9B2F4200C14D68 /* Login-GitAuthorization.swift */,
+				960358A82A9B2EE500C14D68 /* Login-CodestackAuthorization.swift */,
+			);
+			path = LoginService;
+			sourceTree = "<group>";
+		};
+		96410E582AAAF6AB004C5313 /* Token */ = {
+			isa = PBXGroup;
+			children = (
+				96D31B532A62C0CC0018A5D4 /* TokenAcquisitionService.swift */,
+				96D31B552A62CC730018A5D4 /* TestRetruy.swift */,
+			);
+			path = Token;
+			sourceTree = "<group>";
+		};
+		96410E592AAAF72E004C5313 /* UserDefaults */ = {
+			isa = PBXGroup;
+			children = (
+				96410E532AAA214A004C5313 /* UserManager.swift */,
+			);
+			path = UserDefaults;
+			sourceTree = "<group>";
+		};
+		96410E5A2AAAF768004C5313 /* AppleLoginService */ = {
+			isa = PBXGroup;
+			children = (
+				96C9F5B629FE9CBF008D48B9 /* AppleLoginService.swift */,
+			);
+			path = AppleLoginService;
+			sourceTree = "<group>";
+		};
+		96410E5C2AAAFB3B004C5313 /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+				96410E5F2AAAFB5F004C5313 /* ApolloServiceType.swift */,
+			);
+			path = Interface;
+			sourceTree = "<group>";
+		};
+		96410E5D2AAAFB44004C5313 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				960162E52A70064B006E43F8 /* ApolloService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		96410E5E2AAAFB4E004C5313 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				960162DE2A6FF0A7006E43F8 /* Query.swift */,
+				9692B2422A71256100404F6D /* ConvertUtil.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		96410E612AAB0208004C5313 /* Provider */ = {
+			isa = PBXGroup;
+			children = (
+				96410E622AAB0213004C5313 /* API.swift */,
+			);
+			path = Provider;
+			sourceTree = "<group>";
+		};
+		96410E642AAB04E4004C5313 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				96D432A62A52EFEB002403C4 /* CodestackResponseToken.swift */,
+				966B59D12AAC505400165775 /* ReissuedAccessToken.swift */,
+				96C9F5B429FE90EC008D48B9 /* GitPostToken.swift */,
+				96AE36FD2A5452EA0026DF49 /* CodestackIDPwd.swift */,
+				96AE33B42A4C547500BB0817 /* ApplePostToken.swift */,
+				96410E652AAB0B2F004C5313 /* MemberDTO.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		96410E6A2AAB1A81004C5313 /* AuthService */ = {
+			isa = PBXGroup;
+			children = (
+				96410E682AAB197B004C5313 /* AuthService.swift */,
+			);
+			path = AuthService;
+			sourceTree = "<group>";
+		};
 		96440DA32AA6491F00C016F0 /* ApolloRepository */ = {
 			isa = PBXGroup;
 			children = (
 				9629F86B2A6D181900019349 /* ApolloRepository.swift */,
+				96441C032AAC72BE001D4DC3 /* TokenInterceptor.swift */,
+				96441C052AAC817C001D4DC3 /* NetworkInterceptorProvider.swift */,
 				9629F86D2A6D186700019349 /* RxApollo.swift */,
 			);
 			path = ApolloRepository;
@@ -573,8 +674,8 @@
 				96440DA42AA6493200C016F0 /* APP */,
 				96564B3F2A5C22370054193F /* Apollo */,
 				960162E42A700433006E43F8 /* Repository */,
-				96C9F5A529FE7A67008D48B9 /* Service */,
-				9653111029EBCD8E006C3E18 /* Data */,
+				96C9F5A529FE7A67008D48B9 /* Data */,
+				9653111029EBCD8E006C3E18 /* Model */,
 				96D638E12A30B51600AA95B5 /* Flow */,
 				9653110229EAE089006C3E18 /* App-Util */,
 				9665D9A52A49CB77004CB33A /* Common */,
@@ -706,14 +807,9 @@
 			path = CodeProblem;
 			sourceTree = "<group>";
 		};
-		9653111029EBCD8E006C3E18 /* Data */ = {
+		9653111029EBCD8E006C3E18 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				96D432A62A52EFEB002403C4 /* CodestackToken.swift */,
-				96C9F5B429FE90EC008D48B9 /* GitPostToken.swift */,
-				96796A332A56E5390091F54F /* GitCode.swift */,
-				96AE36FD2A5452EA0026DF49 /* CodestackPostToken.swift */,
-				96AE33B42A4C547500BB0817 /* ApplePostToken.swift */,
 				9653111129EBCD9A006C3E18 /* SourceModel.swift */,
 				9665D9932A49BC18004CB33A /* CreateSubmissionInput.swift */,
 				9665D9952A49BC62004CB33A /* Language.swift */,
@@ -724,10 +820,8 @@
 				9665D9A12A49BE38004CB33A /* ProblemCalendar.swift */,
 				9665D99F2A49BE21004CB33A /* Tag.swift */,
 				9665D99D2A49BD6E004CB33A /* Submission.swift */,
-				9665D9A32A49BF64004CB33A /* OAuthProvider.swift */,
-				960358AE2A9B317A00C14D68 /* API.swift */,
 			);
-			path = Data;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		9653111729EBD7C7006C3E18 /* VIewModel */ = {
@@ -990,28 +1084,29 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
-		96AE36F92A54459F0026DF49 /* Element */ = {
+		96AE36F92A54459F0026DF49 /* APIError */ = {
 			isa = PBXGroup;
 			children = (
-				96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */,
 				96440DA12AA646E400C016F0 /* TokenAcquisitionError.swift */,
-				96C9F5AA29FE7C30008D48B9 /* CuStomError.swift */,
+				96C9F5AA29FE7C30008D48B9 /* APIError.swift */,
 			);
-			path = Element;
+			path = APIError;
 			sourceTree = "<group>";
 		};
-		96AE36FA2A5445B90026DF49 /* Manager */ = {
+		96AE36FA2A5445B90026DF49 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				96C9F5A629FE7A7A008D48B9 /* LoginService.swift */,
-				960358AA2A9B2F0900C14D68 /* Login-AppleAuthorization.swift */,
-				960358AC2A9B2F4200C14D68 /* Login-GitAuthorization.swift */,
-				960358A82A9B2EE500C14D68 /* Login-CodestackAuthorization.swift */,
-				96C9F5B629FE9CBF008D48B9 /* AppleLoginService.swift */,
-				96D31B552A62CC730018A5D4 /* TestRetruy.swift */,
-				96D31B532A62C0CC0018A5D4 /* TokenAcquisitionService.swift */,
+				96410E612AAB0208004C5313 /* Provider */,
+				96D432A02A526A00002403C4 /* Interface */,
+				96410E572AAAF608004C5313 /* LoginService */,
+				96410E6A2AAB1A81004C5313 /* AuthService */,
+				96410E5A2AAAF768004C5313 /* AppleLoginService */,
+				9629F8682A6D15C200019349 /* ApolloService */,
+				96410E582AAAF6AB004C5313 /* Token */,
+				96410E642AAB04E4004C5313 /* Model */,
+				96AE36F92A54459F0026DF49 /* APIError */,
 			);
-			path = Manager;
+			path = Network;
 			sourceTree = "<group>";
 		};
 		96BA53B029EFE0CE00B5BDD3 /* VIew */ = {
@@ -1047,25 +1142,24 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
-		96C9F5A529FE7A67008D48B9 /* Service */ = {
+		96C9F5A529FE7A67008D48B9 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				96D432A02A526A00002403C4 /* Interface */,
-				96AE36FA2A5445B90026DF49 /* Manager */,
-				9629F8682A6D15C200019349 /* Apollo */,
-				96AE36F92A54459F0026DF49 /* Element */,
+				96410E592AAAF72E004C5313 /* UserDefaults */,
+				96AE36FA2A5445B90026DF49 /* Network */,
 				96C9F5AC29FE7EC8008D48B9 /* Util */,
 			);
-			path = Service;
+			path = Data;
 			sourceTree = "<group>";
 		};
 		96C9F5AC29FE7EC8008D48B9 /* Util */ = {
 			isa = PBXGroup;
 			children = (
 				96796A352A56FCFE0091F54F /* KeychainItem.swift */,
-				96C9F5AD29FE7ED1008D48B9 /* URLRequest-ext.swift */,
-				96C9F5B829FE9DEB008D48B9 /* RandomNonceString-ext.swift */,
-				96796A372A584C500091F54F /* Log-Util.swift */,
+				96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */,
+				96C9F5AD29FE7ED1008D48B9 /* URLRequest.swift */,
+				96C9F5B829FE9DEB008D48B9 /* RandomNonceString.swift */,
+				96796A372A584C500091F54F /* Log.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -1091,6 +1185,7 @@
 			isa = PBXGroup;
 			children = (
 				96D77C492A1C8AF90075E52E /* MyPageViewController.swift */,
+				96441C072AAC98D5001D4DC3 /* ProfileImageViewController.swift */,
 				96D77C4B2A1C8B160075E52E /* ProfileView.swift */,
 				964590982A4870350060BDCE /* StatusView.swift */,
 				9645909C2A487D9E0060BDCE /* CircleLayer.swift */,
@@ -1459,21 +1554,22 @@
 				96D31B4E2A6174170018A5D4 /* OnBoardingFlow.swift in Sources */,
 				9653112929ED3481006C3E18 /* DummyData.swift in Sources */,
 				96DD2EB42A8CE16100298C42 /* ResultStatusView.swift in Sources */,
-				96C9F5AE29FE7ED1008D48B9 /* URLRequest-ext.swift in Sources */,
+				96C9F5AE29FE7ED1008D48B9 /* URLRequest.swift in Sources */,
 				96D31B522A617DAB0018A5D4 /* OnBoardingViewModel.swift in Sources */,
 				968EB3462A8FCFD10000B8E6 /* RecentSectionHeader.swift in Sources */,
+				96410E542AAA214A004C5313 /* UserManager.swift in Sources */,
 				96AE33B72A4C651900BB0817 /* CAVIew.swift in Sources */,
 				96D638E32A30B5CE00AA95B5 /* LoginFlow.swift in Sources */,
 				9665D9A22A49BE38004CB33A /* ProblemCalendar.swift in Sources */,
 				9653111D29EBF163006C3E18 /* GraphCell.swift in Sources */,
 				9645909D2A487D9F0060BDCE /* CircleLayer.swift in Sources */,
 				96123D0D2A39FEDB002160B9 /* CodeProblemListFlow.swift in Sources */,
+				96410E662AAB0B2F004C5313 /* MemberDTO.swift in Sources */,
 				96EDAAAC2A603E7800125558 /* CodeProblemFlow.swift in Sources */,
 				96796A362A56FCFE0091F54F /* KeychainItem.swift in Sources */,
 				9665D9982A49BC7D004CB33A /* User.swift in Sources */,
-				9629F8702A6D1C7200019349 /* GraphAPI.swift in Sources */,
 				9603588D2A977BF000C14D68 /* Date.swift in Sources */,
-				96C9F5AB29FE7C30008D48B9 /* CuStomError.swift in Sources */,
+				96C9F5AB29FE7C30008D48B9 /* APIError.swift in Sources */,
 				968EB3552A9244D30000B8E6 /* SegType.swift in Sources */,
 				96D4329F2A5263BF002403C4 /* PRSubmissionHistoryCell.swift in Sources */,
 				96D31B5D2A63D3EC0018A5D4 /* HomeFlow.swift in Sources */,
@@ -1484,7 +1580,7 @@
 				9645909B2A4873740060BDCE /* ProgressView.swift in Sources */,
 				9653110D29EAF1DF006C3E18 /* CodeProblemViewController.swift in Sources */,
 				9653114829EEA162006C3E18 /* KeyBoardManager.swift in Sources */,
-				96AE36FE2A5452EA0026DF49 /* CodestackPostToken.swift in Sources */,
+				96AE36FE2A5452EA0026DF49 /* CodestackIDPwd.swift in Sources */,
 				96DD2EC72A8D0D1600298C42 /* SolveStatus.swift in Sources */,
 				969F20B72A9F8A8E00EA7137 /* CollectionViewCell.swift in Sources */,
 				96D31B542A62C0CC0018A5D4 /* TokenAcquisitionService.swift in Sources */,
@@ -1492,16 +1588,19 @@
 				96C9F5A729FE7A7A008D48B9 /* LoginService.swift in Sources */,
 				96D638EA2A30B7A100AA95B5 /* CodestackStep.swift in Sources */,
 				969614DC2A81189900181E9F /* NumberButton.swift in Sources */,
-				96D432A72A52EFEB002403C4 /* CodestackToken.swift in Sources */,
+				96D432A72A52EFEB002403C4 /* CodestackResponseToken.swift in Sources */,
 				967678262A66838C00873404 /* HistorySegmentedControl.swift in Sources */,
 				96DD2EB92A8CE3EC00298C42 /* UIButton.swift in Sources */,
 				96123D122A3A088C002160B9 /* Collection.swift in Sources */,
 				9665D9942A49BC18004CB33A /* CreateSubmissionInput.swift in Sources */,
+				96441C062AAC817C001D4DC3 /* NetworkInterceptorProvider.swift in Sources */,
 				96D77C4A2A1C8AF90075E52E /* MyPageViewController.swift in Sources */,
 				96BA53B229EFE0DA00B5BDD3 /* NumberLinesView.swift in Sources */,
+				96441C082AAC98D5001D4DC3 /* ProfileImageViewController.swift in Sources */,
 				96DD2EC42A8D0CAA00298C42 /* Toast.swift in Sources */,
 				96BA540929F6C71A00B5BDD3 /* CustomTextField.swift in Sources */,
 				960162E82A7006BC006E43F8 /* Respository.swift in Sources */,
+				966B59D22AAC505400165775 /* ReissuedAccessToken.swift in Sources */,
 				96BA540B29F6C72100B5BDD3 /* LoginView.swift in Sources */,
 				9665D9962A49BC62004CB33A /* Language.swift in Sources */,
 				965310E929EA8EF2006C3E18 /* MainSubView-(label 2, button 1).swift in Sources */,
@@ -1517,6 +1616,7 @@
 				96D638E52A30B5D900AA95B5 /* AppFlow.swift in Sources */,
 				9653112C29EE6D9E006C3E18 /* CodeEditorViewController.swift in Sources */,
 				9653114C29EEF1F9006C3E18 /* CustomLayoutManager.swift in Sources */,
+				96441C042AAC72BE001D4DC3 /* TokenInterceptor.swift in Sources */,
 				96C9F5B529FE90EC008D48B9 /* GitPostToken.swift in Sources */,
 				968EB3482A90B3D80000B8E6 /* RecentPageModel.swift in Sources */,
 				9653112429ED1AC0006C3E18 /* LanguageTagContainer.swift in Sources */,
@@ -1538,7 +1638,9 @@
 				9676782F2A66ADCE00873404 /* HistoryViewModel.swift in Sources */,
 				969F20AF2A9F770600EA7137 /* RegisterViewController.swift in Sources */,
 				9692B2482A71357D00404F6D /* RichTextView.swift in Sources */,
+				96410E632AAB0213004C5313 /* API.swift in Sources */,
 				966972812A31FFE3004E0E8B /* TabBarFlow.swift in Sources */,
+				96410E692AAB197B004C5313 /* AuthService.swift in Sources */,
 				96DFD95A2A7D29870056D7BB /* CodeEditorViewModel.swift in Sources */,
 				964590992A4870350060BDCE /* StatusView.swift in Sources */,
 				964590A12A488D970060BDCE /* Color.swift in Sources */,
@@ -1547,13 +1649,14 @@
 				967678282A668C2200873404 /* Container.swift in Sources */,
 				96440DA22AA646E400C016F0 /* TokenAcquisitionError.swift in Sources */,
 				9665D9A82A49CC1F004CB33A /* GraphView.swift in Sources */,
+				96410E602AAAFB5F004C5313 /* ApolloServiceType.swift in Sources */,
 				960358902A977E5300C14D68 /* DateCalculator.swift in Sources */,
 				9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */,
 				96DD2EC92A8D0F8F00298C42 /* Animation.swift in Sources */,
 				96C77B4C2AA3691100F9CA9B /* UITextField.swift in Sources */,
 				96EDAAAA2A6036E000125558 /* CustomTabBarController.swift in Sources */,
 				9653110A29EAF0EA006C3E18 /* HighlightButton.swift in Sources */,
-				96C9F5B929FE9DEB008D48B9 /* RandomNonceString-ext.swift in Sources */,
+				96C9F5B929FE9DEB008D48B9 /* RandomNonceString.swift in Sources */,
 				96AE33B52A4C547500BB0817 /* ApplePostToken.swift in Sources */,
 				96DD2EB62A8CE1EC00298C42 /* WKWebView.swift in Sources */,
 				9653111929EBD7D0006C3E18 /* ProblemItemModel.swift in Sources */,
@@ -1564,10 +1667,8 @@
 				9676782A2A66955800873404 /* String.swift in Sources */,
 				960358A92A9B2EE500C14D68 /* Login-CodestackAuthorization.swift in Sources */,
 				9629F8632A6C09BA00019349 /* CustomBottomView.swift in Sources */,
-				9665D9A42A49BF64004CB33A /* OAuthProvider.swift in Sources */,
 				9665D99E2A49BD6E004CB33A /* Submission.swift in Sources */,
 				96D77C4C2A1C8B160075E52E /* ProfileView.swift in Sources */,
-				96796A342A56E5390091F54F /* GitCode.swift in Sources */,
 				96DD2EC22A8D0BFE00298C42 /* BoxContainerLabel.swift in Sources */,
 				9665D99A2A49BD0F004CB33A /* PageInfo.swift in Sources */,
 				966972892A32104A004E0E8B /* LoginButtonType.swift in Sources */,
@@ -1600,8 +1701,7 @@
 				965310B329EA7A4F006C3E18 /* SceneDelegate.swift in Sources */,
 				96653BB82A71467D00557E3A /* String-HTML.swift in Sources */,
 				96BA540D29F6CA1800B5BDD3 /* LoginButton.swift in Sources */,
-				960358AF2A9B317A00C14D68 /* API.swift in Sources */,
-				96796A382A584C500091F54F /* Log-Util.swift in Sources */,
+				96796A382A584C500091F54F /* Log.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4,7 +4,7 @@
 import ApolloAPI
 
 public extension Objects {
-  static let Language = Object(
+  static let Language = ApolloAPI.Object(
     typename: "Language",
     implementedInterfaces: []
   )

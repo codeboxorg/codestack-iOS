@@ -4,7 +4,7 @@
 import ApolloAPI
 
 public extension Objects {
-  static let TagPage = Object(
+  static let TagPage = ApolloAPI.Object(
     typename: "TagPage",
     implementedInterfaces: []
   )

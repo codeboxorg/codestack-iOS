@@ -5,50 +5,9 @@
 
 public class CreateSubmissionMutation: GraphQLMutation {
   public static let operationName: String = "CreateSubmission"
-  public static let document: ApolloAPI.DocumentType = .notPersisted(
+  public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"""
-      mutation CreateSubmission($languageId: ID!, $problemId: ID!, $sourceCode: String!) {
-        createSubmission(
-          languageId: $languageId
-          problemId: $problemId
-          sourceCode: $sourceCode
-        ) {
-          __typename
-          id
-          language {
-            __typename
-            name
-            extension
-          }
-          member {
-            __typename
-            nickname
-          }
-          sourceCode
-          problem {
-            __typename
-            id
-            title
-            context
-            languages {
-              __typename
-              id
-              name
-              extension
-            }
-            maxCpuTime
-            maxMemory
-            tags {
-              __typename
-              name
-            }
-          }
-          statusCode
-          createdAt
-        }
-      }
-      """#
+      #"mutation CreateSubmission($languageId: ID!, $problemId: ID!, $sourceCode: String!) { createSubmission( languageId: $languageId problemId: $problemId sourceCode: $sourceCode ) { __typename id language { __typename id name extension } member { __typename nickname } sourceCode problem { __typename id title context languages { __typename id name extension } maxCpuTime maxMemory tags { __typename name } } statusCode createdAt } }"#
     ))
 
   public var languageId: ID
@@ -123,10 +82,12 @@ public class CreateSubmissionMutation: GraphQLMutation {
         public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Language }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
+          .field("id", CodestackAPI.ID.self),
           .field("name", String.self),
           .field("extension", String.self),
         ] }
 
+        public var id: CodestackAPI.ID { __data["id"] }
         public var name: String { __data["name"] }
         public var `extension`: String { __data["extension"] }
       }
