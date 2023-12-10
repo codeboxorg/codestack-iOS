@@ -15,26 +15,22 @@ protocol AuthServiceType {
     
     func signUp(member: MemberDTO) -> Maybe<Bool>
     
-    func editProfile(_ image: Data) -> Maybe<Image>
+    func editProfile(_ image: Data) -> Maybe<ImageURL>
     
     func passwordChange(_ original: Pwd, new: Pwd) -> Maybe<Bool>
+    
+    func reissueToken(token: ReissueAccessToken) -> Observable<(response: HTTPURLResponse, data: Data)>
 }
 
-typealias Image = String
+typealias ImageURL = String
 
-class AuthService {
-    
+final class AuthService {
     
     let urlSession: URLSession
     
     var tokenService: TokenAcquisitionService<ReissueAccessToken> {
         tokenAcquisionService
     }
-    
-//    private var initialToken = CodestackResponseToken(refreshToken: KeychainItem.currentRefreshToken,
-//                                                      accessToken: KeychainItem.currentAccessToken,
-//                                                      expiresIn: UserManager.expiresIn ?? 0,
-//                                                      tokenType: UserManager.tokenType ?? "nothing")
     
     private var initialToken = ReissueAccessToken(accessToken: KeychainItem.currentAccessToken)
     
@@ -50,8 +46,6 @@ class AuthService {
     }
     
     func reissueToken(token: ReissueAccessToken) -> Observable<(response: HTTPURLResponse, data: Data)> {
-        Log.debug("reissueToken(token: ReissueAccessToken) -> Observable<(response: HTTPURLResponse, data: Data)> : \(token.accessToken)")
-        
         let refreshToken = KeychainItem.currentRefreshToken
         
         guard
@@ -59,20 +53,6 @@ class AuthService {
         else {
             return Observable.error(APIError.badURLError)
         }
-        
-        
-//        return Observable<(response: HTTPURLResponse, data: Data)>.create { ob in
-//
-//            let http = HTTPURLResponse(url: URL(string: "https://www.codestack.co.kr")!,
-//                                       statusCode: 201, httpVersion: nil, headerFields: [:])
-//            let token = ReissueAccessToken(accessToken: "accessToken 이지롱")
-//
-//            let data = try! JSONEncoder().encode(token)
-//
-//            ob.onNext((response: http!, data: data))
-//            return Disposables.create()
-//        }
-//        return Observable.empty()
         return urlSession.rx
             .response(request: request)
     }
@@ -104,7 +84,7 @@ extension AuthService: AuthServiceType {
     }
     
     
-    func editProfile(_ image: Data) -> Maybe<Image> {
+    func editProfile(_ image: Data) -> Maybe<ImageURL> {
         guard
             let request = try? API.profile(image).urlRequest()
         else {
@@ -115,7 +95,7 @@ extension AuthService: AuthServiceType {
             .response(request: request)
             .timeout(.seconds(5), scheduler: ConcurrentDispatchQueueScheduler.init(qos: .background))
             .asMaybe()
-            .map { (response: HTTPURLResponse, data: Data) throws -> Image in
+            .map { (response: HTTPURLResponse, data: Data) throws -> ImageURL in
                 guard
                     (200..<300) ~= response.statusCode
                 else {
@@ -156,7 +136,6 @@ extension AuthService: AuthServiceType {
                     throw APIError.httpResponseError(code: response.statusCode)
                 }
                 Log.debug("response statusCode: \(response.statusCode)")
-                Log.debug("data: \(data)")
                 return true
             }
     }
