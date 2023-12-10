@@ -11,7 +11,7 @@ import RxSwift
 import RxRelay
 
 
-class AppleLoginManager:NSObject,ASAuthorizationControllerDelegate{
+class AppleLoginManager: NSObject, ASAuthorizationControllerDelegate {
     
     weak var loginViewcontroller: LoginViewController?
     weak var serviceManager: AppleAuthorization?

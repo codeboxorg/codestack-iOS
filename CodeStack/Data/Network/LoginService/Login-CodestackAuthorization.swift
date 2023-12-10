@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 //MARK: - Codestack login
-extension LoginService: CodestackAuthorization{
+extension LoginService: CodestackAuthorization {
     
     func request(name id: ID,password: Pwd) -> Maybe<CodestackResponseToken> {
 
