@@ -23,8 +23,6 @@ extension WKWebView{
         
         let cssString = try! String(contentsOfFile: path).components(separatedBy: .newlines).joined()
         
-        Log.debug(cssString)
-        
         let source = """
               var style = document.createElement('style');
               style.innerHTML = '\(cssString)';

@@ -36,7 +36,7 @@ extension UITextField {
         self.delegate = vc
         self.layer.borderWidth = 2
         self.layer.cornerRadius = 12
-        self.layer.borderColor = Color.whiteGray.cgColor
+        self.layer.borderColor = CColor.whiteGray.cgColor
         self.setPadding(left: 12)
         return self
     }

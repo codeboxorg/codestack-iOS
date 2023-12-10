@@ -11,66 +11,31 @@ typealias DummyModel = (model: ProblemListItemModel, language: [Language], flag:
 
 struct DummyData{
     
-    func getDummyDataModel(name: String) -> DummyModel{
-        let model = ProblemListItemModel(problemNumber: String(Int.random(in: 100...100000)),
+    func getDummyDataModel(name: String, problemNumber: String) -> DummyModel{
+        let model = ProblemListItemModel(problemNumber: problemNumber,
                                          problemTitle: "\(name)",
                                          submitCount: Int.random(in: 10...134),
                                          correctAnswer: Int.random(in: 10...134),
                                          correctRate: Double.random(in: 0...100))
-        let random = Int.random(in: 0...8)
-        let lang =  ["C", "JAVA" , "C++", "Node.js", "Swift", "Kot", "Go", "Python", "javascript"]
-        
-        var newLang: [String] = []
-        
-        for i in 0..<random + 1 {
-            newLang.append(lang[i])
-        }
-        
-        
-        let languese = newLang.map{ name in Language(id: "1", name: name, _extension: "ㅋ")}
-        
-        return (model,languese, true)
+        return (model, Language.sample, true)
     }
     
     func getAllModels(limit: Int = 15, index: Int = 0) -> [DummyModel]{
-        let model = [getDummyDataModel(name: "hellow World \(index)"),
-                     getDummyDataModel(name: "ABC \(index)"),
-                     getDummyDataModel(name: "별찍기 \(index)"),
-                     getDummyDataModel(name: "Three Sum \(index)"),
-                     getDummyDataModel(name: "Dynamic programming \(index)"),
-                     getDummyDataModel(name: "DFS \(index)"),
-                     getDummyDataModel(name: "BFS \(index)"),
-                     getDummyDataModel(name: "Cell merge \(index)"),
-                     getDummyDataModel(name: "CompactMap \(index)"),
-                     getDummyDataModel(name: "filter \(index)"),
-                     getDummyDataModel(name: "hellow World \(index)"),
-                     getDummyDataModel(name: "ABC \(index)"),
-                     getDummyDataModel(name: "별찍기 \(index)"),
-                     getDummyDataModel(name: "Three Sum \(index)"),
-                     getDummyDataModel(name: "Dynamic programming \(index)"),
-                     getDummyDataModel(name: "DFS \(index)"),
-                     getDummyDataModel(name: "BFS \(index)"),
-                     getDummyDataModel(name: "Cell merge \(index)"),
-                     getDummyDataModel(name: "CompactMap \(index)"),
-                     getDummyDataModel(name: "filter \(index)")][0...limit].shuffled()
+        let numbers = (10000...100010).map { num in
+            num + (10 * index)
+        }
+        
+        let model = [getDummyDataModel(name: "hellow World \(index)",problemNumber: String(numbers[0])),
+                     getDummyDataModel(name: "ABC \(index)", problemNumber: String(numbers[1])),
+                     getDummyDataModel(name: "별찍기 \(index)", problemNumber: String(numbers[2])),
+                     getDummyDataModel(name: "Three Sum \(index)", problemNumber: String(numbers[3])),
+                     getDummyDataModel(name: "Dynamic programming \(index)",problemNumber: String(numbers[4])),
+                     getDummyDataModel(name: "DFS \(index)", problemNumber: String(numbers[5])),
+                     getDummyDataModel(name: "BFS \(index)", problemNumber: String(numbers[6])),
+                     getDummyDataModel(name: "Cell merge \(index)", problemNumber: String(numbers[7])),
+                     getDummyDataModel(name: "CompactMap \(index)", problemNumber: String(numbers[8])),
+                     getDummyDataModel(name: "filter \(index)", problemNumber:String(numbers[9]))
+                     ]
         return model
-    }
-    
-    func fetchModels(limit: Int = 15, currentPage: Int) -> [DummyModel]{
-        return [getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)"),
-                getDummyDataModel(name: "안녕하세요 : \(currentPage)")]
     }
 }

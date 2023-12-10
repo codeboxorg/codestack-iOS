@@ -143,10 +143,10 @@ extension String {
             return self == SolveStatus.favorite.rawValue ? true : false
         case .tempSave:
             return self == SolveStatus.temp.rawValue ? true : false
-        case .success:
-            return self == SolveStatus.AC.rawValue ? true : false
-        case .failure:
-            return self.isFailure()
+        // case .success:
+        //     return self == SolveStatus.AC.rawValue ? true : false
+        // case .failure:
+        //     return self.isFailure()
         case .all:
             return true
         case .none:

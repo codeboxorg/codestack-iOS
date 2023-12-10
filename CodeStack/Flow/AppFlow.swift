@@ -25,7 +25,7 @@ class AppFlow: Flow{
     private let loginService: OAuthrizationRequest
     private let appleService: AppleLoginManager
     private let authService: AuthServiceType
-    private lazy var apolloService: ApolloServiceType = ApolloService(dependency: authService.tokenService)
+    private lazy var apolloService: WebRepository = DefaultApolloRepository(dependency: authService.tokenService)
     
     
     init(dependency: Dependency){
@@ -56,7 +56,7 @@ class AppFlow: Flow{
     }
 
     private func navigateToLoginVC() -> FlowContributors{
-        let loginStepper = LoginStepper()
+        let loginStepper = LoginStepper(authService: self.authService)
         
         let dependecy = LoginFlow.Dependency(loginService: self.loginService,
                                              appleLoginManager: self.appleService,

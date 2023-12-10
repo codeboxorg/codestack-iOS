@@ -58,7 +58,6 @@ struct KeychainItem {
         var queryResult: AnyObject?
         
         let status = withUnsafeMutablePointer(to: &queryResult) {
-            Log.debug("isMainThread: \(Thread.current.isMainThread)")
             return SecItemCopyMatching(query as CFDictionary, UnsafeMutablePointer($0))
         }
         
@@ -67,7 +66,6 @@ struct KeychainItem {
             if let string = existing[kSecValueData as String]{
                 let data = string as? Data
                 let testData = String(data: data!, encoding: .utf8)
-                Log.debug("token: \(String(describing: testData))")
             }else{
                 Log.error("키체인에 데이터 없음")
             }
@@ -91,7 +89,6 @@ struct KeychainItem {
         // Encode the password into an Data object.
         let encodedPassword = password.data(using: String.Encoding.utf8)!
         
-        Log.debug("save ItemThread: \(Thread.isMainThread)")
         
         do {
             // keychain에 존재하는지 확인
@@ -132,7 +129,7 @@ struct KeychainItem {
 
 //MARK: - KeychainItem static func
 
-extension KeychainItem{
+extension KeychainItem {
     
     /// Keychain을 위한 query 작성함수
     /// - Parameters:
@@ -148,6 +145,15 @@ extension KeychainItem{
             kSecAttrAccount as String: account.rawValue as AnyObject,
         ]
         return query
+    }
+    
+    static func deleteToken() {
+        do {
+            try KeychainItem(service: .bundle, account: .access).deleteItem()
+            try KeychainItem(service: .bundle, account: .refresh).deleteItem()
+        } catch {
+            Log.error("deleteToken error :\(error)")
+        }
     }
     
     static func saveAccessToken(access: ReissueAccessToken) throws {

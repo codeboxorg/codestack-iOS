@@ -10,7 +10,6 @@ import UIKit
 
 class BackButton: UIButton{
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
