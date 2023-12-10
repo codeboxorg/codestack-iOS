@@ -8,20 +8,40 @@
 import UIKit
 
 
+
 extension String{
-    func toDate() -> Date {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        dateFormatter.timeZone = NSTimeZone(name: "UTC") as TimeZone?
-        guard let date: Date = dateFormatter.date(from: self) else {return Date()}
+    
+    func toYYMMDD() -> Date? {
+        Fommater.formatter.dateFormat = "yyyy-MM-dd"
+        Fommater.formatter.timeZone = TimeZone(abbreviation: "KST")
+        guard let date: Date = Fommater.formatter.date(from: self) else { return nil }
+        return date
+    }
+    
+    func toDateUTC() -> Date? {
+        Fommater.formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        Fommater.formatter.timeZone = NSTimeZone(name: "UTC") as TimeZone?
+        guard let date: Date = Fommater.formatter.date(from: self) else { return nil }
+        return date
+    }
+    
+    func toDateKST() -> Date? {
+        Fommater.formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        Fommater.formatter.timeZone = TimeZone(abbreviation: "KST")
+        guard let date: Date = Fommater.formatter.date(from: self)
+        else { return Date() }
         return date
     }
     
     /// 시간형식이 맞지 않은 String Date를 Date로 변환후 KR 형식으로 String으로 변환
     /// - Parameter format: DATE string 형식
     /// - Returns: String -> Date -> String
-    func toDateString(format: DATE) -> String{
-        self.toDate().toString(format: format)
+    func toDateStringUTC(format: DATE) -> String? {
+        self.toDateUTC()?.toString(format: format)
+    }
+    
+    func toDateStringKST(format: DATE) -> String? {
+        self.toDateKST()?.toString(format: format)
     }
 }
 
@@ -52,9 +72,9 @@ extension String {
     }
     
 
-    func boxContainer() -> NSAttributedString{
+    func boxContainer(color: UIColor) -> NSAttributedString{
         let attStr = NSAttributedString(string: self,
-                                        attributes: [NSAttributedString.Key.backgroundColor : UIColor.juhwang,
+                                        attributes: [NSAttributedString.Key.backgroundColor : color,
                                                      NSAttributedString.Key.kern : CGFloat(1.4)])
         return attStr
     }

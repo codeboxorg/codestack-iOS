@@ -10,6 +10,7 @@ import XCTest
 import RxSwift
 import RxTest
 import RxCocoa
+import Combine
 
 final class CodeStackTests: XCTestCase {
 
@@ -29,9 +30,67 @@ final class CodeStackTests: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         
     }
+    
+    enum TestError: Error {
+        case apiError
+        case maxCalled
+    }
+    
+    func pagination(limit: Int, offset: Int) -> Observable<Result<[Int],TestError>> {
+        var arr: [Int?] = (0..<limit).map { $0 }
+        arr[3] = nil
+        
+        return Observable<Result<[Int],TestError>>.create { ob in
+            
+//            ob.onNext(.success(<#T##[Int]#>))
+            return Disposables.create()
+        }
+    }
+    
+    func testRxSwift() {
+        let observable: Observable<Int>
+        =
+        Observable<Int>.create { ob in
+            ob.onNext(1)
+            ob.onNext(2)
+            ob.onNext(3)
+            ob.onNext(4)
+            ob.onError(TestError.apiError)
+            return Disposables.create()
+        }
+        
+        observable
+            .retry(when: { error in
+                print("error: \(error)")
+                return error
+                    .scan(0) { prevalue, newValue in
+                        guard prevalue < 3 else { throw TestError.maxCalled }
+                        return prevalue + 1
+                    }
+            })
+            .subscribe (
+                onNext: { value in
+                Log.debug(value)
+            },onError: {  error in
+                Log.error(error)
+            },onCompleted: {
+                Log.debug("completed")
+            },onDisposed: {
+                Log.debug("disposed")
+            })
+        
+    }
 
     
     func testMap_Range() {
+        
+        
+        // 1
+//        let subject = PassthroughSubject<Int, Never>()
+//        // 2
+//        let publisher = subject.shareReplay(capacity: 2)
+        
+        
         // Initializes test scheduler.
         // Test scheduler implements virtual time that is
         // detached from local machine clock.

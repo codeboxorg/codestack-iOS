@@ -64,8 +64,7 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
                 guard let self = self else {return}
                 self.titleLabel.text = submission.problem?.title
                 
-                if let solvedDate = submission.createdAt?.toDateString(format: .FULL){
-                    Log.debug("solvedDate : \(solvedDate)")
+                if let solvedDate = submission.createdAt?.toDateStringKST(format: .FULL){
                     let dateString = DateCalculator().caluculateTime(solvedDate)
                     self.dateLabel.text = dateString
                 }

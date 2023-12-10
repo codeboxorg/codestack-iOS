@@ -9,6 +9,11 @@ import UIKit
 
 
 extension UIImage{
+    
+    
+    /// 탭바 이미지 위치를 맞추기 위한 함수
+    /// - Parameter size: 이미지 사이즈
+    /// - Returns: 이미지
     func baseOffset(size: CGFloat = 25) -> UIImage{
         return self.withBaselineOffset(fromBottom: size)
     }
@@ -16,6 +21,13 @@ extension UIImage{
 
 
 struct ImageCompressor {
+    
+    
+    /// 이미지 압축하는 함수
+    /// - Parameters:
+    ///   - image: 압출할 이미지
+    ///   - maxByte: max 로 이미지 크기 최대치 조정
+    ///   - completion: 콜백 함수
     static func compress(image: UIImage, maxByte: Int,
                          completion: @escaping (UIImage?) -> ()) {
         

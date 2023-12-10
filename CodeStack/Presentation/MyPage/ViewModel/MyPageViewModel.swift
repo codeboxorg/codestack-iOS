@@ -16,6 +16,7 @@ class MyPageViewModel: ViewModelType,Stepper{
         var editProfileEvent: Signal<Void>
         var profileImageValue: Signal<Data>
         var viewDidLoad: Signal<Void>
+//        var viewWillDisapear: Signal<Void>
 //        var imageLoading: Driver<ProfileView.LoadingState>
     }
     
@@ -26,14 +27,14 @@ class MyPageViewModel: ViewModelType,Stepper{
     
     struct Dependency {
         let authService: AuthServiceType
-        let apolloService: ApolloServiceType
+        let apolloService: WebRepository
     }
     
     var steps = PublishRelay<Step>()
     private var disposeBag = DisposeBag()
     
     private let authService: AuthServiceType
-    private let apolloService: ApolloServiceType
+    let apolloService: WebRepository
     
     init(dependency: Dependency) {
         self.authService = dependency.authService
@@ -44,11 +45,11 @@ class MyPageViewModel: ViewModelType,Stepper{
 
     func transform(input: Input) -> Output {
         
-//        input
-//            .editProfileEvent
-//            .map{ _ in CodestackStep.profileEdit}
-//            .emit(to: steps)
-//            .disposed(by: disposeBag)
+        input
+            .editProfileEvent
+            .map{ _ in CodestackStep.profileEdit}
+            .emit(to: steps)
+            .disposed(by: disposeBag)
         
         let loading = profileImage(update: input.profileImageValue)
         let activated = loading.distinctUntilChanged()
@@ -59,15 +60,32 @@ class MyPageViewModel: ViewModelType,Stepper{
             .withUnretained(self)
             .flatMap{ vm, _ in vm.apolloService.getMe(query: Query.getMe()).asObservable() }
             .subscribe(with: self, onNext: { vm, user in
-                Log.debug("viewDidLoad: \(user)")
                 vm.userProfile.accept(user)
                 loading.onNext(.loaded(user.profileImage))
             },onError: { vm, err in
-                Log.error("err : \(err)")
+                loading.onNext(.loaded(nil))
             }).disposed(by: disposeBag)
             
         return Output(userProfile: userProfile.asDriver(),
                       loading: activated.asDriver(onErrorJustReturn: .notLoading))
+    }
+    
+    
+    struct DetailInput {
+        var viewWillDissapear: Signal<Void>
+        var backbuttonTap: Signal<Void>
+    }
+    
+    func profileDetailBinding(input: DetailInput) {
+        input.viewWillDissapear
+            .map { CodestackStep.profileEditDissmiss }
+            .emit(to: steps)
+            .disposed(by: disposeBag)
+        
+        input.backbuttonTap
+            .map { CodestackStep.profileEditDissmiss }
+            .emit(to: steps)
+            .disposed(by: disposeBag)
     }
     
     private func profileImage(update profileImageValue: Signal<Data>) -> BehaviorSubject<ProfileView.LoadingState> {
@@ -83,7 +101,7 @@ class MyPageViewModel: ViewModelType,Stepper{
             .do(onError: {_ in loading.onNext(.loaded(nil))})
             .subscribe(with: self, onNext: { vm, user in
                 Log.debug("success: \(user)")
-//                vm.userProfile.accept(user)
+                //  vm.userProfile.accept(user)
             }).disposed(by: disposeBag)
         
         return loading

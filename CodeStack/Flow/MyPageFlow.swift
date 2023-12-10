@@ -19,12 +19,15 @@ class MyPageFlow: Flow{
     }
     
     struct Dependency {
-        let apolloService: ApolloServiceType
+        let apolloService: WebRepository
         let authService: AuthServiceType
     }
     
     private let authService: AuthServiceType
-    private let apolloService: ApolloServiceType
+    private let apolloService: WebRepository
+    
+    private lazy var myPageViewModel = MyPageViewModel(dependency: .init(authService: self.authService,
+                                                                         apolloService: self.apolloService))
     
     init(dependency: Dependency) {
         self.authService = dependency.authService
@@ -42,23 +45,24 @@ class MyPageFlow: Flow{
         switch codestackStep{
         case .profilePage:
             return navigateToMyPage()
-        case .profileEdit:
-            return navigateToEditProfile()
+//        case .profileEdit:
+//            Log.debug("profileEdit")
+//            return navigateToDetailProfile()
+//        case .profileEditDissmiss:
+//            self.rootViewController.dismiss(animated: true)
+//            return .none
         default:
             return .none
         }
     }
     
     func navigateToMyPage() -> FlowContributors {
-        let viewmodel = MyPageViewModel(dependency: .init(authService: self.authService,
-                                                          apolloService: self.apolloService))
-        let profileVC = MyPageViewController.create(with: viewmodel)
-
+        let profileVC = MyPageViewController.create(with: myPageViewModel)
         profileVC.navigationItem.title = "마이페이지"
         self.rootViewController.pushViewController(profileVC, animated: true)
         return .one(flowContributor: .contribute(withNextPresentable: profileVC,
                                                  withNextStepper: CompositeStepper(steppers: [DefaultStepper(),
-                                                                                              viewmodel])))
+                                                                                              myPageViewModel])))
     }
     
     func navigateToEditProfile() -> FlowContributors {

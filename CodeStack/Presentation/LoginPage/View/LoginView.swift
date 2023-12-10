@@ -144,17 +144,14 @@ class LoginView: UIView{
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        
-        
         addContentView()
         addAutoLayout()
     }
     
     func debugIDPwd(){
 #if DEBUG
-        idTextField.text = "test@codestack.co.kr"
-        passwordTextField.text = "qwer1234!"
+        idTextField.text = "gudghks56@gmail.com"
+        passwordTextField.text = "qwer159852"
         placeUpAnimation(idTextField, .ID)
         placeUpAnimation(idTextField, .PassWord)
 #endif
@@ -175,7 +172,6 @@ class LoginView: UIView{
                     owner.loginButton.isLoading = false
                     Toast.toastMessage("서버에서 응답이 오지 않습니다.: \(error)",offset: 30)
                 }
-                Log.debug("login button value : \(value)")
             }).disposed(by: disposeBag)
     }
     
@@ -196,8 +192,7 @@ class LoginView: UIView{
             }
             .asSignal(onErrorJustReturn: .none)
         
-        return Signal.merge([git,email])
-            .asSignal(onErrorJustReturn: .none)
+        return Signal.merge([git,email]).asSignal(onErrorJustReturn: .none)
     }
     
     func registerEvent() -> Signal<Void>{
@@ -219,7 +214,7 @@ protocol TextFieldAnimationDelegate: AnyObject{
 
 
 
-extension LoginView: TextFieldAnimationDelegate{
+extension LoginView: TextFieldAnimationDelegate {
     func placeUpAnimation(_ textField: CustomTextField, _ type: CustomTextField.FieldType) {
         switch type {
         case .ID:
@@ -303,18 +298,7 @@ extension LoginView {
         let place_constant: CGFloat = 8
         let lineHeight: CGFloat = 4
         let button_Width_height: CGFloat = 30
-        
         let info_top_constant: CGFloat = 16
-        
-        
-        //        let bottomInset: CGFloat = 20
-        // var subviewsHeight: CGFloat = (3 * idTop) + 10 + (5 * info_top_constant) + bottomInset
-        // Update the containerView height constraint constant
-        //        let containerViewHeightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
-        //        [containerView.widthAnchor.constraint(equalTo: self.widthAnchor)].forEach{
-        //            $0.isActive = true
-        //        }
-        //        containerViewHeightConstraint.isActive = true
         
         let heightAnchor = containerView.heightAnchor.constraint(equalToConstant: 300)
         
@@ -444,19 +428,6 @@ extension LoginView {
             infoLabel.centerXAnchor.constraint(equalTo: githubLoginButton.centerXAnchor,constant: 24),
             infoLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,constant: -12)
         ])
-      
-        // Update the containerView height constraint
-        
-        // Calculate the height of the subviews
-//        subviewsHeight += [codestackLogo,idTextField,passwordTextField,infoLabel,loginButton,rememberLabel,registerButton,loginProviderStackView].reduce(0) { $0 + $1.systemLayoutSizeFitting(CGSize(width: containerView.bounds.width, height: UIView.layoutFittingCompressedSize.height)).height
-//        }
-//
-//        containerViewHeightConstraint.constant = subviewsHeight
     }
-    
-//
-//    func containerViewLayoutIfNeeded(){
-//        containerView.layoutIfNeeded()
-//    }
 }
 

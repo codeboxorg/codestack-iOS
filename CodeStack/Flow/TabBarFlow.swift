@@ -19,7 +19,7 @@ class TabBarFlow: Flow{
     struct Dependency {
         let loginservice: OAuthrizationRequest
         let authService: AuthServiceType
-        let apolloService: ApolloServiceType
+        let apolloService: WebRepository
     }
     
     init(dependency: Dependency){
@@ -32,12 +32,15 @@ class TabBarFlow: Flow{
     
     private let loginService: CodestackAuthorization
     private let authService: AuthServiceType
-    private let apolloService: ApolloServiceType
+    private let apolloService: WebRepository
+    private let dbRepository: DBRepository = DefaultDBRepository(persistenStore: CoreDataStack(version: 1))
     
+    private lazy var submissionUseCase: SubmissionUseCase 
+    = DefaultSubmissionUseCase(dbRepository: dbRepository,
+                               webRepository: apolloService)
     
     func navigate(to step: RxFlow.Step) -> RxFlow.FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
-        
         switch codestackStep {
         case .logout:
             return .end(forwardToParentFlowWithStep: CodestackStep.logout)
@@ -57,19 +60,25 @@ class TabBarFlow: Flow{
     }
     
     private func navigateToTabBarController() -> FlowContributors{
-        let homeViewModel = HomeViewModel()
+        let homeViewModel = HomeViewModel(dependency: .init(repository: dbRepository,
+                                                            service: apolloService))
         let tabBarDelegate = rootViewTabController
         
-        let historyViewModel = HistoryViewModel(service: apolloService)
+        let historyViewModel = HistoryViewModel(dependency: .init(service: apolloService,
+                                                                  submisionUsecase: submissionUseCase))
         
         let codeDependency = CodeProblemFlow.Dependency(apolloService: apolloService,
                                                         homeViewModel: homeViewModel,
-                                                        historyViewModel: historyViewModel)
+                                                        historyViewModel: historyViewModel,
+                                                        dbRepository: dbRepository,
+                                                        submissionUseCase: submissionUseCase)
         
         let homeDependency = HomeFlow.Dependency(tabbarDelegate: tabBarDelegate,
                                                  apolloService: apolloService,
                                                  homeViewModel: homeViewModel,
-                                                 historyViewModel: historyViewModel)
+                                                 historyViewModel: historyViewModel,
+                                                 dbRepository: dbRepository,
+                                                 submissionUseCase: submissionUseCase)
         
         let myPageDependency = MyPageFlow.Dependency(apolloService: apolloService,
                                                      authService: authService)

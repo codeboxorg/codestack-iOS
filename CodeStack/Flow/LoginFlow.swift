@@ -19,13 +19,13 @@ class LoginFlow: Flow{
     struct Dependency {
         let loginService: OAuthrizationRequest
         let appleLoginManager: AppleLoginManager
-        let apolloService: ApolloServiceType
+        let apolloService: WebRepository
         let authService: AuthServiceType
     }
     
     private let loginService: OAuthrizationRequest
     private let appleLoginManager: AppleLoginManager
-    private let apolloService: ApolloServiceType
+    private let apolloService: WebRepository
     private let authService: AuthServiceType
     
     private var disposeBag = DisposeBag()
@@ -59,6 +59,9 @@ class LoginFlow: Flow{
             return .none
             
         case .logout:
+            UserManager.shared.logout {
+                KeychainItem.deleteToken()
+            }
             self.loginViewController.navigationController?.popViewController(animated: true)
             return .none
             
@@ -107,23 +110,38 @@ class LoginStepper: Stepper{
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     
+    private var authService: AuthServiceType
+    
+    init(authService: AuthServiceType) {
+        self.authService = authService
+    }
+    
     var initialStep: Step{
         CodestackStep.none
     }
     
     func readyToEmitSteps() {
-        
-        let accessToken = KeychainItem.currentAccessToken
-        let refreshToken = KeychainItem.currentRefreshToken
-        
-        Log.debug("accessToken: \(accessToken)")
-        Log.debug("accessToken: \(refreshToken)")
-        
-        if KeychainItem.currentAccessToken.isEmpty{
-            steps.accept(CodestackStep.none)
-        }else{
-            steps.accept(CodestackStep.userLoggedIn(nil, nil))
-        }
+//         TODO: Reissue Token Error
+//         현재 refresh TOken 으로 재발급시 서버측 Token(구버젼) 으로 발급이 되어 에러 발생 -> 현재는 명시적으로 로그인 하도록
+//        let accessToken = KeychainItem.currentAccessToken
+//        // let refreshToken = KeychainItem.currentRefreshToken
+//        
+//        let token = authService.reissueToken(token: ReissueAccessToken(accessToken: accessToken))
+//        
+//        _ = token.subscribe(with: self, onNext: { stepper , value in
+//            let (response,data) = value
+//            switch response.statusCode {
+//            case 200..<299:
+//                do {
+//                    let reissueToken = try API.extractAccessToken(data)
+//                    try KeychainItem.saveAccessToken(access: reissueToken)
+//                    stepper.steps.accept(CodestackStep.userLoggedIn(nil, nil))
+//                } catch {
+//                    Log.error(error)
+//                }
+//            default:
+//                stepper.steps.accept(CodestackStep.none)
+//            }
+//        })
     }
-    
 }

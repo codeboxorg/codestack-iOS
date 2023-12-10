@@ -21,10 +21,4 @@ struct Tag: Codable,Equatable{
         self.id = 0
         self.name = tag.name
     }
-    
-}
-
-struct _TagPagedResult: Codable{
-    let content: [Tag]
-    let pageInfo: _PageInfo
 }
