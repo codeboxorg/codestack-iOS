@@ -76,7 +76,7 @@ final class TokenAcquisitionService<T> {
                     .map { (urlResponse) -> Result<T, Error> in
                         count += 1
                         
-                        switch urlResponse.response.statusCode{
+                        switch urlResponse.response.statusCode {
                         case (200..<299):
                             
                             if count > maxCount {
@@ -95,7 +95,8 @@ final class TokenAcquisitionService<T> {
                             }
                             return result
                         default:
-                            return count < maxCount ? .success(token) : .failure(TokenAcquisitionError.refusedToken(response: urlResponse.response, data: urlResponse.data))
+                            return count < maxCount ? .success(token) : .failure(TokenAcquisitionError.refusedToken(response: urlResponse.response,
+                                                                                                                    data: urlResponse.data))
                         }
                     }
                     .catch { Observable.just(Result.failure($0)) }
@@ -122,6 +123,7 @@ final class TokenAcquisitionService<T> {
     func trackErrors<O: ObservableConvertibleType>(for source: O) -> Observable<Void> where O.Element == Error {
         let lock = self.lock
         let relay = self.relay
+        
         let error = source
             .asObservable()
             .map { error in
@@ -131,18 +133,17 @@ final class TokenAcquisitionService<T> {
                     case .gqlErrors(let graphError):
                         Log.error("error \(err)")
                         let flag = graphError.contains(where: { err in return err.message == "Unauthorized"})
-                        if flag{
-                            // Unauthorized 일때 토큰 재발급 처리 , 재발급이 블가능하면
+                        if flag {
+                            // TODO: Unauthorized 일때 토큰 재발급 처리 , 재발급이 블가능하면
                             return
-                        }else{
-                            throw TokenAcquisitionError.unowned
                         }
                     }
                 }
                 throw TokenAcquisitionError.unowned
             }
-            .flatMap { [unowned self] in self.token.take(1) }
+            .flatMap { [unowned self] in Log.error("flatMap asdfsdf"); return self.token.take(1) }
             .do(onNext: {
+                Log.error("dasfsaf \($0)")
                 guard case let .success(token) = $0 else { throw TokenAcquisitionError.unauthorized }
                 lock.lock()
                 relay.onNext(token)

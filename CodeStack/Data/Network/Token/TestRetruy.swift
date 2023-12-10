@@ -29,8 +29,6 @@ class ServiceTest{
                 tokenAcquisitionService.token.take(1).compactMap { result in
                     
                     guard case let .success(value) = result else { return nil }
-                    Log.debug(result)
-                    Log.debug(value)
                     return value
                 }
             }
@@ -64,7 +62,6 @@ public class TestRetry{
     }
     
     var getValidValue: (Int) -> Observable<(valid: Int,flag: Int)> = { value in
-        Log.debug(value)
         if value < 200{
             return Observable.just(( 220, 231))
         }
@@ -79,7 +76,6 @@ public class TestRetry{
                 
                 getValidValue(token)
                     .map { (response) -> Result<Int, Error> in
-                        Log.debug(response)
                         guard response.valid / 100 == 2 else {
                             return .failure(TError.relayError)
                         }
@@ -105,7 +101,6 @@ public class TestRetry{
             .do(onNext: {
                 guard case let .success(token) = $0 else { return }
                 lock.lock()
-                Log.debug(token)
                 relay.onNext(token)
                 lock.unlock()
             })
