@@ -9,11 +9,10 @@ import UIKit
 import Highlightr
 import RxSwift
 
-class CodeUITextView: UITextView{
+class CodeUITextView: UITextView {
     
     override var contentSize: CGSize {
-        didSet{
-            
+        didSet {
         }
     }
     
@@ -28,7 +27,18 @@ class CodeUITextView: UITextView{
         self.autocapitalizationType = UITextAutocapitalizationType.none
         self.alwaysBounceVertical = true
         
+        self.text = """
+#include <stdio.h>
+    
+int main() {
+        
+    return 0;
+}
+    
+    
+"""
     }
+    
     required init?(coder: NSCoder) {
         fatalError("fattal error in codeUITextView this is not by using Storyboard")
     }
@@ -61,5 +71,38 @@ class CodeUITextView: UITextView{
         self.endEditing(true)
     }
     
+    private var isFirst: Bool = true
+    
+    func bind(language: Language, sourceCode: String) {
+
+        // 첫 실행시 비어있을때 default Text로 셋팅
+        if isFirst {
+            if self.text.isEmpty {
+                self.text = sourceCode
+            }
+            isFirst.toggle()
+            return
+        }
+        
+        self.text = sourceCode
+    }
+    
+    func languageBinding(language: Language) {
+        let storage = (self.textStorage as! CodeAttributedString)
+        
+        if language.name == "Node" || language.name == "Node.js" {
+            storage.language = "typescript"
+        } else {
+            if language.name == "Python3" {
+                storage.language = "python"
+            } else {
+                storage.language = "\(language.name)"
+            }
+        }
+    }
+    
+    func textBinding(sourceCode: String) {
+        self.text = sourceCode
+    }
 }
 

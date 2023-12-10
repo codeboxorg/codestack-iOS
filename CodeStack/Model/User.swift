@@ -8,7 +8,6 @@
 import Foundation
 
 
-
 struct User: Codable {
     let username: String?
     let nickname: String?
@@ -52,7 +51,6 @@ extension User{
     }
     
     init(me member: Member) {
-        
         self.nickname = member.nickname
         self.problemCalendar = []
         self.email = member.email

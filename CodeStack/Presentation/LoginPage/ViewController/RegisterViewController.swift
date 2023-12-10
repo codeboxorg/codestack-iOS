@@ -26,7 +26,7 @@ class RegisterViewController: UIViewController, Stepper{
         case wrong
     }
     
-    var service: AuthServiceType?
+    private var service: AuthServiceType?
     
     static func create(with dependency: AuthServiceType) -> RegisterViewController {
         let vc = RegisterViewController()
@@ -98,10 +98,10 @@ class RegisterViewController: UIViewController, Stepper{
     
     private let registerButton: UIButton = {
         let button = UIButton()
-        button.tintColor = Color.sky_blue.color
+        button.tintColor = CColor.sky_blue.color
         button.setTitle("회원가입", for: .normal)
-        button.setTitleColor(Color.label.color, for: .normal)
-        button.backgroundColor = Color.powder_blue.color
+        button.setTitleColor(CColor.label.color, for: .normal)
+        button.backgroundColor = CColor.powder_blue.color
         button.layer.cornerRadius = 12
         return button
     }()
@@ -327,7 +327,7 @@ class RegisterViewController: UIViewController, Stepper{
     private func toast(content: String) {
         Toast.toastMessage("\(content)",
                            offset: 60,
-                           background: Color.red.color,
+                           background: CColor.red.color,
                            boader: UIColor.black.cgColor)
     }
     
@@ -344,11 +344,11 @@ class RegisterViewController: UIViewController, Stepper{
     private func markColorWhenVaild(type: Valid, view: UIView) {
         switch type {
         case .empty:
-            view.layer.borderColor = Color.whiteGray.cgColor
+            view.layer.borderColor = CColor.whiteGray.cgColor
         case .corret:
-            view.layer.borderColor = Color.green.cgColor
+            view.layer.borderColor = CColor.green.cgColor
         case .wrong:
-            view.layer.borderColor = Color.red_up.cgColor
+            view.layer.borderColor = CColor.red_up.cgColor
         }
     }
     
@@ -363,7 +363,7 @@ class RegisterViewController: UIViewController, Stepper{
     }
     
     private func isValidPattern(pattern: String, text: String) -> Bool {
-        if let _ = text.range(of: pattern,options: .regularExpression) {
+        if let _ = text.range(of: pattern, options: .regularExpression) {
             return true
         }else{
             return false
@@ -482,7 +482,7 @@ extension RegisterViewController{
 
 extension UILabel{
     func labelSetting(_ text: String,
-                      _ color: UIColor = Color.label.color,
+                      _ color: UIColor = CColor.label.color,
                       _ font: UIFont = UIFont.boldSystemFont(ofSize: 16))
     -> UILabel
     {

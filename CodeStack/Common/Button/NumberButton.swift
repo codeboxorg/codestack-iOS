@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class NumberButton: UIButton{
+class NumberButton: UIButton {
     
     var container: UIView = {
         let view = UIView()

@@ -12,7 +12,7 @@ import RxFlow
 import RxCocoa
 import RxSwift
 
-class CodeEditorViewController: UIViewController,Stepper{
+class CodeEditorViewController: UIViewController, Stepper {
     
     var steps = PublishRelay<Step>()
     
@@ -25,18 +25,18 @@ class CodeEditorViewController: UIViewController,Stepper{
     private weak var highlightr: Highlightr?
     
     struct Dependency{
+        
         var viewModel: CodeEditorViewModel
         var problem: ProblemListItemModel
     }
     
-    static func create(with dependency: Dependency) -> CodeEditorViewController{
+    static func create(with dependency: Dependency) -> CodeEditorViewController {
         let vc = CodeEditorViewController()
         vc.editorViewModel = dependency.viewModel
         vc.problemItem = dependency.problem
         vc.problemPopUpView.setLangueMenu(languages: dependency.problem.language)
         return vc
     }
-    
     
     private let numberTextViewContainer: UIView = {
         let view = UIView()
@@ -58,6 +58,7 @@ class CodeEditorViewController: UIViewController,Stepper{
         layoutManager.addTextContainer(textContainer)
         
         highlightr = textStorage.highlightr
+        highlightr?.setTheme(to: "Chalk")
         
         let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
         layoutManager.delegate = self
@@ -70,14 +71,18 @@ class CodeEditorViewController: UIViewController,Stepper{
     lazy var problemPopUpView: ProblemPopUpView = {
         let popView = ProblemPopUpView(frame: .zero,self)
         
-        if let html = problemItem?.contenxt{
+        if let html = problemItem?.contenxt {
             popView.loadHTMLToWebView(html: html)
+        }
+        
+        if let title = problemItem?.problemTitle {
+            popView.problemTitle.text = "\(title)"
         }
         return popView
     }()
     
 
-    deinit{
+    deinit {
         Log.debug("CodeEditorViewController : deinit")
     }
    
@@ -86,20 +91,18 @@ class CodeEditorViewController: UIViewController,Stepper{
         
         layoutConfigure()
         
-        textViewHighLiterSetting()
         settingBackground()
-        
-        lineNumberRulerViewSetting()
-        problemPopUpViewShow()
-        binding()
-        
+        self.numbersView.settingTextView(self.codeUITextView,tracker: self)
+        self.view.bringSubviewToFront(problemPopUpView)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+        
+        binding()
     }
     
     func settingBackground() {
         let black = self.highlightr?.theme.themeBackgroundColor
         
-        let white = Color.whiteGray.color
+        let white = CColor.whiteGray.color
         
         self.codeUITextView.backgroundColor = black
         self.codeUITextView.layer.borderColor = black?.cgColor
@@ -112,27 +115,135 @@ class CodeEditorViewController: UIViewController,Stepper{
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        self.problemPopUpView.show()
-        
+        self.problemPopUpView.show()   
     }
     
     
     func binding(){
         let dissmissAction = problemPopUpView.dissmissAction()
         
-        if let id = problemItem?.problemNumber{
-            let sendSubmissionAction = problemPopUpView.sendSubmissionAction().map{_ in "\(id)" }.asDriver(onErrorJustReturn: "")
+        if let id = problemItem?.problemNumber,
+           let title = problemItem?.problemTitle {
+            
+            let sendSubmissionAction 
+            =
+            problemPopUpView
+                .sendSubmissionAction()
+                .map { _ in "\(id)" }
+                .startWith("\(id)")
+                .asDriver(onErrorJustReturn: "")
+            
+            if let sourceCode = problemItem?.sourceCode,
+               let language = problemItem?.seletedLanguage {
+                codeUITextView.text = sourceCode
+                problemPopUpView.languageRelay.accept(language)
+            }
+            
             let languageAction = problemPopUpView.languageAction()
+            
+            let textChange = codeUITextView.rx.text
+                .skip(1)
+                .debounce(.milliseconds(300),
+                          scheduler: MainScheduler.instance)
+                .compactMap { $0 }
+                .asDriver(onErrorJustReturn: "")
+            
+            let submissionID = problemItem?.submissionID
+            let titleOb: Driver<String> = .just(title).asDriver(onErrorJustReturn: "")
+            let submissionIDOb: Observable<String> = (submissionID == nil) ? .just("") : .just(submissionID!)
+            let submissionListGesture = problemPopUpView.submissionListGesture.map { _ in }
+            let problemRefreshTap = problemPopUpView.problemRefreshTap
+            let favoriteTap = problemPopUpView.favoriteTap
             
             let output = editorViewModel?.transform(input:.init(dismissAction: dissmissAction,
                                                                 sendAction: sendSubmissionAction,
+                                                                problemTitle: titleOb,
                                                                 language: languageAction,
-                                                                sourceCode: codeUITextView.rx.text.compactMap{ $0 }.asDriver(onErrorJustReturn: "")))
+                                                                sourceCode: textChange, 
+                                                                submissionID: submissionIDOb.asDriver(onErrorJustReturn: ""),
+                                                                submissionListGesture: submissionListGesture,
+                                                                problemRefreshTap: problemRefreshTap,
+                                                                favoriteTap: favoriteTap))
+            
+            if let loadSourceCode = output?.loadSourceCode {
+                languageAction
+                    .withLatestFrom(loadSourceCode) { language, sourceCode in
+                        return (language, sourceCode)
+                    }
+                    .drive(with: self, onNext: { vm, tuple  in
+                        let (language, sourceCode) = tuple
+                        vm.codeUITextView.languageBinding(language: language)
+                        vm.codeUITextView.text = sourceCode
+                    }).disposed(by: disposeBag)
+            }
+            
+            output?.favoritProblem
+                .drive(with: self, onNext: { view, flag in
+                    view.problemPopUpView.heartButton.flag = flag
+                }).disposed(by: disposeBag)
+            
+            favoriteTap
+                .drive(with: self, onNext: { view, _ in
+                    view.problemPopUpView.heartButton.flag.toggle()
+                }).disposed(by: disposeBag)
+            
+            sendSubmissionAction
+                .skip(1)
+                .drive(with: self, onNext: { vc, _ in
+                    vc.problemPopUpView.pageValue.accept(.result(nil))
+                }).disposed(by: disposeBag)
+            
             output?.solvedResult
                 .drive(with: self,onNext: { vc, submission in
                     vc.problemPopUpView.pageValue.accept(.result(submission))
                 }).disposed(by: disposeBag)
+            
+            output?.submissionListResult
+                .drive(with: self, onNext: { vc, submissions in
+                    vc.problemPopUpView.pageValue.accept(.resultList([]))
+                }).disposed(by: disposeBag)
+            
+            output?.submitWaiting
+                .emit(with: self, onNext: { vc, flag in
+                    vc.problemPopUpView.submissionLoadingWating.accept(flag)
+                }).disposed(by: disposeBag)
+            
+            output?.submissionListResult
+                .drive(with: self, onNext: { vc, submissionList in
+                    vc.problemPopUpView.pageValue.accept(.resultList([]))
+                }).disposed(by: disposeBag)
+            
+            output?.problemRefreshResult
+                .emit(with: self, onNext: { vc, state in
+                    if case let .fail(error) = state {
+                        vc.steps.accept(CodestackStep.toastMessage(" \(error) 불러오는데 실패"))
+                    }
+                    vc.problemPopUpView.problemState.accept(state)
+                }).disposed(by: disposeBag)
+            
+            
+            let tableView = problemPopUpView.submissionListView.tableView
+            
+            tableView.rx
+                .setDelegate(self)
+                .disposed(by: disposeBag)
+            
+            output?.submissionListResult
+                .drive(with: self, onNext: { vc, value in
+                    vc.problemPopUpView.submissionListView.addEmptyLayout(flag: value.isEmpty)
+                }).disposed(by: disposeBag)
+            
+            output?.submissionListResult
+                .drive(tableView.rx.items(cellIdentifier: HistoryCell.identifier,
+                                          cellType: HistoryCell.self))
+            { index, submission, cell in
+                cell.selectionStyle = .none
+                cell.separatorInset = UIEdgeInsets.zero
+                cell.backgroundColor = .clear
+                cell.contentView.backgroundColor = .clear
+                cell.onHistoryData.accept(submission)
+                cell.onStatus.accept(submission.statusCode?.convertSolveStatus() ?? .none)
+            }.disposed(by: disposeBag)
         }
     }
     
@@ -145,7 +256,6 @@ class CodeEditorViewController: UIViewController,Stepper{
 
 //MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
 extension CodeEditorViewController{
-
     
     func showProblemDiscription(){
         problemPopUpView.snp.remakeConstraints { make in
@@ -171,9 +281,6 @@ extension CodeEditorViewController{
 
 //MARK: - TextView delegate
 extension CodeEditorViewController: UITextViewDelegate{
-    func textViewDidChange(_ textView: UITextView) {
-    }
-    
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         return true
     }
@@ -187,32 +294,6 @@ extension CodeEditorViewController: NSLayoutManagerDelegate{
 
 //MARK: - layout setting
 extension CodeEditorViewController{
-    
-    private func textViewHighLiterSetting(){
-        let storage = (self.codeUITextView.textStorage as! CodeAttributedString)
-        self.highlightr?.setTheme(to: "Chalk")
-        storage.language = "swift"
-//        guard let path = Bundle.main.path(forResource: "default", ofType: "txt",inDirectory: "\(storage.language!)",forLocalization: nil) else {return}
-//        guard let strings = try? String(contentsOfFile: path) else {return}
-        //        self.codeUITextView.text = strings
-        
-        self.codeUITextView.text =
-"""
-#include <stdio.h> \n int main() \n { \n printf("Hello, world!\\n"); \n return 0; \n }
-"""
-    }
-    
-    private func lineNumberRulerViewSetting(){
-        self.numbersView.settingTextView(self.codeUITextView,tracker: self)
-    }
-    
-    private func problemPopUpViewShow(){
-        // Dependency TextView injection in NumbersVIew
-        
-        self.view.bringSubviewToFront(problemPopUpView)
-        
-    }
-    
     
     private func layoutConfigure(){
         self.view.addSubview(problemPopUpView)

@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxFlow
 
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
@@ -16,16 +17,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var coordinator: FlowCoordinator = FlowCoordinator()
     var disposeBag: DisposeBag = DisposeBag()
 
-    
     private let loginService: OAuthrizationRequest = LoginService()
     private let authService: AuthServiceType = AuthService()
     private lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.loginService as AppleAuthorization)
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        
         guard let windoScene = (scene as? UIWindowScene) else { return }
+        
         let window = UIWindow(windowScene: windoScene)
-
         
         let appDependency = AppFlow.Dependency(loginService: self.loginService,
                                                appleService: self.appleLoginManger,

@@ -9,6 +9,7 @@ import UIKit
 
 struct Toast{
     static func toastMessage(_ message: String,
+                             container: UIView? = nil,
                              x position: CGFloat = 25 ,
                              offset: CGFloat = 120,
                              font: UIFont = UIFont.boldSystemFont(ofSize: 14),
@@ -29,7 +30,12 @@ struct Toast{
         messageView.layer.borderColor = b_color
         messageView.layer.borderWidth = width
         
-        UIApplication.shared.keyWindow?.addSubview(messageView)
+        if let container {
+            container.addSubview(messageView)
+        } else {
+            UIApplication.shared.keyWindow?.addSubview(messageView)
+        }
+        
         
         UIView.animate(
              withDuration: appearElement.duration,
