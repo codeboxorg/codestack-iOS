@@ -42,12 +42,12 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     
     struct Dependency {
         let loginService: OAuthrizationRequest
-        let apolloService: ApolloServiceType
+        let apolloService: WebRepository
         let stepper: LoginStepper
     }
     
     private var loginService: OAuthrizationRequest
-    private var apolloService: ApolloServiceType
+    private var apolloService: WebRepository
     private var disposeBag = DisposeBag()
     
     init(dependency: Dependency){
@@ -87,8 +87,11 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                     }
                 case .email((let id, let pwd)):
                     vm.loginLoadingEvent.accept(.success(true))
+                    vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
+                    vm.loginLoadingEvent.accept(.success(false))
                     #if DEBUG
-                    vm.requestAuth(id: id, pwd: pwd)
+                    // TODO: 502 Bad Gate Way
+//                     vm.requestAuth(id: id, pwd: pwd)
                     #endif
                 case .none:
                     break
@@ -151,15 +154,13 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     private func saveToken(token: CodestackResponseToken) -> Maybe<User> {
         UserManager.shared.saveTokenInfo(with: TokenInfo(expiresIn: token.expiresIn,
                                                          tokenType: token.tokenType))
-        KeychainItem.saveTokens(access: token.accessToken, refresh: token.refreshToken)
         
-        Log.debug("\(token.accessToken) + \(token.refreshToken)")
+        KeychainItem.saveTokens(access: token.accessToken, refresh: token.refreshToken)
         
         return apolloService.getMe(query: Query.getMe())
     }
     
     private func saveUserInfo(user: User){
-        Log.debug("userInfo : \(user)")
         UserManager.shared.saveUser(with: user)
         steps.accept(CodestackStep.userLoggedIn(nil, nil))
     }

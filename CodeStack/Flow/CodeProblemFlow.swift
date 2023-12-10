@@ -18,19 +18,25 @@ class CodeProblemFlow: Flow{
     }
     
     struct Dependency{
-        var apolloService: ApolloServiceType
+        var apolloService: WebRepository
         var homeViewModel: (any HomeViewModelType)
         var historyViewModel: (any HistoryViewModelType)
+        var dbRepository: DBRepository
+        var submissionUseCase: SubmissionUseCase
     }
     
-    private let apolloService: ApolloServiceType
+    private let apolloService: WebRepository
     private let homeViewModel: any HomeViewModelType
     private let historyViewModel: any HistoryViewModelType
+    private let dbRepository: DBRepository
+    private let submissionUseCase: SubmissionUseCase
     
     init(dependency: Dependency){
         self.apolloService = dependency.apolloService
         self.homeViewModel = dependency.homeViewModel
         self.historyViewModel = dependency.historyViewModel
+        self.dbRepository = dependency.dbRepository
+        self.submissionUseCase = dependency.submissionUseCase
     }
     
     private let rootViewController: UINavigationController = {
@@ -45,7 +51,7 @@ class CodeProblemFlow: Flow{
         case .problemList:
             return navigateToProblemList()
         case .problemPick(let problem):
-            Log.debug(problem)
+            // Log.debug(problem)
             rootViewController.tabBarController?.tabBar.isHidden = true
             return navigateToProblemPick(problem: problem)
             
@@ -53,6 +59,14 @@ class CodeProblemFlow: Flow{
             rootViewController.tabBarController?.tabBar.isHidden = false
             rootViewController.setNavigationBarHidden(false, animated: true)
             rootViewController.popViewController(animated: true)
+            return .none
+            
+        case .toastMessage(let message):
+            Toast.toastMessage("\(message)",
+                               container: rootViewController.presentedViewController?.view,
+                               offset: UIScreen.main.bounds.height - 150,
+                               background: .sky_blue,
+                               boader: UIColor.black.cgColor)
             return .none
         case .loginNeeded:
             return .end(forwardToParentFlowWithStep: CodestackStep.logout)
@@ -82,9 +96,10 @@ class CodeProblemFlow: Flow{
     
     func navigateToProblemPick(problem: ProblemListItemModel) -> FlowContributors{
         
-        let viewModelDependency = CodeEditorViewModel.Dependency(service: self.apolloService,
-                                                                 homeViewModel: self.homeViewModel,
-                                                                 historyViewModel: self.historyViewModel)
+        let viewModelDependency = CodeEditorViewModel.Dependency(homeViewModel: self.homeViewModel,
+                                                                 historyViewModel: self.historyViewModel,
+                                                                 submissionUseCase: self.submissionUseCase)
+        
         let viewModel = CodeEditorViewModel(dependency: viewModelDependency)
         let dependency = CodeEditorViewController.Dependency(viewModel: viewModel,
                                                              problem: problem)

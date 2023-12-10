@@ -12,10 +12,9 @@ import RxCocoa
 
 public typealias CurrentPage = Int
 
-class CodeProblemViewController: UIViewController, UITableViewDelegate{
+class CodeProblemViewController: UIViewController, UITableViewDelegate {
     
     struct Dependencies{
-//        var delegate: SideMenuDelegate?
         var viewModel: (any ProblemViewModelProtocol)?
     }
     
@@ -44,7 +43,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         segmentControl.selectedSegmentIndex = 0
         segmentControl.setImage(UIImage(systemName: "rectangle"), forSegmentAt: 0)
         segmentControl.setImage(UIImage(systemName: "list.bullet"), forSegmentAt: 1)
-        for index in 0...titles.count-1 {
+        for index in 0...titles.count - 1 {
             segmentControl.setWidth(50, forSegmentAt: index)
         }
         return segmentControl
@@ -66,7 +65,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         super.viewDidDisappear(animated)
         _viewDissapear.accept(())
         
-        if self.navigationController == nil{
+        if self.navigationController == nil {
             disposeBag = DisposeBag()
         }
     }
@@ -80,7 +79,8 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         problemTableView.snp.makeConstraints{
             $0.edges.equalTo(self.view.safeAreaLayoutGuide.snp.edges)
         }
-        settingSegmentControll()
+        segmentControl.sizeToFit()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: segmentControl)
     }
     
     
@@ -118,23 +118,11 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         self.output = viewmodel?.transform(input)
         
         let scroll = problemTableView.rx.didScroll.asDriver()
-        let dragging =  problemTableView.rx.didEndDragging.asDriver()
-        
         
         output?.refreshEndEvnet
             .drive(with: self,onNext: { vc, _ in
                 vc.problemTableView.removeBottomRefresh()
             }).disposed(by: disposeBag)
-        
-//        dragging
-//            .drive(with: self,onNext: { vc, value in
-//                let table = vc.problemTableView
-//                guard let vm = vc.viewModel else { return }
-//                if table.contentOffset.y >= table.contentSize.height - table.bounds.height,
-//                   vm.isLoading{
-//                    vc.addBottomRefresh()
-//                }
-//            }).disposed(by: disposeBag)
         
         scroll
             .filter{[weak self] _ in
@@ -143,7 +131,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
                 else {return false}
                return vm.isLoading ? false : true
             }
-            .drive(with: self,onNext: { vc , _ in
+            .drive(with: self, onNext: { vc , _ in
                 let table = vc.problemTableView
                 if table.contentOffset.y > table.contentSize.height - table.bounds.height{
                     vc.viewModel?.isLoading = true
@@ -160,7 +148,8 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
         guard let seg_list_model = self.output?.seg_list_model.asObservable() else {return}
         
         
-        seg_list_model.bind(to: problemTableView.rx.items(cellIdentifier: ProblemCell.identifier,cellType: ProblemCell.self))
+        seg_list_model.bind(to: problemTableView.rx.items(cellIdentifier: ProblemCell.identifier,
+                                                          cellType: ProblemCell.self))
         {
             (index: Int, model : DummyModel ,cell: ProblemCell) in
         
@@ -204,14 +193,5 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate{
             }
         })
 #endif
-    }
-    
-    func settingSegmentControll(){
-        segmentControl.sizeToFit()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: segmentControl)
-    }
-    
-    @objc func segmentChanged(_ sender: UISegmentedControl){
-//        sender.selectedSegmentIndex
     }
 }

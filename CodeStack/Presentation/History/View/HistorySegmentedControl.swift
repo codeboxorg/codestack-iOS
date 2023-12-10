@@ -36,7 +36,7 @@ class HistorySegmentedControl: UISegmentedControl{
         
         segmentSelecteLayer(x: x, y: yHeight)
         
-        let separtorPointOne = calculateWidth(for: 4)
+        let separtorPointOne = calculateWidth(for: 2)
         let separtorPointTwo = calculateWidth(for: 1)
         addSeparatorLine(x: separtorPointOne, y: rect.origin.y, height: yHeight)
         addSeparatorLine(x: separtorPointTwo, y: rect.origin.y, height: yHeight)
@@ -92,7 +92,7 @@ class HistorySegmentedControl: UISegmentedControl{
         self.setDividerImage(image, forLeftSegmentState: .selected, rightSegmentState: .normal, barMetrics: .default)
     }
     
-    func calculateWidth(for index: Int) -> CGFloat{
+    private func calculateWidth(for index: Int) -> CGFloat{
         return Array(segWidths[safe: 0..<index] ?? [])
             .compactMap{$0 + 20}
             .reduce(0, +)

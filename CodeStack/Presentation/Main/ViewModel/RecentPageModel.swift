@@ -19,8 +19,9 @@ extension Submission: IdentifiableType, Equatable{
         return self.id
     }
 }
-extension Array where Element == Submission{
-    func toRecentModels(title: String = "최근 제출 10개") -> [RecentSubmission]{
+
+extension Array where Element == Submission {
+    func toRecentModels(title: String = "최근 제출 10개") -> [RecentSubmission] {
         return [RecentSubmission(headerTitle: title, items: self)]
     }
 }

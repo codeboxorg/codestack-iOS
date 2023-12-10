@@ -15,7 +15,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
     
     var historyViewModel: (any HistoryViewModelType)?
     
-    static func create(with dependency: any HistoryViewModelType) -> HistoryViewController{
+    static func create(with dependency: any HistoryViewModelType) -> HistoryViewController {
         let history = HistoryViewController()
         history.historyViewModel = dependency as? HistoryViewModel
         return history
@@ -48,7 +48,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
     
     
     
-    var disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     private var _viewDidLoad = PublishSubject<Void>()
     private var fetchHistoryList = PublishRelay<Void>()
     private var paginationLoadingInput = PublishRelay<Bool>()
@@ -97,7 +97,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
         
         let currentSegment
         =
-        historySegmentUtil.map{ value in
+        historySegmentUtil.map { value in
             let segTypeValue = SegType.Value(rawValue: value) ?? SegType.Value.all
             return segTypeValue
         }.asDriver()
@@ -112,6 +112,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
                                                refreshTap: refreshButton.rx.tap.asSignal(),
                                                fetchHistoryList: fetchHistoryList.asSignal(),
                                                paginationLoadingInput: paginationLoadingInput.asSignal()))
+        
         output.historyData
             .drive(historyList.rx.items(cellIdentifier: HistoryCell.identifier,
                                         cellType: HistoryCell.self))
@@ -123,7 +124,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
         }.disposed(by: disposeBag)
         
         
-        output.refreshEndEvnet
+        output.paginationRefreshEndEvent
             .emit(with: self,onNext: { vc, _ in
                 vc.historyList.removeBottomRefresh()
             }).disposed(by: disposeBag)
@@ -135,12 +136,19 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
         historyList.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
+        output.refreshClearEvent
+            .emit(with: self,onNext: { vc, value in
+                Toast.toastMessage("...새로고침 완료...",
+                                   offset: UIScreen.main.bounds.height - 250,
+                                   background: .sky_blue,
+                                   boader: UIColor.black.cgColor)
+            }).disposed(by: disposeBag)
 
         Driver.combineLatest(scroll, currentSegment)
             .throttle(.milliseconds(500))
-            .filter{ $1.isAll() }
+            .filter { $1.isAll() }
             .flatMapLatest{ _ in paginationLoding.take(1).asDriver(onErrorJustReturn: false) }
-            .filter{ !$0 }
+            .filter { !$0 }
             .drive(with: self,onNext: { vc , _ in
                 let table = vc.historyList
                 if table.contentOffset.y > table.contentSize.height - table.bounds.height{
@@ -163,7 +171,7 @@ extension HistoryViewController{
         view.addSubview(container)
         view.addSubview(historyList)
         container.addSubview(historySegmentList)
-        historySegmentList.selectedSegmentIndex = 4
+        historySegmentList.selectedSegmentIndex = SegType.Value.all.rawValue
         
         
         historyList.snp.makeConstraints{

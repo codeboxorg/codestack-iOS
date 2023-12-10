@@ -12,11 +12,10 @@ import RxRelay
 
 
 protocol HistoryViewModelType: ViewModelType{
-    
     var sendSubmission: PublishRelay<Submission> { get set }
 }
 
-class HistoryViewModel: HistoryViewModelType{
+class HistoryViewModel: HistoryViewModelType {
     
     struct Input{
         var viewDidLoad: Signal<Void>
@@ -28,35 +27,45 @@ class HistoryViewModel: HistoryViewModelType{
     
     struct Output{
         var historyData: Driver<[Submission]>
-        var refreshEndEvnet: Signal<Void>
+        var paginationRefreshEndEvent: Signal<Void>
         var paginationLoading: Driver<Bool>
+        var refreshClearEvent: Signal<Void>
     }
     
-    private let service: ApolloServiceType
     
-    init(service: ApolloServiceType){
-        self.service = service
+    struct Dependency {
+        let service: WebRepository
+        let submisionUsecase: SubmissionUseCase
+    }
+    private let service: WebRepository
+    private let submissionUsecase: SubmissionUseCase
+    
+    init(dependency: Dependency){
+        self.service = dependency.service
+        self.submissionUsecase = dependency.submisionUsecase
     }
     
     private var disposeBag = DisposeBag()
-    private let dummyData = BehaviorRelay<[Submission]>(value: [])
+    private let submissionModel = BehaviorRelay<[Submission]>(value: [])
     private let historyData = BehaviorRelay<[Submission]>(value: [])
+    
+    
+    // private let favoriteModel
     private let paginationLoading = BehaviorRelay<Bool>(value: false)
     
     
     private var currentPage: CurrentPage = 0
-    private var totalPage: Int = 20
+    private var totalPage: Int = 50
     
+    //Bottom Pagination refresh
     private let refreshEndEvent = PublishRelay<Void>()
+    
+    //Navigation Top right refresh
+    private let refreshClearEvent = PublishRelay<Void>()
+    
     var sendSubmission = PublishRelay<Submission>()
     
-    
-#if DEBUG
-    private let testService: TestService = NetworkService()
-#endif
-    
     func transform(input: Input) -> Output {
-        
         
         input.paginationLoadingInput
             .emit(to: paginationLoading)
@@ -69,8 +78,8 @@ class HistoryViewModel: HistoryViewModelType{
         viewDidLoadBinding(viewDidLoad: input.viewDidLoad)
         fetchHistoryBinding(fetchHistory: input.fetchHistoryList)
         
-        dummyData.withLatestFrom(historyData){  submission, original in
-            original + submission
+        submissionModel.withLatestFrom(historyData){  submission, original in
+            return original + submission
         }
         .subscribe(with: self,onNext: { vm, submission in
             vm.historyData.accept(submission)
@@ -85,115 +94,125 @@ class HistoryViewModel: HistoryViewModelType{
             return filteredSubmissions
         }
         
+            // filteredHistoryData.asObservable()
+            //   .subscribe(with: self,onNext: { vm,value in
+                // TODO: 현재 Filter해서 fetch 해오는 Query 부재 -> 기능 추후 제공
+                // -> 즐겨찾기와 임시저장만 추가
+            //   }).disposed(by: disposeBag)
+        
         return Output(historyData: filteredHistoryData,
-                      refreshEndEvnet: refreshEndEvent.asSignal(),
-                      paginationLoading: paginationLoading.asDriver(onErrorJustReturn: false))
+                      paginationRefreshEndEvent: refreshEndEvent.asSignal(),
+                      paginationLoading: paginationLoading.asDriver(onErrorJustReturn: false),
+                      refreshClearEvent: refreshClearEvent.asSignal())
     }
     
-    func observingSubmission(){
+    func observingSubmission() {
         sendSubmission
-            .withLatestFrom(dummyData){ value, original in
-                return [value] + original 
+            .withLatestFrom(historyData){ value, original in
+                return [value] + original
             }.subscribe(with: self, onNext: { vm, value in
-                vm.dummyData.accept(value)
+                vm.historyData.accept(value)
             }).disposed(by: disposeBag)
     }
     
+    
     func viewDidLoadBinding(viewDidLoad: Signal<Void>){
         viewDidLoad
-            .emit(with: self,onNext: { vm, _ in
-                vm.requestSubmission()
-            })
-            .disposed(by: disposeBag)
-        //        viewDidLoad
-        //            .compactMap{[weak self] _ in
-        //                guard let self else { return []}
-        //                return self.testService.request(type: .all).content
-        //            }.emit(to: dummyData)
-        //            .disposed(by: disposeBag)
+            .asObservable()
+            .withUnretained(self)
+            .flatMap { vm, _ in
+                let localTempSubmission
+                = vm.submissionUsecase
+                    .fetchProblemHistoryEqualStatus(status: "temp")
+                    .compactMap { try $0.get() }
+                
+                let fetchedSubmission = vm.requestSubmission().do(onNext: { _ in vm.currentPage += 1 })
+                return Observable<[Submission]>.concat([localTempSubmission, fetchedSubmission])
+            }
+            
+            .subscribe(with: self, onNext: { vm, data in
+                vm.submissionModel.accept(data)
+                vm.refreshEndEvent.accept(())
+                vm.paginationLoading.accept(false)
+            }).disposed(by: disposeBag)
     }
     
     func fetchHistoryBinding(fetchHistory list: Signal<Void>) {
         list
             .withUnretained(self)
             .filter{ vm, _ in
-                if vm.currentPage >= vm.totalPage{
+                if vm.currentPage >= vm.totalPage {
                     vm.paginationLoading.accept(false)
                     vm.refreshEndEvent.accept(())
                     return false
                 }
                 return true
-            }.delay(.milliseconds(300))
-            .emit(with: self,onNext: { vm, _ in
-                vm.currentPage += 1
-                Log.debug("vm.currentPage: \(vm.currentPage)")
-                vm.requestSubmission(offset: vm.currentPage)
+            }
+            .delay(.milliseconds(300))
+            .flatMap {vm, _ in vm.requestSubmission().asSignal(onErrorJustReturn: []) }
+            .emit(with: self,onNext: { vm, datas in
+                
+                if !datas.isEmpty {
+                    vm.submissionModel.accept(datas)
+                    vm.currentPage += 1
+                }
+                // TODO: Fall Back UI Present 필요
+                vm.refreshEndEvent.accept(())
+                vm.paginationLoading.accept(false)
             }).disposed(by: disposeBag)
     }
     
     func refreshBinding(tap: Signal<Void>){
-        tap.emit(with: self,onNext: { vm, _ in
-            vm.requestMe()
-            vm.requestSubmission()
-        }).disposed(by: disposeBag)
+        tap
+            .throttle(.milliseconds(800))
+            .asObservable()
+            .withUnretained(self)
+            .flatMapLatest { vm, _ in vm.requestSubmission() }
+            .subscribe(with: self, onNext: { vm, datas in
+                vm.submissionModel.accept(datas)
+                vm.refreshEndEvent.accept(())
+                vm.paginationLoading.accept(false)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private lazy var retryHandler: (Observable<Error>) -> Observable<Int> = { error in
+        error.enumerated().flatMap { [weak self] (attempt, error) -> Observable<Int> in
+            if attempt >= 3 {
+                return Observable.error(error)
+            }
+            self?.currentPage += 1
+            return Observable<Int>.timer(.milliseconds(300), scheduler: MainScheduler.instance).take(1)
+        }
+    }
+    
+    private func requestSubmission() -> Observable<[Submission]> {
+        return service
+            .getSubmission(query: Query.getSubmission(offest: self.currentPage),
+                           cache: nil)
+            .asObservable()
+    }
+    
+    
+    // TODO: - "INTERNAL_SERVER_ERROR",
+    // 현재 getMe 의 submission query Internal Server Error 발생
+    private func requestGetMeSubmissions(){
+        //        _ = service.getMeSubmissions(query: Query.getMeSubmissions())
     }
     
     private func requestMe(){
-        //TODO: - 현재 SolvedProblem만 가지고 온다.
+        // TODO: - 현재 SolvedProblem만 가지고 온다.
         // 에러나 성공 실패 했을때의 결과에 대한 Submission을 가지고 오기 위해서는
         // Submission에 조건을 달아서 query를 날려야 하나?
-        service.getMe(query: Query.getMe())
-            .subscribe(with: self, onSuccess: { vm , me in
-                Log.debug(me)
-            })
-    }
-    
-    
-    //TODO: - "INTERNAL_SERVER_ERROR",
-    // 현재 getMe 의 submission query Internal Server Error 발생
-    private func requestGetMeSubmissions(){
-        _ = service.getMeSubmissions(query: Query.getMeSubmissions())
-            .subscribe(with: self,onSuccess: { vm, submissions in
-                
-            },onError: { vm , error in
-                Log.error(error)
-            })
-    }
-    
-    private func requestSubmission(offset: Int = 0){
-        _ = service.getSubmission(query: Query.getSubmission(offest: offset))
-            .subscribe(with: self,onSuccess: { vm, data in
-                vm.dummyData.accept(data)
-                vm.refreshEndEvent.accept(())
-                vm.paginationLoading.accept(false)
-            },onError: { vm , error in
-                vm.refreshEndEvent.accept(())
-                vm.paginationLoading.accept(false)
+        //        service.getMe(query: Query.getMe())
+        //            .subscribe(with: self, onSuccess: { vm , me in
+        //                Log.debug(me)
+        //            })
+        _ = service.getSubmission(query: Query.getSubmission(),cache: .fetchIgnoringCacheCompletely)
+            .subscribe(with: self, onSuccess: { vm, value in
+                vm.submissionModel.accept([])
+                vm.historyData.accept([])
+                vm.historyData.accept(value)
             })
     }
 }
-
-//MARK: - Debug code
-
-//submissions.forEach{ sub in
-//    Log.debug("sub.id :\(sub.id)")
-//    Log.debug("sub.sourceCode :\(sub.sourceCode)")
-//    Log.debug("sub.createdAt :\(sub.createdAt)")
-//    Log.debug("sub.language :\(sub.language)")
-//    Log.debug("sub.problem.id :\(sub.problem.id)")
-//    Log.debug("sub.problem.title :\(sub.problem.title)")
-//}
-
-//                data.content?.forEach({ content in
-//                    _  = """
-//                                START💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡
-//                                    content.id :\(content.id)
-//                                    content.sourceCode :\(content.sourceCode)
-//                                    content.updatedAt :\(content.updatedAt)
-//                                    content.createdAt :\(content.createdAt)
-//                                    content.language :\(content.language)
-//                                    content.problem.id :\(content.problem.id)
-//                                    content.problem.title :\(content.problem.title)
-//                                End❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️
-//                                """
-//                })

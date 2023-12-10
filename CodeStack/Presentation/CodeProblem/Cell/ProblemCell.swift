@@ -48,7 +48,7 @@ class ProblemCell: UITableViewCell{
     }()
     
     
-    //TODO: CollectionView에서 UIView로 변경해야댐
+    //TODO: CollectionView에서 UIView로 변경해야댐 -> 완료인가?
     private let graphSubmit: GraphSubmitView = {
         let view = GraphSubmitView()
         view.layer.borderColor = UIColor.lightGray.cgColor
@@ -122,9 +122,9 @@ class ProblemCell: UITableViewCell{
             cell.problem_number.setTitle("\(model.problemNumber)", for: .normal)
             cell.problem_title.text = "\(model.problemTitle)"
             cell.model = model
-            cell.languages = language + model.tags.map{tag in Language(id: "none",
-                                                                       name: tag.name ,
-                                                                       _extension: "none")}
+            cell.languages = language + model.tags.map{ tag in Language(id: "none",
+                                                                        name: tag.name ,
+                                                                        _extension: "none")}
             
             cell.graphSubmit.bind(.init(submitCount: String(describing: model.submitCount),
                                         correctAnswer: String(describing: model.correctAnswer),
@@ -313,11 +313,11 @@ class ProblemCell: UITableViewCell{
         setViewPriority()
         
         
-        foldButton.layer.borderColor = UIColor.purple.cgColor
-        foldButton.layer.borderWidth = 2
+        // foldButton.layer.borderColor = UIColor.purple.cgColor
+        // foldButton.layer.borderWidth = 2
         
         foldButton.snp.makeConstraints { make in
-            //아 이거때문에 하ㅏㅏ
+            // 아 이거때문에 하ㅏㅏ
 //            make.top.equalToSuperview()
             make.trailing.equalToSuperview().inset(12)
             make.width.height.equalTo(30)

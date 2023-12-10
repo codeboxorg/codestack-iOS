@@ -71,9 +71,6 @@ class ProfileView: UIView{
         return button
     }()
     
-    
-    private var beforeImage: UIImage?
-    
     var disposeBag = DisposeBag()
     
     /// Binder   뷰에 프로필 데이터 바인딩
@@ -81,8 +78,8 @@ class ProfileView: UIView{
         Binder(self){ [weak self] target ,value  in
             guard let self else { return }
             
-            self.nameLabel.text = value.username
-            self.rank.text = value.rank
+            self.nameLabel.text = value.username ?? "Unknown"
+            self.rank.text = value.rank ?? "N/A"
         }
     }
     
@@ -129,7 +126,7 @@ class ProfileView: UIView{
         case .loaded(let urlstring):
             Log.debug("loaded")
             if urlstring == nil {
-                self.imageView.image = beforeImage
+                self.imageView.image = UIImage(named: "codeStack")
             } else {
                 //TODO: 이미지 로컬 저장소에 저장해야함
                 //TODO: Cache 처리 해야되는데 .....
@@ -228,7 +225,6 @@ extension UIImageView {
         if let image = UIImage(data: data) {
             DispatchQueue.main.async {
                 self.image = image
-                
                 completion(image)
             }
         }

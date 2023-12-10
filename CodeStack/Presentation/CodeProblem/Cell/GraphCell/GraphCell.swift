@@ -10,7 +10,7 @@ import SnapKit
 
 
 
-class GraphSubmitView: UIView{
+class GraphSubmitView: UIView {
     
     let lableSize: CGFloat = 14
     

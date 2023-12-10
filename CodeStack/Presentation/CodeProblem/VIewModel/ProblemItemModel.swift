@@ -43,7 +43,9 @@ var contextExample  =
          </section></body>
    """
 struct ProblemListItemModel: Equatable{
-    
+    var submissionID: String?
+    var seletedLanguage: Language?
+    var sourceCode: String?
     var problemNumber: String
     var problemTitle: String
     var submitCount: Int
@@ -53,23 +55,30 @@ struct ProblemListItemModel: Equatable{
     var tags: [Tag]
     var language: [Language]
     
-    init(problemNumber: String, problemTitle: String, submitCount: Int, correctAnswer: Int, correctRate: Double,tags: [Tag] = [],languages: [Language] = []) {
-        self.problemNumber = problemNumber
-        self.problemTitle = problemTitle
-        self.submitCount = submitCount
-        self.correctAnswer = correctAnswer
-        self.correctRate = correctRate
-        
-        self.tags = []
-        self.language =
-        ["C", "JAVA" , "C++", "Node.js", "Swift", "Kot", "Go", "Python", "javascript"]
-            .map{ name in Language(id: "1", name: name, _extension: "ㅋ")}
-        
-        self.contenxt = contextExample
-        
-    }
-    
     init(problemNumber: String,
+         problemTitle: String,
+         submitCount: Int,
+         correctAnswer: Int,
+         correctRate: Double,
+         tags: [Tag] = [],
+         languages: [Language] = []) {
+             self.submissionID = nil
+             self.problemNumber = problemNumber
+             self.problemTitle = problemTitle
+             self.submitCount = submitCount
+             self.correctAnswer = correctAnswer
+             self.correctRate = correctRate
+             
+             self.tags = []
+             self.language = ["C", "JAVA" , "C++", "Node.js", "Swift", "Kot", "Go", "Python", "javascript"]
+                 .map{ name in Language(id: "1", name: name, _extension: "")}
+             self.contenxt = contextExample
+         }
+    
+    init(submissionID: String? = nil,
+         seletedLanguage: Language?,
+         sourceCode: String?,
+         problemNumber: String,
          problemTitle: String,
          submitCount: Int,
          correctAnswer: Int,
@@ -78,6 +87,9 @@ struct ProblemListItemModel: Equatable{
          tags: [Tag] = [],
          languages: [Language] = [])
     {
+        self.submissionID = submissionID
+        self.seletedLanguage = seletedLanguage
+        self.sourceCode = sourceCode
         self.problemNumber = problemNumber
         self.problemTitle = problemTitle
         self.submitCount = submitCount

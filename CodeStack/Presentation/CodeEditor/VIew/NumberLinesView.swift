@@ -17,6 +17,7 @@ class LineNumberRulerView: UIView {
     private weak var textView: UITextView?
     private var textViewContentObserver: NSKeyValueObservation?
     private weak var tracker: TextViewSizeTracker?
+    
     private lazy var updateContentSize: (CGSize) -> () = {[weak self] size in
         self?.tracker?.updateNumberViewsHeight(size.height)
         self?.layer.setNeedsDisplay()
@@ -82,7 +83,7 @@ class LineNumberRulerView: UIView {
         
         var lineNum = 1
         
-        paragraphRanges.forEach{ [weak self] range in
+        paragraphRanges.forEach { [weak self] range in
             guard let self else { return }
             var start_line: CGPoint = CGPoint(x: 0, y: 0)
             var end_line: CGPoint = CGPoint(x: 0, y: 0)
@@ -113,7 +114,7 @@ class LineNumberRulerView: UIView {
     
     
     //MARK: textView setting
-    func settingTextView(_ textView: UITextView,tracker delegate: TextViewSizeTracker ){
+    func settingTextView(_ textView: UITextView, tracker delegate: TextViewSizeTracker ){
         self.textView = textView
         self.tracker = delegate
         self.backgroundColor = textView.backgroundColor
@@ -125,17 +126,16 @@ class LineNumberRulerView: UIView {
             })
         }
         guard let codeTextView = self.textView else {return}
-        let kvo = codeTextView.observe(\.contentSize,options: [.new], changeHandler: { [weak self] ui, value in
+        keyValueObserving(textView: codeTextView)
+    }
+    
+    //MARK: TextView contentSize KVO
+    private func keyValueObserving(textView: UITextView){
+        textViewContentObserver = textView.observe(\.contentSize,options: [.new], changeHandler: { [weak self] ui, value in
             guard let self else { return }
             guard let newValue = value.newValue else {return}
             self.updateContentSize(newValue)
         })
-        keyValueObserving(content: kvo)
-    }
-    
-    //MARK: TextView contentSize KVO
-    private func keyValueObserving(content observing: NSKeyValueObservation){
-        textViewContentObserver = observing
     }
     
     

@@ -16,7 +16,7 @@ class HomeStepper: Stepper{
     var steps = PublishRelay<Step>()
     
     var initialStep: Step{
-        CodestackStep.firstHomeStep
+        CodestackStep.projectHomeStep
     }
 }
 
@@ -54,27 +54,36 @@ class HomeFlow: Flow{
     
     struct Dependency{
         var tabbarDelegate: TabBarDelegate
-        var apolloService: ApolloServiceType
+        var apolloService: WebRepository
         var homeViewModel: (any HomeViewModelType)
         var historyViewModel: (any HistoryViewModelType)
+        var dbRepository: DBRepository
+        var submissionUseCase: SubmissionUseCase
     }
     
     private weak var tabbarDelegate: TabBarDelegate?
-    private let apolloService: ApolloServiceType
+    private let apolloService: WebRepository
     private let homeViewModel: (any HomeViewModelType)
     private let historyViewModel: (any HistoryViewModelType)
+    private let dbRepository: DBRepository
+    private let submissionUseCase: SubmissionUseCase
     
     init(dependency: Dependency){
         self.apolloService = dependency.apolloService
         self.homeViewModel = dependency.homeViewModel
         self.tabbarDelegate = dependency.tabbarDelegate
         self.historyViewModel = dependency.historyViewModel
+        self.dbRepository = dependency.dbRepository
+        self.submissionUseCase = dependency.submissionUseCase
     }
     
     
     func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
         switch codestackStep{
+        case .projectHomeStep:
+            return navigateToHome()
+            
         case .firstHomeStep:
             return navigateToHome()
             
@@ -101,11 +110,21 @@ class HomeFlow: Flow{
             rootViewController.popViewController(animated: true)
             return .none
             
+        case .toastMessage(let message):
+            Toast.toastMessage("\(message)",
+                               container: rootViewController.presentedViewController?.view,
+                               offset: UIScreen.main.bounds.height - 150,
+                               background: .sky_blue,
+                               boader: UIColor.black.cgColor)
+            return .none
+            
+        case .loginNeeded:
+            return .end(forwardToParentFlowWithStep: CodestackStep.logout)
+            
         case .logout:
             return .end(forwardToParentFlowWithStep: CodestackStep.logout)
             
         case .recentSolveList(let item):
-            
             guard let item else {return .none}
             return navigateToRecentSolveList(problem: item)
             
@@ -117,12 +136,15 @@ class HomeFlow: Flow{
             return .none
         }
     }
-    
+
     private func navigateToHome() -> FlowContributors{
         let homeViewModel = self.homeViewModel
+        let contributionModel = ContributionViewModel.create(depenedency: .init(service: apolloService,
+                                                                                submissionUsecase: submissionUseCase))
         
         let homeVC = ViewController.create(with: HomeViewController.Dependencies(homeViewModel: homeViewModel,
-                                                                                         sidemenuVC: sideVC))
+                                                                                 contiributionViewModel: contributionModel, 
+                                                                                 sidemenuVC: sideVC))
         rootViewController.pushViewController(homeVC, animated: false)
                 
         return .one(flowContributor: .contribute(withNextPresentable: homeVC,
@@ -131,13 +153,14 @@ class HomeFlow: Flow{
     
     private func navigateToRecentSolveList(problem item: ProblemListItemModel) -> FlowContributors
     {
-        let viewModelDependency = CodeEditorViewModel.Dependency(service: apolloService,
-                                                                 homeViewModel: homeViewModel,
-                                                                 historyViewModel: historyViewModel)
+        let viewModelDependency = CodeEditorViewModel.Dependency(homeViewModel: homeViewModel,
+                                                                 historyViewModel: historyViewModel,
+                                                                 submissionUseCase: submissionUseCase)
         let viewModel = CodeEditorViewModel(dependency: viewModelDependency)
         let dependency = CodeEditorViewController.Dependency(viewModel: viewModel, problem: item)
         let editorvc = CodeEditorViewController.create(with: dependency)
         editorvc.hidesBottomBarWhenPushed = true
+        
         rootViewController.pushViewController(editorvc, animated: true)
         return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: viewModel))
     }

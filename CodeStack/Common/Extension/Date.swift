@@ -16,7 +16,7 @@ enum DATE{
 
 extension Date{
     
-    func toString(format: DATE = .FULL) -> String{
+    func toString(format: DATE = .FULL) -> String {
         let formatter: DateFormatter = DateFormatter()
         formatter.dateFormat = getDateForMat(format)
         formatter.locale = Locale(identifier: "ko_kr")
@@ -24,7 +24,7 @@ extension Date{
         return formatter.string(from: self)
     }
     
-    private func getDateForMat(_ format: DATE) -> String{
+    private func getDateForMat(_ format: DATE) -> String {
         switch format {
         case .DOT:
             return "yyyy.MM.dd"
@@ -33,6 +33,35 @@ extension Date{
         case .YYYYMMDD:
             return "yyyy-MM-dd"
         }
+    }
+    
+    static func getDateFromCurrentMonth(count: Int = 5) -> [String] {
+        let currentMonth = Calendar.current.dateComponents([.month], from: Date())
+        let month: Int = currentMonth.month!
+        var result: [String] = []
+        result.append("\(month)월")
+        var diffMonth: Int = month
+        for _ in 1...4 {
+            diffMonth -= 1
+            if diffMonth <= 0 {
+                diffMonth = 12
+            }
+            result.append("\(diffMonth)월")
+        }
+        return result.reversed()
+    }
+    
+    /// '분' 더하는 메소드
+    /// - Parameter day: 일자
+    /// - Returns: 더해진 날짜
+    func adding(day: Int) -> Date {
+        let date = Calendar.current.date(byAdding: .day, value: day, to: self)!
+        let formatter = Fommater.formatter
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = NSTimeZone(name: "ko_KR") as? TimeZone
+        let str = formatter.string(from: date)
+        return formatter.date(from: str)!
     }
 }
 
