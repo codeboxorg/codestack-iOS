@@ -9,7 +9,7 @@ import UIKit
 import RxFlow
 import RxCocoa
 
-class OnBoardingVC: UIViewController,Stepper{
+class OnBoardingVC: UIViewController,Stepper {
     
     var steps: RxRelay.PublishRelay<RxFlow.Step> = PublishRelay<Step>()
     

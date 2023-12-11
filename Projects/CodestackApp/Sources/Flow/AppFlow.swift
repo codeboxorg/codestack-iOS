@@ -55,7 +55,7 @@ class AppFlow: Flow{
         }
     }
 
-    private func navigateToLoginVC() -> FlowContributors{
+    private func navigateToLoginVC() -> FlowContributors {
         let loginStepper = LoginStepper(authService: self.authService)
         
         let dependecy = LoginFlow.Dependency(loginService: self.loginService,
@@ -71,7 +71,7 @@ class AppFlow: Flow{
         return .one(flowContributor: .contribute(withNextPresentable: loginFlow, withNextStepper: loginStepper))
     }
     
-    private func navigateToOnBoarding() -> FlowContributors{
+    private func navigateToOnBoarding() -> FlowContributors {
     
         let onBoardingFlow = OnBoardingFlow()
         
@@ -86,7 +86,7 @@ class AppFlow: Flow{
                                                  withNextStepper: OneStepper(withSingleStep: CodestackStep.onBoardingRequired)))
     }
     
-    private func dismissOnBoarding() -> FlowContributors{
+    private func dismissOnBoarding() -> FlowContributors {
         if let vc = self.rootViewController.presentedViewController{
             vc.dismiss(animated: true)
         }
