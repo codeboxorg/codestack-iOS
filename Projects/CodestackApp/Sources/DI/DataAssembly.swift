@@ -6,4 +6,21 @@
 //  Copyright © 2023 hyeong. All rights reserved.
 //
 
-import Foundation
+import Swinject
+
+
+public struct DataAssembly: Assembly {
+    
+    public func assemble(container: Container) {
+        
+        container.register(WebRepository.self) { resolver in
+            let tokenService = resolver.resolve(TokenAcquisitionService<ReissueAccessToken>.self)!
+            return DefaultApolloRepository(dependency: tokenService)
+        }
+        
+        container.register(DBRepository.self) { resolver in
+            let coreDataStack = CoreDataStack(version: 1)
+            return DefaultDBRepository(persistenStore: coreDataStack)
+        }
+    }
+}
