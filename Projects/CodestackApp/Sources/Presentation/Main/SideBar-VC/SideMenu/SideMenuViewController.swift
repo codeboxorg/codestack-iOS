@@ -13,13 +13,32 @@ struct SideMenuItem {
     let icon: UIImage?
     let name: String
     let presentation: CodestackStep
+    
+    static let items = [SideMenuItem(icon: UIImage(named: "problem"),
+                                     name: "문제",
+                                     presentation: .problemList),
+                        SideMenuItem(icon: UIImage(named: "submit"),
+                                     name: "제출근황",
+                                     presentation: .recentSolveList(nil)),
+                        SideMenuItem(icon: UIImage(named: "my"),
+                                     name: "마이 페이지",
+                                     presentation: .profilePage),
+                        SideMenuItem(icon: UIImage(named: "home"),
+                                     name: "메인 페이지",
+                                     presentation: .none),
+                        SideMenuItem(icon: UIImage(systemName: "hand.thumbsup"),
+                                     name: "추천",
+                                     presentation: .recommendPage),
+                        SideMenuItem(icon: UIImage(systemName: "lock.open"),
+                                     name: "로그아웃", presentation: .logout)]
+    
 }
 
 //TODO: - SideTabBar Color 정하기
 final class SideMenuViewController: UIViewController ,Stepper{
     
-    static func create(with items: [SideMenuItem]) -> SideMenuViewController{
-        return SideMenuViewController(sideMenuItems: items)
+    static func create(with items: [SideMenuItem] = []) -> SideMenuViewController{
+        return SideMenuViewController(sideMenuItems: SideMenuItem.items)
     }
     
     private var headerView: UIView = {

@@ -10,7 +10,7 @@ import RxFlow
 import RxSwift
 import RxCocoa
 
-class MyPageViewModel: ViewModelType,Stepper{
+class MyPageViewModel: ViewModelType, Stepper{
     
     struct Input{
         var editProfileEvent: Signal<Void>
