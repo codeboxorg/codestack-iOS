@@ -1,17 +1,13 @@
-# Uncomment the next line to define a global platform for your project
-platform :ios, '15.0'
 
-source 'https://github.com/CocoaPods/Specs.git'
-target 'CodeStack' do
- use_frameworks!
+platform :ios, '12.0'
+use_frameworks!
+inhibit_all_warnings!
+
+workspace 'CodeStackApp.xcworkspace'
+project 'Projects/CodestackApp/CodestackApp.xcodeproj'
+
+
+target 'CodestackApp' do
+  project 'Projects/CodestackApp/CodestackApp.xcodeproj'
   pod 'Highlightr'
-  target 'CodeStackTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-  target 'CodeStackUITests' do
-    # Pods for testing
-  end
-
 end
