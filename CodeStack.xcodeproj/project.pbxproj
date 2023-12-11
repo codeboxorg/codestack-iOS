@@ -53,8 +53,6 @@
 		963CD5582B10F5B100172EB9 /* CodeContextMO+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963CD5522B10F5B100172EB9 /* CodeContextMO+CoreDataClass.swift */; };
 		963CD5592B10F5B100172EB9 /* CodeContextMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963CD5532B10F5B100172EB9 /* CodeContextMO+CoreDataProperties.swift */; };
 		96410E542AAA214A004C5313 /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E532AAA214A004C5313 /* UserManager.swift */; };
-		96410E602AAAFB5F004C5313 /* WebRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E5F2AAAFB5F004C5313 /* WebRepository.swift */; };
-		96410E632AAB0213004C5313 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E622AAB0213004C5313 /* API.swift */; };
 		96410E662AAB0B2F004C5313 /* MemberDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E652AAB0B2F004C5313 /* MemberDTO.swift */; };
 		96410E692AAB197B004C5313 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E682AAB197B004C5313 /* AuthService.swift */; };
 		964348912AB0D5B9009CE82F /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964348902AB0D5B9009CE82F /* Array.swift */; };
@@ -149,211 +147,6 @@
 		9692B2482A71357D00404F6D /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9692B2472A71357D00404F6D /* RichTextView.swift */; };
 		969614DC2A81189900181E9F /* NumberButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969614DB2A81189900181E9F /* NumberButton.swift */; };
 		969614E12A81373300181E9F /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969614E02A81373300181E9F /* BackButton.swift */; };
-		96964A602B241C35005753BE /* OnBoardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B4D2A6174170018A5D4 /* OnBoardingFlow.swift */; };
-		96964A612B241C35005753BE /* DummyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112829ED3481006C3E18 /* DummyData.swift */; };
-		96964A622B241C35005753BE /* SubmissionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2EB32A8CE16100298C42 /* SubmissionResultView.swift */; };
-		96964A632B241C35005753BE /* URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AD29FE7ED1008D48B9 /* URLRequest.swift */; };
-		96964A642B241C35005753BE /* OnBoardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B512A617DAB0018A5D4 /* OnBoardingViewModel.swift */; };
-		96964A652B241C35005753BE /* RecentSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EB3452A8FCFD10000B8E6 /* RecentSectionHeader.swift */; };
-		96964A662B241C35005753BE /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E532AAA214A004C5313 /* UserManager.swift */; };
-		96964A672B241C35005753BE /* CAVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE33B62A4C651900BB0817 /* CAVIew.swift */; };
-		96964A682B241C35005753BE /* LoginFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E22A30B5CE00AA95B5 /* LoginFlow.swift */; };
-		96964A692B241C35005753BE /* ProblemCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9A12A49BE38004CB33A /* ProblemCalendar.swift */; };
-		96964A6A2B241C35005753BE /* GraphCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111C29EBF163006C3E18 /* GraphCell.swift */; };
-		96964A6B2B241C35005753BE /* CircleLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9645909C2A487D9E0060BDCE /* CircleLayer.swift */; };
-		96964A6C2B241C35005753BE /* CodeProblemListFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96123D0C2A39FEDB002160B9 /* CodeProblemListFlow.swift */; };
-		96964A6D2B241C35005753BE /* MemberDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E652AAB0B2F004C5313 /* MemberDTO.swift */; };
-		96964A6E2B241C35005753BE /* LanguageMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963CD5512B10F5B100172EB9 /* LanguageMO+CoreDataProperties.swift */; };
-		96964A6F2B241C35005753BE /* CodeProblemFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EDAAAB2A603E7800125558 /* CodeProblemFlow.swift */; };
-		96964A702B241C35005753BE /* KeychainItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A352A56FCFE0091F54F /* KeychainItem.swift */; };
-		96964A712B241C35005753BE /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9972A49BC7D004CB33A /* User.swift */; };
-		96964A722B241C35005753BE /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9603588C2A977BF000C14D68 /* Date.swift */; };
-		96964A732B241C35005753BE /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5AA29FE7C30008D48B9 /* APIError.swift */; };
-		96964A742B241C35005753BE /* SegType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EB3542A9244D30000B8E6 /* SegType.swift */; };
-		96964A752B241C35005753BE /* FavoriteProblemMO-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A479232B218F32002B1466 /* FavoriteProblemMO-extension.swift */; };
-		96964A762B241C35005753BE /* PRSubmissionHistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D4329E2A5263BF002403C4 /* PRSubmissionHistoryCell.swift */; };
-		96964A772B241C35005753BE /* HomeFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B5C2A63D3EC0018A5D4 /* HomeFlow.swift */; };
-		96964A782B241C35005753BE /* SubmissionMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963814B42B1EE8160021539D /* SubmissionMO+CoreDataProperties.swift */; };
-		96964A792B241C35005753BE /* TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358932A977E7B00C14D68 /* TimeInterval.swift */; };
-		96964A7A2B241C35005753BE /* CodestackAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36F52A5442240026DF49 /* CodestackAuthorization.swift */; };
-		96964A7B2B241C35005753BE /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960162DE2A6FF0A7006E43F8 /* Query.swift */; };
-		96964A7C2B241C35005753BE /* GitAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36F32A5441F90026DF49 /* GitAuthorization.swift */; };
-		96964A7D2B241C35005753BE /* SubmissionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E89ECB2B15BCF00098C378 /* SubmissionUseCase.swift */; };
-		96964A7E2B241C35005753BE /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9645909A2A4873740060BDCE /* ProgressView.swift */; };
-		96964A7F2B241C35005753BE /* CodeProblemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653110C29EAF1DF006C3E18 /* CodeProblemViewController.swift */; };
-		96964A802B241C35005753BE /* db_model_v1.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 962C34702B0E2A0C00A38885 /* db_model_v1.xcdatamodeld */; };
-		96964A812B241C35005753BE /* KeyBoardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114729EEA162006C3E18 /* KeyBoardManager.swift */; };
-		96964A822B241C35005753BE /* CodestackIDPwd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36FD2A5452EA0026DF49 /* CodestackIDPwd.swift */; };
-		96964A832B241C35005753BE /* SolveStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2EC62A8D0D1600298C42 /* SolveStatus.swift */; };
-		96964A842B241C35005753BE /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20B62A9F8A8E00EA7137 /* CollectionViewCell.swift */; };
-		96964A852B241C35005753BE /* TokenAcquisitionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B532A62C0CC0018A5D4 /* TokenAcquisitionService.swift */; };
-		96964A862B241C35005753BE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B429EA7A4F006C3E18 /* ViewController.swift */; };
-		96964A872B241C35005753BE /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A629FE7A7A008D48B9 /* LoginService.swift */; };
-		96964A882B241C35005753BE /* CodestackStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E92A30B7A100AA95B5 /* CodestackStep.swift */; };
-		96964A892B241C35005753BE /* FavoriteProblem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965702682B0E4DE500ECAE9B /* FavoriteProblem.swift */; };
-		96964A8A2B241C35005753BE /* NumberButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969614DB2A81189900181E9F /* NumberButton.swift */; };
-		96964A8B2B241C35005753BE /* CodestackResponseToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D432A62A52EFEB002403C4 /* CodestackResponseToken.swift */; };
-		96964A8C2B241C35005753BE /* HistorySegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678252A66838C00873404 /* HistorySegmentedControl.swift */; };
-		96964A8D2B241C35005753BE /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2EB82A8CE3EC00298C42 /* UIButton.swift */; };
-		96964A8E2B241C35005753BE /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96123D112A3A088C002160B9 /* Collection.swift */; };
-		96964A8F2B241C35005753BE /* CreateSubmissionInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9932A49BC18004CB33A /* CreateSubmissionInput.swift */; };
-		96964A902B241C35005753BE /* NetworkInterceptorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96441C052AAC817C001D4DC3 /* NetworkInterceptorProvider.swift */; };
-		96964A912B241C35005753BE /* MyPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D77C492A1C8AF90075E52E /* MyPageViewController.swift */; };
-		96964A922B241C35005753BE /* FavoritProblem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A4791F2B21669F002B1466 /* FavoritProblem+CoreDataProperties.swift */; };
-		96964A932B241C35005753BE /* NumberLinesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA53B129EFE0DA00B5BDD3 /* NumberLinesView.swift */; };
-		96964A942B241C35005753BE /* ProfileImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96441C072AAC98D5001D4DC3 /* ProfileImageViewController.swift */; };
-		96964A952B241C35005753BE /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2EC32A8D0CAA00298C42 /* Toast.swift */; };
-		96964A962B241C35005753BE /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540829F6C71A00B5BDD3 /* CustomTextField.swift */; };
-		96964A972B241C35005753BE /* GraphQLAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960162E72A7006BC006E43F8 /* GraphQLAPI.swift */; };
-		96964A982B241C35005753BE /* TempSubmission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965702652B0E4D3A00ECAE9B /* TempSubmission.swift */; };
-		96964A992B241C35005753BE /* ReissuedAccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966B59D12AAC505400165775 /* ReissuedAccessToken.swift */; };
-		96964A9A2B241C35005753BE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540A29F6C72100B5BDD3 /* LoginView.swift */; };
-		96964A9B2B241C35005753BE /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9952A49BC62004CB33A /* Language.swift */; };
-		96964A9C2B241C35005753BE /* MainSubView-(label 2, button 1).swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310E829EA8EF2006C3E18 /* MainSubView-(label 2, button 1).swift */; };
-		96964A9D2B241C35005753BE /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D99F2A49BE21004CB33A /* Tag.swift */; };
-		96964A9E2B241C35005753BE /* SubmissionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962C34682B0E1D1200A38885 /* SubmissionViewModel.swift */; };
-		96964A9F2B241C35005753BE /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964348902AB0D5B9009CE82F /* Array.swift */; };
-		96964AA02B241C35005753BE /* ConvertUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9692B2422A71256100404F6D /* ConvertUtil.swift */; };
-		96964AA12B241C35005753BE /* SideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310FC29EADF67006C3E18 /* SideMenuViewController.swift */; };
-		96964AA22B241C35005753BE /* HTTPHeaderFiled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A829FE7C15008D48B9 /* HTTPHeaderFiled.swift */; };
-		96964AA32B241C35005753BE /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972822A320370004E0E8B /* HomeViewModel.swift */; };
-		96964AA42B241C35005753BE /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965702552B0E3A6800ECAE9B /* CoreDataStack.swift */; };
-		96964AA52B241C35005753BE /* Login-AppleAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358AA2A9B2F0900C14D68 /* Login-AppleAuthorization.swift */; };
-		96964AA62B241C35005753BE /* TimeDiffereceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358912A977E6600C14D68 /* TimeDiffereceType.swift */; };
-		96964AA72B241C35005753BE /* CodeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112D29EE6E43006C3E18 /* CodeTextView.swift */; };
-		96964AA82B241C35005753BE /* ToastMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F85A2A6BDAB400019349 /* ToastMessage.swift */; };
-		96964AA92B241C35005753BE /* AppFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D638E42A30B5D900AA95B5 /* AppFlow.swift */; };
-		96964AAA2B241C35005753BE /* CodeEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112B29EE6D9E006C3E18 /* CodeEditorViewController.swift */; };
-		96964AAB2B241C35005753BE /* CustomLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114B29EEF1F9006C3E18 /* CustomLayoutManager.swift */; };
-		96964AAC2B241C35005753BE /* TokenInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96441C032AAC72BE001D4DC3 /* TokenInterceptor.swift */; };
-		96964AAD2B241C35005753BE /* GitPostToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B429FE90EC008D48B9 /* GitPostToken.swift */; };
-		96964AAE2B241C35005753BE /* SubmissionHistoryUsecase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96118BFF2B1B3D6400D48B84 /* SubmissionHistoryUsecase.swift */; };
-		96964AAF2B241C35005753BE /* RecentPageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EB3472A90B3D80000B8E6 /* RecentPageModel.swift */; };
-		96964AB02B241C35005753BE /* SubmissionCalendarMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96118BF62B1B32E600D48B84 /* SubmissionCalendarMO+CoreDataProperties.swift */; };
-		96964AB12B241C35005753BE /* LanguageTagContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112329ED1AC0006C3E18 /* LanguageTagContainer.swift */; };
-		96964AB22B241C35005753BE /* SubmissionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96118BE42B186C4F00D48B84 /* SubmissionListView.swift */; };
-		96964AB32B241C35005753BE /* AppleAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE36F12A54419F0026DF49 /* AppleAuthorization.swift */; };
-		96964AB42B241C35005753BE /* AppleLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B629FE9CBF008D48B9 /* AppleLoginService.swift */; };
-		96964AB52B241C35005753BE /* LoadingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966A83642ABEDB8000876F27 /* LoadingButton.swift */; };
-		96964AB62B241C35005753BE /* SideItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653110029EAE008006C3E18 /* SideItemCell.swift */; };
-		96964AB72B241C35005753BE /* SubmissionChartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964348932AB0D633009CE82F /* SubmissionChartCell.swift */; };
-		96964AB82B241C35005753BE /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972862A320DCE004E0E8B /* ViewModelType.swift */; };
-		96964AB92B241C35005753BE /* CodeContextMO+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963CD5522B10F5B100172EB9 /* CodeContextMO+CoreDataClass.swift */; };
-		96964ABA2B241C35005753BE /* CodeStackFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96118BF32B19C1FA00D48B84 /* CodeStackFlow.swift */; };
-		96964ABB2B241C35005753BE /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653114929EEED69006C3E18 /* HistoryViewController.swift */; };
-		96964ABC2B241C35005753BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B029EA7A4F006C3E18 /* AppDelegate.swift */; };
-		96964ABD2B241C35005753BE /* CodeStackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96118BF12B19C1CB00D48B84 /* CodeStackViewController.swift */; };
-		96964ABE2B241C35005753BE /* MyPageFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EDAAAD2A603E8400125558 /* MyPageFlow.swift */; };
-		96964ABF2B241C35005753BE /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F85C2A6BDAD900019349 /* UIView.swift */; };
-		96964AC02B241C35005753BE /* RightAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8642A6C11B300019349 /* RightAlarmView.swift */; };
-		96964AC12B241C35005753BE /* SubmissionChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964348952AB0D64C009CE82F /* SubmissionChart.swift */; };
-		96964AC22B241C35005753BE /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B229FE871C008D48B9 /* LoginViewModel.swift */; };
-		96964AC32B241C35005753BE /* CollectionViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20B82A9F8A9D00EA7137 /* CollectionViewHeader.swift */; };
-		96964AC42B241C35005753BE /* CodeContextMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963CD5532B10F5B100172EB9 /* CodeContextMO+CoreDataProperties.swift */; };
-		96964AC52B241C35005753BE /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310E429EA855D006C3E18 /* Label.swift */; };
-		96964AC62B241C35005753BE /* InsetTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540129F6A0AE00B5BDD3 /* InsetTextField.swift */; };
-		96964AC72B241C35005753BE /* CodeProblemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BC2A02765A008D48B9 /* CodeProblemViewModel.swift */; };
-		96964AC82B241C35005753BE /* GitHubLoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5A329FE751E008D48B9 /* GitHubLoginButton.swift */; };
-		96964AC92B241C35005753BE /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9676782E2A66ADCE00873404 /* HistoryViewModel.swift */; };
-		96964ACA2B241C35005753BE /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20AE2A9F770600EA7137 /* RegisterViewController.swift */; };
-		96964ACB2B241C35005753BE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9692B2472A71357D00404F6D /* RichTextView.swift */; };
-		96964ACC2B241C35005753BE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E622AAB0213004C5313 /* API.swift */; };
-		96964ACD2B241C35005753BE /* TabBarFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972802A31FFE3004E0E8B /* TabBarFlow.swift */; };
-		96964ACE2B241C35005753BE /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E682AAB197B004C5313 /* AuthService.swift */; };
-		96964ACF2B241C35005753BE /* SubmissionMO-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E89EC42B15B80B0098C378 /* SubmissionMO-extension.swift */; };
-		96964AD02B241C35005753BE /* CodeEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DFD9592A7D29870056D7BB /* CodeEditorViewModel.swift */; };
-		96964AD12B241C35005753BE /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964590982A4870350060BDCE /* StatusView.swift */; };
-		96964AD22B241C35005753BE /* CColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964590A02A488D970060BDCE /* CColor.swift */; };
-		96964AD32B241C35005753BE /* UITableVIew-Refresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20AA2A9E2DA500EA7137 /* UITableVIew-Refresh.swift */; };
-		96964AD42B241C35005753BE /* LangugeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653112629ED1B5F006C3E18 /* LangugeView.swift */; };
-		96964AD52B241C35005753BE /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678272A668C2200873404 /* Container.swift */; };
-		96964AD62B241C35005753BE /* TokenAcquisitionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96440DA12AA646E400C016F0 /* TokenAcquisitionError.swift */; };
-		96964AD72B241C35005753BE /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D9A72A49CC1F004CB33A /* GraphView.swift */; };
-		96964AD82B241C35005753BE /* WebRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96410E5F2AAAFB5F004C5313 /* WebRepository.swift */; };
-		96964AD92B241C35005753BE /* DateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9603588F2A977E5200C14D68 /* DateCalculator.swift */; };
-		96964ADA2B241C35005753BE /* CellIdentifierProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111529EBD729006C3E18 /* CellIdentifierProtocol.swift */; };
-		96964ADB2B241C35005753BE /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2EC82A8D0F8F00298C42 /* Animation.swift */; };
-		96964ADC2B241C35005753BE /* UITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C77B4B2AA3691100F9CA9B /* UITextField.swift */; };
-		96964ADD2B241C35005753BE /* DBRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9657026D2B0E577E00ECAE9B /* DBRepository.swift */; };
-		96964ADE2B241C35005753BE /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EDAAA92A6036E000125558 /* CustomTabBarController.swift */; };
-		96964ADF2B241C35005753BE /* HighlightButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653110929EAF0EA006C3E18 /* HighlightButton.swift */; };
-		96964AE02B241C35005753BE /* RandomNonceString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5B829FE9DEB008D48B9 /* RandomNonceString.swift */; };
-		96964AE12B241C35005753BE /* ApplePostToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE33B42A4C547500BB0817 /* ApplePostToken.swift */; };
-		96964AE22B241C35005753BE /* WKWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2EB52A8CE1EC00298C42 /* WKWebView.swift */; };
-		96964AE32B241C35005753BE /* ProblemItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111829EBD7CF006C3E18 /* ProblemItemModel.swift */; };
-		96964AE42B241C35005753BE /* DefaultApolloRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960162E52A70064B006E43F8 /* DefaultApolloRepository.swift */; };
-		96964AE52B241C35005753BE /* UIApplication-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653110329EAE092006C3E18 /* UIApplication-extension.swift */; };
-		96964AE62B241C35005753BE /* ProblemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111329EBD176006C3E18 /* ProblemCell.swift */; };
-		96964AE72B241C35005753BE /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EB33E2A8FA3650000B8E6 /* Double.swift */; };
-		96964AE82B241C35005753BE /* SubmissionCalendarsMO-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96118BF92B1B346500D48B84 /* SubmissionCalendarsMO-extension.swift */; };
-		96964AE92B241C35005753BE /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967678292A66955800873404 /* String.swift */; };
-		96964AEA2B241C35005753BE /* Login-CodestackAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358A82A9B2EE500C14D68 /* Login-CodestackAuthorization.swift */; };
-		96964AEB2B241C35005753BE /* CustomBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F8622A6C09BA00019349 /* CustomBottomView.swift */; };
-		96964AEC2B241C35005753BE /* Submission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D99D2A49BD6E004CB33A /* Submission.swift */; };
-		96964AED2B241C35005753BE /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D77C4B2A1C8B160075E52E /* ProfileView.swift */; };
-		96964AEE2B241C35005753BE /* BoxContainerLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2EC12A8D0BFE00298C42 /* BoxContainerLabel.swift */; };
-		96964AEF2B241C35005753BE /* MyProfileDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964DC9FB2AB0892100178A67 /* MyProfileDetailViewController.swift */; };
-		96964AF02B241C35005753BE /* LoginButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966972882A32104A004E0E8B /* LoginButtonType.swift */; };
-		96964AF12B241C35005753BE /* LanguageMO+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963CD5502B10F5B100172EB9 /* LanguageMO+CoreDataClass.swift */; };
-		96964AF22B241C35005753BE /* CircleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9645909E2A4886990060BDCE /* CircleProgressView.swift */; };
-		96964AF32B241C35005753BE /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966D6D112A8E436800F3EEE0 /* UIImage.swift */; };
-		96964AF42B241C35005753BE /* SubmissionContribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962C346A2B0E1D4F00A38885 /* SubmissionContribution.swift */; };
-		96964AF52B241C35005753BE /* vc-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960C353E2AB9CB7B005E0FF4 /* vc-extension.swift */; };
-		96964AF62B241C35005753BE /* DefaultGraphQLAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86B2A6D181900019349 /* DefaultGraphQLAPI.swift */; };
-		96964AF72B241C35005753BE /* FavoritProblem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A4791E2B21669F002B1466 /* FavoritProblem+CoreDataClass.swift */; };
-		96964AF82B241C35005753BE /* ProblemSubmissionStateMO-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E89EC62B15B8260098C378 /* ProblemSubmissionStateMO-extension.swift */; };
-		96964AF92B241C35005753BE /* OnBoardingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B4F2A617C2D0018A5D4 /* OnBoardingVC.swift */; };
-		96964AFA2B241C35005753BE /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310E629EA8E96006C3E18 /* MainView.swift */; };
-		96964AFB2B241C35005753BE /* ProblemSubmissionStateMO+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ADDFC92B15885D003328BF /* ProblemSubmissionStateMO+CoreDataProperties.swift */; };
-		96964AFC2B241C35005753BE /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969614E02A81373300181E9F /* BackButton.swift */; };
-		96964AFD2B241C35005753BE /* FoldButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96C9F5BE2A03C456008D48B9 /* FoldButton.swift */; };
-		96964AFE2B241C35005753BE /* ProblemPopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA53FE29F53DAB00B5BDD3 /* ProblemPopUpView.swift */; };
-		96964AFF2B241C35005753BE /* ProblemSubmissionStateMO+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96ADDFC82B15885D003328BF /* ProblemSubmissionStateMO+CoreDataClass.swift */; };
-		96964B002B241C35005753BE /* RxApollo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F86D2A6D186700019349 /* RxApollo.swift */; };
-		96964B012B241C35005753BE /* TestRetruy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B552A62CC730018A5D4 /* TestRetruy.swift */; };
-		96964B022B241C35005753BE /* Problem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9665D99B2A49BD3A004CB33A /* Problem.swift */; };
-		96964B032B241C35005753BE /* SendProblemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DFD95B2A7D36380056D7BB /* SendProblemModel.swift */; };
-		96964B042B241C35005753BE /* UILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20BB2A9F8AD300EA7137 /* UILabel.swift */; };
-		96964B052B241C35005753BE /* CALayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9653111F29ED1730006C3E18 /* CALayer.swift */; };
-		96964B062B241C35005753BE /* SubmissionCalendarMO+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96118BF52B1B32E600D48B84 /* SubmissionCalendarMO+CoreDataClass.swift */; };
-		96964B072B241C35005753BE /* SubmissionChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964348972AB0D782009CE82F /* SubmissionChartView.swift */; };
-		96964B082B241C35005753BE /* PRSubmissionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EB34F2A90C4BC0000B8E6 /* PRSubmissionTableViewCell.swift */; };
-		96964B092B241C35005753BE /* CodeContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965702632B0E4CE000ECAE9B /* CodeContext.swift */; };
-		96964B0A2B241C35005753BE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540629F6C71400B5BDD3 /* LoginViewController.swift */; };
-		96964B0B2B241C35005753BE /* HistoryFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EDAAAF2A603E8A00125558 /* HistoryFlow.swift */; };
-		96964B0C2B241C35005753BE /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9629F85E2A6BDB0800019349 /* Position.swift */; };
-		96964B0D2B241C35005753BE /* Models-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965702592B0E475700ECAE9B /* Models-extension.swift */; };
-		96964B0E2B241C35005753BE /* SolvePageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DD2EBC2A8CFD7500298C42 /* SolvePageType.swift */; };
-		96964B0F2B241C35005753BE /* CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965702572B0E3AB800ECAE9B /* CoreDataHelper.swift */; };
-		96964B102B241C35005753BE /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D31B5A2A63D03B0018A5D4 /* MyPageViewModel.swift */; };
-		96964B112B241C35005753BE /* PagingOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20B32A9F8A7000EA7137 /* PagingOnboardingViewController.swift */; };
-		96964B122B241C35005753BE /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963A4CD02ABC7C320077CE1F /* Dictionary.swift */; };
-		96964B132B241C35005753BE /* Login-GitAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960358AC2A9B2F4200C14D68 /* Login-GitAuthorization.swift */; };
-		96964B142B241C35005753BE /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960C35402AB9E44B005E0FF4 /* CustomTabBar.swift */; };
-		96964B152B241C35005753BE /* SubmissionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968EB34D2A90C4930000B8E6 /* SubmissionCell.swift */; };
-		96964B162B241C35005753BE /* OAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D432A12A526A1D002403C4 /* OAuthorization.swift */; };
-		96964B172B241C35005753BE /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961773582A68036A00AFE287 /* HistoryCell.swift */; };
-		96964B182B241C35005753BE /* SubmissionMO+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963814B32B1EE8160021539D /* SubmissionMO+CoreDataClass.swift */; };
-		96964B192B241C35005753BE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965310B229EA7A4F006C3E18 /* SceneDelegate.swift */; };
-		96964B1A2B241C35005753BE /* String-HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96653BB72A71467D00557E3A /* String-HTML.swift */; };
-		96964B1B2B241C35005753BE /* LoginButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96BA540C29F6CA1800B5BDD3 /* LoginButton.swift */; };
-		96964B1C2B241C35005753BE /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96796A372A584C500091F54F /* Log.swift */; };
-		96964B2A2B241C35005753BE /* javascript in Resources */ = {isa = PBXBuildFile; fileRef = 9653113829EE9611006C3E18 /* javascript */; };
-		96964B2B2B241C35005753BE /* typescript in Resources */ = {isa = PBXBuildFile; fileRef = 9653113229EE95F4006C3E18 /* typescript */; };
-		96964B2C2B241C35005753BE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 965310B929EA7A51006C3E18 /* Assets.xcassets */; };
-		96964B2D2B241C35005753BE /* swift in Resources */ = {isa = PBXBuildFile; fileRef = 9653113129EE95F4006C3E18 /* swift */; };
-		96964B2E2B241C35005753BE /* graphqlQueries.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 96564B442A5C30340054193F /* graphqlQueries.graphql */; };
-		96964B2F2B241C35005753BE /* nodejs in Resources */ = {isa = PBXBuildFile; fileRef = 96118BEE2B19724200D48B84 /* nodejs */; };
-		96964B302B241C35005753BE /* kotlin in Resources */ = {isa = PBXBuildFile; fileRef = 9653113F29EE9637006C3E18 /* kotlin */; };
-		96964B312B241C35005753BE /* c in Resources */ = {isa = PBXBuildFile; fileRef = 96118BEA2B1971D300D48B84 /* c */; };
-		96964B322B241C35005753BE /* appstore.png in Resources */ = {isa = PBXBuildFile; fileRef = 96C9F5A129FE73D6008D48B9 /* appstore.png */; };
-		96964B332B241C35005753BE /* go in Resources */ = {isa = PBXBuildFile; fileRef = 9653113B29EE9617006C3E18 /* go */; };
-		96964B342B241C35005753BE /* python3 in Resources */ = {isa = PBXBuildFile; fileRef = 9653113529EE9608006C3E18 /* python3 */; };
-		96964B352B241C35005753BE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 965310BB29EA7A51006C3E18 /* LaunchScreen.storyboard */; };
-		96964B362B241C35005753BE /* c++ in Resources */ = {isa = PBXBuildFile; fileRef = 963814B12B1DB04B0021539D /* c++ */; };
-		96964B372B241C35005753BE /* style.css in Resources */ = {isa = PBXBuildFile; fileRef = 96653BB92A71579C00557E3A /* style.css */; };
-		96964B382B241C35005753BE /* java in Resources */ = {isa = PBXBuildFile; fileRef = 9653113729EE9611006C3E18 /* java */; };
-		96964B392B241C35005753BE /* codestackSchema.graphqls in Resources */ = {isa = PBXBuildFile; fileRef = 96564B422A5C26E30054193F /* codestackSchema.graphqls */; };
 		969A53CE2B246CE100916A92 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 969A53CD2B246CE100916A92 /* SnapKit */; };
 		969A53D12B246CEE00916A92 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = 969A53D02B246CEE00916A92 /* Differentiator */; };
 		969A53D32B246CEE00916A92 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 969A53D22B246CEE00916A92 /* RxDataSources */; };
@@ -365,6 +158,13 @@
 		969A53E32B246D3B00916A92 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 969A53E22B246D3B00916A92 /* RxRelay */; };
 		969A53E62B246D8100916A92 /* CodestackAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 969A53E52B246D8100916A92 /* CodestackAPI */; };
 		969A53E92B246D9700916A92 /* RichTextKit in Frameworks */ = {isa = PBXBuildFile; productRef = 969A53E82B246D9700916A92 /* RichTextKit */; };
+		969A53F12B25A39A00916A92 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A53F02B25A39A00916A92 /* Project.swift */; };
+		969A53F52B25A6B300916A92 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A53F42B25A6B300916A92 /* Test.swift */; };
+		969A54022B25AFFC00916A92 /* BuildSetting.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 969A54012B25AFFC00916A92 /* BuildSetting.xcconfig */; };
+		969A54042B25B00D00916A92 /* Codestack.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 969A54032B25B00D00916A92 /* Codestack.xcconfig */; };
+		969A54052B25B54500916A92 /* CodeStack.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */; };
+		969A54072B25B7F200916A92 /* WebRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A54062B25B7F200916A92 /* WebRepository.swift */; };
+		969A54092B25B80D00916A92 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969A54082B25B80D00916A92 /* API.swift */; };
 		969F20AB2A9E2DA500EA7137 /* UITableVIew-Refresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20AA2A9E2DA500EA7137 /* UITableVIew-Refresh.swift */; };
 		969F20AF2A9F770600EA7137 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20AE2A9F770600EA7137 /* RegisterViewController.swift */; };
 		969F20B42A9F8A7000EA7137 /* PagingOnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 969F20B32A9F8A7000EA7137 /* PagingOnboardingViewController.swift */; };
@@ -464,16 +264,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		96964B3B2B241C35005753BE /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -526,8 +316,6 @@
 		963CD5522B10F5B100172EB9 /* CodeContextMO+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CodeContextMO+CoreDataClass.swift"; sourceTree = "<group>"; };
 		963CD5532B10F5B100172EB9 /* CodeContextMO+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CodeContextMO+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		96410E532AAA214A004C5313 /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
-		96410E5F2AAAFB5F004C5313 /* WebRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebRepository.swift; path = ../../../../../../../Documents/WebRepository.swift; sourceTree = "<group>"; };
-		96410E622AAB0213004C5313 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = API.swift; path = ../../../../../../Documents/API.swift; sourceTree = "<group>"; };
 		96410E652AAB0B2F004C5313 /* MemberDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberDTO.swift; sourceTree = "<group>"; };
 		96410E682AAB197B004C5313 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		964348902AB0D5B9009CE82F /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
@@ -626,8 +414,12 @@
 		9692B2472A71357D00404F6D /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		969614DB2A81189900181E9F /* NumberButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberButton.swift; sourceTree = "<group>"; };
 		969614E02A81373300181E9F /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
-		96964B402B241C35005753BE /* CodeStack.DEV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeStack.DEV.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		96964B412B241C35005753BE /* CodeStack copy2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "CodeStack copy2-Info.plist"; path = "/Users/baghyeonghwan/IOSPROJECT/CodeStack/CodeStack copy2-Info.plist"; sourceTree = "<absolute>"; };
+		969A53F02B25A39A00916A92 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		969A53F42B25A6B300916A92 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		969A54012B25AFFC00916A92 /* BuildSetting.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BuildSetting.xcconfig; sourceTree = "<group>"; };
+		969A54032B25B00D00916A92 /* Codestack.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Codestack.xcconfig; sourceTree = "<group>"; };
+		969A54062B25B7F200916A92 /* WebRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRepository.swift; sourceTree = "<group>"; };
+		969A54082B25B80D00916A92 /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		969F20AA2A9E2DA500EA7137 /* UITableVIew-Refresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableVIew-Refresh.swift"; sourceTree = "<group>"; };
 		969F20AE2A9F770600EA7137 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		969F20B32A9F8A7000EA7137 /* PagingOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingOnboardingViewController.swift; sourceTree = "<group>"; };
@@ -674,7 +466,6 @@
 		96D31B552A62CC730018A5D4 /* TestRetruy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRetruy.swift; sourceTree = "<group>"; };
 		96D31B5A2A63D03B0018A5D4 /* MyPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewModel.swift; sourceTree = "<group>"; };
 		96D31B5C2A63D3EC0018A5D4 /* HomeFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeFlow.swift; sourceTree = "<group>"; };
-		96D31BF62A6529840018A5D4 /* CodeStack copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "CodeStack copy-Info.plist"; path = "/Users/baghyeonghwan/IOSPROJECT/CodeStack/CodeStack copy-Info.plist"; sourceTree = "<absolute>"; };
 		96D4329E2A5263BF002403C4 /* PRSubmissionHistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRSubmissionHistoryCell.swift; sourceTree = "<group>"; };
 		96D432A12A526A1D002403C4 /* OAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthorization.swift; sourceTree = "<group>"; };
 		96D432A62A52EFEB002403C4 /* CodestackResponseToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackResponseToken.swift; sourceTree = "<group>"; };
@@ -742,13 +533,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				03912172E61B050E63808F4E /* Pods_CodeStack_CodeStackUITests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		96964B1D2B241C35005753BE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -919,7 +703,7 @@
 		96410E5C2AAAFB3B004C5313 /* Interface */ = {
 			isa = PBXGroup;
 			children = (
-				96410E5F2AAAFB5F004C5313 /* WebRepository.swift */,
+				969A54062B25B7F200916A92 /* WebRepository.swift */,
 			);
 			path = Interface;
 			sourceTree = "<group>";
@@ -944,7 +728,7 @@
 		96410E612AAB0208004C5313 /* Provider */ = {
 			isa = PBXGroup;
 			children = (
-				96410E622AAB0213004C5313 /* API.swift */,
+				969A54082B25B80D00916A92 /* API.swift */,
 			);
 			path = Provider;
 			sourceTree = "<group>";
@@ -1014,14 +798,12 @@
 		965310A429EA7A4F006C3E18 = {
 			isa = PBXGroup;
 			children = (
-				965310AF29EA7A4F006C3E18 /* CodeStack */,
+				965310AF29EA7A4F006C3E18 /* Projects */,
 				965310C629EA7A51006C3E18 /* CodeStackTests */,
 				965310D029EA7A51006C3E18 /* CodeStackUITests */,
 				965310AE29EA7A4F006C3E18 /* Products */,
 				55099AAE04D17F2FB691F355 /* Pods */,
 				2C07342AAD050E547FAC2A75 /* Frameworks */,
-				96D31BF62A6529840018A5D4 /* CodeStack copy-Info.plist */,
-				96964B412B241C35005753BE /* CodeStack copy2-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1031,24 +813,16 @@
 				965310AD29EA7A4F006C3E18 /* CodeStack.app */,
 				965310C329EA7A51006C3E18 /* CodeStackTests.xctest */,
 				965310CD29EA7A51006C3E18 /* CodeStackUITests.xctest */,
-				96964B402B241C35005753BE /* CodeStack.DEV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		965310AF29EA7A4F006C3E18 /* CodeStack */ = {
+		965310AF29EA7A4F006C3E18 /* Projects */ = {
 			isa = PBXGroup;
 			children = (
-				9653114129EE9BFE006C3E18 /* Resources */,
-				9665D9A52A49CB77004CB33A /* Common */,
-				96440DA42AA6493200C016F0 /* APP */,
-				96C9F5A529FE7A67008D48B9 /* Data */,
-				96E89EC82B15BCB10098C378 /* Domain */,
-				9653111029EBCD8E006C3E18 /* Model */,
-				96D638E12A30B51600AA95B5 /* Flow */,
-				965310EA29EA8F59006C3E18 /* Presentation */,
+				969A53F82B25A7BB00916A92 /* CodestackApp */,
 			);
-			path = CodeStack;
+			path = Projects;
 			sourceTree = "<group>";
 		};
 		965310C629EA7A51006C3E18 /* CodeStackTests */ = {
@@ -1239,7 +1013,6 @@
 				96C9F5BA29FEA185008D48B9 /* CodeStack.entitlements */,
 				96653BB92A71579C00557E3A /* style.css */,
 				965310B929EA7A51006C3E18 /* Assets.xcassets */,
-				96C9F59C29FE6FBF008D48B9 /* Config.xcconfig */,
 				965310BB29EA7A51006C3E18 /* LaunchScreen.storyboard */,
 				965310BE29EA7A51006C3E18 /* Info.plist */,
 				96C9F5A129FE73D6008D48B9 /* appstore.png */,
@@ -1435,6 +1208,42 @@
 				9653110C29EAF1DF006C3E18 /* CodeProblemViewController.swift */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		969A53EE2B25A38500916A92 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				969A53F42B25A6B300916A92 /* Test.swift */,
+				9665D9A52A49CB77004CB33A /* Common */,
+				96440DA42AA6493200C016F0 /* APP */,
+				96C9F5A529FE7A67008D48B9 /* Data */,
+				9653111029EBCD8E006C3E18 /* Model */,
+				96E89EC82B15BCB10098C378 /* Domain */,
+				96D638E12A30B51600AA95B5 /* Flow */,
+				965310EA29EA8F59006C3E18 /* Presentation */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		969A53F82B25A7BB00916A92 /* CodestackApp */ = {
+			isa = PBXGroup;
+			children = (
+				969A53FE2B25AFBC00916A92 /* Config */,
+				969A53F02B25A39A00916A92 /* Project.swift */,
+				9653114129EE9BFE006C3E18 /* Resources */,
+				969A53EE2B25A38500916A92 /* Sources */,
+			);
+			path = CodestackApp;
+			sourceTree = "<group>";
+		};
+		969A53FE2B25AFBC00916A92 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				96C9F59C29FE6FBF008D48B9 /* Config.xcconfig */,
+				969A54032B25B00D00916A92 /* Codestack.xcconfig */,
+				969A54012B25AFFC00916A92 /* BuildSetting.xcconfig */,
+			);
+			path = Config;
 			sourceTree = "<group>";
 		};
 		969F20B02A9F837C00EA7137 /* ViewController */ = {
@@ -1804,24 +1613,6 @@
 			productReference = 965310CD29EA7A51006C3E18 /* CodeStackUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		96964A4C2B241C35005753BE /* CodeStack.DEV */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 96964B3C2B241C35005753BE /* Build configuration list for PBXNativeTarget "CodeStack.DEV" */;
-			buildPhases = (
-				96964A5F2B241C35005753BE /* Sources */,
-				96964B1D2B241C35005753BE /* Frameworks */,
-				96964B292B241C35005753BE /* Resources */,
-				96964B3B2B241C35005753BE /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = CodeStack.DEV;
-			productName = CodeStack;
-			productReference = 96964B402B241C35005753BE /* CodeStack.DEV.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1868,7 +1659,6 @@
 			projectRoot = "";
 			targets = (
 				965310AC29EA7A4F006C3E18 /* CodeStack */,
-				96964A4C2B241C35005753BE /* CodeStack.DEV */,
 				965310C229EA7A51006C3E18 /* CodeStackTests */,
 				965310CC29EA7A51006C3E18 /* CodeStackUITests */,
 			);
@@ -1880,13 +1670,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				969A54052B25B54500916A92 /* CodeStack.entitlements in Resources */,
 				9653113A29EE9611006C3E18 /* javascript in Resources */,
 				9653113429EE95F4006C3E18 /* typescript in Resources */,
 				9653110529EAE35E006C3E18 /* Assets.xcassets in Resources */,
 				9653113329EE95F4006C3E18 /* swift in Resources */,
 				96564B452A5C30340054193F /* graphqlQueries.graphql in Resources */,
 				96118BEF2B19724200D48B84 /* nodejs in Resources */,
+				969A54042B25B00D00916A92 /* Codestack.xcconfig in Resources */,
 				9653114029EE9637006C3E18 /* kotlin in Resources */,
+				969A54022B25AFFC00916A92 /* BuildSetting.xcconfig in Resources */,
 				96118BEC2B1971D300D48B84 /* c in Resources */,
 				96C9F5A229FE73D6008D48B9 /* appstore.png in Resources */,
 				9653113C29EE9617006C3E18 /* go in Resources */,
@@ -1910,29 +1703,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		96964B292B241C35005753BE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96964B2A2B241C35005753BE /* javascript in Resources */,
-				96964B2B2B241C35005753BE /* typescript in Resources */,
-				96964B2C2B241C35005753BE /* Assets.xcassets in Resources */,
-				96964B2D2B241C35005753BE /* swift in Resources */,
-				96964B2E2B241C35005753BE /* graphqlQueries.graphql in Resources */,
-				96964B2F2B241C35005753BE /* nodejs in Resources */,
-				96964B302B241C35005753BE /* kotlin in Resources */,
-				96964B312B241C35005753BE /* c in Resources */,
-				96964B322B241C35005753BE /* appstore.png in Resources */,
-				96964B332B241C35005753BE /* go in Resources */,
-				96964B342B241C35005753BE /* python3 in Resources */,
-				96964B352B241C35005753BE /* LaunchScreen.storyboard in Resources */,
-				96964B362B241C35005753BE /* c++ in Resources */,
-				96964B372B241C35005753BE /* style.css in Resources */,
-				96964B382B241C35005753BE /* java in Resources */,
-				96964B392B241C35005753BE /* codestackSchema.graphqls in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2064,6 +1834,7 @@
 				96EDAAAC2A603E7800125558 /* CodeProblemFlow.swift in Sources */,
 				96796A362A56FCFE0091F54F /* KeychainItem.swift in Sources */,
 				9665D9982A49BC7D004CB33A /* User.swift in Sources */,
+				969A54092B25B80D00916A92 /* API.swift in Sources */,
 				9603588D2A977BF000C14D68 /* Date.swift in Sources */,
 				96C9F5AB29FE7C30008D48B9 /* APIError.swift in Sources */,
 				968EB3552A9244D30000B8E6 /* SegType.swift in Sources */,
@@ -2109,6 +1880,7 @@
 				965310E929EA8EF2006C3E18 /* MainSubView-(label 2, button 1).swift in Sources */,
 				9665D9A02A49BE21004CB33A /* Tag.swift in Sources */,
 				962C34692B0E1D1200A38885 /* SubmissionViewModel.swift in Sources */,
+				969A53F12B25A39A00916A92 /* Project.swift in Sources */,
 				964348912AB0D5B9009CE82F /* Array.swift in Sources */,
 				9692B2432A71256100404F6D /* ConvertUtil.swift in Sources */,
 				965310FD29EADF67006C3E18 /* SideMenuViewController.swift in Sources */,
@@ -2142,6 +1914,7 @@
 				96118BF22B19C1CB00D48B84 /* CodeStackViewController.swift in Sources */,
 				96EDAAAE2A603E8400125558 /* MyPageFlow.swift in Sources */,
 				9629F85D2A6BDAD900019349 /* UIView.swift in Sources */,
+				969A53F52B25A6B300916A92 /* Test.swift in Sources */,
 				9629F8652A6C11B300019349 /* RightAlarmView.swift in Sources */,
 				964348962AB0D64C009CE82F /* SubmissionChart.swift in Sources */,
 				96C9F5B329FE871C008D48B9 /* LoginViewModel.swift in Sources */,
@@ -2150,11 +1923,11 @@
 				965310E529EA855D006C3E18 /* Label.swift in Sources */,
 				96BA540229F6A0AE00B5BDD3 /* InsetTextField.swift in Sources */,
 				96C9F5BD2A02765A008D48B9 /* CodeProblemViewModel.swift in Sources */,
+				969A54072B25B7F200916A92 /* WebRepository.swift in Sources */,
 				96C9F5A429FE751E008D48B9 /* GitHubLoginButton.swift in Sources */,
 				9676782F2A66ADCE00873404 /* HistoryViewModel.swift in Sources */,
 				969F20AF2A9F770600EA7137 /* RegisterViewController.swift in Sources */,
 				9692B2482A71357D00404F6D /* RichTextView.swift in Sources */,
-				96410E632AAB0213004C5313 /* API.swift in Sources */,
 				966972812A31FFE3004E0E8B /* TabBarFlow.swift in Sources */,
 				96410E692AAB197B004C5313 /* AuthService.swift in Sources */,
 				96E89EC52B15B80B0098C378 /* SubmissionMO-extension.swift in Sources */,
@@ -2166,7 +1939,6 @@
 				967678282A668C2200873404 /* Container.swift in Sources */,
 				96440DA22AA646E400C016F0 /* TokenAcquisitionError.swift in Sources */,
 				9665D9A82A49CC1F004CB33A /* GraphView.swift in Sources */,
-				96410E602AAAFB5F004C5313 /* WebRepository.swift in Sources */,
 				960358902A977E5300C14D68 /* DateCalculator.swift in Sources */,
 				9653111629EBD729006C3E18 /* CellIdentifierProtocol.swift in Sources */,
 				96DD2EC92A8D0F8F00298C42 /* Animation.swift in Sources */,
@@ -2252,202 +2024,6 @@
 			files = (
 				965310D429EA7A51006C3E18 /* CodeStackUITestsLaunchTests.swift in Sources */,
 				965310D229EA7A51006C3E18 /* CodeStackUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		96964A5F2B241C35005753BE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				96964A602B241C35005753BE /* OnBoardingFlow.swift in Sources */,
-				96964A612B241C35005753BE /* DummyData.swift in Sources */,
-				96964A622B241C35005753BE /* SubmissionResultView.swift in Sources */,
-				96964A632B241C35005753BE /* URLRequest.swift in Sources */,
-				96964A642B241C35005753BE /* OnBoardingViewModel.swift in Sources */,
-				96964A652B241C35005753BE /* RecentSectionHeader.swift in Sources */,
-				96964A662B241C35005753BE /* UserManager.swift in Sources */,
-				96964A672B241C35005753BE /* CAVIew.swift in Sources */,
-				96964A682B241C35005753BE /* LoginFlow.swift in Sources */,
-				96964A692B241C35005753BE /* ProblemCalendar.swift in Sources */,
-				96964A6A2B241C35005753BE /* GraphCell.swift in Sources */,
-				96964A6B2B241C35005753BE /* CircleLayer.swift in Sources */,
-				96964A6C2B241C35005753BE /* CodeProblemListFlow.swift in Sources */,
-				96964A6D2B241C35005753BE /* MemberDTO.swift in Sources */,
-				96964A6E2B241C35005753BE /* LanguageMO+CoreDataProperties.swift in Sources */,
-				96964A6F2B241C35005753BE /* CodeProblemFlow.swift in Sources */,
-				96964A702B241C35005753BE /* KeychainItem.swift in Sources */,
-				96964A712B241C35005753BE /* User.swift in Sources */,
-				96964A722B241C35005753BE /* Date.swift in Sources */,
-				96964A732B241C35005753BE /* APIError.swift in Sources */,
-				96964A742B241C35005753BE /* SegType.swift in Sources */,
-				96964A752B241C35005753BE /* FavoriteProblemMO-extension.swift in Sources */,
-				96964A762B241C35005753BE /* PRSubmissionHistoryCell.swift in Sources */,
-				96964A772B241C35005753BE /* HomeFlow.swift in Sources */,
-				96964A782B241C35005753BE /* SubmissionMO+CoreDataProperties.swift in Sources */,
-				96964A792B241C35005753BE /* TimeInterval.swift in Sources */,
-				96964A7A2B241C35005753BE /* CodestackAuthorization.swift in Sources */,
-				96964A7B2B241C35005753BE /* Query.swift in Sources */,
-				96964A7C2B241C35005753BE /* GitAuthorization.swift in Sources */,
-				96964A7D2B241C35005753BE /* SubmissionUseCase.swift in Sources */,
-				96964A7E2B241C35005753BE /* ProgressView.swift in Sources */,
-				96964A7F2B241C35005753BE /* CodeProblemViewController.swift in Sources */,
-				96964A802B241C35005753BE /* db_model_v1.xcdatamodeld in Sources */,
-				96964A812B241C35005753BE /* KeyBoardManager.swift in Sources */,
-				96964A822B241C35005753BE /* CodestackIDPwd.swift in Sources */,
-				96964A832B241C35005753BE /* SolveStatus.swift in Sources */,
-				96964A842B241C35005753BE /* CollectionViewCell.swift in Sources */,
-				96964A852B241C35005753BE /* TokenAcquisitionService.swift in Sources */,
-				96964A862B241C35005753BE /* ViewController.swift in Sources */,
-				96964A872B241C35005753BE /* LoginService.swift in Sources */,
-				96964A882B241C35005753BE /* CodestackStep.swift in Sources */,
-				96964A892B241C35005753BE /* FavoriteProblem.swift in Sources */,
-				96964A8A2B241C35005753BE /* NumberButton.swift in Sources */,
-				96964A8B2B241C35005753BE /* CodestackResponseToken.swift in Sources */,
-				96964A8C2B241C35005753BE /* HistorySegmentedControl.swift in Sources */,
-				96964A8D2B241C35005753BE /* UIButton.swift in Sources */,
-				96964A8E2B241C35005753BE /* Collection.swift in Sources */,
-				96964A8F2B241C35005753BE /* CreateSubmissionInput.swift in Sources */,
-				96964A902B241C35005753BE /* NetworkInterceptorProvider.swift in Sources */,
-				96964A912B241C35005753BE /* MyPageViewController.swift in Sources */,
-				96964A922B241C35005753BE /* FavoritProblem+CoreDataProperties.swift in Sources */,
-				96964A932B241C35005753BE /* NumberLinesView.swift in Sources */,
-				96964A942B241C35005753BE /* ProfileImageViewController.swift in Sources */,
-				96964A952B241C35005753BE /* Toast.swift in Sources */,
-				96964A962B241C35005753BE /* CustomTextField.swift in Sources */,
-				96964A972B241C35005753BE /* GraphQLAPI.swift in Sources */,
-				96964A982B241C35005753BE /* TempSubmission.swift in Sources */,
-				96964A992B241C35005753BE /* ReissuedAccessToken.swift in Sources */,
-				96964A9A2B241C35005753BE /* LoginView.swift in Sources */,
-				96964A9B2B241C35005753BE /* Language.swift in Sources */,
-				96964A9C2B241C35005753BE /* MainSubView-(label 2, button 1).swift in Sources */,
-				96964A9D2B241C35005753BE /* Tag.swift in Sources */,
-				96964A9E2B241C35005753BE /* SubmissionViewModel.swift in Sources */,
-				96964A9F2B241C35005753BE /* Array.swift in Sources */,
-				96964AA02B241C35005753BE /* ConvertUtil.swift in Sources */,
-				96964AA12B241C35005753BE /* SideMenuViewController.swift in Sources */,
-				96964AA22B241C35005753BE /* HTTPHeaderFiled.swift in Sources */,
-				96964AA32B241C35005753BE /* HomeViewModel.swift in Sources */,
-				96964AA42B241C35005753BE /* CoreDataStack.swift in Sources */,
-				96964AA52B241C35005753BE /* Login-AppleAuthorization.swift in Sources */,
-				96964AA62B241C35005753BE /* TimeDiffereceType.swift in Sources */,
-				96964AA72B241C35005753BE /* CodeTextView.swift in Sources */,
-				96964AA82B241C35005753BE /* ToastMessage.swift in Sources */,
-				96964AA92B241C35005753BE /* AppFlow.swift in Sources */,
-				96964AAA2B241C35005753BE /* CodeEditorViewController.swift in Sources */,
-				96964AAB2B241C35005753BE /* CustomLayoutManager.swift in Sources */,
-				96964AAC2B241C35005753BE /* TokenInterceptor.swift in Sources */,
-				96964AAD2B241C35005753BE /* GitPostToken.swift in Sources */,
-				96964AAE2B241C35005753BE /* SubmissionHistoryUsecase.swift in Sources */,
-				96964AAF2B241C35005753BE /* RecentPageModel.swift in Sources */,
-				96964AB02B241C35005753BE /* SubmissionCalendarMO+CoreDataProperties.swift in Sources */,
-				96964AB12B241C35005753BE /* LanguageTagContainer.swift in Sources */,
-				96964AB22B241C35005753BE /* SubmissionListView.swift in Sources */,
-				96964AB32B241C35005753BE /* AppleAuthorization.swift in Sources */,
-				96964AB42B241C35005753BE /* AppleLoginService.swift in Sources */,
-				96964AB52B241C35005753BE /* LoadingButton.swift in Sources */,
-				96964AB62B241C35005753BE /* SideItemCell.swift in Sources */,
-				96964AB72B241C35005753BE /* SubmissionChartCell.swift in Sources */,
-				96964AB82B241C35005753BE /* ViewModelType.swift in Sources */,
-				96964AB92B241C35005753BE /* CodeContextMO+CoreDataClass.swift in Sources */,
-				96964ABA2B241C35005753BE /* CodeStackFlow.swift in Sources */,
-				96964ABB2B241C35005753BE /* HistoryViewController.swift in Sources */,
-				96964ABC2B241C35005753BE /* AppDelegate.swift in Sources */,
-				96964ABD2B241C35005753BE /* CodeStackViewController.swift in Sources */,
-				96964ABE2B241C35005753BE /* MyPageFlow.swift in Sources */,
-				96964ABF2B241C35005753BE /* UIView.swift in Sources */,
-				96964AC02B241C35005753BE /* RightAlarmView.swift in Sources */,
-				96964AC12B241C35005753BE /* SubmissionChart.swift in Sources */,
-				96964AC22B241C35005753BE /* LoginViewModel.swift in Sources */,
-				96964AC32B241C35005753BE /* CollectionViewHeader.swift in Sources */,
-				96964AC42B241C35005753BE /* CodeContextMO+CoreDataProperties.swift in Sources */,
-				96964AC52B241C35005753BE /* Label.swift in Sources */,
-				96964AC62B241C35005753BE /* InsetTextField.swift in Sources */,
-				96964AC72B241C35005753BE /* CodeProblemViewModel.swift in Sources */,
-				96964AC82B241C35005753BE /* GitHubLoginButton.swift in Sources */,
-				96964AC92B241C35005753BE /* HistoryViewModel.swift in Sources */,
-				96964ACA2B241C35005753BE /* RegisterViewController.swift in Sources */,
-				96964ACB2B241C35005753BE /* RichTextView.swift in Sources */,
-				96964ACC2B241C35005753BE /* API.swift in Sources */,
-				96964ACD2B241C35005753BE /* TabBarFlow.swift in Sources */,
-				96964ACE2B241C35005753BE /* AuthService.swift in Sources */,
-				96964ACF2B241C35005753BE /* SubmissionMO-extension.swift in Sources */,
-				96964AD02B241C35005753BE /* CodeEditorViewModel.swift in Sources */,
-				96964AD12B241C35005753BE /* StatusView.swift in Sources */,
-				96964AD22B241C35005753BE /* CColor.swift in Sources */,
-				96964AD32B241C35005753BE /* UITableVIew-Refresh.swift in Sources */,
-				96964AD42B241C35005753BE /* LangugeView.swift in Sources */,
-				96964AD52B241C35005753BE /* Container.swift in Sources */,
-				96964AD62B241C35005753BE /* TokenAcquisitionError.swift in Sources */,
-				96964AD72B241C35005753BE /* GraphView.swift in Sources */,
-				96964AD82B241C35005753BE /* WebRepository.swift in Sources */,
-				96964AD92B241C35005753BE /* DateCalculator.swift in Sources */,
-				96964ADA2B241C35005753BE /* CellIdentifierProtocol.swift in Sources */,
-				96964ADB2B241C35005753BE /* Animation.swift in Sources */,
-				96964ADC2B241C35005753BE /* UITextField.swift in Sources */,
-				96964ADD2B241C35005753BE /* DBRepository.swift in Sources */,
-				96964ADE2B241C35005753BE /* CustomTabBarController.swift in Sources */,
-				96964ADF2B241C35005753BE /* HighlightButton.swift in Sources */,
-				96964AE02B241C35005753BE /* RandomNonceString.swift in Sources */,
-				96964AE12B241C35005753BE /* ApplePostToken.swift in Sources */,
-				96964AE22B241C35005753BE /* WKWebView.swift in Sources */,
-				96964AE32B241C35005753BE /* ProblemItemModel.swift in Sources */,
-				96964AE42B241C35005753BE /* DefaultApolloRepository.swift in Sources */,
-				96964AE52B241C35005753BE /* UIApplication-extension.swift in Sources */,
-				96964AE62B241C35005753BE /* ProblemCell.swift in Sources */,
-				96964AE72B241C35005753BE /* Double.swift in Sources */,
-				96964AE82B241C35005753BE /* SubmissionCalendarsMO-extension.swift in Sources */,
-				96964AE92B241C35005753BE /* String.swift in Sources */,
-				96964AEA2B241C35005753BE /* Login-CodestackAuthorization.swift in Sources */,
-				96964AEB2B241C35005753BE /* CustomBottomView.swift in Sources */,
-				96964AEC2B241C35005753BE /* Submission.swift in Sources */,
-				96964AED2B241C35005753BE /* ProfileView.swift in Sources */,
-				96964AEE2B241C35005753BE /* BoxContainerLabel.swift in Sources */,
-				96964AEF2B241C35005753BE /* MyProfileDetailViewController.swift in Sources */,
-				96964AF02B241C35005753BE /* LoginButtonType.swift in Sources */,
-				96964AF12B241C35005753BE /* LanguageMO+CoreDataClass.swift in Sources */,
-				96964AF22B241C35005753BE /* CircleProgressView.swift in Sources */,
-				96964AF32B241C35005753BE /* UIImage.swift in Sources */,
-				96964AF42B241C35005753BE /* SubmissionContribution.swift in Sources */,
-				96964AF52B241C35005753BE /* vc-extension.swift in Sources */,
-				96964AF62B241C35005753BE /* DefaultGraphQLAPI.swift in Sources */,
-				96964AF72B241C35005753BE /* FavoritProblem+CoreDataClass.swift in Sources */,
-				96964AF82B241C35005753BE /* ProblemSubmissionStateMO-extension.swift in Sources */,
-				96964AF92B241C35005753BE /* OnBoardingVC.swift in Sources */,
-				96964AFA2B241C35005753BE /* MainView.swift in Sources */,
-				96964AFB2B241C35005753BE /* ProblemSubmissionStateMO+CoreDataProperties.swift in Sources */,
-				96964AFC2B241C35005753BE /* BackButton.swift in Sources */,
-				96964AFD2B241C35005753BE /* FoldButton.swift in Sources */,
-				96964AFE2B241C35005753BE /* ProblemPopUpView.swift in Sources */,
-				96964AFF2B241C35005753BE /* ProblemSubmissionStateMO+CoreDataClass.swift in Sources */,
-				96964B002B241C35005753BE /* RxApollo.swift in Sources */,
-				96964B012B241C35005753BE /* TestRetruy.swift in Sources */,
-				96964B022B241C35005753BE /* Problem.swift in Sources */,
-				96964B032B241C35005753BE /* SendProblemModel.swift in Sources */,
-				96964B042B241C35005753BE /* UILabel.swift in Sources */,
-				96964B052B241C35005753BE /* CALayer.swift in Sources */,
-				96964B062B241C35005753BE /* SubmissionCalendarMO+CoreDataClass.swift in Sources */,
-				96964B072B241C35005753BE /* SubmissionChartView.swift in Sources */,
-				96964B082B241C35005753BE /* PRSubmissionTableViewCell.swift in Sources */,
-				96964B092B241C35005753BE /* CodeContext.swift in Sources */,
-				96964B0A2B241C35005753BE /* LoginViewController.swift in Sources */,
-				96964B0B2B241C35005753BE /* HistoryFlow.swift in Sources */,
-				96964B0C2B241C35005753BE /* Position.swift in Sources */,
-				96964B0D2B241C35005753BE /* Models-extension.swift in Sources */,
-				96964B0E2B241C35005753BE /* SolvePageType.swift in Sources */,
-				96964B0F2B241C35005753BE /* CoreDataHelper.swift in Sources */,
-				96964B102B241C35005753BE /* MyPageViewModel.swift in Sources */,
-				96964B112B241C35005753BE /* PagingOnboardingViewController.swift in Sources */,
-				96964B122B241C35005753BE /* Dictionary.swift in Sources */,
-				96964B132B241C35005753BE /* Login-GitAuthorization.swift in Sources */,
-				96964B142B241C35005753BE /* CustomTabBar.swift in Sources */,
-				96964B152B241C35005753BE /* SubmissionCell.swift in Sources */,
-				96964B162B241C35005753BE /* OAuthorization.swift in Sources */,
-				96964B172B241C35005753BE /* HistoryCell.swift in Sources */,
-				96964B182B241C35005753BE /* SubmissionMO+CoreDataClass.swift in Sources */,
-				96964B192B241C35005753BE /* SceneDelegate.swift in Sources */,
-				96964B1A2B241C35005753BE /* String-HTML.swift in Sources */,
-				96964B1B2B241C35005753BE /* LoginButton.swift in Sources */,
-				96964B1C2B241C35005753BE /* Log.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2606,13 +2182,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CodeStack/Resources/CodeStack.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Projects/CodeStackApp/Resources/CodeStack.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CodeStack/Resources/Info.plist;
+				INFOPLIST_FILE = Projects/CodestackApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "코드스택";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "프로필 사진을 업데이트 하기 위해서는 권한이 필요합니다";
@@ -2641,13 +2217,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CodeStack/Resources/CodeStack.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Projects/CodeStackApp/Resources/CodeStack.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CodeStack/Resources/Info.plist;
+				INFOPLIST_FILE = Projects/CodestackApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "코드스택";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "프로필 사진을 업데이트 하기 위해서는 권한이 필요합니다";
@@ -2746,111 +2322,6 @@
 			};
 			name = Release;
 		};
-		96964B3D2B241C35005753BE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CodeStack/Resources/CodeStack.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "CodeStack copy2-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "$(PRODUCT_NAME)";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "프로필 사진을 업데이트 하기 위해서는 권한이 필요합니다";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.codestack.ios;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		96964B3E2B241C35005753BE /* Dev */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CodeStack/Resources/CodeStack.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "CodeStack copy2-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "$(PRODUCT_NAME)";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "프로필 사진을 업데이트 하기 위해서는 권한이 필요합니다";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "kr.co.CodeStack-iOS.Dev";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Dev;
-		};
-		96964B3F2B241C35005753BE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CodeStack/Resources/CodeStack.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "CodeStack copy2-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "$(PRODUCT_NAME)";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "프로필 사진을 업데이트 하기 위해서는 권한이 필요합니다";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.codestack.ios;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		96AE36FF2A5528EB0026DF49 /* Dev */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 96C9F59C29FE6FBF008D48B9 /* Config.xcconfig */;
@@ -2921,13 +2392,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CodeStack/Resources/CodeStack.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Projects/CodeStackApp/Resources/CodeStack.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2JZ8QNS5D4;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CodeStack/Resources/Info.plist;
+				INFOPLIST_FILE = Projects/CodestackApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "코드스택";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "프로필 사진을 업데이트 하기 위해서는 권한이 필요합니다";
@@ -3027,16 +2498,6 @@
 				965310DE29EA7A51006C3E18 /* Debug */,
 				96AE37022A5528EB0026DF49 /* Dev */,
 				965310DF29EA7A51006C3E18 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		96964B3C2B241C35005753BE /* Build configuration list for PBXNativeTarget "CodeStack.DEV" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				96964B3D2B241C35005753BE /* Debug */,
-				96964B3E2B241C35005753BE /* Dev */,
-				96964B3F2B241C35005753BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
