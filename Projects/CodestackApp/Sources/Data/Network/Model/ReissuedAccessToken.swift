@@ -8,6 +8,6 @@
 import Foundation
 
 
-struct ReissueAccessToken: Codable {
+public struct ReissueAccessToken: Codable {
     let accessToken: Token
 }

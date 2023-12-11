@@ -32,7 +32,7 @@ final class AuthService {
         tokenAcquisionService
     }
     
-    private var initialToken = ReissueAccessToken(accessToken: KeychainItem.currentAccessToken)
+    var initialToken = ReissueAccessToken(accessToken: KeychainItem.currentAccessToken)
     
     private lazy var tokenAcquisionService: TokenAcquisitionService<ReissueAccessToken>
     = TokenAcquisitionService(initialToken: initialToken,
