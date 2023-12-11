@@ -6,4 +6,13 @@
 //  Copyright © 2023 hyeong. All rights reserved.
 //
 
-import Foundation
+import Swinject
+
+public struct OnBoardingAssembly: Assembly {
+    
+    public func assemble(container: Container) {
+        container.register(OnBoardingVC.self) { resolver in
+            return OnBoardingVC.init()
+        }
+    }
+}

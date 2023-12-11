@@ -6,4 +6,18 @@
 //  Copyright © 2023 hyeong. All rights reserved.
 //
 
-import Foundation
+import Swinject
+
+public struct DomainAssembly: Assembly {
+    
+    public func assemble(container: Container) {
+        container.register(SubmissionUseCase.self) { resolver in
+            let db = resolver.resolve(DBRepository.self)!
+            let web = resolver.resolve(WebRepository.self)!
+            return DefaultSubmissionUseCase(dbRepository: db,
+                                            webRepository: web)
+        }
+    }
+}
+
+
