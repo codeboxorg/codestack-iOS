@@ -168,6 +168,8 @@
 		968AC3252B27060000183590 /* LoginAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968AC3242B27060000183590 /* LoginAssembly.swift */; };
 		968AC3272B27060700183590 /* MyPageAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968AC3262B27060700183590 /* MyPageAssembly.swift */; };
 		968AC3292B27060E00183590 /* OnBoardingAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 968AC3282B27060E00183590 /* OnBoardingAssembly.swift */; };
+		96B92AC72B2828470019E66A /* CodeEditorAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B92AC62B2828470019E66A /* CodeEditorAssembly.swift */; };
+		96B92AC92B28317E0019E66A /* RegisterAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B92AC82B28317E0019E66A /* RegisterAssembly.swift */; };
 		97C641F8F1BC8933BDF3ED49 /* SubmissionContribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A60937FB825D741C49A8C8A /* SubmissionContribution.swift */; };
 		980A0923FF1B9E47C912F877 /* MyPageFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8978EDFBF7FF2D9A1927F81 /* MyPageFlow.swift */; };
 		98815A40D66D03F3E5529B1F /* CodeContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D2A91C504B614BAB98FB4A6 /* CodeContext.swift */; };
@@ -453,6 +455,8 @@
 		968AC3242B27060000183590 /* LoginAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAssembly.swift; sourceTree = "<group>"; };
 		968AC3262B27060700183590 /* MyPageAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageAssembly.swift; sourceTree = "<group>"; };
 		968AC3282B27060E00183590 /* OnBoardingAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingAssembly.swift; sourceTree = "<group>"; };
+		96B92AC62B2828470019E66A /* CodeEditorAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeEditorAssembly.swift; sourceTree = "<group>"; };
+		96B92AC82B28317E0019E66A /* RegisterAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterAssembly.swift; sourceTree = "<group>"; };
 		973CDA3EFF241C80DE5F8CF2 /* RecentSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSectionHeader.swift; sourceTree = "<group>"; };
 		988BD2F56FD56201A5AFEE95 /* CodestackAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodestackAuthorization.swift; sourceTree = "<group>"; };
 		989C69004CEE83442395A6C3 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
@@ -763,10 +767,10 @@
 			isa = PBXGroup;
 			children = (
 				A656D634E797171568C44C46 /* APP */,
+				4A30F20EF715992A92604D47 /* DI */,
 				3E024814643472ED3BD57CF5 /* App-Util */,
 				E328FBD19B7B444EB7701839 /* Common */,
 				95E450E3AFE769491E79F77E /* Data */,
-				4A30F20EF715992A92604D47 /* DI */,
 				4A9ACDA0C99D2A2685D7ADC2 /* Domain */,
 				8ACAC03465802ACF56DC2190 /* Flow */,
 				01F596D0818D947FC5FC4F3C /* Model */,
@@ -886,8 +890,10 @@
 				7EC6C932C4E4421541FA7B7A /* Dependency+Injector.swift */,
 				968AC3182B26FF0A00183590 /* HomeAssembly.swift */,
 				968AC3202B27054B00183590 /* CodeProblemAssembly.swift */,
+				96B92AC62B2828470019E66A /* CodeEditorAssembly.swift */,
 				968AC3222B2705FA00183590 /* HistoryAssembly.swift */,
 				968AC3242B27060000183590 /* LoginAssembly.swift */,
+				96B92AC82B28317E0019E66A /* RegisterAssembly.swift */,
 				968AC3262B27060700183590 /* MyPageAssembly.swift */,
 				968AC3282B27060E00183590 /* OnBoardingAssembly.swift */,
 				968AC31A2B2701FF00183590 /* NetworkAssembly.swift */,
@@ -1952,6 +1958,7 @@
 				668128AC630A30E6CAD8D75C /* GitCode.swift in Sources */,
 				8445BB8E425D4A578BF24E15 /* GitPostToken.swift in Sources */,
 				B1576C1BCC29CA96143F1C06 /* MemberDTO.swift in Sources */,
+				96B92AC92B28317E0019E66A /* RegisterAssembly.swift in Sources */,
 				00916C12F7D8105B3913CB1E /* ReissuedAccessToken.swift in Sources */,
 				68753ED7CA3E5E858ED33063 /* API.swift in Sources */,
 				618FD6D26F266024815E7E99 /* TestRetruy.swift in Sources */,
@@ -2094,6 +2101,7 @@
 				ABD1A70F78A6E1A8DB1DEE7A /* CollectionViewHeader.swift in Sources */,
 				CEB9716CE0E8EBA1E0BFE20E /* OnBoardingVC.swift in Sources */,
 				92D15DC8CB5CE1505F13FB32 /* PagingOnboardingViewController.swift in Sources */,
+				96B92AC72B2828470019E66A /* CodeEditorAssembly.swift in Sources */,
 				8BC152747D9ACBF61AF380DA /* OnBoardingViewModel.swift in Sources */,
 				86BA5E5605B69178CE22AE41 /* db_model_v1.xcdatamodeld in Sources */,
 			);
