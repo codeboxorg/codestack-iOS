@@ -8,6 +8,6 @@
 import Foundation
 import RxSwift
 
-protocol CodestackAuthorization: OAuthorization{
+protocol CodestackAuthorization: OAuthorization {
     func request(name id: ID,password: Pwd) -> Maybe<CodestackResponseToken>
 }

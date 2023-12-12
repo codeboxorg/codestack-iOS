@@ -13,7 +13,6 @@ public struct MyPageAssembly: Assembly {
     public func assemble(container: Container) {
         
         container.register(MyPageViewModel.self) { resolver in
-            
             let auth = resolver.resolve(AuthServiceType.self)!
             let web = resolver.resolve(WebRepository.self)!
             

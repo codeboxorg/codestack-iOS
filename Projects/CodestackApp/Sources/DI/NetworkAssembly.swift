@@ -7,7 +7,7 @@
 //
 
 import Swinject
-
+import Foundation
 
 public struct NetworkAssembly: Assembly {
     
