@@ -17,39 +17,22 @@ class LoginFlow: Flow{
     }
     
     struct Dependency {
-        let loginService: OAuthrizationRequest
-        let appleLoginManager: AppleLoginManager
-        let apolloService: WebRepository
-        let authService: AuthServiceType
+        let injector: Injectable
     }
     
-    private let loginService: OAuthrizationRequest
-    private let appleLoginManager: AppleLoginManager
-    private let apolloService: WebRepository
-    private let authService: AuthServiceType
+    private let injector: Injectable
     
     private var disposeBag = DisposeBag()
     
     private var loginStepper: LoginStepper
     
-    private lazy var loginViewController: LoginViewController = {
-        let dependency = LoginViewModel.Dependency(loginService: self.loginService,
-                                                   apolloService: self.apolloService,
-                                                   stepper: self.loginStepper)
-        let viewModel = LoginViewModel(dependency: dependency)
-        let dp = LoginViewController.Dependencies(viewModel: viewModel,appleManager: appleLoginManager)
-        let vc = LoginViewController.create(with: dp)
-        return vc
-    }()
+    private var loginViewController: LoginViewController
     
     init(dependency: Dependency,
          stepper: LoginStepper) {
-        
-        self.appleLoginManager = dependency.appleLoginManager
-        self.loginService = dependency.loginService
-        self.authService = dependency.authService
-        self.apolloService = dependency.apolloService
         self.loginStepper = stepper
+        self.injector = dependency.injector
+        self.loginViewController = injector.resolve(LoginViewController.self)
     }
     
     func navigate(to step: Step) -> FlowContributors {
@@ -78,7 +61,7 @@ class LoginFlow: Flow{
     
     private func navigateToRegisterViewController() -> FlowContributors {
         
-        let registerViewController = RegisterViewController.create(with: self.authService)
+        let registerViewController = injector.resolve(RegisterViewController.self)
         
         registerViewController.adjustLargeTitleSize(title: "회원가입")
         self.loginViewController.navigationController?.isNavigationBarHidden = false
@@ -89,9 +72,9 @@ class LoginFlow: Flow{
     
     private func navigateToHomeViewController() -> FlowContributors{
         
-        let dependency = TabBarFlow.Dependency(loginservice: self.loginService,
-                                               authService: self.authService,
-                                               apolloService: self.apolloService)
+        let dependency = TabBarFlow.Dependency(
+            injector: self.injector
+        )
         
         let flow = TabBarFlow(dependency: dependency)
         
@@ -106,7 +89,7 @@ class LoginFlow: Flow{
 }
 
 
-class LoginStepper: Stepper{
+class LoginStepper: Stepper {
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     

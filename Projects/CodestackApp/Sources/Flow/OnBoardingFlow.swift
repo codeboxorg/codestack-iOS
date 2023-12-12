@@ -20,6 +20,16 @@ class OnBoardingFlow: Flow{
         return viewController
     }()
     
+    struct Dependency {
+        let injector: Injectable
+    }
+    
+    private let injector: Injectable
+    
+    
+    init(dependency: Dependency) {
+        self.injector = dependency.injector
+    }
     
     func navigate(to step: Step) -> FlowContributors {
         guard
@@ -40,10 +50,9 @@ class OnBoardingFlow: Flow{
     }
     
     func navigateToOnBoardingVC() -> FlowContributors{
-        let onBoarding = PagingOnboardingViewController()
-        
-        rootViewController.pushViewController(onBoarding, animated: false)
-        return .one(flowContributor: .contribute(withNext: onBoarding))
+        let vc = injector.resolve(PagingOnboardingViewController.self)
+        rootViewController.pushViewController(vc, animated: false)
+        return .one(flowContributor: .contribute(withNext: vc))
         
 //        let onBoarding = OnBoardingVC()
 //
