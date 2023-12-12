@@ -8,13 +8,13 @@
 import Foundation
 
 
-enum DATE{
+public enum DATE {
     case DOT
     case FULL
     case YYYYMMDD
 }
 
-extension Date{
+public extension Date {
     
     func toString(format: DATE = .FULL) -> String {
         let formatter: DateFormatter = DateFormatter()
@@ -73,11 +73,11 @@ extension Date {
         return lhs.timeIntervalSinceReferenceDate - rhs.timeIntervalSinceReferenceDate
     }
     
-    func dateComponent(_ components: Calendar.Component..., calendar: Calendar = Calendar.current) -> DateComponents {
+    public func dateComponent(_ components: Calendar.Component..., calendar: Calendar = Calendar.current) -> DateComponents {
         return calendar.dateComponents(Set(components), from: self)
     }
 
-    func dateComponent(_ component: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
+    public func dateComponent(_ component: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
         return calendar.component(component, from: self)
     }
 }

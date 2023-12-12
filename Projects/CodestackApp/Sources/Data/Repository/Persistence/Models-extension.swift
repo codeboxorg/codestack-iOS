@@ -7,7 +7,7 @@
 
 
 import CoreData
-
+import Global
 protocol ManagedEntity: NSFetchRequestResult { }
 
 extension SubmissionMO: ManagedEntity { }

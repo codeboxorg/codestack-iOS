@@ -58,9 +58,9 @@ public let dependencies = Dependencies(
                 .rxGesture,
                 .sqlite,
                 .swinject,
-                .codestackAPI
+                .codestackAPI,
             ],
-            productTypes: [ : ],
+            productTypes: [ "CodestackAPI" : .framework ],
             baseSettings: .settings(configurations: [
                 .debug(name: "Dev"),
                 .debug(name: "Prod"),

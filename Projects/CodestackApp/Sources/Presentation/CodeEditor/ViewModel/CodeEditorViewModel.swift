@@ -17,21 +17,9 @@ enum FavoriteError: Error {
 
 protocol CodeEditorViewModelType: ViewModelType { }
 
-
-
-class LogicService {
-    
-    static let shared = LogicService()
-    
-    func add() {
-        
-    }
-}
-
-
 final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
     
-    var steps: PublishRelay<Step> = PublishRelay<Step>()
+    var steps: PublishRelay<Step>
     
     typealias SourceCode = String
     
@@ -62,12 +50,14 @@ final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
         let homeViewModel: any HomeViewModelType
         let historyViewModel: any HistoryViewModelType
         let submissionUseCase: SubmissionUseCase
+        let step: PublishRelay<Step>
     }
     
     init(dependency: Dependency) {
         self.homeViewModel = dependency.homeViewModel
         self.historyViewModel = dependency.historyViewModel
         self.submissionUseCase = dependency.submissionUseCase
+        self.steps = dependency.step
     }
     
     private var homeViewModel: (any HomeViewModelType)?
@@ -148,6 +138,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
             .flatMapLatest { [weak self] model, flag -> Observable<State<Bool>> in
                 guard let self else { return .empty() }
                 let favoriteProblem = model.makeFavoirtProblem()
+                Log.debug("favoriteProblem : \(favoriteProblem.problmeTitle)")
                 return self.submissionUseCase.updateFavoritProblem(model: favoriteProblem, flag: flag)
             }
             .subscribe(with: self, onNext: { vm, result in

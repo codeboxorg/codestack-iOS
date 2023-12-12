@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 import RichTextKit
 
-
-
 class RichTextViewController: UIViewController{
 
     private var attributedString: NSAttributedString?

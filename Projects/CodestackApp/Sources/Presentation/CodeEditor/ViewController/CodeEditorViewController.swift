@@ -25,7 +25,6 @@ class CodeEditorViewController: UIViewController, Stepper {
     private weak var highlightr: Highlightr?
     
     struct Dependency{
-        
         var viewModel: CodeEditorViewModel
         var problem: ProblemListItemModel
     }

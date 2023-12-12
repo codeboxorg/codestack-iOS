@@ -95,6 +95,11 @@ class HistoryViewModel: HistoryViewModelType {
             return filteredSubmissions
         }
         
+        submissionUsecase.fetchFavoriteProblem()
+            .subscribe(with: self, onNext: { vm, favoriteProblems in
+                Log.debug("즐겨찾기 한 문제 : \(favoriteProblems)")
+            }).disposed(by: disposeBag)
+        
             // filteredHistoryData.asObservable()
             //   .subscribe(with: self,onNext: { vm,value in
                 // TODO: 현재 Filter해서 fetch 해오는 Query 부재 -> 기능 추후 제공

@@ -6,7 +6,7 @@
 //
 
 import CoreData
-
+import Global
 extension SubmissionMO {
     
     typealias ProblemID = String
