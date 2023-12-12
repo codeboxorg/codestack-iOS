@@ -7,9 +7,7 @@
 
 import UIKit
 
-
-
-extension String{
+public extension String {
     
     func toYYMMDD() -> Date? {
         Fommater.formatter.dateFormat = "yyyy-MM-dd"
@@ -40,12 +38,12 @@ extension String{
         self.toDateUTC()?.toString(format: format)
     }
     
-    func toDateStringKST(format: DATE) -> String? {
+    public func toDateStringKST(format: DATE) -> String? {
         self.toDateKST()?.toString(format: format)
     }
 }
 
-extension String {
+public extension String {
     
     /// String Height
     /// - Parameters:

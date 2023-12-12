@@ -83,11 +83,11 @@ class CodeProblemFlow: Flow{
     
     func navigateToProblemPick(problem: ProblemListItemModel) -> FlowContributors{
         let editorvc = injector.resolve(CodeEditorViewController.self, problem)
-        let viewModel = injector.resolve(CodeEditorViewModel.self)
+        let stepper = injector.resolve(CodeEditorStepper.self)
         editorvc.hidesBottomBarWhenPushed = true
         rootViewController.pushViewController(editorvc, animated: true)
         
-        return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: viewModel))
+        return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: stepper))
     }
     
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 
-extension TimeInterval{
+extension TimeInterval {
 
     func stringFromTimeInterval() -> String {
 

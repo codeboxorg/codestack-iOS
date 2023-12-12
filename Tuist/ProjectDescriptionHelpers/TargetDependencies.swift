@@ -14,5 +14,6 @@ public extension TargetDependency {
     static let swinject: TargetDependency = .external(name: "Swinject")
     static let sqlite: TargetDependency    = .external(name: "SQLite")
     static let codestackAPI: TargetDependency    = .external(name: "CodestackAPI")
+    // static let rxCocoa: TargetDependency = .external(name: "RxCocoa")
 }
 

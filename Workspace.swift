@@ -23,7 +23,9 @@ import ProjectDescription
 let workspace = Workspace(
     name: "CodeStackApp",
     projects: [
-        "Projects/CodestackApp"
+        "Projects/CodestackApp",
+        "Projects/Global",
+        "Projects/Data"
     ])
 //let project = Project.app(name: "MyApp",
 //                          platform: .iOS,

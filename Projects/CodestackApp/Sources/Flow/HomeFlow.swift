@@ -124,11 +124,11 @@ class HomeFlow: Flow{
     
     private func navigateToRecentSolveList(problem item: ProblemListItemModel) -> FlowContributors {
         let editorVC = injector.resolve(CodeEditorViewController.self, item)
-        let viewModel = injector.resolve(CodeEditorViewModel.self)
+        let stepper = injector.resolve(CodeEditorStepper.self)
         editorVC.hidesBottomBarWhenPushed = true
         
         rootViewController.pushViewController(editorVC, animated: true)
-        return .one(flowContributor: .contribute(withNextPresentable: editorVC, withNextStepper: viewModel))
+        return .one(flowContributor: .contribute(withNextPresentable: editorVC, withNextStepper: stepper))
     }
     
     private func showSideMenuView() -> FlowContributors {

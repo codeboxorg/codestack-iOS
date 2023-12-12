@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Global
 
 struct ProblemCalendar: Codable {
     let date: String
@@ -18,10 +19,11 @@ struct SubmissionCalendar: Codable {
 
 extension SubmissionCalendar {
 
-    static func generateMockCalendar() -> Self {
+    public static func generateMockCalendar() -> Self {
         var date = Date()
         let dates = (0...200).map { num in
             let randomNumber = (0...200).randomElement()!
+            
             let dateString = date.adding(day: -randomNumber).toString(format: .FULL)
             return dateString
         }
