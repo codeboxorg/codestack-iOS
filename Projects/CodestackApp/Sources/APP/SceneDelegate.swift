@@ -28,10 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let window = UIWindow(windowScene: windoScene)
         
-        let appDependency = AppFlow.Dependency( /*loginService: self.loginService,
-                                               appleService: self.appleLoginManger,
-                                               authService: self.authService,*/
-                                               injector: self.injector)
+        let appDependency = AppFlow.Dependency(injector: self.injector)
         injector.assemble([
             NetworkAssembly(),
             DataAssembly(),
