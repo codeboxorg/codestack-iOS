@@ -19,19 +19,13 @@ class MyPageFlow: Flow{
     }
     
     struct Dependency {
-        let apolloService: WebRepository
-        let authService: AuthServiceType
+        let injector: Injectable
     }
     
-    private let authService: AuthServiceType
-    private let apolloService: WebRepository
-    
-    private lazy var myPageViewModel = MyPageViewModel(dependency: .init(authService: self.authService,
-                                                                         apolloService: self.apolloService))
+    private let injector: Injectable
     
     init(dependency: Dependency) {
-        self.authService = dependency.authService
-        self.apolloService = dependency.apolloService
+        self.injector = dependency.injector
     }
     
     private let rootViewController: UINavigationController = {
@@ -57,12 +51,14 @@ class MyPageFlow: Flow{
     }
     
     func navigateToMyPage() -> FlowContributors {
-        let profileVC = MyPageViewController.create(with: myPageViewModel)
+        let profileVC = injector.resolve(MyPageViewController.self)
+        let profileViewModel = injector.resolve(MyPageViewModel.self)
         profileVC.navigationItem.title = "마이페이지"
         self.rootViewController.pushViewController(profileVC, animated: true)
-        return .one(flowContributor: .contribute(withNextPresentable: profileVC,
-                                                 withNextStepper: CompositeStepper(steppers: [DefaultStepper(),
-                                                                                              myPageViewModel])))
+        return .one(flowContributor:
+                .contribute(withNextPresentable: profileVC,
+                            withNextStepper: CompositeStepper(steppers: [DefaultStepper(), profileViewModel]))
+        )
     }
     
     func navigateToEditProfile() -> FlowContributors {

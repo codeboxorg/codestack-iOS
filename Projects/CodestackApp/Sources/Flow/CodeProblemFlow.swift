@@ -18,25 +18,13 @@ class CodeProblemFlow: Flow{
     }
     
     struct Dependency{
-        var apolloService: WebRepository
-        var homeViewModel: (any HomeViewModelType)
-        var historyViewModel: (any HistoryViewModelType)
-        var dbRepository: DBRepository
-        var submissionUseCase: SubmissionUseCase
+        let injector: Injectable
     }
     
-    private let apolloService: WebRepository
-    private let homeViewModel: any HomeViewModelType
-    private let historyViewModel: any HistoryViewModelType
-    private let dbRepository: DBRepository
-    private let submissionUseCase: SubmissionUseCase
+    private let injector: Injectable
     
     init(dependency: Dependency){
-        self.apolloService = dependency.apolloService
-        self.homeViewModel = dependency.homeViewModel
-        self.historyViewModel = dependency.historyViewModel
-        self.dbRepository = dependency.dbRepository
-        self.submissionUseCase = dependency.submissionUseCase
+        injector = dependency.injector
     }
     
     private let rootViewController: UINavigationController = {
@@ -84,9 +72,8 @@ class CodeProblemFlow: Flow{
     }
     
     func navigateToProblemList() -> FlowContributors{
-        let codeViewModel = CodeProblemViewModel(DummyData(),apolloService)
-        let problemVC = CodeProblemViewController.create(with: .init(viewModel: codeViewModel))
-        
+        let problemVC = injector.resolve(CodeProblemViewController.self)
+        let codeViewModel = injector.resolve(CodeProblemViewModel.self)
         rootViewController.pushViewController(problemVC, animated: false)
         
         return .one(flowContributor: .contribute(withNextPresentable: problemVC,
@@ -95,15 +82,8 @@ class CodeProblemFlow: Flow{
     
     
     func navigateToProblemPick(problem: ProblemListItemModel) -> FlowContributors{
-        
-        let viewModelDependency = CodeEditorViewModel.Dependency(homeViewModel: self.homeViewModel,
-                                                                 historyViewModel: self.historyViewModel,
-                                                                 submissionUseCase: self.submissionUseCase)
-        
-        let viewModel = CodeEditorViewModel(dependency: viewModelDependency)
-        let dependency = CodeEditorViewController.Dependency(viewModel: viewModel,
-                                                             problem: problem)
-        let editorvc = CodeEditorViewController.create(with: dependency)
+        let editorvc = injector.resolve(CodeEditorViewController.self, problem)
+        let viewModel = injector.resolve(CodeEditorViewModel.self)
         editorvc.hidesBottomBarWhenPushed = true
         rootViewController.pushViewController(editorvc, animated: true)
         
