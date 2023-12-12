@@ -8,7 +8,7 @@
 import UIKit
 import RxSwift
 import RxFlow
-
+import Swinject
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -21,14 +21,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private let authService: AuthServiceType = AuthService()
     private lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.loginService as AppleAuthorization)
     
+    private let injector = DefaultInjector(container: Container())
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windoScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windoScene)
         
-        let appDependency = AppFlow.Dependency(loginService: self.loginService,
+        let appDependency = AppFlow.Dependency( /*loginService: self.loginService,
                                                appleService: self.appleLoginManger,
-                                               authService: self.authService)
+                                               authService: self.authService,*/
+                                               injector: self.injector)
+        injector.assemble([
+            NetworkAssembly(),
+            DataAssembly(),
+            DomainAssembly(),
+            LoginAssembly(),
+            RegisterAssembly(),
+            HomeAssembly(),
+            CodeProblemAssembly(),
+            HistoryAssembly(),
+            OnBoardingAssembly(),
+            MyPageAssembly(),
+            CodeEditorAssembly()
+        ])
         
         let flow = AppFlow(dependency: appDependency)
         
