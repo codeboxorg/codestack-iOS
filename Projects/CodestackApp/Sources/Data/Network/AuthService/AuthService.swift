@@ -20,6 +20,8 @@ protocol AuthServiceType {
     func passwordChange(_ original: Pwd, new: Pwd) -> Maybe<Bool>
     
     func reissueToken(token: ReissueAccessToken) -> Observable<(response: HTTPURLResponse, data: Data)>
+    
+    var initialToken: ReissueAccessToken { get set }
 }
 
 typealias ImageURL = String

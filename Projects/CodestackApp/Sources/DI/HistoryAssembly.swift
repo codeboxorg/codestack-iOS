@@ -12,16 +12,17 @@ public struct HistoryAssembly: Assembly {
     
     public func assemble(container: Container) {
         
-        container.register((any HistoryViewModelType).self) { resolver in
+        container.register(HistoryViewModel.self) { resolver in
             let webRepository = resolver.resolve(WebRepository.self)!
             let useCase = resolver.resolve(SubmissionUseCase.self)!
             let dp = HistoryViewModel.Dependency(service: webRepository, submisionUsecase: useCase)
             return HistoryViewModel(dependency: dp)
-        }
+        }.inObjectScope(.container)
         
         container.register(HistoryViewController.self) { resolver in
-            let viewModel = resolver.resolve((any HistoryViewModelType).self)!
-            return HistoryViewController.create(with: viewModel)
+            let viewModel = resolver.resolve(HistoryViewModel.self)!
+            let historyViewModelType = viewModel as any HistoryViewModelType
+            return HistoryViewController.create(with: historyViewModelType)
         }
     }
 }

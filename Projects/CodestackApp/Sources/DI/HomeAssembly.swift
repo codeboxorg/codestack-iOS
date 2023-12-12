@@ -13,13 +13,13 @@ public struct HomeAssembly: Assembly {
     public func assemble(container: Container) {
         
         // MARK: Home ViewModel
-        container.register((any HomeViewModelType).self) { resolver in
+        container.register(HomeViewModel.self) { resolver in
             let dbRepository = resolver.resolve(DBRepository.self)!
             let webRepository = resolver.resolve(WebRepository.self)!
             let homeViewModel: HomeViewModel.Dependency = .init(repository: dbRepository,
                                                                 service: webRepository)
             return HomeViewModel(dependency: homeViewModel)
-        }
+        }.inObjectScope(.container)
         
         
         // MARK: Contribution ViewModel
@@ -37,10 +37,10 @@ public struct HomeAssembly: Assembly {
         // MARK: SideMenu VC
         container.register(SideMenuViewController.self) { resolver in
             SideMenuViewController.create()
-        }
+        }.inObjectScope(.container)
         
         container.register(HomeViewController.self) { resolver in
-            let homeViewModel = resolver.resolve((any HomeViewModelType).self)!
+            let homeViewModel = resolver.resolve(HomeViewModel.self)!
             let contributionViewModel = resolver.resolve(ContributionViewModel.self)!
             let sideMenuViewController = resolver.resolve(SideMenuViewController.self)!
             
