@@ -16,11 +16,11 @@ public struct DataAssembly: Assembly {
         container.register(WebRepository.self) { resolver in
             let tokenService = resolver.resolve(TokenAcquisitionService<ReissueAccessToken>.self)!
             return DefaultApolloRepository(dependency: tokenService)
-        }
+        }.inObjectScope(.container)
         
         container.register(DBRepository.self) { resolver in
             let coreDataStack = CoreDataStack(version: 1)
             return DefaultDBRepository(persistenStore: coreDataStack)
-        }
+        }.inObjectScope(.container)
     }
 }

@@ -11,8 +11,8 @@ import Swinject
 public struct OnBoardingAssembly: Assembly {
     
     public func assemble(container: Container) {
-        container.register(OnBoardingVC.self) { resolver in
-            return OnBoardingVC.init()
+        container.register(PagingOnboardingViewController.self) { resolver in
+            return PagingOnboardingViewController.init()
         }
     }
 }
