@@ -11,7 +11,7 @@ import RxCocoa
 import RxRelay
 
 
-protocol HistoryViewModelType: ViewModelType{
+protocol HistoryViewModelType: ViewModelType {
     var sendSubmission: PublishRelay<Submission> { get set }
 }
 
