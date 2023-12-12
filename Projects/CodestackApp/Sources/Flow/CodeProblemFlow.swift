@@ -38,8 +38,8 @@ class CodeProblemFlow: Flow{
         switch codestackStep{
         case .problemList:
             return navigateToProblemList()
+            
         case .problemPick(let problem):
-            // Log.debug(problem)
             rootViewController.tabBarController?.tabBar.isHidden = true
             return navigateToProblemPick(problem: problem)
             
