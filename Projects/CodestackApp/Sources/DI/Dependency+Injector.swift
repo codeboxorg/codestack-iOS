@@ -11,7 +11,10 @@ import Swinject
 
 public protocol DependencyAssemblable {
     func assemble(_ assemblys: [Assembly])
-    func register<T>(_ type: T.Type, _ object: T, _ key: String?)
+    func register<T>(_ type: T.Type, _ object: T)
+    func register<T>(_ type: T.Type, _ object: T, _ key: String)
+    func resolve<T>(_ type: T.Type) -> T
+    func resolve<T, U>(_ type: T.Type,_ argument: U) -> T
 }
 
 public protocol DependencyResolvable {
@@ -34,7 +37,13 @@ public class DefaultInjector: Injectable {
         }
     }
     
-    public func register<T>(_ type: T.Type, _ object: T, _ key: String?) {
+    public func register<T>(_ type: T.Type, _ object: T) {
+        container.register(type) { value in
+            object
+        }
+    }
+    
+    public func register<T>(_ type: T.Type, _ object: T, _ key: String) {
         container.register(type, name: key) { value in
             object
         }
@@ -43,6 +52,24 @@ public class DefaultInjector: Injectable {
     public func resolve<T>(_ type: T.Type, _ key: String?) -> T {
         guard
             let object = container.resolve(type, name: key)
+        else {
+            fatalError("did not found \(type) Type Object ")
+        }
+        return object
+    }
+    
+    public func resolve<T>(_ type: T.Type) -> T {
+        guard
+            let object = container.resolve(type)
+        else {
+            fatalError("did not found \(type) Type Object ")
+        }
+        return object
+    }
+    
+    public func resolve<T, U>(_ type: T.Type,_ argument: U) -> T {
+        guard
+            let object = container.resolve(type, argument: argument)
         else {
             fatalError("did not found \(type) Type Object ")
         }

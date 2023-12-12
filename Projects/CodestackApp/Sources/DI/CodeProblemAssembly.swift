@@ -12,13 +12,13 @@ public struct CodeProblemAssembly: Assembly {
     
     public func assemble(container: Container) {
         
-        container.register((any ProblemViewModelProtocol).self) { resolver in
+        container.register(CodeProblemViewModel.self) { resolver in
             let web = resolver.resolve(WebRepository.self)!
             return CodeProblemViewModel(DummyData(), web)
-        }
+        }.inObjectScope(.container)
         
         container.register(CodeProblemViewController.self) { resolver in
-            let viewModel = resolver.resolve((any ProblemViewModelProtocol).self)!
+            let viewModel = resolver.resolve(CodeProblemViewModel.self)!
             let dp = CodeProblemViewController.Dependencies.init(viewModel: viewModel)
             return CodeProblemViewController.create(with: dp)
         }

@@ -16,7 +16,7 @@ public struct DomainAssembly: Assembly {
             let web = resolver.resolve(WebRepository.self)!
             return DefaultSubmissionUseCase(dbRepository: db,
                                             webRepository: web)
-        }
+        }.inObjectScope(.container)
     }
 }
 
