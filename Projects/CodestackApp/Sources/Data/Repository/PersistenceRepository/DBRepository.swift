@@ -17,10 +17,10 @@ protocol DBRepository: AnyObject {
     func update(submission: Submission, type request: SubmissionMO.RequestType) -> Single<Void>
     
     func fetchProblemState() -> Single<[ProblemSubmissionState]>
-    
     func fetchSubmissionCalendar() -> Single<[SubmissionCalendar]>
     
     func store(favoriteProblem: FavoriteProblem) -> Single<Void>
+    func fetchFavoriteProblems() -> Single<[FavoriteProblem]>
     func removeFavor(_ requestType: FavoritProblemMO.RequestType) -> Completable
 }
 
@@ -74,6 +74,20 @@ final class DefaultDBRepository: DBRepository {
                 .fetch(request, map: { value in
                     SubmissionCalendar(managedContext: value)
                 }).subscribe(onNext: { result in
+                    single(result)
+                })
+            return Disposables.create { observable?.dispose() }
+        }
+    }
+    
+    func fetchFavoriteProblems() -> Single<[FavoriteProblem]> {
+        Single<[FavoriteProblem]>.create { [weak persistentStore] single in
+            let observable = persistentStore?
+                .fetch(FavoritProblemMO.fetchRequest(),
+                       map: { context in
+                    FavoriteProblem(managedContext: context)
+                })
+                .subscribe(onNext: { result in
                     single(result)
                 })
             return Disposables.create { observable?.dispose() }

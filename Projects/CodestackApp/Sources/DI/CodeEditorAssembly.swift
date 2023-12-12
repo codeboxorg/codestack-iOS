@@ -14,16 +14,22 @@ public struct CodeEditorAssembly: Assembly {
     
     public func assemble(container: Container) {
         
+        container.register(CodeEditorStepper.self) { resolver in
+            return CodeEditorStepper()
+        }.inObjectScope(.container)
+        
         container.register(CodeEditorViewModel.self) { resolver in
             let home = resolver.resolve(HomeViewModel.self)!
             let history = resolver.resolve(HistoryViewModel.self)!
             let useCase = resolver.resolve(SubmissionUseCase.self)!
+            let stepper = resolver.resolve(CodeEditorStepper.self)!
             
             let dp = CodeEditorViewModel.Dependency(homeViewModel: home,
                                                     historyViewModel: history,
-                                                    submissionUseCase: useCase)
+                                                    submissionUseCase: useCase,
+                                                    step: stepper.steps)
             return CodeEditorViewModel(dependency: dp)
-        }.inObjectScope(.container)
+        }
         
         
         container.register(CodeEditorViewController.self) { resolver, problemListItem in

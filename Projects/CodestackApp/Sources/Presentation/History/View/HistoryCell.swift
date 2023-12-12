@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxCocoa
 import RxSwift
+import Global
 
 class HistoryCell: UITableViewCell {
 
