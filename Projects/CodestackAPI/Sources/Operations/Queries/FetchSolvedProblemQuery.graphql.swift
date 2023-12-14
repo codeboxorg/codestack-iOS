@@ -3,11 +3,12 @@
 
 @_exported import ApolloAPI
 
-public class GetSolvedProblemQuery: GraphQLQuery {
-  public static let operationName: String = "GetSolvedProblem"
+public class FetchSolvedProblemQuery: GraphQLQuery {
+  public static let operationName: String = "FetchSolvedProblem"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query GetSolvedProblem($username: String!) { matchMember(username: $username) { __typename nickname email profileImage solvedProblems { __typename id title languages { __typename name extension } } } }"#
+      #"query FetchSolvedProblem($username: String!) { matchMember(username: $username) { __typename solvedProblems { __typename ...ProblemIdentityFR } } }"#,
+      fragments: [ProblemIdentityFR.self]
     ))
 
   public var username: String
@@ -39,15 +40,9 @@ public class GetSolvedProblemQuery: GraphQLQuery {
       public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Member }
       public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
-        .field("nickname", String.self),
-        .field("email", String?.self),
-        .field("profileImage", String?.self),
         .field("solvedProblems", [SolvedProblem].self),
       ] }
 
-      public var nickname: String { __data["nickname"] }
-      public var email: String? { __data["email"] }
-      public var profileImage: String? { __data["profileImage"] }
       public var solvedProblems: [SolvedProblem] { __data["solvedProblems"] }
 
       /// MatchMember.SolvedProblem
@@ -60,31 +55,17 @@ public class GetSolvedProblemQuery: GraphQLQuery {
         public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Problem }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("id", CodestackAPI.ID.self),
-          .field("title", String.self),
-          .field("languages", [Language].self),
+          .fragment(ProblemIdentityFR.self),
         ] }
 
         public var id: CodestackAPI.ID { __data["id"] }
         public var title: String { __data["title"] }
-        public var languages: [Language] { __data["languages"] }
 
-        /// MatchMember.SolvedProblem.Language
-        ///
-        /// Parent Type: `Language`
-        public struct Language: CodestackAPI.SelectionSet {
+        public struct Fragments: FragmentContainer {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Language }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("name", String.self),
-            .field("extension", String.self),
-          ] }
-
-          public var name: String { __data["name"] }
-          public var `extension`: String { __data["extension"] }
+          public var problemIdentityFR: ProblemIdentityFR { _toFragment() }
         }
       }
     }

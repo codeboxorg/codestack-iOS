@@ -3,11 +3,12 @@
 
 @_exported import ApolloAPI
 
-public class GetAllLanguageQuery: GraphQLQuery {
-  public static let operationName: String = "GetAllLanguage"
+public class FetchAllLanguageQuery: GraphQLQuery {
+  public static let operationName: String = "FetchAllLanguage"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query GetAllLanguage { getAllLanguage { __typename id name extension } }"#
+      #"query FetchAllLanguage { getAllLanguage { __typename ...LanguageFR } }"#,
+      fragments: [LanguageFR.self]
     ))
 
   public init() {}
@@ -33,14 +34,19 @@ public class GetAllLanguageQuery: GraphQLQuery {
       public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Language }
       public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
-        .field("id", CodestackAPI.ID.self),
-        .field("name", String.self),
-        .field("extension", String.self),
+        .fragment(LanguageFR.self),
       ] }
 
       public var id: CodestackAPI.ID { __data["id"] }
       public var name: String { __data["name"] }
       public var `extension`: String { __data["extension"] }
+
+      public struct Fragments: FragmentContainer {
+        public let __data: DataDict
+        public init(_dataDict: DataDict) { __data = _dataDict }
+
+        public var languageFR: LanguageFR { _toFragment() }
+      }
     }
   }
 }
