@@ -107,15 +107,15 @@ extension SubmissionMO {
         return request
     }
     
-    func update(submission: Submission) -> Self {
-        self.codeContext?.code = submission.sourceCode
-        self.codeContext?.problemID = submission.problem?.id
-        self.codeContext?.problemTitle = submission.problem?.title
-        self.language?.languageID = submission.language?.id
-        self.language?.name = submission.language?.name
-        self.language?.extension = submission.language?._extension
-        self.statusCode = submission.statusCode
-        self.createdAt = submission.createdAt?.toDateKST()
-        return self
-    }
+//    func update(submission: Submission) -> Self {
+//        self.codeContext?.code = submission.sourceCode
+//        self.codeContext?.problemID = submission.problem?.id
+//        self.codeContext?.problemTitle = submission.problem?.title
+//        self.language?.languageID = submission.language?.id
+//        self.language?.name = submission.language?.name
+//        self.language?.extension = submission.language?._extension
+//        self.statusCode = submission.statusCode
+//        self.createdAt = submission.createdAt?.toDateKST()
+//        return self
+//    }
 }
