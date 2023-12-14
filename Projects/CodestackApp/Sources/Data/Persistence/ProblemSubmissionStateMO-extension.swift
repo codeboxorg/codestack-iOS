@@ -11,20 +11,6 @@ import Domain
 
 extension ProblemSubmissionStateMO {
     
-    enum RequestType {
-        case all
-        case isEqualID(ProblemID)
-        
-        func conditionRequest() -> NSFetchRequest<ProblemSubmissionStateMO> {
-            switch self {
-            case .all:
-                return ProblemSubmissionStateMO.fetchRequest()
-            case .isEqualID(let problemID):
-                return ProblemSubmissionStateMO.fetchRequest()
-            }
-        }
-    }
-    
     // MARK: Probelm Submission StateMO 가 존재하면 fetch 후 리턴
     // 존재하지 않으면 생성 후 리턴
     static func fetchSubmissionStateMO(context: NSManagedObjectContext,
