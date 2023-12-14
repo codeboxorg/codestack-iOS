@@ -46,9 +46,9 @@ extension SubmissionCalendarMO : Identifiable {
         let _submissions =
         submissionSet
             .toArray(of: SubmissionMO.self)
-            .compactMap { Submission(managedContext: $0) }
+            .compactMap { value in value.toDomain() }
         
-        return SubmissionCalendarVO(dates: _submissions.compactMap(\.createdAt))
+        return SubmissionCalendarVO(dates: _submissions.map(\.createdAt))
     }
 }
 

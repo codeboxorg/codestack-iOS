@@ -10,11 +10,11 @@ import Foundation
 import RxSwift
 
 protocol DBRepository: AnyObject {
-    func fetch(_ requestType: SubmissionMO.RequestType) -> Single<[Submission]>
-    func store(submission: Submission) -> Single<Void>
+    func fetch(_ requestType: SubmissionMO.RequestType) -> Single<[SubmissionVO]>
+    func store(submission: SubmissionVO) -> Single<Void>
     func remove() -> Single<Void>
     func remove(_ requestType: SubmissionMO.RequestType) -> Completable
-    func update(submission: Submission, type request: SubmissionMO.RequestType) -> Single<Void>
+    func update(submission: SubmissionVO, type request: SubmissionMO.RequestType) -> Single<Void>
     
     func fetchProblemState() -> Single<[ProblemSubmissionState]>
     func fetchSubmissionCalendar() -> Single<[SubmissionCalendar]>

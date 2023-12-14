@@ -64,7 +64,7 @@ enum CodestackStep: Step, CaseIterable{
     case codestack
     
     case historyflow
-    case richText([Problem])
+    case richText([ProblemVO])
     
     case none
     

@@ -27,17 +27,22 @@ import Global
 //public typealias MemberSolvedProblem = GetMeQuery.Data.GetMe.SolvedProblem
 
 
-class DefaultRepository: WebRepository {
+public class DefaultRepository: WebRepository {
     
     private var tokenAcquizition: TokenAcquisitionService<RefreshToken>
     private var graphAPI: GraphQLAPI
-    private var restAPI: RestAPI = DefaultRestAPI(session: .shared)
+    private var restAPI: RestAPI
     
+    public struct Dependency {
+        var tokenAcquizition: TokenAcquisitionService<RefreshToken>
+        var graphAPI: GraphQLAPI
+        var restAPI: RestAPI
+    }
     
-    init(dependency: TokenAcquisitionService<RefreshToken> ) {
-        self.tokenAcquizition = dependency
-        self.graphAPI = DefaultGraphQLAPI(dependency: .init(tokenService: dependency,
-                                                       baseURL: DefaultRepository.baseURL))
+    public init(dependency: Dependency ) {
+        self.tokenAcquizition = dependency.tokenAcquizition
+        self.graphAPI = dependency.graphAPI
+        self.restAPI = dependency.restAPI
     }
     
     func getSubmissionDate(api: GRAPH) -> Single<SubmissionCalendar> {
@@ -59,7 +64,7 @@ class DefaultRepository: WebRepository {
 //            .asSingle()
     }
     
-    func request<T>(type: T.Type, graph: GRAPH) -> Maybe<T> {
+    public func request<T>(type: T.Type, graph: GRAPH) -> Maybe<T> {
         let query = API.GRAPH_QUERY(path: graph)
         
         switch query {
@@ -88,12 +93,13 @@ class DefaultRepository: WebRepository {
         default:
             break
         }
+        return .empty()
     }
     
     
     typealias MatchMember = FetchSolvedProblemQuery.Data.MatchMember.SolvedProblem.Fragments
     
-    func getSolvedProblems(_ query: FetchSolvedProblemQuery) -> Maybe<[ProblemIdentityFR]>  {
+    public func getSolvedProblems(_ query: FetchSolvedProblemQuery) -> Maybe<[ProblemIdentityFR]>  {
 //        let query = API.GRAPH_QUERY(path: graph) as! FetchSolvedProblemQuery
         return graphAPI.fetch(query: query , cachePolicy: .default, queue: .main)
             .map { item in
@@ -101,7 +107,7 @@ class DefaultRepository: WebRepository {
             }
     }
     
-    func getMe(_ graph: GRAPH) -> Maybe<MemberFR> {
+    public func getMe(_ graph: GRAPH) -> Maybe<MemberFR> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchMeQuery
         return graphAPI.fetch(query: query, cachePolicy: .fetchIgnoringCacheData, queue: .main)
             .map { item in
@@ -113,7 +119,7 @@ class DefaultRepository: WebRepository {
             })
     }
     
-    func updateNickName(_ graph: GRAPH) -> Maybe<MemberFR> {
+    public func updateNickName(_ graph: GRAPH) -> Maybe<MemberFR> {
         let mutation = API.GRAPH_MUTATION(path: graph) as! UpdateNickNameMutation
         return graphAPI.perform(query: mutation, cachePolichy: .default, queue: .global(qos: .default))
             .map { item in
@@ -125,7 +131,7 @@ class DefaultRepository: WebRepository {
             })
     }
     
-    func perform(_ graph: GRAPH, max retry: Int = 2) -> Maybe<SubmissionFR> {
+    public func perform(_ graph: GRAPH, max retry: Int = 2) -> Maybe<SubmissionFR> {
         let mutation = API.GRAPH_MUTATION(path: graph) as! SubmitSubmissionMutation
         return graphAPI.perform(query: mutation, cachePolichy: .default, queue: .main)
             .map { item in
@@ -137,7 +143,7 @@ class DefaultRepository: WebRepository {
             }) // retry
     }
     
-    func getProblemsQuery(_ graph: GRAPH) -> Maybe<([ProblemFR],PageInfoFR)> {
+    public func getProblemsQuery(_ graph: GRAPH) -> Maybe<([ProblemFR],PageInfoFR)> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchProblemsQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { item in
@@ -150,7 +156,7 @@ class DefaultRepository: WebRepository {
             }
     }
     
-    func getProblemByID(_ graph: GRAPH) -> Maybe<ProblemFR> {
+    public func getProblemByID(_ graph: GRAPH) -> Maybe<ProblemFR> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchProblemByIdQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { data in
@@ -158,7 +164,7 @@ class DefaultRepository: WebRepository {
             }
     }
     
-    func getAllTag(_ graph: GRAPH) -> Maybe<([TagFR],PageInfoFR)> {
+    public func getAllTag(_ graph: GRAPH) -> Maybe<([TagFR],PageInfoFR)> {
         //tag: 완전 탐색
         //tag: 4
         //tag: 자료 구조
@@ -173,7 +179,7 @@ class DefaultRepository: WebRepository {
             }
     }
     
-    func getAllLanguage(_ graph: GRAPH) -> Maybe<[LanguageFR]> {
+    public func getAllLanguage(_ graph: GRAPH) -> Maybe<[LanguageFR]> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchAllLanguageQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { data in
@@ -183,7 +189,7 @@ class DefaultRepository: WebRepository {
             }
     }
     
-    func getMeSubmissions(_ graph: GRAPH) -> Maybe<[SubmissionFR]> {
+    public func getMeSubmissions(_ graph: GRAPH) -> Maybe<[SubmissionFR]> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchMeSubmissionsQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { data in
@@ -193,7 +199,7 @@ class DefaultRepository: WebRepository {
             }
     }
     
-    func getSubmission(_ graph: GRAPH, cache: CachePolicy? = nil) -> Maybe<([SubmissionFR],PageInfoFR)> {
+    public func getSubmission(_ graph: GRAPH, cache: CachePolicy? = nil) -> Maybe<([SubmissionFR],PageInfoFR)> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchSubmissionsQuery
         return graphAPI.fetch(query: query, cachePolicy: cache ?? .default, queue: .main)
             .map { data in

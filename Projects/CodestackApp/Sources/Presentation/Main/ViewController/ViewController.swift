@@ -166,7 +166,7 @@ class ViewController: UIViewController{
         let recentModelSelected
         =
         recentPagesCollectionView.rx
-            .modelSelected(Submission.self)
+            .modelSelected(SubmissionVO.self)
             .asSignal()
             .throttle(.seconds(1), latest: false)
             .map { print("touch value"); return $0 }
@@ -192,7 +192,7 @@ class ViewController: UIViewController{
                     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PRSubmissionHistoryCell.identifier, for: indexPath) as? PRSubmissionHistoryCell else {return UICollectionViewCell()}
                     
                     cell.onRecentPageData.accept(item)
-                    cell.onStatus.accept(item.statusCode?.convertSolveStatus() ?? .none)
+                    cell.onStatus.accept(item.statusCode.convertSolveStatus())
                     return cell
                 },
             configureSupplementaryView:

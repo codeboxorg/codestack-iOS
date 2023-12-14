@@ -27,7 +27,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
         var dismissAction: Driver<Void>
         var sendAction: Driver<ProblemID>
         var problemTitle: Driver<String>
-        var language: Driver<Language>
+        var language: Driver<LanguageVO>
         var sourceCode: Driver<SourceCode>
         var submissionID: Driver<SubmissionID>
         var submissionListGesture: Driver<Void>
@@ -36,8 +36,8 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
     }
     
     struct Output {
-        var solvedResult: Driver<Submission>
-        var submissionListResult: Driver<[Submission]>
+        var solvedResult: Driver<SubmissionVO>
+        var submissionListResult: Driver<[SubmissionVO]>
         var submitWaiting: Signal<Bool>
         var submissionListWaiting: Signal<Bool>
         var problemRefreshResult: Signal<ProblemState>
@@ -67,7 +67,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
     
     private var disposeBag = DisposeBag()
     
-    private var languageRelay = BehaviorRelay<Language>(value: Language.default)
+    private var languageRelay = BehaviorRelay<LanguageVO>(value: LanguageVO.default)
     private var sourceCodeRelay = BehaviorRelay<SourceCode>(value: "")
     
     private var sourceCodeCache: [String: SourceCode] = [:]
@@ -75,17 +75,17 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
     private var sendProblemModel = BehaviorRelay<SendProblemModel>(value: .default)
 
     // MARK: Output
-    private var solvedResult = PublishRelay<Submission>()
+    private var solvedResult = PublishRelay<SubmissionVO>()
     private var submitWaiting = BehaviorRelay<Bool>(value: false)
     
-    private var submissionListResult = BehaviorRelay<[Submission]>(value: [])
+    private var submissionListResult = BehaviorRelay<[SubmissionVO]>(value: [])
     private var submissionListWaiting = BehaviorRelay<Bool>(value: false)
     
     private var favoriteProblem = BehaviorRelay<Bool>(value: false)
     
     
     enum ProblemState {
-        case fetched(Problem)
+        case fetched(ProblemVO)
         case fail(Error)
     }
     
@@ -116,7 +116,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
         sendAction(action: input.sendAction.asSignal(onErrorJustReturn: ""))
         
         return Output(
-            solvedResult: solvedResult.asDriver(onErrorJustReturn: .init(_problem: .init(title: "fail"))),
+            solvedResult: solvedResult.asDriver(onErrorJustReturn: .sample),
             submissionListResult: submissionListResult.asDriver(),
             submitWaiting: submitWaiting.asSignal(onErrorJustReturn: false),
             submissionListWaiting: submissionListWaiting.asSignal(onErrorJustReturn: false),
@@ -159,7 +159,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
                 return self.sendProblemModel.take(1).asObservable()
             }
             .delay(.milliseconds(800), scheduler: MainScheduler.instance)
-            .flatMap { [weak self] model -> Observable<State<Problem>> in
+            .flatMap { [weak self] model -> Observable<State<ProblemVO>> in
                 guard let useCase = self?.submissionUseCase else { return .empty() }
                 return useCase.fetchProblem(id: model.problemID)
             }
@@ -181,12 +181,12 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
             .withUnretained(self)
             .flatMap { vm, sendModel in
                 vm.submissionUseCase
-                    .updateSubmissionAction(model: sendModel)
+                    .updateSubmissionAction(model: sendModel.toTempDomain())
                     .do(onNext: { updateFlag in
                         if let home = vm.homeViewModel,
                            let _ = vm.historyViewModel,
                             updateFlag {
-                            let submission = sendModel.makeTempSubmission()
+                            let submission = sendModel.toTempDomain()
                             home.sendSubmission.accept(submission)
                         }
                     })
@@ -201,11 +201,11 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
     
     private func sourceCodeAction(action: Driver<SourceCode>) {
         action
-            .flatMap {[weak self] sourceCode -> Driver<(Language, SourceCode)>  in
+            .flatMap {[weak self] sourceCode -> Driver<(LanguageVO, SourceCode)>  in
                 guard let self else { return .empty() }
                 return Observable
                     .zip(self.languageRelay.take(1), Observable.just(sourceCode))
-                    .asDriver(onErrorJustReturn: (Language.default, ""))
+                    .asDriver(onErrorJustReturn: (LanguageVO.default, ""))
             }
             .drive(with: self, onNext: { vm, tuple in
                 let (language, sourceCode) = tuple
@@ -214,10 +214,10 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
             }).disposed(by: disposeBag)
     }
     
-    private func languageAction(action: Driver<Language>) {
+    private func languageAction(action: Driver<LanguageVO>) {
         action
             .distinctUntilChanged()
-            .map { [weak self] language -> (Language, String?) in
+            .map { [weak self] language -> (LanguageVO, String?) in
                 if let sourceCode = self?.sourceCodeCache[language.name] {
                     return (language, sourceCode)
                 }
@@ -238,15 +238,15 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
             .asObservable()
             .take(1)
             .flatMap { _ in probelmID.asObservable().take(1) }
-            .flatMap { [weak self] (id) -> Observable<Result<[Submission], Error>> in
+            .flatMap { [weak self] (id) -> Observable<Result<[SubmissionVO], Error>> in
                 guard let self else { return .just(.success([])) }
                 return self.submissionUseCase.fetchProblemSubmissionHistory(id: id, state: "temp")
             }
             .map { result in
                 if case let .success(submissions) = result {
                     return submissions.sorted(by: { s1,s2 in
-                        if let createdAt1 = s1.createdAt?.toDateKST(),
-                           let createdAt2 = s2.createdAt?.toDateKST() {
+                        if let createdAt1 = s1.createdAt.toDateKST(),
+                           let createdAt2 = s2.createdAt.toDateKST() {
                             return createdAt1 > createdAt2
                         }
                         return false
@@ -272,7 +272,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
             .do(onNext: { vm, _ in vm.submitWaiting.accept(true) })
             .delay(.seconds(1), scheduler: MainScheduler.instance)
             .do(onError: { [weak self] _ in self?.submitWaiting.accept(false) })
-            .flatMap { vm, model in vm.submissionUseCase.submitSubmissionAction(model: model)}
+            .flatMap { vm, model in vm.submissionUseCase.submitSubmissionAction(model: model.toTempDomain())}
             .observe(on: MainScheduler.instance)
             .subscribe(with: self,onNext: { vm, submission in
                 switch submission {
@@ -286,7 +286,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
             .disposed(by: disposeBag)
     }
     
-    private func loadSourceCodeBy(language: Language) -> String {
+    private func loadSourceCodeBy(language: LanguageVO) -> String {
         var name = language.name
         if language.name == "Node" || language.name == "Node.js" {
             name = "nodejs"
@@ -303,7 +303,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
         return strings
     }
     
-    private func viewInteractorAction(_ submission: Submission) {
+    private func viewInteractorAction(_ submission: SubmissionVO) {
         self.submitWaiting.accept(false)
         self.solvedResult.accept(submission)
         //TODO: 제출 결과 -> HomeViewModel Binding - 전달완료

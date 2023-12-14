@@ -171,6 +171,7 @@ class CodeEditorViewController: UIViewController, Stepper {
             
             if let loadSourceCode = output?.loadSourceCode {
                 languageAction
+                    .distinctUntilChanged()
                     .withLatestFrom(loadSourceCode) { language, sourceCode in
                         return (language, sourceCode)
                     }
@@ -178,6 +179,7 @@ class CodeEditorViewController: UIViewController, Stepper {
                         let (language, sourceCode) = tuple
                         vm.codeUITextView.languageBinding(language: language)
                         if !vm.sourceCodeState {
+                            vm.codeUITextView.text = ""
                             vm.codeUITextView.text = sourceCode
                         } else {
                             vm.sourceCodeState = false
@@ -250,7 +252,7 @@ class CodeEditorViewController: UIViewController, Stepper {
                 cell.backgroundColor = .clear
                 cell.contentView.backgroundColor = .clear
                 cell.onHistoryData.accept(submission)
-                cell.onStatus.accept(submission.statusCode?.convertSolveStatus() ?? .none)
+                cell.onStatus.accept(submission.statusCode.convertSolveStatus())
             }.disposed(by: disposeBag)
         }
     }
