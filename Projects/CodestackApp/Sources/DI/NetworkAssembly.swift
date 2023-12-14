@@ -29,6 +29,13 @@ public struct NetworkAssembly: Assembly {
                                            extractToken: API.extractAccessToken)
         }.inObjectScope(.container)
         
+        
+        container.register(GraphQLAPI.self) { resolver in
+            let graphAPIDependency = DefaultGraphQLAPI.Dependency.init(baseURL: DefaultRepository.baseURL,
+                                                                       configuration: .default)
+            return DefaultGraphQLAPI(dependency: graphAPIDependency)
+        }
+        
         container.register(AppleLoginManager.self) { resolver in
             let service = resolver.resolve(Auth.self)!
             return AppleLoginManager(serviceManager: service)
