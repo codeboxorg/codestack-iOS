@@ -11,7 +11,7 @@ Projects/Highilighrt/**/*.*
 *.xccheckout
 *.xcconfig
 *.pbxproj
-*.png
+Projects/CodestackAPI/
 Projects/Highlightr/**
 Projects/Highlightr/**/*.*
 ./*.xcconfig
