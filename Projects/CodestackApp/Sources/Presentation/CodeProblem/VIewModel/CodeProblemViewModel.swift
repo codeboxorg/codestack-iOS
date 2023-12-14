@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import RxFlow
+import Data
 
 protocol ProblemViewModelProtocol{
     associatedtype Input = CodeProblemViewModel.Input
@@ -159,6 +160,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
             .flatMap { vm, _ in  vm.requestProblem(offset: vm.currentPage) }
             .emit(with: self, onNext: { vm, problems in
                 let dummyModel = problems.map { problem in
+                    let list1 = problem.toProblemList(.sample)
                     let list = problem.toProblemList()
                     return (model: list,language: problem.languages, flag: false)
                 }
@@ -205,10 +207,14 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
     
     private func requestProblem(offset: Int,
                                 sort: String = "id",
-                                order: String = "asc") -> Signal<[Problem]> {
+                                order: String = "asc") -> Signal<[ProblemVO]> {
         apollo
             // .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
-            .getProblemsQuery(.)
+        //TODO: 확인후 변경
+            .getProblemsQuery(.PR_LIST(arg: GRAR(offset: offset)))
+            .map { frInfo in
+                frInfo.0.map { fr in fr.toDomain() }
+            }
             .asSignal(onErrorJustReturn: [])
     }
 }

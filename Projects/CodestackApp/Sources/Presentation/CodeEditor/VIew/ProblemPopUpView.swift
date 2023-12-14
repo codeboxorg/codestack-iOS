@@ -10,6 +10,7 @@ import RxCocoa
 import RxGesture
 import RxSwift
 import WebKit
+import Data
 import Global
 
 
@@ -204,7 +205,7 @@ final class ProblemPopUpView: UIView {
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
     
     var disposeBag = DisposeBag()
-    let languageRelay = BehaviorRelay<Language>(value: Language.default)
+    let languageRelay = BehaviorRelay<LanguageVO>(value: LanguageVO.default)
     let pageValue = BehaviorRelay<SolveResultType>(value: .problem)
     let submissionLoadingWating = BehaviorRelay<Bool>(value: false)
     let problemState = PublishRelay<CodeEditorViewModel.ProblemState>()
@@ -332,12 +333,12 @@ final class ProblemPopUpView: UIView {
         sendButton.rx.tap.asDriver()
     }
     
-    func languageAction() -> Driver<Language> {
+    func languageAction() -> Driver<LanguageVO> {
         languageRelay.asDriver()
     }
     
     /// 언어 모델
-    private var languages: [Language] = []
+    private var languages: [LanguageVO] = []
     
     /// 언어 Title Action && languageRelay에 값 전달 -> ViewModel로 데이터 전달
     private lazy var setTitleAction: (UIAction) -> () = { [weak self] action in
@@ -350,7 +351,7 @@ final class ProblemPopUpView: UIView {
     
     /// 언어 설정 하기 위한 함수
     /// - Parameter languages: 언어 배열
-    func setLangueMenu(languages: [Language]){
+    func setLangueMenu(languages: [LanguageVO]){
         self.languages = languages
         
         let element = languages.map { lan in
@@ -531,7 +532,6 @@ extension ProblemPopUpView{
         }
         
         // TODO: autolayout warnig resultStatusView 의 레이아웃 수정 해야함
-    
         self.popUpContainerView.layoutIfNeeded()
     }
     
@@ -551,7 +551,8 @@ extension ProblemPopUpView{
         submissionListView.snp.remakeConstraints { make in
             make.top.equalToSuperview()
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.height.equalTo(300) // TODO: 고정 상수값 -> 변경
+            make.bottom.equalToSuperview().priority(.low)
         }
     }
     

@@ -27,12 +27,13 @@ final class UserManager {
     
     static var shared = UserManager()
     
-    var profile: User {
+    var profile: MemberVO {
         get {
-            return User(userName: UserManager.userName,
-                        nickName: UserManager.nickName,
-                        email: UserManager.email ,
-                        profileImage: UserManager.profileImage)
+            return MemberVO(email: UserManager.email ?? "N/A",
+                            nickName: UserManager.nickName ?? "N/A",
+                            username: UserManager.userName ?? "N/A",
+                            solvedProblems: [],
+                            profileImage: UserManager.profileImage ?? "codeStack")
         }
     }
     
@@ -78,11 +79,12 @@ extension UserManager {
         case tokenType
     }
     
-    func saveUser(with user: User) {
-        UserManager.userName = user.username
-        UserManager.nickName = user.nickname
-        UserManager.email = user.email
-        UserManager.profileImage = user.profileImage
+    func saveUser(with member: MemberVO) {
+        UserManager.userName = member.username
+        UserManager.nickName = member.nickName
+        UserManager.email = member.email
+        UserManager.profileImage = member.profileImage
+        // TODO: Solved Problem 저장 여부
     }
     
     func saveTokenInfo(with token: TokenInfo) {

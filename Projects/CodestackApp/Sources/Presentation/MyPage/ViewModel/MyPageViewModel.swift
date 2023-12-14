@@ -23,7 +23,7 @@ class MyPageViewModel: ViewModelType, Stepper{
     }
     
     struct Output{
-        var userProfile: Driver<User>
+        var userProfile: Driver<MemberVO>
         var loading: Driver<ProfileView.LoadingState>
     }
     
@@ -43,7 +43,7 @@ class MyPageViewModel: ViewModelType, Stepper{
         self.apolloService = dependency.apolloService
     }
     
-    private let userProfile = BehaviorRelay<User>(value: UserManager.shared.profile)
+    private let userProfile = BehaviorRelay<MemberVO>(value: UserManager.shared.profile)
 
     func transform(input: Input) -> Output {
         
@@ -60,10 +60,11 @@ class MyPageViewModel: ViewModelType, Stepper{
             .asObservable()
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .withUnretained(self)
-            .flatMap{ vm, _ in vm.apolloService.getMe(query: Query.getMe()).asObservable() }
-            .subscribe(with: self, onNext: { vm, user in
-                vm.userProfile.accept(user)
-                loading.onNext(.loaded(user.profileImage))
+            .flatMap{ vm, _ in vm.apolloService.getMe(.ME) }
+            .map { $0.toDomain() }
+            .subscribe(with: self, onNext: { vm, member in
+                vm.userProfile.accept(member)
+                loading.onNext(.loaded(member.profileImage))
             },onError: { vm, err in
                 loading.onNext(.loaded(nil))
             }).disposed(by: disposeBag)

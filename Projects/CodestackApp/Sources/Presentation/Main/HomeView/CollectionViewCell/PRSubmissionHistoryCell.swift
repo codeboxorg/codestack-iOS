@@ -46,7 +46,7 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
     }()
     
     
-    var onRecentPageData = PublishRelay<Submission>()
+    var onRecentPageData = PublishRelay<SubmissionVO>()
     var onStatus = PublishRelay<SolveStatus>()
     
     var cellDisposeBag = DisposeBag()
@@ -60,12 +60,12 @@ final class PRSubmissionHistoryCell: UICollectionViewCell {
         addAutoLayout()
         
         onRecentPageData
-            .asDriver(onErrorJustReturn: .init(_problem: Problem(title: "")))
+            .asDriver(onErrorJustReturn: .sample)
             .drive(onNext: {[weak self] submission in
                 guard let self = self else {return}
-                self.titleLabel.text = submission.problem?.title
+                self.titleLabel.text = submission.problem.title
                 
-                if let solvedDate = submission.createdAt?.toDateStringKST(format: .FULL){
+                if let solvedDate = submission.createdAt.toDateStringKST(format: .FULL){
                     let dateString = DateCalculator().caluculateTime(solvedDate)
                     self.dateLabel.text = dateString
                 }

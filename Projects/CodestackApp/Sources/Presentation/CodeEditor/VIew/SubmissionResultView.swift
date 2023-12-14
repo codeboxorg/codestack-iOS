@@ -11,11 +11,11 @@ import RxSwift
 class SubmissionResultView: UIView{
     
     
-    lazy var status = Binder<Submission>(self)
+    lazy var status = Binder<SubmissionVO>(self)
     { target, submission in
         let propertyLoop = [submission.id,
-                            submission.problem?.title,
-                            submission.member?.nickname ?? submission.member?.username,
+                            submission.problem.title,
+                            submission.member.username,
                             "\(submission.memoryUsage ?? -1)",
                             "\(submission.cpuTime ?? -1)",
                             "\(submission.statusCode ?? "N/A")"]

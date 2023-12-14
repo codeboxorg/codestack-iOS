@@ -75,12 +75,14 @@ class ProfileView: UIView{
     var disposeBag = DisposeBag()
     
     /// Binder   뷰에 프로필 데이터 바인딩
-    var profileBinder: Binder<User> {
+    var profileBinder: Binder<MemberVO> {
         Binder(self){ [weak self] target ,value  in
             guard let self else { return }
             
-            self.nameLabel.text = value.username ?? "Unknown"
-            self.rank.text = value.rank ?? "N/A"
+            self.nameLabel.text = value.username // ?? "Unknown"
+            
+            // TODO: Rank 어떻게 해야돼ㅣㅁ?
+            self.rank.text = "N/A"
         }
     }
     

@@ -10,17 +10,24 @@ import RxDataSources
 
 //typealias RecentSubmissionSection = SectionModel<String, RecentSubmission>
 
-extension Submission: IdentifiableType, Equatable{
-    static func == (lhs: Submission, rhs: Submission) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    var identity: some Hashable{
+// MARK: 확인후 제거
+//extension Submission: IdentifiableType, Equatable{
+//    static func == (lhs: Submission, rhs: Submission) -> Bool {
+//        lhs.id == rhs.id
+//    }
+//    
+//    var identity: some Hashable{
+//        return self.id
+//    }
+//}
+
+extension SubmissionVO: IdentifiableType {
+    public var identity: some Hashable {
         return self.id
     }
 }
 
-extension Array where Element == Submission {
+extension Array where Element == SubmissionVO {
     func toRecentModels(title: String = "최근 제출 10개") -> [RecentSubmission] {
         return [RecentSubmission(headerTitle: title, items: self)]
     }
@@ -32,7 +39,7 @@ struct RecentSubmission {
 }
 
 extension RecentSubmission: AnimatableSectionModelType {
-    typealias Item = Submission
+    typealias Item = SubmissionVO
     
     var identity: String {
         return headerTitle
