@@ -7,6 +7,7 @@
 
 import CoreData
 import RxSwift
+import Global
 
 protocol PersistentStore: AnyObject {
     typealias DBOperation<Result> = (NSManagedObjectContext) throws -> Result

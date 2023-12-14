@@ -7,6 +7,7 @@
 
 import UIKit
 import RxFlow
+import Global
 
 class OnBoardingFlow: Flow{
     
