@@ -10,6 +10,7 @@ import RxCocoa
 import RxFlow
 import RxSwift
 import Global
+import Domain
 
 class ContributionViewModel: ObservableObject, RxFlow.Stepper {
     
@@ -66,7 +67,7 @@ class ContributionViewModel: ObservableObject, RxFlow.Stepper {
     }
     
     
-    private func caculateCurrentContribution(value: SubmissionCalendar) -> [SubmissionContribution] {
+    private func caculateCurrentContribution(value: SubmissionCalendarVO) -> [SubmissionContribution] {
         
         var dayArray: [String: SubmissionContribution] = self.getContributionDates(size: contribution_day_count)
         

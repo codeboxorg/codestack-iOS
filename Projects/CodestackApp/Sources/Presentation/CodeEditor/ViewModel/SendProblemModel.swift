@@ -7,6 +7,7 @@
 
 import Foundation
 import Data
+import Domain
 
 struct SendProblemModel {
     let submissionID: ID
@@ -42,10 +43,10 @@ extension SendProblemModel {
               language: LanguageVO.default)
     }
     
-    func makeFavoirtProblem() -> FavoriteProblem {
-        FavoriteProblem(problemID: self.problemID,
-                        problmeTitle: self.problemTitle,
-                        createdAt: Date())
+    func makeFavoirtProblem() -> FavoriteProblemVO {
+        FavoriteProblemVO(problemID: self.problemID,
+                          problmeTitle: self.problemTitle,
+                          createdAt: Date())
     }
     
     func toProblemIdentity() -> ProblemIdentityVO {

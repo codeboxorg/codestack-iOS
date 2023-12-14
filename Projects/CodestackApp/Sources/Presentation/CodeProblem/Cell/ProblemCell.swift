@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Domain
 
 class ProblemCell: UITableViewCell{
     

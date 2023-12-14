@@ -21,7 +21,7 @@ public struct LanguageVO: Codable, Equatable {
     }
 }
 
-extension LanguageVO {
+public extension LanguageVO {
     static var `default`: Self {
         LanguageVO(id: "1",
                    name: "C",

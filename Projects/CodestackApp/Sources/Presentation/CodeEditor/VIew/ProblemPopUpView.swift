@@ -12,7 +12,7 @@ import RxSwift
 import WebKit
 import Data
 import Global
-
+import Domain
 
 //TODO: View -> UIViewCOntroller 로 변경해야됨
 

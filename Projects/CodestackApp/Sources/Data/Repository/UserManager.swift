@@ -8,6 +8,7 @@
 import Foundation
 import Data
 import Global
+import Domain
 
 @propertyWrapper
 struct UserDefault<T> {
