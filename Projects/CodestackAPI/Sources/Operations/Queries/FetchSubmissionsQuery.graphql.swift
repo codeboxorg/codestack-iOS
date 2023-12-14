@@ -3,11 +3,12 @@
 
 @_exported import ApolloAPI
 
-public class GetSubmissionsQuery: GraphQLQuery {
-  public static let operationName: String = "GetSubmissions"
+public class FetchSubmissionsQuery: GraphQLQuery {
+  public static let operationName: String = "FetchSubmissions"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query GetSubmissions($offset: Int, $sort: String, $order: String) { getSubmissions(limit: 20, offset: $offset, sort: $sort, order: $order) { __typename content { __typename id sourceCode statusCode problem { __typename id title } language { __typename id name extension } createdAt updatedAt } pageInfo { __typename offset limit totalPage totalContent } } }"#
+      #"query FetchSubmissions($offset: Int, $sort: String, $order: String) { getSubmissions(limit: 20, offset: $offset, sort: $sort, order: $order) { __typename content { __typename ...SubmissionFR } pageInfo { __typename ...PageInfoFR } } }"#,
+      fragments: [LanguageFR.self, PageInfoFR.self, ProblemIdentityFR.self, SubmissionFR.self]
     ))
 
   public var offset: GraphQLNullable<Int>
@@ -73,39 +74,25 @@ public class GetSubmissionsQuery: GraphQLQuery {
         public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Submission }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("id", CodestackAPI.ID.self),
-          .field("sourceCode", String.self),
-          .field("statusCode", String?.self),
-          .field("problem", Problem.self),
-          .field("language", Language.self),
-          .field("createdAt", CodestackAPI.DateTime.self),
-          .field("updatedAt", CodestackAPI.DateTime.self),
+          .fragment(SubmissionFR.self),
         ] }
 
         public var id: CodestackAPI.ID { __data["id"] }
-        public var sourceCode: String { __data["sourceCode"] }
-        public var statusCode: String? { __data["statusCode"] }
-        public var problem: Problem { __data["problem"] }
         public var language: Language { __data["language"] }
-        public var createdAt: CodestackAPI.DateTime { __data["createdAt"] }
+        public var member: SubmissionFR.Member { __data["member"] }
+        public var memoryUsage: Double? { __data["memoryUsage"] }
+        public var problem: Problem { __data["problem"] }
+        public var sourceCode: String { __data["sourceCode"] }
+        public var cpuTime: Double? { __data["cpuTime"] }
+        public var statusCode: String? { __data["statusCode"] }
         public var updatedAt: CodestackAPI.DateTime { __data["updatedAt"] }
+        public var createdAt: CodestackAPI.DateTime { __data["createdAt"] }
 
-        /// GetSubmissions.Content.Problem
-        ///
-        /// Parent Type: `Problem`
-        public struct Problem: CodestackAPI.SelectionSet {
+        public struct Fragments: FragmentContainer {
           public let __data: DataDict
           public init(_dataDict: DataDict) { __data = _dataDict }
 
-          public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Problem }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("id", CodestackAPI.ID.self),
-            .field("title", String.self),
-          ] }
-
-          public var id: CodestackAPI.ID { __data["id"] }
-          public var title: String { __data["title"] }
+          public var submissionFR: SubmissionFR { _toFragment() }
         }
 
         /// GetSubmissions.Content.Language
@@ -116,16 +103,37 @@ public class GetSubmissionsQuery: GraphQLQuery {
           public init(_dataDict: DataDict) { __data = _dataDict }
 
           public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Language }
-          public static var __selections: [ApolloAPI.Selection] { [
-            .field("__typename", String.self),
-            .field("id", CodestackAPI.ID.self),
-            .field("name", String.self),
-            .field("extension", String.self),
-          ] }
 
           public var id: CodestackAPI.ID { __data["id"] }
           public var name: String { __data["name"] }
           public var `extension`: String { __data["extension"] }
+
+          public struct Fragments: FragmentContainer {
+            public let __data: DataDict
+            public init(_dataDict: DataDict) { __data = _dataDict }
+
+            public var languageFR: LanguageFR { _toFragment() }
+          }
+        }
+
+        /// GetSubmissions.Content.Problem
+        ///
+        /// Parent Type: `Problem`
+        public struct Problem: CodestackAPI.SelectionSet {
+          public let __data: DataDict
+          public init(_dataDict: DataDict) { __data = _dataDict }
+
+          public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.Problem }
+
+          public var id: CodestackAPI.ID { __data["id"] }
+          public var title: String { __data["title"] }
+
+          public struct Fragments: FragmentContainer {
+            public let __data: DataDict
+            public init(_dataDict: DataDict) { __data = _dataDict }
+
+            public var problemIdentityFR: ProblemIdentityFR { _toFragment() }
+          }
         }
       }
 
@@ -139,16 +147,20 @@ public class GetSubmissionsQuery: GraphQLQuery {
         public static var __parentType: ApolloAPI.ParentType { CodestackAPI.Objects.PageInfo }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("offset", Int.self),
-          .field("limit", Int.self),
-          .field("totalPage", Int.self),
-          .field("totalContent", Int.self),
+          .fragment(PageInfoFR.self),
         ] }
 
-        public var offset: Int { __data["offset"] }
         public var limit: Int { __data["limit"] }
-        public var totalPage: Int { __data["totalPage"] }
+        public var offset: Int { __data["offset"] }
         public var totalContent: Int { __data["totalContent"] }
+        public var totalPage: Int { __data["totalPage"] }
+
+        public struct Fragments: FragmentContainer {
+          public let __data: DataDict
+          public init(_dataDict: DataDict) { __data = _dataDict }
+
+          public var pageInfoFR: PageInfoFR { _toFragment() }
+        }
       }
     }
   }
