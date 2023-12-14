@@ -9,19 +9,22 @@
 import Foundation
 import RxSwift
 
-protocol DBRepository: AnyObject {
-    func fetch(_ requestType: SubmissionMO.RequestType) -> Single<[SubmissionVO]>
+
+public protocol DBRepository: AnyObject {
+    func fetch(_ requestType: SUB_TYPE) -> Single<[SubmissionVO]>
     func store(submission: SubmissionVO) -> Single<Void>
     func remove() -> Single<Void>
-    func remove(_ requestType: SubmissionMO.RequestType) -> Completable
-    func update(submission: SubmissionVO, type request: SubmissionMO.RequestType) -> Single<Void>
+    func remove(_ requestType: SUB_TYPE) -> Completable
+    func update(submission: SubmissionVO, type request: SUB_TYPE) -> Single<Void>
     
-    func fetchProblemState() -> Single<[ProblemSubmissionState]>
-    func fetchSubmissionCalendar() -> Single<[SubmissionCalendar]>
+    func fetchProblemState() -> Single<[ProblemSubmissionStateVO]>
+    func fetchSubmissionCalendar() -> Single<[SubmissionCalendarVO]>
     
-    func store(favoriteProblem: FavoriteProblem) -> Single<Void>
-    func fetchFavoriteProblems() -> Single<[FavoriteProblem]>
-    func removeFavor(_ requestType: FavoritProblemMO.RequestType) -> Completable
+    func store(favoriteProblem: FavoriteProblemVO) -> Single<Void>
+    func fetchFavoriteProblems() -> Single<[FavoriteProblemVO]>
+    func removeFavor(_ requestType: FAV_TYPE) -> Completable
+}
+
 public typealias ProblemID = String
 public typealias StatusCode = String
 public typealias SubmissionID = String
