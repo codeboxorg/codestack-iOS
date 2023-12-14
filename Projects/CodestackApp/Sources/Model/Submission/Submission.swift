@@ -9,7 +9,104 @@ import Foundation
 import CodestackAPI
 
 
-struct Submission: Codable{
+//[FProblemIdentity]
+//
+//FMember
+//
+//FSubmission
+//
+//[FProblem],FPageInfo
+//
+//FProblem
+//
+//[FTag],FPageInfo
+//
+//[FLanguage]
+//
+//[FSubmission]
+//
+//[FSubmission],FPageInfo)
+
+
+extension SubmissionFR {
+    func toDomain() -> SubmissionVO {
+        SubmissionVO(id: self.id,
+                     sourceCode: self.sourceCode,
+                     problem: self.problem.fragments.problemIdentityFR.toDomain(),
+                     member: MemberNameVO(username: self.member.username),
+                     language: self.language.fragments.languageFR.toDomain(),
+                     cpuTime: self.cpuTime ?? -1,
+                     memoryUsage: self.memoryUsage ?? -1,
+                     statusCode: self.statusCode ?? "fail",
+                     createdAt: self.createdAt)
+    }
+}
+
+extension ProblemIdentityFR {
+    func toDomain() -> ProblemIdentityVO {
+        ProblemIdentityVO(id: self.id,
+                          title: self.title)
+    }
+    
+    func toSubVO() -> SubmissionVO {
+        SubmissionVO(id: "",
+                     sourceCode: "",
+                     problem: self.toDomain(),
+                     member: .init(username: ""),
+                     language: .init(id: "", name: "", extension: ""),
+                     cpuTime: 0,
+                     memoryUsage: 0,
+                     statusCode: "",
+                     createdAt: "")
+    }
+    
+}
+extension LanguageFR {
+    func toDomain() -> LanguageVO {
+        LanguageVO(id: self.id,
+                   name: self.name,
+                   extension: self.extension)
+    }
+}
+
+extension PageInfoFR {
+    func toDomain() -> PageInfoVO {
+        PageInfoVO(limit: self.limit,
+                   offset: self.offset,
+                   totalContent: self.totalContent,
+                   totalPage: self.totalPage)
+    }
+}
+
+extension ProblemFR {
+    
+    func toDomain() -> ProblemVO {
+        ProblemVO(id: self.id,
+                  title: self.title,
+                  context: self.context,
+                  languages: self.languages.map { $0.fragments.languageFR.toDomain() },
+                  tags: self.tags.map { $0.fragments.tagFR.toDomain() },
+                  accepted: self.accepted,
+                  submission: self.submission,
+                  maxCpuTime: self.maxCpuTime,
+                  maxMemory: self.maxMemory)
+    }
+    
+    func toIdentifyFR() -> ProblemIdentityFR {
+        // TODO: 체크해야됌
+        try! ProblemIdentityFR(data: ["id" : self.id, "title" : self.title])
+    }
+}
+
+extension TagFR {
+    func toDomain() -> TagVO {
+        TagVO(id: String(self.id),
+              name: self.name)
+    }
+}
+
+
+struct Submission: Codable {
     var id: String?
     var sourceCode: String?
     var problem: Problem?
@@ -72,29 +169,29 @@ extension Submission {
 //MARK: GraphQL mapping initializer
 extension Submission {
     /// GraphQL Mutation Submission Result
-    /// - Parameter submission: CreateSubmissionMutation Result
-    init(with submission: SubmissionMutation){
-        self.id = submission.id
-        self.statusCode = submission.statusCode
-        self.problem = Problem(create: submission.problem)
-        self.member = User(with: submission.member)
-        self.language = Language(with: submission.language)
-        self.cpuTime = nil
-        self.sourceCode = submission.sourceCode
-        self.memoryUsage = nil
-        self.statusCode = submission.statusCode
-        self.createdAt = submission.createdAt
-    }
-    
-    init(submission: GetSubmissions.Content){
-        self.id = submission.id
-        self.statusCode = submission.statusCode
-        self.problem = Problem(id: submission.problem.id, title: submission.problem.title)
-        self.language = Language(id: submission.language.id, name: submission.language.name, _extension: "")
-        self.statusCode = submission.statusCode
-        self.createdAt = submission.createdAt
-    }
-    
+//    /// - Parameter submission: CreateSubmissionMutation Result
+//    init(with submission: SubmissionMutation) {
+//        self.id = submission.id
+//        self.statusCode = submission.statusCode
+//        self.problem = Problem(create: submission.problem)
+//        self.member = User(with: submission.member)
+//        self.language = Language(with: submission.language)
+//        self.cpuTime = nil
+//        self.sourceCode = submission.sourceCode
+//        self.memoryUsage = nil
+//        self.statusCode = submission.statusCode
+//        self.createdAt = submission.createdAt
+//    }
+//    
+//    init(submission: GetSubmissions.Content){
+//        self.id = submission.id
+//        self.statusCode = submission.statusCode
+//        self.problem = Problem(id: submission.problem.id, title: submission.problem.title)
+//        self.language = Language(id: submission.language.id, name: submission.language.name, _extension: "")
+//        self.statusCode = submission.statusCode
+//        self.createdAt = submission.createdAt
+//    }
+//    
     mutating func ifNetworkErorr() -> Self {
         if self.problem?.languages == nil  {
             self.problem?.languages = Language.sample
