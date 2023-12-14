@@ -8,7 +8,9 @@
 import UIKit
 import RxSwift
 import RxFlow
-
+import Swinject
+import Global
+import Data
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -17,18 +19,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var coordinator: FlowCoordinator = FlowCoordinator()
     var disposeBag: DisposeBag = DisposeBag()
 
-    private let loginService: OAuthrizationRequest = LoginService()
-    private let authService: AuthServiceType = AuthService()
-    private lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.loginService as AppleAuthorization)
+    private let loginService: Auth = LoginService()
+    private let authService: RestAPI = DefaultRestAPI()
+//    private lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.loginService as AppleAuthorization)
+    
+    private let injector = DefaultInjector(container: Container())
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windoScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windoScene)
         
-        let appDependency = AppFlow.Dependency(loginService: self.loginService,
-                                               appleService: self.appleLoginManger,
-                                               authService: self.authService)
+        let appDependency = AppFlow.Dependency(injector: self.injector)
+        injector.assemble([
+            NetworkAssembly(),
+            DataAssembly(),
+            DomainAssembly(),
+            LoginAssembly(),
+            RegisterAssembly(),
+            HomeAssembly(),
+            CodeProblemAssembly(),
+            HistoryAssembly(),
+            OnBoardingAssembly(),
+            MyPageAssembly(),
+            CodeEditorAssembly()
+        ])
         
         let flow = AppFlow(dependency: appDependency)
         
@@ -56,7 +71,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             if let flag = component.first?.elementsEqual("codestackios://git/auth"),
                flag,
                let code = component.last?.components(separatedBy: "=").last{
-                (loginService as GitOAuthorization).gitOAuthComplete(code: code)
+                (loginService as GitAuth).gitOAuthComplete(code: code)
             }
         }
     }

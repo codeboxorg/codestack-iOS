@@ -9,9 +9,9 @@ import UIKit
 import RxFlow
 import RxCocoa
 import RxSwift
+import Data
 
-class LoginViewController: UIViewController,Stepper {
-    
+class LoginViewController: UIViewController,Stepper, AppleLoginViewType {
     
     //MARK: - RXFLow
     let steps = PublishRelay<Step>()

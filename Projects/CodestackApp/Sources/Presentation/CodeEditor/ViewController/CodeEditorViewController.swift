@@ -10,6 +10,7 @@ import Highlightr
 import SnapKit
 import RxFlow
 import RxCocoa
+import Global
 import RxSwift
 
 class CodeEditorViewController: UIViewController, Stepper {
@@ -25,7 +26,6 @@ class CodeEditorViewController: UIViewController, Stepper {
     private weak var highlightr: Highlightr?
     
     struct Dependency{
-        
         var viewModel: CodeEditorViewModel
         var problem: ProblemListItemModel
     }
@@ -82,9 +82,7 @@ class CodeEditorViewController: UIViewController, Stepper {
     }()
     
 
-    deinit {
-        Log.debug("CodeEditorViewController : deinit")
-    }
+    
    
     override func viewDidLoad() {
         super.viewDidLoad()

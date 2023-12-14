@@ -4,7 +4,7 @@ import SnapKit
 import RxFlow
 import RxRelay
 import RxSwift
-
+import Data
 
 enum RError: Error{
     case invalidID
@@ -26,9 +26,9 @@ class RegisterViewController: UIViewController, Stepper{
         case wrong
     }
     
-    private var service: AuthServiceType?
+    private var service: RestAPI?
     
-    static func create(with dependency: AuthServiceType) -> RegisterViewController {
+    static func create(with dependency: RestAPI) -> RegisterViewController {
         let vc = RegisterViewController()
         vc.service = dependency
         return vc

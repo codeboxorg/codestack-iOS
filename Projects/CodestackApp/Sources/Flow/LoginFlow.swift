@@ -9,6 +9,8 @@ import Foundation
 import RxFlow
 import RxSwift
 import RxCocoa
+import Data
+import Global
 
 class LoginFlow: Flow{
     
@@ -17,39 +19,22 @@ class LoginFlow: Flow{
     }
     
     struct Dependency {
-        let loginService: OAuthrizationRequest
-        let appleLoginManager: AppleLoginManager
-        let apolloService: WebRepository
-        let authService: AuthServiceType
+        let injector: Injectable
     }
     
-    private let loginService: OAuthrizationRequest
-    private let appleLoginManager: AppleLoginManager
-    private let apolloService: WebRepository
-    private let authService: AuthServiceType
+    private let injector: Injectable
     
     private var disposeBag = DisposeBag()
     
     private var loginStepper: LoginStepper
     
-    private lazy var loginViewController: LoginViewController = {
-        let dependency = LoginViewModel.Dependency(loginService: self.loginService,
-                                                   apolloService: self.apolloService,
-                                                   stepper: self.loginStepper)
-        let viewModel = LoginViewModel(dependency: dependency)
-        let dp = LoginViewController.Dependencies(viewModel: viewModel,appleManager: appleLoginManager)
-        let vc = LoginViewController.create(with: dp)
-        return vc
-    }()
+    private var loginViewController: LoginViewController
     
     init(dependency: Dependency,
          stepper: LoginStepper) {
-        
-        self.appleLoginManager = dependency.appleLoginManager
-        self.loginService = dependency.loginService
-        self.authService = dependency.authService
-        self.apolloService = dependency.apolloService
         self.loginStepper = stepper
+        self.injector = dependency.injector
+        self.loginViewController = injector.resolve(LoginViewController.self)
     }
     
     func navigate(to step: Step) -> FlowContributors {
@@ -78,7 +63,7 @@ class LoginFlow: Flow{
     
     private func navigateToRegisterViewController() -> FlowContributors {
         
-        let registerViewController = RegisterViewController.create(with: self.authService)
+        let registerViewController = injector.resolve(RegisterViewController.self)
         
         registerViewController.adjustLargeTitleSize(title: "회원가입")
         self.loginViewController.navigationController?.isNavigationBarHidden = false
@@ -89,9 +74,9 @@ class LoginFlow: Flow{
     
     private func navigateToHomeViewController() -> FlowContributors{
         
-        let dependency = TabBarFlow.Dependency(loginservice: self.loginService,
-                                               authService: self.authService,
-                                               apolloService: self.apolloService)
+        let dependency = TabBarFlow.Dependency(
+            injector: self.injector
+        )
         
         let flow = TabBarFlow(dependency: dependency)
         
@@ -106,13 +91,13 @@ class LoginFlow: Flow{
 }
 
 
-class LoginStepper: Stepper{
+class LoginStepper: Stepper {
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     
-    private var authService: AuthServiceType
+    private var authService: RestAPI
     
-    init(authService: AuthServiceType) {
+    init(authService: RestAPI) {
         self.authService = authService
     }
     
@@ -121,19 +106,20 @@ class LoginStepper: Stepper{
     }
     
     func readyToEmitSteps() {
+        
 //         TODO: Reissue Token Error
 //         현재 refresh TOken 으로 재발급시 서버측 Token(구버젼) 으로 발급이 되어 에러 발생 -> 현재는 명시적으로 로그인 하도록
 //        let accessToken = KeychainItem.currentAccessToken
-//        // let refreshToken = KeychainItem.currentRefreshToken
+//        let refreshToken = KeychainItem.currentRefreshToken
 //        
-//        let token = authService.reissueToken(token: ReissueAccessToken(accessToken: accessToken))
+//        let token = authService.reissueToken(token: RefreshToken(refresh: refreshToken))
 //        
 //        _ = token.subscribe(with: self, onNext: { stepper , value in
 //            let (response,data) = value
 //            switch response.statusCode {
 //            case 200..<299:
 //                do {
-//                    let reissueToken = try API.extractAccessToken(data)
+//                    let reissueToken = try API.extract(data)
 //                    try KeychainItem.saveAccessToken(access: reissueToken)
 //                    stepper.steps.accept(CodestackStep.userLoggedIn(nil, nil))
 //                } catch {

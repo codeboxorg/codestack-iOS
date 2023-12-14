@@ -10,6 +10,8 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import Apollo
+import Data
+import Global
 
 enum FavoriteError: Error {
     case error
@@ -17,21 +19,7 @@ enum FavoriteError: Error {
 
 protocol CodeEditorViewModelType: ViewModelType { }
 
-
-
-class LogicService {
-    
-    static let shared = LogicService()
-    
-    func add() {
-        
-    }
-}
-
-
-final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
-    
-    var steps: PublishRelay<Step> = PublishRelay<Step>()
+final class CodeEditorViewModel: CodeEditorViewModelType {
     
     typealias SourceCode = String
     
@@ -62,17 +50,20 @@ final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
         let homeViewModel: any HomeViewModelType
         let historyViewModel: any HistoryViewModelType
         let submissionUseCase: SubmissionUseCase
+        let stepper: CodeEditorStepper
     }
     
     init(dependency: Dependency) {
         self.homeViewModel = dependency.homeViewModel
         self.historyViewModel = dependency.historyViewModel
         self.submissionUseCase = dependency.submissionUseCase
+        self.stepper = dependency.stepper
     }
     
-    private var homeViewModel: (any HomeViewModelType)?
-    private var historyViewModel: (any HistoryViewModelType)?
-    private let submissionUseCase: SubmissionUseCase
+    weak var stepper: CodeEditorStepper?
+    private weak var homeViewModel: (any HomeViewModelType)?
+    private weak var historyViewModel: (any HistoryViewModelType)?
+    private var submissionUseCase: SubmissionUseCase
     
     private var disposeBag = DisposeBag()
     
@@ -106,7 +97,6 @@ final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
                                                sourceCodeRelay.asObservable(),
                                                input.sendAction.asObservable(),
                                                input.submissionID.asObservable())
-        
         // TODO: distilt Until Change 대응
         combine
             .distinctUntilChanged { $0 == $1 }
@@ -146,9 +136,9 @@ final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
                                       Observable.just(value))
             }
             .flatMapLatest { [weak self] model, flag -> Observable<State<Bool>> in
-                guard let self else { return .empty() }
+                guard let useCase = self?.submissionUseCase else { return .empty() }
                 let favoriteProblem = model.makeFavoirtProblem()
-                return self.submissionUseCase.updateFavoritProblem(model: favoriteProblem, flag: flag)
+                return useCase.updateFavoritProblem(model: favoriteProblem, flag: flag)
             }
             .subscribe(with: self, onNext: { vm, result in
                 switch result {
@@ -170,8 +160,8 @@ final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
             }
             .delay(.milliseconds(800), scheduler: MainScheduler.instance)
             .flatMap { [weak self] model -> Observable<State<Problem>> in
-                guard let self else { return .empty() }
-                return self.submissionUseCase.fetchProblem(id: model.problemID)
+                guard let useCase = self?.submissionUseCase else { return .empty() }
+                return useCase.fetchProblem(id: model.problemID)
             }
             .subscribe(with: self, onNext: { vm, result in
                 switch result {
@@ -202,9 +192,9 @@ final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
                     })
             }
             .subscribe(with: self, onNext: { vm, value in
-                vm.steps.accept(CodestackStep.problemComplete)
+                vm.stepper?.steps.accept(CodestackStep.problemComplete)
             },onError: { vm, _ in
-                vm.steps.accept(CodestackStep.problemComplete)
+                vm.stepper?.steps.accept(CodestackStep.problemComplete)
             })
             .disposed(by: disposeBag)
     }
@@ -328,17 +318,17 @@ final class CodeEditorViewModel: CodeEditorViewModelType, Stepper {
     private func viewErrorInteractorAction(_ error: Error) {
         if let err = error as? TokenAcquisitionError {
             if err == TokenAcquisitionError.unowned {
-                self.steps.accept(CodestackStep.toastMessage("서버에 response가 오지 않습니다"))
+                self.stepper?.steps.accept(CodestackStep.toastMessage("서버에 response가 오지 않습니다"))
             }
             
             if err == TokenAcquisitionError.unauthorized {
-                self.steps.accept(CodestackStep.loginNeeded)
+                self.stepper?.steps.accept(CodestackStep.loginNeeded)
                 return
             }
         }
         
         if let _ = error as? SendError {
-            self.steps.accept(CodestackStep.toastMessage("같은 내용입니다"))
+            self.stepper?.steps.accept(CodestackStep.toastMessage("같은 내용입니다"))
             return
         }
     }

@@ -6,9 +6,14 @@
 xcuserdata/
 
 ## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+Projects/Highilighrt/**/*.*
 *.xcscmblueprint
 *.xccheckout
 *.xcconfig
+*.pbxproj
+Projects/CodestackAPI/
+Projects/Highlightr/**
+Projects/Highlightr/**/*.*
 ./*.xcconfig
 APIResource.xcconfig
 /APIResource.xcconfig

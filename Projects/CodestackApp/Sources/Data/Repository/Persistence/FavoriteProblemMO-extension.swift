@@ -6,7 +6,7 @@
 //
 
 import CoreData
-
+import Data
 
 extension FavoritProblemMO {
     

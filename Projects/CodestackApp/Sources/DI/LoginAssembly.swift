@@ -7,10 +7,28 @@
 //
 
 import Swinject
+import Data
 
 public struct LoginAssembly: Assembly {
     
     public func assemble(container: Container) {
+        
+        container.register(LoginStepper.self) { resolver in
+            let service = resolver.resolve(RestAPI.self)!
+            return LoginStepper(authService: service)
+        }.inObjectScope(.container)
+        
+        container.register((any LoginViewModelProtocol).self) { resolver in
+            let request = resolver.resolve(Auth.self)!
+            let web = resolver.resolve(WebRepository.self)!
+            let stepper = resolver.resolve(LoginStepper.self)!
+            
+            let dp = LoginViewModel.Dependency(loginService: request,
+                                               apolloService: web,
+                                               stepper: stepper)
+            return LoginViewModel(dependency: dp)
+        }.inObjectScope(.container)
+        
         container.register(LoginViewController.self) { resolver in
             let loginViewModel = resolver.resolve((any LoginViewModelProtocol).self)!
             let apple = resolver.resolve(AppleLoginManager.self)!

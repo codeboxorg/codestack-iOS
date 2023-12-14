@@ -6,13 +6,13 @@
 //
 
 import UIKit
-
-
+import Global
 
 class BoxContainerLabel: UILabel{
     
     private let maxWidth: (String,UIFont) -> CGFloat =
     { text, font in
+        
         "\(text)".width(withConstrainedHeight: 0, font: font) + 40
     }
     

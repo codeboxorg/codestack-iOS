@@ -9,6 +9,8 @@ import Foundation
 import RxFlow
 import RxSwift
 import RxCocoa
+import Data
+import Global
 
 class MyPageViewModel: ViewModelType, Stepper{
     
@@ -26,14 +28,14 @@ class MyPageViewModel: ViewModelType, Stepper{
     }
     
     struct Dependency {
-        let authService: AuthServiceType
+        let authService: RestAPI
         let apolloService: WebRepository
     }
     
     var steps = PublishRelay<Step>()
     private var disposeBag = DisposeBag()
     
-    private let authService: AuthServiceType
+    private let authService: RestAPI
     let apolloService: WebRepository
     
     init(dependency: Dependency) {

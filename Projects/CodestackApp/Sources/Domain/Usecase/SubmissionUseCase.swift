@@ -8,6 +8,8 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import Data
+import Global
 
 typealias State<T> = Result<T, Error>
 
@@ -19,6 +21,8 @@ protocol SubmissionUseCase: AnyObject {
     
     // func fetchSubmissionByLanguage(name: String) -> Observable<State<[Submission]>>
     func updateFavoritProblem(model: FavoriteProblem, flag: Bool) -> Observable<State<Bool>>
+    
+    func fetchFavoriteProblem() -> Observable<State<[FavoriteProblem]>>
     
     func fetchProblem(id: ProblemID) -> Observable<State<Problem>>
     func fetchProblemHistoryEqualStatus(status code: String) -> Observable<State<[Submission]>>
@@ -146,6 +150,13 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
             .asObservable()
         //         _ = service?.getSubmissionDate(query: Query.getSubmissionHistory(limit: 100, offset: 0))
         //             .observe(on: MainScheduler.instance)
+    }
+    
+    func fetchFavoriteProblem() -> Observable<State<[FavoriteProblem]>> {
+        dbRepository
+            .fetchFavoriteProblems()
+            .asObservable()
+            .map { .success($0) }
     }
     
     func updateFavoritProblem(model: FavoriteProblem, flag: Bool) -> Observable<State<Bool>> {

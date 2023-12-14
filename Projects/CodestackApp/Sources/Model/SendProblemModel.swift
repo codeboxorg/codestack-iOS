@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Data
 
 struct SendProblemModel {
     let submissionID: ID
@@ -43,7 +43,7 @@ extension SendProblemModel {
     
     func makeFavoirtProblem() -> FavoriteProblem {
         FavoriteProblem(problemID: self.problemID,
-                        problmeTitle: self.problemID,
+                        problmeTitle: self.problemTitle,
                         createdAt: Date())
     }
     

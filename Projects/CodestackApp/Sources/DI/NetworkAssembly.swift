@@ -7,29 +7,30 @@
 //
 
 import Swinject
-
+import Foundation
+import Data
 
 public struct NetworkAssembly: Assembly {
     
     public func assemble(container: Container) {    
-        container.register(AuthService.self) { resolver in
-            AuthService()
-        }
+        container.register(RestAPI.self) { resolver in
+            DefaultRestAPI(session: URLSession(configuration: .default))
+        }.inObjectScope(.container)
         
-        container.register(OAuthrizationRequest.self) { resolver in
+        container.register(Auth.self) { resolver in
             LoginService()
-        }
+        }.inObjectScope(.container)
         
-        container.register(TokenAcquisitionService<ReissueAccessToken>.self) { resolver in
-            let service = resolver.resolve(AuthService.self)!
+        container.register(TokenAcquisitionService<RefreshToken>.self) { resolver in
+            let service = resolver.resolve(RestAPI.self)!
             return TokenAcquisitionService(initialToken: service.initialToken,
                                            getToken: service.reissueToken(token:),
                                            max: 2,
                                            extractToken: API.extractAccessToken)
-        }
+        }.inObjectScope(.container)
         
         container.register(AppleLoginManager.self) { resolver in
-            let service = resolver.resolve(OAuthrizationRequest.self)!
+            let service = resolver.resolve(Auth.self)!
             return AppleLoginManager(serviceManager: service)
         }
     }

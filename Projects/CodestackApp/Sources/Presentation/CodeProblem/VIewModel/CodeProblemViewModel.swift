@@ -19,7 +19,7 @@ protocol ProblemViewModelProtocol{
     func transform(_ input: Input) -> Output
 }
 
-class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
+class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
     
     
     var steps = PublishRelay<Step>()
@@ -83,7 +83,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper{
         
         //MARK: - Cell Select
         _ = input.cellSelect
-            .map{model in CodestackStep.problemPick(model.model)}
+            .map{ model in CodestackStep.problemPick(model.model) }
             .emit(to: steps)
             .disposed(by: disposeBag)
         
