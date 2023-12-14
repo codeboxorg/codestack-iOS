@@ -27,7 +27,7 @@ let resources: ResourceFileElements
     "Resources/PLanguage/swift/*.txt",
     "Resources/PLanguage/typescript/*.txt",
     "Resources/Base.lproj/LaunchScreen.storyboard",
-    "Sources/Data/Repository/Model/db_model_v1.xcdatamodeld"
+    "Sources/Data/Repository/MO/db_model_v1.xcdatamodeld"
 ]
 
 
