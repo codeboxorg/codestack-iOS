@@ -24,8 +24,10 @@ let project = Project(name: "Global",
                                        dependencies: [
                                        ],
                                        configuration: [
-                                        .debug(name: "Dev"),
-                                        .debug(name: "Prod")
+                                        .debug(name: "Dev",
+                                               settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG")]),
+                                        .debug(name: "Prod",
+                                               settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("PROD")])
                                         ]),
                       ],
                       schemes: [
