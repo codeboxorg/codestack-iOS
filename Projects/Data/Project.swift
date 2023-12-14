@@ -25,6 +25,7 @@ let project = Project(name: "Data",
                                        dependencies: [
                                         .rxSwift,
                                         .codestackAPI,
+                                        .project(target: "Global", path: .relativeToRoot("Projects/Global")),
                                        ],
                                        configuration: [
                                         .debug(name: "Dev"),

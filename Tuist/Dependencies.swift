@@ -40,6 +40,8 @@ public extension Package {
     
     static let codestackAPI: Package = .local(path: .relativeToRoot("Projects/CodestackAPI"))
     
+    static let highlightr: Package = .local(path: .relativeToRoot("Projects/Highlightr"))
+    
 }
 
 
@@ -59,13 +61,15 @@ public let dependencies = Dependencies(
                 .sqlite,
                 .swinject,
                 .codestackAPI,
+                .highlightr
             ],
-            productTypes: [ "CodestackAPI" : .framework ],
+            productTypes: [ "CodestackAPI" : .framework ,
+                            "Highlightr" : .framework ],
             baseSettings: .settings(configurations: [
                 .debug(name: "Dev"),
                 .debug(name: "Prod"),
             ]),
-            targetSettings: [:],
+            targetSettings: [ : ],
             projectOptions: [:])
     ,
     platforms: [.iOS]

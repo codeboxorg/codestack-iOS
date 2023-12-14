@@ -65,7 +65,8 @@ let project = Project(name: "CodestackApp",
                                         .rxGesture,
                                         .sqlite,
                                         .swinject,
-                                        .codestackAPI
+                                        .codestackAPI,
+                                        .highlightr,
                                        ],
                                        configuration: [
                                         .debug(name: "Dev",
