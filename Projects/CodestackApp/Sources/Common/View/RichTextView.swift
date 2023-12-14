@@ -39,7 +39,7 @@ class RichTextViewController: UIViewController{
     }
     
     
-    static func create(with html: [Problem]) -> RichTextViewController{
+    static func create(with html: [ProblemVO]) -> RichTextViewController {
         let vc = RichTextViewController()
         let problems = html
         
