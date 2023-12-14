@@ -150,7 +150,10 @@ class LoginViewModel: LoginViewModelProtocol, Stepper{
         
         KeychainItem.saveTokens(access: token.accessToken, refresh: token.refreshToken)
         
-        return apolloService.getMe(query: Query.getMe())
+        return apolloService.getMe(.ME)
+            .map { fr in
+                
+            }
     }
     
     private func saveUserInfo(user: User){

@@ -207,7 +207,8 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
                                 sort: String = "id",
                                 order: String = "asc") -> Signal<[Problem]> {
         apollo
-            .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
+            // .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
+            .getProblemsQuery(.)
             .asSignal(onErrorJustReturn: [])
     }
 }
