@@ -64,3 +64,35 @@ extension SubmissionMO {
         return request
     }
 }
+
+extension SUB_TYPE {
+    func conditionRequest() -> NSFetchRequest<SubmissionMO> {
+        switch self {
+        case .isExist(let problemID):
+            return SubmissionMO.isExistSubmission(problemID: problemID)
+        
+        case .isNotTemp(let problemID, let state):
+            return SubmissionMO.isNotTempSubmission(probelmID: problemID, status: state)
+        
+        case .isEqualStatusCode(let statusCode):
+            return SubmissionMO.isEqualStatusCode(statusCode)
+            
+        case .update(let submissionID, let problemID):
+            return SubmissionMO.isEqualID(id: submissionID, problemID)
+            
+        case .recent(let problemID):
+            return SubmissionMO.recent(probelm: problemID)
+            
+        case .default:
+            let request = SubmissionMO.newFetchRequest()
+            request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
+            request.fetchLimit = 10
+            return request
+        
+        case .delete(let languageName, let problemID, let statusCode):
+            return SubmissionMO.isEqualStatus(languageName: languageName,
+                                              problemID: problemID,
+                                              statusCode: statusCode)
+        }
+    }
+}

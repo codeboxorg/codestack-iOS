@@ -9,9 +9,18 @@ import CoreData
 import Data
 import Domain
 
+extension FAV_TYPE {
+    func conditionRequest() -> NSFetchRequest<FavoritProblemMO> {
+        switch self {
+        case .all:
+            return FavoriteProblem.fetchRequest()
+        case .isEqualID(let problemID):
+            return FavoritProblemMO.isEqualID(probelmID: problemID)
         }
     }
-    
+}
+
+extension FavoritProblemMO {
     static func isEqualID(probelmID: ProblemID) -> NSFetchRequest<FavoritProblemMO> {
         let request = newFetchRequest()
         let predicate1 = NSPredicate(format: "problemID == %@", "\(probelmID)")

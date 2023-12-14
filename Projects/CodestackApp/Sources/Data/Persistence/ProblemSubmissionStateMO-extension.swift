@@ -47,3 +47,14 @@ extension ProblemSubmissionStateMO {
         return stateMO
     }
 }
+
+extension PR_SUB_ST_TYPE {
+    func conditionRequest() -> NSFetchRequest<ProblemSubmissionStateMO> {
+        switch self {
+        case .all:
+            return ProblemSubmissionStateMO.fetchRequest()
+        case .isEqualID(let problemID):
+            return ProblemSubmissionStateMO.fetchRequest()
+        }
+    }
+}
