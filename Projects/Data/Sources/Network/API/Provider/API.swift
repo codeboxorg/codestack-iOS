@@ -40,8 +40,10 @@ extension API {
     
     public static func GRAPH_MUTATION(path: GRAPH) -> any GraphQLMutation {
         switch path {
-        case .SUBMIT_SUB(let languageID, let problemID, let sourceCode):
-            return SubmitSubmissionMutation(languageId: languageID, problemId: problemID, sourceCode: sourceCode)
+        case .SUBMIT_SUB(let grsubmit):
+            return SubmitSubmissionMutation(languageId: grsubmit.languageId,
+                                            problemId: grsubmit.problemId,
+                                            sourceCode: grsubmit.sourceCode)
             
         case .UPDATE_NICKNAME(let nickname):
             return UpdateNickNameMutation(nickname: nickname)
@@ -54,17 +56,17 @@ extension API {
         switch path {
         case .PR_BY_ID(let id):
             return FetchProblemByIdQuery.init(id: id)
-        case .PR_LIST(let offset, let sort, let order):
-            return FetchProblemsQuery.init(offset: .init(integerLiteral: offset),
-                                           sort: .init(stringLiteral: sort),
-                                           order: .init(stringLiteral: order))
+        case .PR_LIST(let grar):
+            return FetchProblemsQuery.init(offset: .init(integerLiteral: grar.offset),
+                                           sort: .init(stringLiteral: grar.sort),
+                                           order: .init(stringLiteral: grar.order))
             
-        case .SER_PR_LIST(let keyword, let limit, let order, let sort):
-            return FetchSearchproblemsQuery.init(keyword: keyword, limit: limit, order: order, sort: sort)
-        case .SUB_LIST(let offset, let sort, let order):
-            return FetchSubmissionsQuery.init(offset: .init(integerLiteral: offset),
-                                              sort: .init(stringLiteral: sort),
-                                              order: .init(stringLiteral: order))
+        case .SER_PR_LIST(let keyword, let grar):
+            return FetchSearchproblemsQuery.init(keyword: keyword, limit: grar.limit, order: grar.order, sort: grar.sort)
+        case .SUB_LIST(let grar):
+            return FetchSubmissionsQuery.init(offset: .init(integerLiteral: grar.offset),
+                                              sort: .init(stringLiteral: grar.sort),
+                                              order: .init(stringLiteral: grar.order))
         case .SUB_BY_PR_ID(let offset, let problemID):
             return FetchSubmissionByProblemIdQuery.init(offset: offset, problemId: problemID)
         case .SUB_BY_ID(let id):
