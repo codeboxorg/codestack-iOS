@@ -1,5 +1,5 @@
 {
-  "schemaNamespace" : "codestackAPI",
+  "schemaNamespace" : "CodestackAPI",
   "input" : {
     "operationSearchPaths" : [
       "**/*.graphql"
@@ -14,7 +14,7 @@
       }
     },
     "schemaTypes" : {
-      "path" : "./codestackAPI",
+      "path" : "./Projects/CodestackAPI",
       "moduleType" : {
         "swiftPackageManager" : {
         }
