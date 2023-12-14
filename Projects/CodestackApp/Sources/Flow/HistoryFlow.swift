@@ -17,10 +17,10 @@ class HistoryFlow: Flow {
         rootViewController
     }
     
-    let historyViewModel: any HistoryViewModelType
+    private let injector: Injectable
     
-    init(historyViewModel: any HistoryViewModelType) {
-        self.historyViewModel = historyViewModel
+    init(injector: Injectable) {
+        self.injector = injector
     }
     
     private let rootViewController: UINavigationController = {
@@ -41,7 +41,7 @@ class HistoryFlow: Flow {
     }
     
     func navigateToHistory() -> FlowContributors{
-        let history = HistoryViewController.create(with: historyViewModel)
+        let history = injector.resolve(HistoryViewController.self)
         history.navigationItem.title = "기록"
         rootViewController.pushViewController(history, animated: false)
         return .none

@@ -52,6 +52,9 @@ let project = Project(name: "CodestackApp",
                                        resources: resources,
                                        entitlement: .relativeToCurrentFile("Resources/CodeStack.entitlements"),
                                        dependencies: [
+                                        
+                                        .project(target: "Global", path: .relativeToRoot("Projects/Global")),
+                                        .project(target: "Data", path: .relativeToRoot("Projects/Data")),
                                         .rxSwift,
                                         .snapKit,
                                         .then,
@@ -62,7 +65,8 @@ let project = Project(name: "CodestackApp",
                                         .rxGesture,
                                         .sqlite,
                                         .swinject,
-                                        .codestackAPI
+                                        .codestackAPI,
+                                        .highlightr,
                                        ],
                                        configuration: [
                                         .debug(name: "Dev",

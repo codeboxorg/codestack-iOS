@@ -9,6 +9,7 @@ import SwiftUI
 import RxCocoa
 import RxFlow
 import RxSwift
+import Global
 
 class ContributionViewModel: ObservableObject, RxFlow.Stepper {
     

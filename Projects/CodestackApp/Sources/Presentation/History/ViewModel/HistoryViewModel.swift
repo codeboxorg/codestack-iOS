@@ -9,9 +9,9 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxRelay
+import Global
 
-
-protocol HistoryViewModelType: ViewModelType{
+protocol HistoryViewModelType: ViewModelType, AnyObject {
     var sendSubmission: PublishRelay<Submission> { get set }
 }
 
@@ -93,6 +93,11 @@ class HistoryViewModel: HistoryViewModelType {
             let filteredSubmissions = submissions.filter{ $0.statusCode?.checkIsEqual(with: segment) ?? false}
             return filteredSubmissions
         }
+        
+        submissionUsecase.fetchFavoriteProblem()
+            .subscribe(with: self, onNext: { vm, favoriteProblems in
+                Log.debug("즐겨찾기 한 문제 : \(favoriteProblems)")
+            }).disposed(by: disposeBag)
         
             // filteredHistoryData.asObservable()
             //   .subscribe(with: self,onNext: { vm,value in

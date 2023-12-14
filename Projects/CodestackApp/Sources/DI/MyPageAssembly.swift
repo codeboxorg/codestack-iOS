@@ -7,14 +7,14 @@
 //
 
 import Swinject
+import Data
 
 public struct MyPageAssembly: Assembly {
     
     public func assemble(container: Container) {
         
         container.register(MyPageViewModel.self) { resolver in
-            
-            let auth = resolver.resolve(AuthServiceType.self)!
+            let auth = resolver.resolve(RestAPI.self)!
             let web = resolver.resolve(WebRepository.self)!
             
             let dp = MyPageViewModel.Dependency(authService: auth,

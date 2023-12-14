@@ -21,7 +21,7 @@ enum TabBarItem: Int {
     case mypage = 4
 }
 
-class CustomTabBarController: UITabBarController,TabBarDelegate{
+class CustomTabBarController: UITabBarController,TabBarDelegate {
     
     var borderView: UIView?
     

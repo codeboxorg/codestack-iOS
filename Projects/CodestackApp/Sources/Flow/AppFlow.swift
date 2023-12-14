@@ -17,21 +17,14 @@ class AppFlow: Flow{
     }
     
     struct Dependency {
-        let loginService: OAuthrizationRequest
-        let appleService: AppleLoginManager
-        let authService: AuthServiceType
+        let injector: Injectable
     }
     
-    private let loginService: OAuthrizationRequest
-    private let appleService: AppleLoginManager
-    private let authService: AuthServiceType
-    private lazy var apolloService: WebRepository = DefaultApolloRepository(dependency: authService.tokenService)
     
+    private let injector: Injectable
     
     init(dependency: Dependency){
-        self.loginService = dependency.loginService
-        self.appleService = dependency.appleService
-        self.authService = dependency.authService
+        self.injector = dependency.injector
     }
 
     private lazy var rootViewController: UINavigationController = {
@@ -56,12 +49,11 @@ class AppFlow: Flow{
     }
 
     private func navigateToLoginVC() -> FlowContributors {
-        let loginStepper = LoginStepper(authService: self.authService)
+        let loginStepper = injector.resolve(LoginStepper.self)
         
-        let dependecy = LoginFlow.Dependency(loginService: self.loginService,
-                                             appleLoginManager: self.appleService,
-                                             apolloService: self.apolloService,
-                                             authService: self.authService)
+        let dependecy = LoginFlow.Dependency(
+            injector: self.injector
+        )
         
         let loginFlow = LoginFlow(dependency: dependecy, stepper: loginStepper)
         
@@ -73,7 +65,7 @@ class AppFlow: Flow{
     
     private func navigateToOnBoarding() -> FlowContributors {
     
-        let onBoardingFlow = OnBoardingFlow()
+        let onBoardingFlow = OnBoardingFlow(dependency: .init(injector: injector))
         
         Flows.use(onBoardingFlow, when: .created){ [unowned self] root in
             DispatchQueue.main.async {

@@ -12,6 +12,7 @@ import RxCocoa
 import PhotosUI
 import Photos
 import RxGesture
+import Global
 
 typealias ProfileImage = UIImage
 
