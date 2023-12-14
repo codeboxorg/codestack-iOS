@@ -52,6 +52,17 @@ extension SubmissionMO : Identifiable {
 }
 
 extension SubmissionVO {
+    func updateMO(mo: SubmissionMO) -> SubmissionMO {
+        mo.codeContext?.code = self.sourceCode
+        mo.codeContext?.problemID = self.problem.id
+        mo.codeContext?.problemTitle = self.problem.title
+        mo.language?.languageID = self.language.id
+        mo.language?.name = self.language.name
+        mo.language?.extension = self.language.extension
+        mo.statusCode = self.statusCode
+        mo.createdAt = self.createdAt.toDateKST()
+        return mo
+    }
     func toMO(in context: NSManagedObjectContext) -> SubmissionMO? {
         guard
             let submissionMO = SubmissionMO.insertNew(in: context),

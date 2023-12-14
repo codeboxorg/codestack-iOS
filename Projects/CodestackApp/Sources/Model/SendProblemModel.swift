@@ -47,16 +47,20 @@ extension SendProblemModel {
                         createdAt: Date())
     }
     
-    func makeTempSubmission() -> Submission {
-        let submissionID = self.submissionID.isEmpty ? UUID().uuidString : self.submissionID
-        return Submission(id: submissionID,
-                          sourceCode: self.sourceCode,
-                          problem: .init(id: self.problemID, title: self.problemTitle),
-                          member: .init(),
-                          language: self.language,
-                          cpuTime: 0,
-                          memoryUsage: 0,
-                          statusCode: "temp",
-                          createdAt: Date().toString())
+    func toProblemIdentity() -> ProblemIdentityVO {
+        ProblemIdentityVO(id: self.problemID, title: self.problemTitle)
     }
+    
+    func toTempDomain() -> SubmissionVO {
+        let submissionID = self.submissionID.isEmpty ? UUID().uuidString : self.submissionID
+        return SubmissionVO.init(id: submissionID,
+                                 sourceCode: self.sourceCode,
+                                 problem: self.toProblemIdentity(),
+                                 member: .init(username: self.userName),
+                                 language: self.language,
+                                 cpuTime: 0,
+                                 memoryUsage: 0,
+                                 statusCode: "temp",
+                                 createdAt: Date().toString())
+    }    
 }
