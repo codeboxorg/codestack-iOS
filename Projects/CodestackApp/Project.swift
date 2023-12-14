@@ -52,9 +52,9 @@ let project = Project(name: "CodestackApp",
                                        resources: resources,
                                        entitlement: .relativeToCurrentFile("Resources/CodeStack.entitlements"),
                                        dependencies: [
-                                        
                                         .project(target: "Global", path: .relativeToRoot("Projects/Global")),
                                         .project(target: "Data", path: .relativeToRoot("Projects/Data")),
+                                        .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
                                         .rxSwift,
                                         .snapKit,
                                         .then,
