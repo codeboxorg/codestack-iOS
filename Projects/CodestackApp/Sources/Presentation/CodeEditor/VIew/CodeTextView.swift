@@ -72,20 +72,6 @@ int main() {
     
     private var isFirst: Bool = true
     
-    func bind(language: Language, sourceCode: String) {
-
-        // 첫 실행시 비어있을때 default Text로 셋팅
-        if isFirst {
-            if self.text.isEmpty {
-                self.text = sourceCode
-            }
-            isFirst.toggle()
-            return
-        }
-        
-        self.text = sourceCode
-    }
-    
     func languageBinding(language: LanguageVO) {
         let storage = (self.textStorage as! CodeAttributedString)
         

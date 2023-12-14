@@ -60,8 +60,8 @@ struct ProblemListItemModel: Equatable {
          submitCount: Int,
          correctAnswer: Int,
          correctRate: Double,
-         tags: [Tag] = [],
-         languages: [Language] = []) {
+         tags: [TagVO] = [],
+         languages: [LanguageVO] = []) {
              self.submissionID = nil
              self.problemNumber = problemNumber
              self.problemTitle = problemTitle
