@@ -120,7 +120,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
             cell.selectionStyle = .none
             cell.separatorInset = UIEdgeInsets.zero
             cell.onHistoryData.accept(submission)
-            cell.onStatus.accept(submission.statusCode?.convertSolveStatus() ?? .none)
+            cell.onStatus.accept(submission.statusCode.convertSolveStatus() )
         }.disposed(by: disposeBag)
         
         

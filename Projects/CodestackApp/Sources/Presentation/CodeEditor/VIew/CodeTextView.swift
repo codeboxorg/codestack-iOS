@@ -86,7 +86,7 @@ int main() {
         self.text = sourceCode
     }
     
-    func languageBinding(language: Language) {
+    func languageBinding(language: LanguageVO) {
         let storage = (self.textStorage as! CodeAttributedString)
         
         if language.name == "Node" || language.name == "Node.js" {
