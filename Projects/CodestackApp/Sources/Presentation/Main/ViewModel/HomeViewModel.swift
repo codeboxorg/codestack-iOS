@@ -11,6 +11,8 @@ import RxGesture
 import RxCocoa
 import RxFlow
 import CodestackAPI
+import Global
+import Data
 
 
 protocol HomeViewModelType: ViewModelType, Stepper, AnyObject {
@@ -62,7 +64,7 @@ final class HomeViewModel: HomeViewModelType {
         updateSubmissionBinding()
     }
     
-    private func sendSubmissionBinding(){
+    private func sendSubmissionBinding() {
         sendSubmission
             .map{ $0 }
             .subscribe(with: self,onNext: { vm, submission in
@@ -137,11 +139,6 @@ final class HomeViewModel: HomeViewModelType {
                 vm.submissions.accept(value.toRecentModels())
             }).disposed(by: disposeBag)
         
-        //            repository.remove()
-        //                .subscribe {
-        //                    Log.debug("delete")
-        //                }
-        
         //        repository.fetch(.default)
         //            .subscribe(onSuccess: {value in
         //                let value = value.compactMap(\.id)
@@ -160,6 +157,7 @@ final class HomeViewModel: HomeViewModelType {
                 return vm.fetchProblem(using: submission)
             }
             .compactMap { submission in
+                // TODO: 확인후 변경 바람º
                 let _submission: Submission = submission
                 return _submission.problem?.toProblemList(submission)
             }
@@ -170,21 +168,32 @@ final class HomeViewModel: HomeViewModelType {
         return Output(submissions: self.submissions.asDriver(onErrorJustReturn: []))
     }
     
-    func fetchProblem(using submission: Submission) -> Signal<Submission> {
+    func fetchProblem(using submission: Submission) -> Signal<SubmissionVO> {
         service
-            .getProblemByID(query: GetProblemByIdQuery(id: submission.problem!.id))
-            .map { value in Submission(_problem: value) }
-            .map { sub in
-                var fetchedSubmission = sub
-                fetchedSubmission.id = submission.id
-                fetchedSubmission.sourceCode = submission.sourceCode
-                fetchedSubmission.language = submission.language
-                return fetchedSubmission
+            .request(type: ProblemFR.self, graph: .PR_BY_ID(submission.problem!.id))
+            .map { prFR in
+                let problem = prFR.toDomain()
             }
             .asSignal(onErrorRecover: { error in
-                var submission = submission
-                return .just(submission.ifNetworkErorr())
+                Log.error("\(error)")
+                return .just(SubmissionVO.sample)
             })
+//            .asSignal(onErrorRecover: { error in
+//                
+//            })
+//            .getProblemByID(query: GetProblemByIdQuery(id: submission.problem!.id))
+//            .map { value in Submission(_problem: value) }
+//            .map { sub in
+//                var fetchedSubmission = sub
+//                fetchedSubmission.id = submission.id
+//                fetchedSubmission.sourceCode = submission.sourceCode
+//                fetchedSubmission.language = submission.language
+//                return fetchedSubmission
+//            }
+//            .asSignal(onErrorRecover: { error in
+//                var submission = submission
+//                return .just(submission.ifNetworkErorr())
+//            })
     }
     
     func fetchedSubmission() -> Signal<[Submission]> {

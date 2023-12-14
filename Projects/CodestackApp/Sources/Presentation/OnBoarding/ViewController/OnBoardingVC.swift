@@ -8,6 +8,7 @@
 import UIKit
 import RxFlow
 import RxCocoa
+import Global
 
 class OnBoardingVC: UIViewController,Stepper {
     

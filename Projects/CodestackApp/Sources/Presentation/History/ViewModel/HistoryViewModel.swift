@@ -10,9 +10,9 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxRelay
+import Global
 
-
-protocol HistoryViewModelType: ViewModelType {
+protocol HistoryViewModelType: ViewModelType, AnyObject {
     var sendSubmission: PublishRelay<Submission> { get set }
 }
 

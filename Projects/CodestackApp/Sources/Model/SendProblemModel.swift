@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Data
 
 struct SendProblemModel {
     let submissionID: ID

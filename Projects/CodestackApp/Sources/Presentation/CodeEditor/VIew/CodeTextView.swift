@@ -45,9 +45,8 @@ int main() {
     
     deinit{
         print("CodeUITextView : deinit")
-        
-        
     }
+    
     fileprivate func addAttributes(){
         self.font = UIFont.boldSystemFont(ofSize: 14)
     }
