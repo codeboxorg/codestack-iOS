@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import RichTextKit
+import Global
 
 class RichTextViewController: UIViewController{
 
@@ -18,7 +19,7 @@ class RichTextViewController: UIViewController{
         
         do{
             rich = RichTextView(string: attributedString!)
-        }catch{
+        } catch {
             Log.debug("html parsing error")
         }
         return rich
