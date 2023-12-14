@@ -20,21 +20,26 @@ public struct SubmissionInfoVO: Codable {
     }
 }
 
-public struct SubmissionVO: Codable {
-    var id: String
-    var sourceCode: String
-    var problem: ProblemIdentityVO
-    var member: MemberNameVO
-    var language: LanguageVO
-    var cpuTime: Double
-    var memoryUsage: Double
-    var statusCode: String
-    var createdAt: String
+
+
+public struct SubmissionVO: Codable, Equatable {
+    public var id: String
+    public var sourceCode: String
+    public var problem: ProblemIdentityVO
+    public var problemVO: ProblemVO
+    public var member: MemberNameVO
+    public var language: LanguageVO
+    public var cpuTime: Double
+    public var memoryUsage: Double
+    public var statusCode: String
+    public var createdAt: String
     
-    public init(id: String, sourceCode: String, problem: ProblemIdentityVO, member: MemberNameVO, language: LanguageVO, cpuTime: Double, memoryUsage: Double, statusCode: String, createdAt: String) {
+    public init(id: String, sourceCode: String, problem: ProblemIdentityVO,
+                problemVO: ProblemVO = ProblemVO.sample ,member: MemberNameVO, language: LanguageVO, cpuTime: Double, memoryUsage: Double, statusCode: String, createdAt: String) {
         self.id = id
         self.sourceCode = sourceCode
         self.problem = problem
+        self.problemVO = problemVO
         self.member = member
         self.language = language
         self.cpuTime = cpuTime
