@@ -11,6 +11,7 @@ Projects/Highilighrt/**/*.*
 *.xccheckout
 *.xcconfig
 *.pbxproj
+*.png
 Projects/Highlightr/**
 Projects/Highlightr/**/*.*
 ./*.xcconfig
