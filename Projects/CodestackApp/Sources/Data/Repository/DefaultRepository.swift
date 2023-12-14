@@ -100,19 +100,21 @@ public class DefaultRepository: WebRepository {
     
     typealias MatchMember = FetchSolvedProblemQuery.Data.MatchMember.SolvedProblem.Fragments
     
-    public func getSolvedProblems(_ query: FetchSolvedProblemQuery) -> Maybe<[ProblemIdentityFR]>  {
+    public func getSolvedProblems(_ query: FetchSolvedProblemQuery) -> Maybe<[ProblemIdentityVO]>  {
 //        let query = API.GRAPH_QUERY(path: graph) as! FetchSolvedProblemQuery
         return graphAPI.fetch(query: query , cachePolicy: .default, queue: .main)
             .map { item in
-                item.matchMember.solvedProblems.map { $0.fragments.problemIdentityFR }
+                item.matchMember
+                    .solvedProblems
+                    .map { $0.fragments.problemIdentityFR.toDomain() }
             }
     }
     
-    public func getMe(_ graph: GRAPH) -> Maybe<MemberFR> {
+    public func getMe(_ graph: GRAPH) -> Maybe<MemberVO> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchMeQuery
         return graphAPI.fetch(query: query, cachePolicy: .fetchIgnoringCacheData, queue: .main)
             .map { item in
-                item.getMe.fragments.memberFR
+                item.getMe.fragments.memberFR.toDomain()
             }
             .retry(when: { [weak self] errorObservable in
                 guard let self else { return Observable<Void>.never() }
@@ -120,11 +122,11 @@ public class DefaultRepository: WebRepository {
             })
     }
     
-    public func updateNickName(_ graph: GRAPH) -> Maybe<MemberFR> {
+    public func updateNickName(_ graph: GRAPH) -> Maybe<MemberVO> {
         let mutation = API.GRAPH_MUTATION(path: graph) as! UpdateNickNameMutation
         return graphAPI.perform(query: mutation, cachePolichy: .default, queue: .global(qos: .default))
             .map { item in
-                item.updateNickname.fragments.memberFR
+                item.updateNickname.fragments.memberFR.toDomain()
             }
             .retry(when: { [weak self] errorObservable in
                 guard let self else { return Observable<Void>.never() }
@@ -132,11 +134,11 @@ public class DefaultRepository: WebRepository {
             })
     }
     
-    public func perform(_ graph: GRAPH, max retry: Int = 2) -> Maybe<SubmissionFR> {
+    public func perform(_ graph: GRAPH, max retry: Int = 2) -> Maybe<SubmissionVO> {
         let mutation = API.GRAPH_MUTATION(path: graph) as! SubmitSubmissionMutation
         return graphAPI.perform(query: mutation, cachePolichy: .default, queue: .main)
             .map { item in
-                item.createSubmission.fragments.submissionFR
+                item.createSubmission.fragments.submissionFR.toDomain()
             }
             .retry(when: { [weak self] errorObservable in
                 guard let self else { return Observable<Void>.never() }
@@ -144,71 +146,72 @@ public class DefaultRepository: WebRepository {
             }) // retry
     }
     
-    public func getProblemsQuery(_ graph: GRAPH) -> Maybe<([ProblemFR],PageInfoFR)> {
+    public func getProblemsQuery(_ graph: GRAPH) -> Maybe<([ProblemVO], PageInfoVO)> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchProblemsQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { item in
                 let content = item.getProblems.content!
                 let fproblems = content.compactMap { content in
-                    content.fragments.problemFR
+                    content.fragments.problemFR.toDomain()
                 }
-                let fpageInfo = item.getProblems.pageInfo.fragments.pageInfoFR
+                let fpageInfo = item.getProblems.pageInfo.fragments.pageInfoFR.toDomain()
                 return (fproblems, fpageInfo)
             }
     }
     
-    public func getProblemByID(_ graph: GRAPH) -> Maybe<ProblemFR> {
+    public func getProblemByID(_ graph: GRAPH) -> Maybe<ProblemVO> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchProblemByIdQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { data in
-                data.getProblemById.fragments.problemFR
+                data.getProblemById.fragments.problemFR.toDomain()
             }
     }
     
-    public func getAllTag(_ graph: GRAPH) -> Maybe<([TagFR],PageInfoFR)> {
+    public func getAllTag(_ graph: GRAPH) -> Maybe<([TagVO],PageInfoVO)> {
         //tag: 완전 탐색
         //tag: 4
         //tag: 자료 구조
         let query = API.GRAPH_QUERY(path: graph) as! FetchAllTagQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { data in
-                let ftags: [TagFR] = data.getAllTag.content!.map { content in
-                    content.fragments.tagFR
+                let ftags: [TagVO] = data.getAllTag.content!.map { content in
+                    content.fragments.tagFR.toDomain()
                 }
-                let pageInfo = data.getAllTag.pageInfo.fragments.pageInfoFR
+                let pageInfo = data.getAllTag.pageInfo.fragments.pageInfoFR.toDomain()
                 return (ftags,pageInfo)
             }
     }
     
-    public func getAllLanguage(_ graph: GRAPH) -> Maybe<[LanguageFR]> {
+    public func getAllLanguage(_ graph: GRAPH) -> Maybe<[LanguageVO]> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchAllLanguageQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { data in
                 data.getAllLanguage.map { content in
-                    content.fragments.languageFR
+                    content.fragments.languageFR.toDomain()
                 }
             }
     }
     
-    public func getMeSubmissions(_ graph: GRAPH) -> Maybe<[SubmissionFR]> {
+    public func getMeSubmissions(_ graph: GRAPH) -> Maybe<[SubmissionVO]> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchMeSubmissionsQuery
         return graphAPI.fetch(query: query, cachePolicy: .default, queue: .main)
             .map { data in
                 data.matchMember.submissions.map { submission in
-                    submission.fragments.submissionFR
+                    submission.fragments.submissionFR.toDomain()
                 }
             }
     }
     
-    public func getSubmission(_ graph: GRAPH, cache: CachePolicy? = nil) -> Maybe<([SubmissionFR],PageInfoFR)> {
+    public func getSubmission(_ graph: GRAPH, cache: CachePolicy? = nil) -> Maybe<([SubmissionVO],PageInfoVO)> {
         let query = API.GRAPH_QUERY(path: graph) as! FetchSubmissionsQuery
         return graphAPI.fetch(query: query, cachePolicy: cache ?? .default, queue: .main)
             .map { data in
-                guard let contents = data.getSubmissions.content else { return ([],.init(_fieldData: nil)) }
+                let contents = data.getSubmissions.content!
+                
                 let fsubmissions = contents.map { content in
-                    content.fragments.submissionFR
+                    content.fragments.submissionFR.toDomain()
                 }
-                let pageInfo = data.getSubmissions.pageInfo.fragments.pageInfoFR
+                let pageInfo = data.getSubmissions.pageInfo.fragments.pageInfoFR.toDomain()
                 return (fsubmissions, pageInfo)
             }
     }

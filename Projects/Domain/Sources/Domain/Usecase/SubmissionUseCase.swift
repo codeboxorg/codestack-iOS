@@ -19,17 +19,17 @@ public protocol SubmissionUseCase: AnyObject {
     
     func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<State<[SubmissionVO]>>
     
-    func updateFavoritProblem(model: FavoriteProblem, flag: Bool) -> Observable<State<Bool>>
+    func updateFavoritProblem(model: FavoriteProblemVO, flag: Bool) -> Observable<State<Bool>>
     
-    func fetchFavoriteProblem() -> Observable<State<[FavoriteProblem]>>
+    func fetchFavoriteProblem() -> Observable<State<[FavoriteProblemVO]>>
     
     func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>>
     
     func fetchProblemHistoryEqualStatus(status code: String) -> Observable<State<[SubmissionVO]>>
-    func fetchSubmissionCalendar() -> Observable<State<SubmissionCalendar>>
+    func fetchSubmissionCalendar() -> Observable<State<SubmissionCalendarVO>>
 }
 
-enum SendError: Error {
+public enum SendError: Error {
     case isEqualSubmission
     case isNotStoreState
     case fetchFailProblem
@@ -37,27 +37,27 @@ enum SendError: Error {
 }
 
 
-final class DefaultSubmissionUseCase: SubmissionUseCase {
+public final class DefaultSubmissionUseCase: SubmissionUseCase {
     
     private let dbRepository: DBRepository
     private let webRepository: WebRepository
     
-    init(dbRepository: DBRepository,
-         webRepository: WebRepository) {
+    public init(dbRepository: DBRepository,
+                webRepository: WebRepository) {
         self.dbRepository = dbRepository
         self.webRepository = webRepository
     }
     
     
-    func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>> {
+    public func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>> {
        webRepository
             .getProblemByID(.PR_BY_ID(id))
             .asObservable()
-            .map { problem in .success(problem.toDomain())}
+            .map { problem in .success(problem)}
             .catchAndReturn(.failure(SendError.fetchFailProblem))
     }
     
-    func submitSubmissionAction(model: SubmissionVO) -> Observable<State<SubmissionVO>> {
+    public func submitSubmissionAction(model: SubmissionVO) -> Observable<State<SubmissionVO>> {
         dbRepository.fetch(.recent(model.problem.id))
             .asObservable()
             .subscribe(on: MainScheduler.instance)
@@ -77,27 +77,27 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
                 guard let webRepository else { return .empty() }
                 return webRepository
                     .perform(.SUBMIT_SUB(submit: model), max: 2)
-                    .map { submitFR in submitFR.toDomain() }
+                    // .map { submitFR in submitFR.toDomain() }
             }
             .do(onNext: { [weak self] in self?.storeInRepo(submission: $0)  })
             .map { .success($0) }
             .catch { .just(.failure($0)) }
     }
     
-    func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<Result<[SubmissionVO], Error>> {
+    public func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<Result<[SubmissionVO], Error>> {
         dbRepository.fetch(.isNotTemp(id, code))
             .asObservable()
             .map { .success($0) }
     }
     
-    func fetchProblemHistoryEqualStatus(status code: String) -> Observable<Result<[SubmissionVO], Error>> {
+    public func fetchProblemHistoryEqualStatus(status code: String) -> Observable<Result<[SubmissionVO], Error>> {
         dbRepository.fetch(.isEqualStatusCode(code))
             .asObservable()
             .map { .success($0) }
     }
     
      
-    func updateSubmissionAction(model: SubmissionVO) -> Observable<Bool> {
+    public func updateSubmissionAction(model: SubmissionVO) -> Observable<Bool> {
         // MARK: 이미 임시저장이 되어있을 경우 무시
         // 최근 기록이 같을때
         dbRepository
@@ -136,7 +136,7 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
             }
     }
     
-    func fetchSubmissionCalendar() -> Observable<State<SubmissionCalendar>> {
+    public func fetchSubmissionCalendar() -> Observable<State<SubmissionCalendarVO>> {
         dbRepository
             .fetchSubmissionCalendar()
             .compactMap {
@@ -144,9 +144,9 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
                     return calendar
                 } else {
                     #if DEBUG
-                    return SubmissionCalendar.generateMockCalendar()
+                    return SubmissionCalendarVO.generateMockCalendar()
                     #else
-                    return SubmissionCalendar.init(dates: [])
+                    return SubmissionCalendarVO.init(dates: [])
                     #endif
                 }
             }
@@ -156,14 +156,14 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
         //             .observe(on: MainScheduler.instance)
     }
     
-    func fetchFavoriteProblem() -> Observable<State<[FavoriteProblem]>> {
+    public func fetchFavoriteProblem() -> Observable<State<[FavoriteProblemVO]>> {
         dbRepository
             .fetchFavoriteProblems()
             .asObservable()
             .map { .success($0) }
     }
     
-    func updateFavoritProblem(model: FavoriteProblem, flag: Bool) -> Observable<State<Bool>> {
+    public func updateFavoritProblem(model: FavoriteProblemVO, flag: Bool) -> Observable<State<Bool>> {
         if flag {
             return dbRepository
                 .store(favoriteProblem: model)
