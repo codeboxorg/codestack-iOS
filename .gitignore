@@ -10,6 +10,7 @@ Projects/Highilighrt/**/*.*
 *.xcscmblueprint
 *.xccheckout
 *.xcconfig
+*.xcscheme
 *.pbxproj
 Projects/CodestackAPI/
 Projects/Highlightr/**
