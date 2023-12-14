@@ -53,7 +53,7 @@ class HistoryCell: UITableViewCell {
         return button
     }()
     
-    var onHistoryData = PublishRelay<Submission>()
+    var onHistoryData = PublishRelay<SubmissionVO>()
     var onStatus = PublishRelay<SolveStatus>()
     
     var cellDisposeBag = DisposeBag()
@@ -64,24 +64,24 @@ class HistoryCell: UITableViewCell {
         
         layoutConfigure()
 
-        Driver.zip(onHistoryData.asDriver(onErrorJustReturn: .init(_problem: Problem(title: "error"))),
+        Driver.zip(onHistoryData.asDriver(onErrorJustReturn: .sample),
                    onStatus.asDriver(onErrorJustReturn: .none))
         .drive(with: self,onNext: { cell, data in
             
             let (submission, solveStatus) = data
             cell.statusLabel.pr_status_label(solveStatus, default: false)
             cell.titleBoxContainerSetting(status: solveStatus)
-            cell.descriptionSetting(status: solveStatus, problem: submission.problem?.title ?? "hellow world ")
-            cell.problemName.text = submission.problem?.title
-            cell.languageBtn.setTitle(submission.language?.name ?? "N/A", for: .disabled)
+            cell.descriptionSetting(status: solveStatus, problem: submission.problem.title )
+            cell.problemName.text = submission.problem.title
+            cell.languageBtn.setTitle(submission.language.name , for: .disabled)
             
-            if let date = submission.createdAt?.toDateStringUTC(format: .FULL) {
+            if let date = submission.createdAt.toDateStringUTC(format: .FULL) {
                 let dateString = DateCalculator().caluculateTime(date)
                 cell.timeLabel.text = dateString
                 return
             }
             
-            if let date = submission.createdAt?.toDateStringKST(format: .FULL) {
+            if let date = submission.createdAt.toDateStringKST(format: .FULL) {
                 let dateString = DateCalculator().caluculateTime(date)
                 cell.timeLabel.text = dateString
                 return

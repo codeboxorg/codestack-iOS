@@ -13,9 +13,10 @@ struct SendProblemModel {
     let problemID: ID
     let problemTitle: String
     let sourceCode: String
-    let language: Language
+    let language: LanguageVO
+    let userName: String = ""
     
-    init(submissionID: ID, problemID: ID, problemTitle: String = "", sourceCode: String, language: Language) {
+    init(submissionID: ID, problemID: ID, problemTitle: String = "", sourceCode: String, language: LanguageVO) {
         self.submissionID = submissionID
         self.problemID = problemID
         self.problemTitle = problemTitle
@@ -23,7 +24,7 @@ struct SendProblemModel {
         self.language = language
     }
     
-    init(tuple: (Language, String, SourceCode, ProblemID, SubmissionID)){
+    init(tuple: (LanguageVO, String, SourceCode, ProblemID, SubmissionID)){
         self.language = tuple.0
         self.problemTitle = tuple.1
         self.sourceCode = tuple.2
@@ -38,7 +39,7 @@ extension SendProblemModel {
               problemID: "",
               problemTitle: "",
               sourceCode: "",
-              language: Language.default)
+              language: LanguageVO.default)
     }
     
     func makeFavoirtProblem() -> FavoriteProblem {

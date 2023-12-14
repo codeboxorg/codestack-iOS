@@ -10,8 +10,8 @@ import Foundation
 
 enum SolveResultType {
     case problem
-    case result(Submission?)
-    case resultList([Submission])
+    case result(SubmissionVO?)
+    case resultList([SubmissionVO])
     
     var value: String {
         switch self {

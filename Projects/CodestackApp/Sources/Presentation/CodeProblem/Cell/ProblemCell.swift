@@ -85,7 +85,7 @@ class ProblemCell: UITableViewCell{
         return view
     }()
     
-    private var languages: [Language]? {
+    private var languages: [LanguageVO]? {
         didSet{
             if let languages{
                 self.langugeContainer.setLanguage(languages)
@@ -122,9 +122,9 @@ class ProblemCell: UITableViewCell{
             cell.problem_number.setTitle("\(model.problemNumber)", for: .normal)
             cell.problem_title.text = "\(model.problemTitle)"
             cell.model = model
-            cell.languages = language + model.tags.map{ tag in Language(id: "none",
+            cell.languages = language + model.tags.map{ tag in LanguageVO(id: "none",
                                                                         name: tag.name ,
-                                                                        _extension: "none")}
+                                                                        extension: "none")}
             
             cell.graphSubmit.bind(.init(submitCount: String(describing: model.submitCount),
                                         correctAnswer: String(describing: model.correctAnswer),
