@@ -11,6 +11,7 @@ Projects/Highilighrt/**/*.*
 *.xccheckout
 *.xcconfig
 *.pbxproj
+Projects/Highlightr/**
 Projects/Highlightr/**/*.*
 ./*.xcconfig
 APIResource.xcconfig
