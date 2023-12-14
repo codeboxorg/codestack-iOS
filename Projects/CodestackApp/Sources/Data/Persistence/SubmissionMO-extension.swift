@@ -15,8 +15,8 @@ extension SubmissionMO {
     typealias LanguageName = String
     enum RequestType {
         case isExist(ProblemID)
-        case isNotTemp(ProblemID, String)
-        case isEqualStatusCode(String)
+        case isNotTemp(ProblemID, StatusCode)
+        case isEqualStatusCode(StatusCode)
         case update(SubmissionID, ProblemID)
         case recent(ProblemID)
         case `default`
@@ -53,24 +53,24 @@ extension SubmissionMO {
         }
     }
     
-    static func recent(probelm id: ID) -> NSFetchRequest<SubmissionMO> {
+    static func recent(probelm id: ProblemID) -> NSFetchRequest<SubmissionMO> {
         let request = newFetchRequest()
-        let predicate1 = NSPredicate(format: "codeContext.problemID == %@", "\(id)")
+        let predicate1 = NSPredicate(format: "codeContext.problemID == %@", "\(String(describing: id))")
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1])
         request.fetchLimit = 1
         request.sortDescriptors = [ NSSortDescriptor(key: "createdAt", ascending: false)]
         return request
     }
     
-    static func isEqualID(id: ID, _ probelmID: ID) -> NSFetchRequest<SubmissionMO> {
+    static func isEqualID(id: SubmissionID, _ probelmID: ProblemID) -> NSFetchRequest<SubmissionMO> {
         let request = newFetchRequest()
-        let predicate1 = NSPredicate(format: "id == %@", "\(id)")
-        let predicate2 = NSPredicate(format: "codeContext.problemID == %@", "\(probelmID)")
+        let predicate1 = NSPredicate(format: "id == %@", "\(String(describing: id))")
+        let predicate2 = NSPredicate(format: "codeContext.problemID == %@", "\(String(describing: probelmID))")
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         return request
     }
     
-    static func isEqualStatusCode(_ statusCode: String) -> NSFetchRequest<SubmissionMO> {
+    static func isEqualStatusCode(_ statusCode: StatusCode) -> NSFetchRequest<SubmissionMO> {
         let request = newFetchRequest()
         let predicate1 = NSPredicate(format: "statusCode == %@", "\(statusCode)")
         request.predicate = predicate1
@@ -78,18 +78,18 @@ extension SubmissionMO {
         return request
     }
     
-    static func isNotTempSubmission(probelmID: ID, status: String) -> NSFetchRequest<SubmissionMO> {
+    static func isNotTempSubmission(probelmID: ProblemID, status: StatusCode) -> NSFetchRequest<SubmissionMO> {
         let request = newFetchRequest()
         let predicate1 = NSPredicate(format: "statusCode != %@", "\(status)")
-        let predicate2 = NSPredicate(format: "codeContext.problemID == %@", "\(probelmID)")
+        let predicate2 = NSPredicate(format: "codeContext.problemID == %@", "\(String(describing: probelmID))")
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
         return request
     }
     
-    static func isExistSubmission(problemID: ID) -> NSFetchRequest<SubmissionMO> {
+    static func isExistSubmission(problemID: ProblemID) -> NSFetchRequest<SubmissionMO> {
         let request = newFetchRequest()
-        let predicate1 = NSPredicate(format: "codeContext.problemID == %@", "\(problemID)")
+        let predicate1 = NSPredicate(format: "codeContext.problemID == %@", "\(String(describing: problemID))")
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1])
         request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
         // request.fetchLimit = 1
