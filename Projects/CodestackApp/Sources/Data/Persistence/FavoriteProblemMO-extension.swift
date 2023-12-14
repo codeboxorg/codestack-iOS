@@ -9,19 +9,6 @@ import CoreData
 import Data
 import Domain
 
-extension FavoritProblemMO {
-    
-    enum RequestType {
-        case all
-        case isEqualID(ProblemID)
-        
-        func conditionRequest() -> NSFetchRequest<FavoritProblemMO> {
-            switch self {
-            case .all:
-                return FavoriteProblem.fetchRequest()
-            case .isEqualID(let problemID):
-                return FavoritProblemMO.isEqualID(probelmID: problemID)
-            }
         }
     }
     

@@ -18,11 +18,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var coordinator: FlowCoordinator = FlowCoordinator()
     var disposeBag: DisposeBag = DisposeBag()
-
-    private let loginService: Auth = LoginService()
-    private let authService: RestAPI = DefaultRestAPI()
-//    private lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.loginService as AppleAuthorization)
-    
     private let injector = DefaultInjector(container: Container())
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -55,8 +50,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         })
         self.window = window
     }
-    
-    
     
     /// Git Auth 과정에서 redirect 되었을때 호출되는 함수
     /// - Parameters:
