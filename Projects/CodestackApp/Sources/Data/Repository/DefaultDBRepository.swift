@@ -19,15 +19,15 @@ final class DefaultDBRepository: DBRepository {
         self.persistentStore = persistenStore
     }
     
-    func fetch(_ requestType: SubmissionMO.RequestType = .default) -> Single<[Submission]> {
-        Single<[Submission]>.create { [weak persistentStore] single in
+    func fetch(_ requestType: SubmissionMO.RequestType = .default) -> Single<[SubmissionVO]> {
+        Single<[SubmissionVO]>.create { [weak persistentStore] single in
             
             let fetchRequest = requestType.conditionRequest()
             fetchRequest.returnsObjectsAsFaults = false
             
             let observable = persistentStore?
                 .fetch(fetchRequest , map: { value in
-                    Submission(managedContext: value)
+                    value.toDomain()
                 }).subscribe { value in
                     if case let .next(result) = value {
                         switch result {
@@ -128,13 +128,13 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func update(submission: Submission, type request: SubmissionMO.RequestType) -> Single<Void> {
+    func update(submission: SubmissionVO, type request: SubmissionMO.RequestType) -> Single<Void> {
         Single<Void>.create { [weak persistentStore] single in
             let observable = persistentStore?.update { context in
                 let request = request.conditionRequest()
                 let willUpdateSubmissionMO = try context.fetch(request)
                 if let mo = willUpdateSubmissionMO.first {
-                    let _ = mo.update(submission: submission)
+                    let _ = submission.updateMO(mo: mo)
                 }
             }.subscribe(onNext: { value in
                 single(value)
@@ -145,13 +145,14 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func store(submission: Submission) -> Single<Void> {
+    func store(submission: SubmissionVO) -> Single<Void> {
         Single<Void>.create { [weak persistentStore] single in
             let observable = persistentStore?.update { context in
-                guard let submissionMO = submission.store(in: context) else { return }
                 
-                if let statusCode = submission.statusCode,
-                statusCode != "temp" && statusCode != "favorite" {
+                // TODO: Submission -> SubmissionVO
+                guard let submissionMO = submission.toMO(in: context) else { return }
+                
+                if submission.statusCode != "temp" && submission.statusCode != "favorite" {
                     // TODO: Submission Calendar 에 Submission 관계 설정
                     // 임시저장과 즐겨찾기가 아닐경우 즉, 제출 히스토리만 관계 설정
                     let submissionCalendar = try SubmissionCalendarMO.fetchSubmissionCalendarMO(context: context)

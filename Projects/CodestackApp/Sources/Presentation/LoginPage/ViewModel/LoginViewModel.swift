@@ -114,7 +114,7 @@ class LoginViewModel: LoginViewModelProtocol, Stepper{
             .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false)) })
             .do(onError: { [weak self] _ in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
             .flatMap { token in self.saveToken(token: token) }
-            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(user: user) },
+            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(memeber: user) },
                                     onError: { owner , err in Log.error(err) })
     }
     
@@ -127,7 +127,7 @@ class LoginViewModel: LoginViewModelProtocol, Stepper{
             .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false))})
             .do(onError: { [weak self] err in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
             .flatMap { token in self.saveToken(token: token) }
-            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(user: user)},
+            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(memeber: user)},
                                     onError: { owner , err in Log.error(err) })
     }
     
@@ -139,25 +139,23 @@ class LoginViewModel: LoginViewModelProtocol, Stepper{
             .flatMap { token in
                 Log.debug(KeychainItem.currentAccessToken)
                 return self.saveToken(token: token) }
-            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(user: user) },
+            .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(memeber: user) },
                                     onError: { owner , err in Log.error(err) })
     }
     
     
-    private func saveToken(token: CSTokenDTO) -> Maybe<User> {
+    private func saveToken(token: CSTokenDTO) -> Maybe<MemberVO> {
         UserManager.shared.saveTokenInfo(with: TokenInfo(expiresIn: token.expiresIn,
                                                          tokenType: token.tokenType))
         
         KeychainItem.saveTokens(access: token.accessToken, refresh: token.refreshToken)
         
         return apolloService.getMe(.ME)
-            .map { fr in
-                
-            }
+            .map { fr in fr.toDomain() }
     }
     
-    private func saveUserInfo(user: User){
-        UserManager.shared.saveUser(with: user)
+    private func saveUserInfo(memeber: MemberVO){
+        UserManager.shared.saveUser(with: memeber)
         steps.accept(CodestackStep.userLoggedIn(nil, nil))
     }
 }

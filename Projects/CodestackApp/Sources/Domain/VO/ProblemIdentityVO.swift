@@ -9,7 +9,7 @@
 import Foundation
 
 
-public struct ProblemIdentityVO: Codable {
+public struct ProblemIdentityVO: Codable, Equatable {
     public let id: String
     public let title: String
     
@@ -19,3 +19,18 @@ public struct ProblemIdentityVO: Codable {
     }
 }
 
+
+public extension ProblemIdentityVO {
+    
+    func toProblemVO() -> ProblemVO {
+        ProblemVO(id: self.id,
+                  title: self.title,
+                  context: "",
+                  languages: [],
+                  tags: [],
+                  accepted: 0,
+                  submission: 0,
+                  maxCpuTime: "",
+                  maxMemory: 0)
+    }
+}

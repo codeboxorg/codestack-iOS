@@ -10,9 +10,10 @@ import RxSwift
 import RxCocoa
 import RxRelay
 import Global
+import Data
 
 protocol HistoryViewModelType: ViewModelType, AnyObject {
-    var sendSubmission: PublishRelay<Submission> { get set }
+    var sendSubmission: PublishRelay<SubmissionVO> { get set }
 }
 
 class HistoryViewModel: HistoryViewModelType {
@@ -26,7 +27,7 @@ class HistoryViewModel: HistoryViewModelType {
     }
     
     struct Output{
-        var historyData: Driver<[Submission]>
+        var historyData: Driver<[SubmissionVO]>
         var paginationRefreshEndEvent: Signal<Void>
         var paginationLoading: Driver<Bool>
         var refreshClearEvent: Signal<Void>
@@ -46,8 +47,8 @@ class HistoryViewModel: HistoryViewModelType {
     }
     
     private var disposeBag = DisposeBag()
-    private let submissionModel = BehaviorRelay<[Submission]>(value: [])
-    private let historyData = BehaviorRelay<[Submission]>(value: [])
+    private let submissionModel = BehaviorRelay<[SubmissionVO]>(value: [])
+    private let historyData = BehaviorRelay<[SubmissionVO]>(value: [])
     
     
     // private let favoriteModel
@@ -63,7 +64,7 @@ class HistoryViewModel: HistoryViewModelType {
     //Navigation Top right refresh
     private let refreshClearEvent = PublishRelay<Void>()
     
-    var sendSubmission = PublishRelay<Submission>()
+    var sendSubmission = PublishRelay<SubmissionVO>()
     
     func transform(input: Input) -> Output {
         
@@ -87,10 +88,10 @@ class HistoryViewModel: HistoryViewModelType {
         
         
         let filteredHistoryData =
-        Driver<[Submission]>.combineLatest(historyData.asDriver(),
+        Driver<[SubmissionVO]>.combineLatest(historyData.asDriver(),
                                            input.currentSegment)
         {   submissions, segment in
-            let filteredSubmissions = submissions.filter{ $0.statusCode?.checkIsEqual(with: segment) ?? false}
+            let filteredSubmissions = submissions.filter{ $0.statusCode.checkIsEqual(with: segment) }
             return filteredSubmissions
         }
         
@@ -132,7 +133,7 @@ class HistoryViewModel: HistoryViewModelType {
                     .compactMap { try $0.get() }
                 
                 let fetchedSubmission = vm.requestSubmission().do(onNext: { _ in vm.currentPage += 1 })
-                return Observable<[Submission]>.concat([localTempSubmission, fetchedSubmission])
+                return Observable<[SubmissionVO]>.concat([localTempSubmission, fetchedSubmission])
             }
             
             .subscribe(with: self, onNext: { vm, data in
@@ -191,10 +192,14 @@ class HistoryViewModel: HistoryViewModelType {
         }
     }
     
-    private func requestSubmission() -> Observable<[Submission]> {
+    private func requestSubmission() -> Observable<[SubmissionVO]> {
         return service
-            .getSubmission(query: Query.getSubmission(offest: self.currentPage),
-                           cache: nil)
+            .getSubmission(.SUB_LIST(arg: GRAR.init(offset: self.currentPage)), cache: nil)
+            .map { frinfo in
+                frinfo.0.map { fr in fr.toDomain() }
+            }
+//            .getSubmission(query: Query.getSubmission(offest: self.currentPage),
+//                           cache: nil)
             .asObservable()
     }
     
@@ -213,7 +218,9 @@ class HistoryViewModel: HistoryViewModelType {
         //            .subscribe(with: self, onSuccess: { vm , me in
         //                Log.debug(me)
         //            })
-        _ = service.getSubmission(query: Query.getSubmission(),cache: .fetchIgnoringCacheCompletely)
+//        _ = service.getSubmission(query: Query.getSubmission(),cache: .fetchIgnoringCacheCompletely)
+        _ = service.getMeSubmissions(.SUB_LIST(arg: GRAR.init(offset: 0)))
+            .map { $0.map { fr in fr.toDomain() }}
             .subscribe(with: self, onSuccess: { vm, value in
                 vm.submissionModel.accept([])
                 vm.historyData.accept([])

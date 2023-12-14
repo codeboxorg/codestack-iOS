@@ -16,7 +16,7 @@ import Data
 
 
 protocol HomeViewModelType: ViewModelType, Stepper, AnyObject {
-    var sendSubmission: PublishRelay<Submission> { get set }
+    var sendSubmission: PublishRelay<SubmissionVO> { get set }
 }
 
 typealias SourceCode = String
@@ -29,7 +29,7 @@ final class HomeViewModel: HomeViewModelType {
         var rightSwipeGesture: Observable<Void>
         var leftSwipeGesture: Observable<Void>
         var leftNavigationButtonEvent: Signal<Void>
-        var recentModelSelected: Signal<Submission>
+        var recentModelSelected: Signal<SubmissionVO>
         var emptyDataButton: Signal<Void>
         var alramTapped: Observable<Void>
     }
@@ -46,8 +46,8 @@ final class HomeViewModel: HomeViewModelType {
     private var repository: DBRepository
     
     //MARK: - Input
-    var sendSubmission = PublishRelay<Submission>()
-    var updateSubmission = PublishRelay<Submission>()
+    var sendSubmission = PublishRelay<SubmissionVO>()
+    var updateSubmission = PublishRelay<SubmissionVO>()
     
     //MARK: - output
     private var submissions = PublishRelay<[RecentSubmission]>()
@@ -75,7 +75,7 @@ final class HomeViewModel: HomeViewModelType {
     private func updateSubmissionBinding() {
         updateSubmission
             .map { $0 }
-            .withLatestFrom(submissions) { [weak self] (updatedSubmission, subs) -> [Submission] in
+            .withLatestFrom(submissions) { [weak self] (updatedSubmission, subs) -> [SubmissionVO] in
                 guard let self else { return [] }
                 let originalSubmissions = subs.flatMap { $0.items }
                 return self.updateSubmissionList(will: updatedSubmission, original: originalSubmissions)
@@ -158,8 +158,8 @@ final class HomeViewModel: HomeViewModelType {
             }
             .compactMap { submission in
                 // TODO: 확인후 변경 바람º
-                let _submission: Submission = submission
-                return _submission.problem?.toProblemList(submission)
+                let _submission: SubmissionVO = submission
+                return _submission.problemVO.toProblemList(submission)
             }
             .map { CodestackStep.recentSolveList($0)}
             .emit(to: steps)
@@ -168,35 +168,22 @@ final class HomeViewModel: HomeViewModelType {
         return Output(submissions: self.submissions.asDriver(onErrorJustReturn: []))
     }
     
-    func fetchProblem(using submission: Submission) -> Signal<SubmissionVO> {
+    func fetchProblem(using submission: SubmissionVO) -> Signal<SubmissionVO> {
         service
-            .request(type: ProblemFR.self, graph: .PR_BY_ID(submission.problem!.id))
+            .getProblemByID(.PR_BY_ID(submission.problem.id))
             .map { prFR in
-                let problem = prFR.toDomain()
+                let problemVO = prFR.toDomain()
+                var submission = submission
+                submission.problemVO = problemVO
+                return submission
             }
             .asSignal(onErrorRecover: { error in
                 Log.error("\(error)")
                 return .just(SubmissionVO.sample)
             })
-//            .asSignal(onErrorRecover: { error in
-//                
-//            })
-//            .getProblemByID(query: GetProblemByIdQuery(id: submission.problem!.id))
-//            .map { value in Submission(_problem: value) }
-//            .map { sub in
-//                var fetchedSubmission = sub
-//                fetchedSubmission.id = submission.id
-//                fetchedSubmission.sourceCode = submission.sourceCode
-//                fetchedSubmission.language = submission.language
-//                return fetchedSubmission
-//            }
-//            .asSignal(onErrorRecover: { error in
-//                var submission = submission
-//                return .just(submission.ifNetworkErorr())
-//            })
     }
     
-    func fetchedSubmission() -> Signal<[Submission]> {
+    func fetchedSubmission() -> Signal<[SubmissionVO]> {
         repository
             .fetchProblemState()
             .map { problemState in
@@ -204,8 +191,8 @@ final class HomeViewModel: HomeViewModelType {
                     return state
                         .submissions
                         .sorted(by: { s1,s2 in
-                            if let createdAt1 = s1.createdAt?.toDateKST(),
-                               let createdAt2 = s2.createdAt?.toDateKST() {
+                            if let createdAt1 = s1.createdAt.toDateKST(),
+                               let createdAt2 = s2.createdAt.toDateKST() {
                                 return createdAt1 > createdAt2
                             }
                             return false
@@ -217,25 +204,21 @@ final class HomeViewModel: HomeViewModelType {
             .asSignal(onErrorJustReturn: [])
     }
     
-    private func updateSubmissionList(will updateSubmission: Submission,
-                                      original submissions: [Submission]) -> [Submission] {
-        guard
-            let id = updateSubmission.problem?.id
-        else {
-            return submissions
-        }
+    private func updateSubmissionList(will updateSubmission: SubmissionVO,
+                                      original submissions: [SubmissionVO]) -> [SubmissionVO] {
+        let id = updateSubmission.problem.id
         
-        let originalIDs = submissions.compactMap(\.problem?.id)
+        let originalIDs = submissions.map(\.problem.id)
         
         let flag = originalIDs.contains(id)
         
         if flag {
-            let newSubmissions: [Submission] = submissions.map {
-                $0.problem?.id == updateSubmission.problem?.id ? updateSubmission : $0
+            let newSubmissions: [SubmissionVO] = submissions.map {
+                $0.problem.id == updateSubmission.problem.id ? updateSubmission : $0
             }
-            let sortedSubmissions: [Submission] = newSubmissions.sorted(by: { first, second in
-                if let date1 = first.createdAt?.toDateKST(),
-                   let date2 = second.createdAt?.toDateKST() {
+            let sortedSubmissions: [SubmissionVO] = newSubmissions.sorted(by: { first, second in
+                if let date1 = first.createdAt.toDateKST(),
+                   let date2 = second.createdAt.toDateKST() {
                     return date1 > date2
                 }
                 return true

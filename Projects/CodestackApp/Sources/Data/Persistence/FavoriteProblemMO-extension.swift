@@ -24,7 +24,7 @@ extension FavoritProblemMO {
         }
     }
     
-    static func isEqualID(probelmID: ID) -> NSFetchRequest<FavoritProblemMO> {
+    static func isEqualID(probelmID: ProblemID) -> NSFetchRequest<FavoritProblemMO> {
         let request = newFetchRequest()
         let predicate1 = NSPredicate(format: "problemID == %@", "\(probelmID)")
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [ predicate1 ])

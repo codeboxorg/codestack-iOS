@@ -11,21 +11,21 @@ import RxCocoa
 import Data
 import Global
 
-typealias State<T> = Result<T, Error>
+public typealias State<T> = Result<T, Error>
 
-protocol SubmissionUseCase: AnyObject {
-    func submitSubmissionAction(model: SendProblemModel) -> Observable<State<Submission>>
-    func updateSubmissionAction(model: SendProblemModel) -> Observable<Bool>
+public protocol SubmissionUseCase: AnyObject {
+    func submitSubmissionAction(model: SubmissionVO) -> Observable<State<SubmissionVO>>
+    func updateSubmissionAction(model: SubmissionVO) -> Observable<Bool>
     
-    func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<State<[Submission]>>
+    func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<State<[SubmissionVO]>>
     
-    // func fetchSubmissionByLanguage(name: String) -> Observable<State<[Submission]>>
     func updateFavoritProblem(model: FavoriteProblem, flag: Bool) -> Observable<State<Bool>>
     
     func fetchFavoriteProblem() -> Observable<State<[FavoriteProblem]>>
     
-    func fetchProblem(id: ProblemID) -> Observable<State<Problem>>
-    func fetchProblemHistoryEqualStatus(status code: String) -> Observable<State<[Submission]>>
+    func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>>
+    
+    func fetchProblemHistoryEqualStatus(status code: String) -> Observable<State<[SubmissionVO]>>
     func fetchSubmissionCalendar() -> Observable<State<SubmissionCalendar>>
 }
 
@@ -35,6 +35,7 @@ enum SendError: Error {
     case fetchFailProblem
     case none
 }
+
 
 final class DefaultSubmissionUseCase: SubmissionUseCase {
     
@@ -47,56 +48,62 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
         self.webRepository = webRepository
     }
     
-    func fetchProblem(id: ProblemID) -> Observable<Result<Problem, Error>> {
+    
+    func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>> {
        webRepository
-            .getProblemByID(query: Query.getProblemByID(id: id))
+            .getProblemByID(.PR_BY_ID(id))
             .asObservable()
-            .map { problem in .success(problem)}
+            .map { problem in .success(problem.toDomain())}
             .catchAndReturn(.failure(SendError.fetchFailProblem))
     }
     
-    func submitSubmissionAction(model: SendProblemModel) -> Observable<Result<Submission, Error>> {
-        dbRepository.fetch(.recent(model.problemID))
+    func submitSubmissionAction(model: SubmissionVO) -> Observable<State<SubmissionVO>> {
+        dbRepository.fetch(.recent(model.problem.id))
             .asObservable()
             .subscribe(on: MainScheduler.instance)
+        // TODO: View에서 판단하는게 맞음
             .filter { value in
                 guard let recentSubmission = value.first else { return true }
                 if recentSubmission.isEqualContent(other: model) { throw SendError.isEqualSubmission }
                 return true
             }
             .observe(on: ConcurrentDispatchQueueScheduler.init(queue: .global()))
-            .flatMap { [weak webRepository] value -> Maybe<Submission> in
+            .map { _ in
+                GRSubmit(languageId: model.language.id,
+                         problemId: model.problem.id,
+                         sourceCode: model.sourceCode)
+            }
+            .flatMap { [weak webRepository] model -> Maybe<SubmissionVO> in
                 guard let webRepository else { return .empty() }
-                let mutation = Mutation.problemSubmit(model: model)
                 return webRepository
-                    .perform(mutation: mutation, max: 2)
-                    .map { result in Submission(with: result.createSubmission) }
+                    .perform(.SUBMIT_SUB(submit: model), max: 2)
+                    .map { submitFR in submitFR.toDomain() }
             }
             .do(onNext: { [weak self] in self?.storeInRepo(submission: $0)  })
-            .map { .success($0)}
+            .map { .success($0) }
             .catch { .just(.failure($0)) }
     }
     
-    func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<Result<[Submission], Error>> {
+    func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<Result<[SubmissionVO], Error>> {
         dbRepository.fetch(.isNotTemp(id, code))
             .asObservable()
             .map { .success($0) }
     }
     
-    func fetchProblemHistoryEqualStatus(status code: String) -> Observable<Result<[Submission], Error>> {
+    func fetchProblemHistoryEqualStatus(status code: String) -> Observable<Result<[SubmissionVO], Error>> {
         dbRepository.fetch(.isEqualStatusCode(code))
             .asObservable()
             .map { .success($0) }
     }
     
      
-    func updateSubmissionAction(model: SendProblemModel) -> Observable<Bool> {
+    func updateSubmissionAction(model: SubmissionVO) -> Observable<Bool> {
         // MARK: 이미 임시저장이 되어있을 경우 무시
         // 최근 기록이 같을때
         dbRepository
             .fetchProblemState()
             .asObservable()
-            .flatMap { states throws -> Observable<[Submission]> in
+            .flatMap { states throws -> Observable<[SubmissionVO]> in
                 if let state = states.first {
                     return .just(state.submissions)
                 } else {
@@ -110,8 +117,7 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
                 
                 // 내용이 없을때 임시저장
                 if submissions.isEmpty || submission == nil {
-                    let _submission = model.makeTempSubmission()
-                    return self.dbRepository.store(submission: _submission)
+                    return self.dbRepository.store(submission: model)
                         .asObservable()
                         .map { _ in true }
                 }
@@ -120,9 +126,7 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
                 
                 if !unWrapSubmission.isEqualContent(other: model) {
                     // 다른 내용일때 임시저장 업데이트
-                    let _submission = model.makeTempSubmission()
-                    
-                    return self.updateSubmissionState(submission: _submission)
+                    return self.updateSubmissionState(submission: model)
                         .asObservable()
                         .map { _ in true }
                 } else {
@@ -177,12 +181,12 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
     }
       
     // TODO: Update 필요
-    private func updateSubmissionState(submission: Submission) -> Single<Void> {
+    private func updateSubmissionState(submission: SubmissionVO) -> Single<Void> {
         return delete(submission: submission)
             .andThen(dbRepository.store(submission: submission))
     }
     
-    private func storeInRepo(submission: Submission) {
+    private func storeInRepo(submission: SubmissionVO) {
         let _ = dbRepository.store(submission: submission)
             .subscribe(with: self, onSuccess: { vm, _ in
                 Log.debug("success Store in ProblemState")
@@ -192,8 +196,8 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
     // 제일 최근 제출 현황을 가져온다 생각하면
     // 0 == 없을때는 임시저장 시키면 되고,,,,,,
     // 1 == 존재했을때는 상태가 temp가 아닐경우에 temp로 변경 하면 될듯?
-    private func saveInRepository(model: SendProblemModel, submissions: [Submission]) -> Single<Void> {
-        let _submission = model.makeTempSubmission()
+    private func saveInRepository(model: SubmissionVO, submissions: [SubmissionVO]) -> Single<Void> {
+        let _submission = model
            
         if submissions.count == 0 {
             return store(submission: _submission)
@@ -202,32 +206,29 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
         if submissions.count == 1 {
             let fetchedSubmission = submissions.first!
             
-            if let statusCode = fetchedSubmission.statusCode {
-                
-                if statusCode == "temp"  {
-                    return update(submission: _submission)
-                }
-
-                if _submission.sourceCode == fetchedSubmission.sourceCode,
-                   _submission.language == fetchedSubmission.language {
-                    return .just(())
-                } else {
-                    return store(submission: _submission)
-                }
+            let statusCode = fetchedSubmission.statusCode
+            
+            if statusCode == "temp"  {
+                return update(submission: _submission)
             }
+            
+            return store(submission: _submission)
+            //                if _submission.sourceCode == fetchedSubmission.sourceCode,
+            //                   _submission.language == fetchedSubmission.language {
+            //                    return .just(())
+            //                } else { }
+            
         }
         return .just(())
     }
     
-    private func deleteTempRepo(submission: Submission) {
-        guard let id = submission.problem?.id else { return }
-        _ = dbRepository.fetch(.isExist(id))
+    private func deleteTempRepo(submission: SubmissionVO) {
+        _ = dbRepository.fetch(.isExist(submission.problem.id))
             .flatMap { [weak self] fetchedSubmissions in
                 guard let self else { return .just(()) }
                 if fetchedSubmissions.count == 1,
                    let fetchedSubmission = fetchedSubmissions.first,
-                   let statusCode = fetchedSubmission.statusCode,
-                   statusCode == "temp"  {
+                   fetchedSubmission.statusCode == "temp"  {
                     return self.delete(submission: fetchedSubmission)
                         .andThen(self.store(submission: submission))
                 }
@@ -239,57 +240,23 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
     }
     
     
-    private func delete(submission: Submission) -> Completable {
-        if let languageName = submission.language?.name,
-           let problemID = submission.problem?.id ,
-           let statusCode = submission.statusCode {
-            return dbRepository
-                .remove(.delete(languageName, problemID, statusCode))
-        }
-        return .empty()
+    private func delete(submission: SubmissionVO) -> Completable {
+        let languageName = submission.language.name
+        let problemID = submission.problem.id
+        let statusCode = submission.statusCode
+        return dbRepository
+            .remove(.delete(languageName, problemID, statusCode))
     }
     
-    private func store(submission: Submission) -> Single<Void> {
+    private func store(submission: SubmissionVO) -> Single<Void> {
         dbRepository
             .store(submission: submission)
     }
     
-    private func update(submission: Submission) -> Single<Void> {
+    private func update(submission: SubmissionVO) -> Single<Void> {
         dbRepository
             .update(submission: submission,
-                    type: .update(submission.id ?? "-1",
-                                  submission.problem?.id ?? ""))
+                    type: .update(submission.id, submission.problem.id ))
     }
 }
 
-extension Submission {
-    
-    /// 제출 같은 language와 source코드 여부
-    /// - Parameter other: 다른 제출 모델
-    /// - Returns: 같은 내용인지 flag
-    func isEqualContent(other: SendProblemModel) -> Bool {
-        if self.sourceCode == other.sourceCode,
-           self.language == other.language {
-            return true
-        } else {
-            return false
-        }
-    }
-}
-extension Array where Element == Submission {
-    
-    
-    /// 같은 Problem ID를 찾는 함수,
-    /// 임시저장을 배열에서 일치하는 제출을 찾아서 업데이트 할때 필요한 extension 함수
-    /// - Parameter model: SendProblemModel
-    /// - Returns: 일치하는 Submission
-    func find(model: SendProblemModel) -> Submission? {
-        return self.filter { value in
-            if let id = value.problem?.id ,
-               id == model.problemID {
-                return true
-            }
-            return false
-        }.first
-    }
-}

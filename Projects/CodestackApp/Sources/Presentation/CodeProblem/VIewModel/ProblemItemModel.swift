@@ -42,9 +42,9 @@ var contextExample  =
            </div>
          </section></body>
    """
-struct ProblemListItemModel: Equatable{
+struct ProblemListItemModel: Equatable {
     var submissionID: String?
-    var seletedLanguage: Language?
+    var seletedLanguage: LanguageVO?
     var sourceCode: String?
     var problemNumber: String
     var problemTitle: String
@@ -52,16 +52,16 @@ struct ProblemListItemModel: Equatable{
     var correctAnswer: Int
     var correctRate: Double
     var contenxt: String?
-    var tags: [Tag]
-    var language: [Language]
+    var tags: [TagVO]
+    var language: [LanguageVO]
     
     init(problemNumber: String,
          problemTitle: String,
          submitCount: Int,
          correctAnswer: Int,
          correctRate: Double,
-         tags: [Tag] = [],
-         languages: [Language] = []) {
+         tags: [TagVO] = [],
+         languages: [LanguageVO] = []) {
              self.submissionID = nil
              self.problemNumber = problemNumber
              self.problemTitle = problemTitle
@@ -71,12 +71,12 @@ struct ProblemListItemModel: Equatable{
              
              self.tags = []
              self.language = ["C", "JAVA" , "C++", "Node.js", "Swift", "Kot", "Go", "Python", "javascript"]
-                 .map{ name in Language(id: "1", name: name, _extension: "")}
+                 .map{ name in LanguageVO(id: "1", name: name, extension: "")}
              self.contenxt = contextExample
          }
     
     init(submissionID: String? = nil,
-         seletedLanguage: Language?,
+         seletedLanguage: LanguageVO?,
          sourceCode: String?,
          problemNumber: String,
          problemTitle: String,
@@ -84,8 +84,8 @@ struct ProblemListItemModel: Equatable{
          correctAnswer: Int,
          correctRate: Double,
          contenxt: String,
-         tags: [Tag] = [],
-         languages: [Language] = [])
+         tags: [TagVO] = [],
+         languages: [LanguageVO] = [])
     {
         self.submissionID = submissionID
         self.seletedLanguage = seletedLanguage

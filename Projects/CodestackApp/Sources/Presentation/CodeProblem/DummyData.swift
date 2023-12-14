@@ -7,7 +7,7 @@
 
 import Foundation
 
-typealias DummyModel = (model: ProblemListItemModel, language: [Language], flag: Bool)
+typealias DummyModel = (model: ProblemListItemModel, language: [LanguageVO], flag: Bool)
 
 struct DummyData{
     
@@ -17,7 +17,7 @@ struct DummyData{
                                          submitCount: Int.random(in: 10...134),
                                          correctAnswer: Int.random(in: 10...134),
                                          correctRate: Double.random(in: 0...100))
-        return (model, Language.sample, true)
+        return (model, LanguageVO.sample, true)
     }
     
     func getAllModels(limit: Int = 15, index: Int = 0) -> [DummyModel]{

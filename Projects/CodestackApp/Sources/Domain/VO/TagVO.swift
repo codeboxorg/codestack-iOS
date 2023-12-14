@@ -19,7 +19,7 @@ public struct TagInfoVO: Codable {
     }
 }
 
-public struct TagVO: Codable {
+public struct TagVO: Codable, Equatable {
     public let id: String
     public let name: String
     

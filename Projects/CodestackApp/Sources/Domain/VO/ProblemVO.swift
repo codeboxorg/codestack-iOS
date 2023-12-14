@@ -44,8 +44,12 @@ public struct ProblemVO: Codable {
     }
 }
 
-extension ProblemVO {
-    func toSubVO() -> SubmissionVO {
+extension ProblemVO: Equatable {
+    
+    public static var sample: Self {
+        .init(id: "", title: "'", context: "'", languages: [], tags: [], accepted: 0, submission: 0, maxCpuTime: "", maxMemory: 0)
+    }
+//    func toSubVO() -> SubmissionVO {
 //        SubmissionVO(id: <#T##String#>,
 //                     sourceCode: <#T##String#>,
 //                     problem: <#T##ProblemIdentityVO#>,
@@ -55,5 +59,5 @@ extension ProblemVO {
 //                     memoryUsage: <#T##Double#>,
 //                     statusCode: <#T##String#>,
 //                     createdAt: <#T##String#>)
-    }
+//    }
 }

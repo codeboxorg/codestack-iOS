@@ -48,7 +48,6 @@ final class SubmissionListView: UIView {
     private func addAutoLayout() {
         addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: self.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: self.leadingAnchor),

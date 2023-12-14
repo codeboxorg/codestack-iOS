@@ -79,7 +79,7 @@ class LanguageTagContainer: UIView {
         invalidateIntrinsicContentSize()
     }
     
-    func setLanguage(_ language: [Language]){
+    func setLanguage(_ language: [LanguageVO]){
         fetures = language.map{$0.name}
         feturesUpdate()
     }
