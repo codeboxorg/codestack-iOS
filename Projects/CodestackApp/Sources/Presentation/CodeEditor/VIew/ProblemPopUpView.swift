@@ -10,6 +10,7 @@ import RxCocoa
 import RxGesture
 import RxSwift
 import WebKit
+import Global
 
 
 //TODO: View -> UIViewCOntroller 로 변경해야됨
@@ -144,7 +145,6 @@ final class ProblemPopUpView: UIView {
         let view = SubmissionListView()
         return view
     }()
-
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -193,7 +193,9 @@ final class ProblemPopUpView: UIView {
         fatalError("required init fatalError occur!")
     }
     
-    deinit { Log.debug("deinit") }
+    deinit {
+        Log.debug("deinit")
+    }
     
     //MARK: receive event from EditorViewController
     

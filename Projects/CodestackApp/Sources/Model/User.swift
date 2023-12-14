@@ -40,24 +40,25 @@ struct User: Codable {
 }
 
 //MARK: GraphQL response maaping initializer
+// TODO: MAPPING 변경
 extension User{
-    init(with member: SubmissionMutation.Member){
-        self.nickname = member.nickname
-        self.problemCalendar = []
-        self.email = nil
-        self.profileImage = nil
-        self.username = nil
-        self.year = nil
-    }
-    
-    init(me member: Member) {
-        self.nickname = member.nickname
-        self.problemCalendar = []
-        self.email = member.email
-        self.profileImage = member.profileImage
-        self.username = member.username
-        self.year = nil
-    }
+//    init(with member: SubmissionMutation.Member){
+//        self.nickname = member.nickname
+//        self.problemCalendar = []
+//        self.email = nil
+//        self.profileImage = nil
+//        self.username = nil
+//        self.year = nil
+//    }
+//    
+//    init(me member: Member) {
+//        self.nickname = member.nickname
+//        self.problemCalendar = []
+//        self.email = member.email
+//        self.profileImage = member.profileImage
+//        self.username = member.username
+//        self.year = nil
+//    }
 }
 
 

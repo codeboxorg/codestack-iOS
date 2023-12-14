@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Data
 
 enum LoginButtonType{
     case gitHub

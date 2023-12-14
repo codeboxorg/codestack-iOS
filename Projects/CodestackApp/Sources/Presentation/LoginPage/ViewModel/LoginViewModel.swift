@@ -10,24 +10,15 @@ import RxFlow
 import RxRelay
 import RxSwift
 import RxCocoa
-
-
-protocol LoginViewModelProtocol: AnyObject,ViewModelType{
-    func requestOAuth() throws
-    
-    /// Git Auth Complte
-    /// - Parameter code: git Authorize code
-    func oAuthComplete(code: String)
-    
-    func oAuthComplte(apple token: AppleToken)
-}
+import Data
+import Global
 
 enum LoginError: Error{
     case gitOAuthError
     case timeOut
 }
 
-class LoginViewModel: LoginViewModelProtocol,Stepper{
+class LoginViewModel: LoginViewModelProtocol, Stepper{
     
     var steps: PublishRelay<RxFlow.Step>
     
@@ -41,12 +32,12 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     }
     
     struct Dependency {
-        let loginService: OAuthrizationRequest
+        let loginService: Auth
         let apolloService: WebRepository
         let stepper: LoginStepper
     }
     
-    private var loginService: OAuthrizationRequest
+    private var loginService: Auth
     private var apolloService: WebRepository
     private var disposeBag = DisposeBag()
     
@@ -76,7 +67,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
         event
             .withUnretained(self)
             .emit{ vm,type in
-                switch type{
+                switch type {
                 case .apple:
                     break
                 case .gitHub:
@@ -86,12 +77,12 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
                         Log.error("github 로그인 실패 : \(error)")
                     }
                 case .email((let id, let pwd)):
-                    vm.loginLoadingEvent.accept(.success(true))
-                    vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
-                    vm.loginLoadingEvent.accept(.success(false))
+//                    vm.loginLoadingEvent.accept(.success(true))
+//                    vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
+//                    vm.loginLoadingEvent.accept(.success(false))
                     #if DEBUG
                     // TODO: 502 Bad Gate Way
-//                     vm.requestAuth(id: id, pwd: pwd)
+                     vm.requestAuth(id: id, pwd: pwd)
                     #endif
                 case .none:
                     break
@@ -116,7 +107,7 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
     }
 
     
-    func oAuthComplte(apple token: AppleToken) {
+    func oAuthComplte(apple token: AppleDTO) {
         _ = loginService
             .request(with: token)
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
@@ -145,13 +136,15 @@ class LoginViewModel: LoginViewModelProtocol,Stepper{
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
             .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false)) })
             .do(onError: { [weak self] _ in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
-            .flatMap { token in self.saveToken(token: token) }
+            .flatMap { token in
+                Log.debug(KeychainItem.currentAccessToken)
+                return self.saveToken(token: token) }
             .subscribe(with: self,onSuccess: { owner, user in owner.saveUserInfo(user: user) },
                                     onError: { owner , err in Log.error(err) })
     }
     
     
-    private func saveToken(token: CodestackResponseToken) -> Maybe<User> {
+    private func saveToken(token: CSTokenDTO) -> Maybe<User> {
         UserManager.shared.saveTokenInfo(with: TokenInfo(expiresIn: token.expiresIn,
                                                          tokenType: token.tokenType))
         
