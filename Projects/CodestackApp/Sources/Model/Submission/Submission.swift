@@ -30,10 +30,11 @@ import CodestackAPI
 
 extension MemberFR {
     func toDomain() -> MemberVO {
-        MemberVO(id: self.,
-                 email: <#T##String#>,
-                 nickName: <#T##String#>,
-                 imageURL: <#T##String#>)
+        MemberVO(email: self.email ?? "",
+                 nickName: self.nickname,
+                 username: self.username,
+                 solvedProblems: self.solvedProblems.map { $0.fragments.problemIdentityFR.toDomain() },
+                 profileImage: self.profileImage ?? "codeStack")
     }
 }
 
