@@ -62,7 +62,9 @@ class MyPageViewModel: ViewModelType, Stepper{
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .withUnretained(self)
             .flatMap{ vm, _ in vm.apolloService.getMe(.ME) }
-            .map { $0.toDomain() }
+        
+        //TODO: 확인 필요
+//            .map { $0.toDomain() }
             .subscribe(with: self, onNext: { vm, member in
                 vm.userProfile.accept(member)
                 loading.onNext(.loaded(member.profileImage))
