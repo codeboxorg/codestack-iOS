@@ -25,7 +25,7 @@ public final class DefaultRestAPI {
     
     public var initialToken = RefreshToken(refresh: KeychainItem.currentRefreshToken)
     
-    private lazy var tokenAcquisionService: TokenAcquisitionService<RefreshToken>
+    lazy var tokenAcquisionService: TokenAcquisitionService<RefreshToken>
     = TokenAcquisitionService(initialToken: initialToken,
                               getToken: reissueToken(token:),
                               max: 2,

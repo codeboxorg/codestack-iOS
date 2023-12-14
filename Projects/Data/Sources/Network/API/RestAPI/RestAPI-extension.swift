@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import RxSwift
+import Global
 
 
 extension DefaultRestAPI: RestAPI {

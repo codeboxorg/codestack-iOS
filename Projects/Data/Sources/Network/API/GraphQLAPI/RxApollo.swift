@@ -46,6 +46,7 @@ extension Reactive where Base: ApolloClientProtocol {
                     switch result {
                     case let .success(gqlResult):
                         if let errors = gqlResult.errors {
+                            Log.debug("error: \(errors)")
                             observer(.error(ApolloError.gqlErrors(errors)))
                         } else if let data = gqlResult.data {
                             observer(.success(data))
