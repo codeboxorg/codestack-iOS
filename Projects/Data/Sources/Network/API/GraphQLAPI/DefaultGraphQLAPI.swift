@@ -14,24 +14,23 @@ import CodestackAPI
 public final class DefaultGraphQLAPI {
     
     public struct Dependency {
-        var tokenService: TokenAcquisitionService<RefreshToken>
         var baseURL: URL
+        let configuration: URLSessionConfiguration
         
-        public init(tokenService: TokenAcquisitionService<RefreshToken>, baseURL: URL) {
-            self.tokenService = tokenService
+        public init(baseURL: URL,
+                    configuration: URLSessionConfiguration) {
             self.baseURL = baseURL
+            self.configuration = configuration
         }
     }
     
-    private var tokenService: TokenAcquisitionService<RefreshToken>?
     private let client: ApolloClient
     
     private var disposeBag = DisposeBag()
     
     private let store = ApolloStore(cache: InMemoryNormalizedCache())
     
-    public init(base url: URL, session client: URLSessionClient) {
-    
+    private init(base url: URL, session client: URLSessionClient) {
         self.client = ApolloClient(
             networkTransport: RequestChainNetworkTransport(
                 interceptorProvider: NetworkInterceptorProvider(
@@ -46,14 +45,11 @@ public final class DefaultGraphQLAPI {
     }
 
     public convenience init(dependency: Dependency) {
-        
-        let configuration: URLSessionConfiguration = .default
-        
         let sessionClient = URLSessionClient(
-            sessionConfiguration: configuration,
+            sessionConfiguration: dependency.configuration,
             callbackQueue: .main
         )
-
+        
         self.init(base: dependency.baseURL,session: sessionClient)
     }
 }

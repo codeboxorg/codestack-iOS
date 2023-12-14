@@ -12,10 +12,13 @@ import Data
 public struct DataAssembly: Assembly {
     
     public func assemble(container: Container) {
-        
         container.register(WebRepository.self) { resolver in
-            let tokenService = resolver.resolve(TokenAcquisitionService<RefreshToken>.self)!
-            return DefaultRepository(dependency: tokenService)
+            let graphAPI = resolver.resolve(GraphQLAPI.self)!
+            let restAPI = resolver.resolve(RestAPI.self)!
+            let token = resolver.resolve(TokenAcquisitionService<RefreshToken>.self)!
+            return DefaultRepository(dependency: .init(tokenAcquizition: token,
+                                                       graphAPI: graphAPI,
+                                                       restAPI: restAPI))
         }.inObjectScope(.container)
         
         container.register(DBRepository.self) { resolver in
