@@ -8,6 +8,7 @@
 
 import Swinject
 import Data
+import Domain
 
 public struct DataAssembly: Assembly {
     

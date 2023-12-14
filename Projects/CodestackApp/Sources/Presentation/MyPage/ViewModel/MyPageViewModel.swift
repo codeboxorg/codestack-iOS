@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import Data
 import Global
+import Domain
 
 class MyPageViewModel: ViewModelType, Stepper{
     

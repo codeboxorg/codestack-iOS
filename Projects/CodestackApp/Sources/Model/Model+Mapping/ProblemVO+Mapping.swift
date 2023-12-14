@@ -7,7 +7,7 @@
 
 import Foundation
 import CodestackAPI
-
+import Domain
 
 //MARK: - To View Model
 extension ProblemVO {

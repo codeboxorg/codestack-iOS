@@ -24,7 +24,7 @@ public struct MemberVO: Codable {
     public let solvedProblems: [ProblemIdentityVO]
     public let profileImage: String
     
-    init(email: String, nickName: String, username: String, solvedProblems: [ProblemIdentityVO], profileImage: String) {
+    public init(email: String, nickName: String, username: String, solvedProblems: [ProblemIdentityVO], profileImage: String) {
         self.email = email
         self.nickName = nickName
         self.username = username
@@ -35,7 +35,7 @@ public struct MemberVO: Codable {
 
 
 extension MemberDTO {
-    func toDomain() -> MemberVO {
+    public func toDomain() -> MemberVO {
         MemberVO(email: self.email,
                  nickName: self.nickName,
                  username: "",

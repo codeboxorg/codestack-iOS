@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 import RxSwift
 import Global
-
+import Domain
 
 final class DefaultDBRepository: DBRepository {
     

@@ -7,6 +7,7 @@
 //
 
 import Swinject
+import Domain
 
 public struct HistoryAssembly: Assembly {
     

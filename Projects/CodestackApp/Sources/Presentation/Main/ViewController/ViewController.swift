@@ -12,8 +12,7 @@ import RxSwift
 import RxRelay
 import RxGesture
 import RxDataSources
-
-
+import Domain
 
 extension UIViewController {
     func adjustLargeTitleSize(title: String = "Codestack") {

@@ -13,6 +13,7 @@ import RxFlow
 import CodestackAPI
 import Global
 import Data
+import Domain
 
 
 protocol HomeViewModelType: ViewModelType, Stepper, AnyObject {
@@ -171,8 +172,8 @@ final class HomeViewModel: HomeViewModelType {
     func fetchProblem(using submission: SubmissionVO) -> Signal<SubmissionVO> {
         service
             .getProblemByID(.PR_BY_ID(submission.problem.id))
-            .map { prFR in
-                let problemVO = prFR.toDomain()
+            .map { /*prFR*/ prVo in
+                let problemVO = prVo /*.toDomain()*/
                 var submission = submission
                 submission.problemVO = problemVO
                 return submission

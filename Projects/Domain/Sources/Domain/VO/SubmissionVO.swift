@@ -49,7 +49,7 @@ public struct SubmissionVO: Codable, Equatable {
     }
 }
 
-extension SubmissionVO {
+public extension SubmissionVO {
     static var sample: Self {
         .init(id: "",
               sourceCode: "",

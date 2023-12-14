@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 import Global
+import Domain
 
 extension SubmissionMO {
 

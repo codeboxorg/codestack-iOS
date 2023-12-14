@@ -12,6 +12,7 @@ import RxSwift
 import RxCocoa
 import Data
 import Global
+import Domain
 
 enum LoginError: Error{
     case gitOAuthError
@@ -151,7 +152,7 @@ class LoginViewModel: LoginViewModelProtocol, Stepper{
         KeychainItem.saveTokens(access: token.accessToken, refresh: token.refreshToken)
         
         return apolloService.getMe(.ME)
-            .map { fr in fr.toDomain() }
+//            .map { fr in fr.toDomain() }
     }
     
     private func saveUserInfo(memeber: MemberVO){
