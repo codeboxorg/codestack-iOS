@@ -1,250 +1,208 @@
 # Write your query or mutation here
 
+fragment PageInfoFR on PageInfo {
+  limit
+  offset
+  totalContent
+  totalPage
+}
 
-query GetMeSubmissionHistory($limit: Int = 100,$offset: Int) {
+fragment ProblemFR on Problem {
+  id
+  title
+  context
+  languages {
+    ...LanguageFR
+  }
+  tags {
+    ...TagFR
+  }
+  accepted
+  submission
+  maxCpuTime
+  maxMemory
+}
+
+fragment TagFR on Tag {
+  id
+  name
+}
+
+fragment LanguageFR on Language {
+      id
+      name
+      extension
+}
+
+fragment MemberFR on Member {
+  email
+  nickname
+  username
+  profileImage
+  solvedProblems {
+    ...ProblemIdentityFR
+  }
+}
+
+fragment ProblemIdentityFR on Problem {
+    id
+    title
+}
+
+## FProbelm ->ProblemIdentityFR
+fragment SubmissionFR on Submission {
+  id
+  language {
+    ...LanguageFR
+  }
+  member {
+    username
+  }
+  memoryUsage
+  problem {
+    ...ProblemIdentityFR
+  }
+  sourceCode
+  cpuTime
+  statusCode
+  updatedAt
+  createdAt
+}
+
+# 현재 전체 유저의 submission을 가져옴
+query FetchMeSubmissionHistory($limit: Int = 100,$offset: Int) {
   getSubmissions(limit: $limit,offset: $offset) {
     content {
       createdAt
     }
     pageInfo {
-      limit
-      offset
-      totalContent
+      ...PageInfoFR
     }
   }
 }
 
-
-query GetProblemById($id: ID!){
+# 성공
+query FetchProblemById($id: ID!){
   getProblemById(id: $id){
-    accepted
-    context
-    id
-    languages{
-      id
-      name
-      extension
-    }
-    maxCpuTime
-    maxMemory
-    submission
-    tags{
-      id
-      name
-    }
-    title
+    ...ProblemFR
   }
 }
 
-query GetProblems($offset: Int,$sort: String, $order: String){
-  getProblems(limit: 10,offset: $offset, sort: $sort, order: $order){
-    content{
-      id
-      title
-      context
-      submission
-      accepted
-      tags{
-        id
-        name
-      }
-      languages{
-        id
-        name
-        extension
-      }
+# 성공
+query FetchProblems($offset: Int,$sort: String, $order: String){
+  getProblems(limit: 10, offset: $offset, sort: $sort, order: $order){
+    content {
+      ...ProblemFR
     }
-    pageInfo{
-      offset
-      limit
-      totalPage
-      totalContent
+    pageInfo {
+      ...PageInfoFR
     }
   }
 }
 
-
-query GetSearchproblems($keyword: String!,$limit: Int! = 10, $order: String! = "asc", $sort: String! = "id"){
+# 성공
+query FetchSearchproblems($keyword: String!,$limit: Int! = 10, $order: String! = "asc", $sort: String! = "id"){
   getSearchProblems(keyword: $keyword, limit: $limit, order: $order,sort: $sort){
-    content{
-      id
-      title
-      context
-      languages{
-        id
-        name
-        extension
-      }
+    content {
+      ...ProblemFR
+    }
+    pageInfo {
+      ...PageInfoFR
     }
   }
 }
 
-
-query GetSubmissionByProblemId($offset: Int! = 0,$problemId: Float!){
+# 성공
+query FetchSubmissionByProblemId($offset: Int! = 0,$problemId: Float!){
   getSubmissionsByProblemId(limit: 20, offset: $offset, order: "asc",problemId: $problemId,sort: "id"){
-    content{
-      id
-      sourceCode
-      statusCode
-      language{
-        name
-        extension
-      }
-      problem{
-        id
-        title
-      }
-      updatedAt
-      createdAt
+    content {
+      ...SubmissionFR
+    }
+    pageInfo {
+      ...PageInfoFR
     }
   }
 }
 
-query GetMeSubmissions{
+# 현재 INTERNAL_SERVER_ERROR
+query FetchMeSubmissions($username: String!) {
+  matchMember(username: $username) {
+    submissions {
+      ...SubmissionFR
+    }
+  }
+}
+
+## 성공
+query FetchMe {
   getMe{
-    submissions{
-      id
-      statusCode
-      sourceCode
-      cpuTime
-      memoryUsage
-      createdAt
-      problem{
-        id
-        title
-      }
-      language{
-        name
-      }
-    }
+    ...MemberFR
   }
 }
 
-
-query GetMe{
-  getMe{
-    email
-    nickname
-    profileImage
-    solvedProblems{
-      id
-    }
-    username
-  }
-}
-
-query GetSolvedProblem($username: String!){
+# 성공 - 하지만 현재는 제출 실패 만 가능
+query FetchSolvedProblem($username: String!) {
   matchMember(username: $username){
-    nickname
-    email
-    profileImage
-    solvedProblems{
-      id
-      title
-      languages{
-        name
-        extension
-      }
-    }
-  }
-}
-query GetSubmissionById($id: ID!){
-   getSubmissionById(id: $id){
-    cpuTime
-    id
-    member{
-      nickname
-      username
+     __typename
+    solvedProblems {
+      ...ProblemIdentityFR
     }
   }
 }
 
-query GetSubmissions($offset: Int,$sort: String, $order: String){
+# 성공
+query FetchSubmissionById($id: ID!){
+   getSubmissionById(id: $id){
+    id
+    problem {
+      ...ProblemIdentityFR
+    }
+    member {
+      ...MemberFR
+    }
+  }
+}
+
+# 성공
+query FetchSubmissions($offset: Int,$sort: String, $order: String){
   getSubmissions(limit: 20,offset: $offset,sort: $sort, order: $order){
     content{
-      id
-      sourceCode
-      statusCode
-      problem{
-        id
-        title
-      }
-      language{
-        id
-        name
-        extension
-      }
-      createdAt
-      updatedAt
+      ...SubmissionFR
     }
     pageInfo{
-      offset
-      limit
-      totalPage
-      totalContent
+      ...PageInfoFR
     }
   }
 }
-
-query GetAllLanguage{
-  getAllLanguage{
-    id
-    name
-    extension
+# 성공
+query FetchAllLanguage {
+  getAllLanguage {
+    ...LanguageFR
   }
 }
 
-
-query GetAllTag($offset: Int){
+# 성공
+query FetchAllTag($offset: Int){
   getAllTag(limit: 10, offset: $offset,sort: "id",order: "asc"){
     content{
-      id
-      name
+      ...TagFR
     }
     pageInfo{
-      totalPage
-      totalContent
+      ...PageInfoFR
     }
   }
 }
 
+# 성공
 mutation UpdateNickName($nickname:String!){
   updateNickname(nickname: $nickname) {
-    email
-    nickname
-    username
-    profileImage
+    ...MemberFR
   }
 }
 
-mutation CreateSubmission($languageId: ID!,$problemId:ID!,$sourceCode: String!){
+# 성공
+mutation SubmitSubmission($languageId: ID!,$problemId:ID!,$sourceCode: String!){
   createSubmission(languageId: $languageId,problemId: $problemId,sourceCode:$sourceCode){
-    id
-    language{
-      id
-      name
-      extension
-    }
-    member{
-      nickname
-    }
-    sourceCode
-    problem{
-      id
-      title
-      context
-      languages{
-        id
-        name
-        extension
-      }
-      maxCpuTime
-      maxMemory
-      tags{
-        name
-      }
-    }
-    statusCode
-    createdAt
+    ...SubmissionFR
   }
 }
