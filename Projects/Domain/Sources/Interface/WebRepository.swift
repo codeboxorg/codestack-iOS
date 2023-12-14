@@ -11,6 +11,8 @@ import CodestackAPI
 import Apollo
 import Data
 
+
+
 public protocol WebRepository: AnyObject {
     
     // MARK: GraphQL
@@ -18,17 +20,17 @@ public protocol WebRepository: AnyObject {
     
     func request<T>(type: T.Type, graph: GRAPH) -> Maybe<T>
     
-    func getSolvedProblems(_ query: FetchSolvedProblemQuery) -> Maybe<[ProblemIdentityFR]>
+    func getSolvedProblems(_ query: FetchSolvedProblemQuery) -> Maybe<[ProblemIdentityVO]>
     
-    func getMe(_ graph: GRAPH) -> Maybe<MemberFR>
-    func updateNickName(_ graph: GRAPH) -> Maybe<MemberFR>
-    func perform(_ graph: GRAPH, max retry: Int) -> Maybe<SubmissionFR>
-    func getProblemsQuery(_ graph: GRAPH) -> Maybe<([ProblemFR],PageInfoFR)>
-    func getProblemByID(_ graph: GRAPH) -> Maybe<ProblemFR>
-    func getAllTag(_ graph: GRAPH) -> Maybe<([TagFR],PageInfoFR)>
-    func getAllLanguage(_ graph: GRAPH) -> Maybe<[LanguageFR]>
-    func getMeSubmissions(_ graph: GRAPH) -> Maybe<[SubmissionFR]>
-    func getSubmission(_ graph: GRAPH, cache: CachePolicy?) -> Maybe<([SubmissionFR],PageInfoFR)>
+    func getMe(_ graph: GRAPH) -> Maybe<MemberVO>
+    func updateNickName(_ graph: GRAPH) -> Maybe<MemberVO>
+    func perform(_ graph: GRAPH, max retry: Int) -> Maybe<SubmissionVO>
+    func getProblemsQuery(_ graph: GRAPH) -> Maybe<([ProblemVO],PageInfoVO)>
+    func getProblemByID(_ graph: GRAPH) -> Maybe<ProblemVO>
+    func getAllTag(_ graph: GRAPH) -> Maybe<([TagVO],PageInfoVO)>
+    func getAllLanguage(_ graph: GRAPH) -> Maybe<[LanguageVO]>
+    func getMeSubmissions(_ graph: GRAPH) -> Maybe<[SubmissionVO]>
+    func getSubmission(_ graph: GRAPH, cache: CachePolicy?) -> Maybe<([SubmissionVO],PageInfoVO)>
     
     // MARK: REST
     func signUp(member: MemberDTO) -> Maybe<Bool>
