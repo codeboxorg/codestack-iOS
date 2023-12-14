@@ -11,7 +11,7 @@ import CodestackAPI
 import Apollo
 import Data
 
-protocol WebRepository: AnyObject {
+public protocol WebRepository: AnyObject {
     
     // MARK: GraphQL
 //    func getSolvedProblems(_ graph: GRAPH) -> Maybe<[ProblemIdentityFR]>
@@ -37,7 +37,7 @@ protocol WebRepository: AnyObject {
 }
 
 
-extension WebRepository {
+public extension WebRepository {
     
     private static var endpoint: String {
         return Bundle.main.infoDictionary!["graphql_endpoint"] as! String
