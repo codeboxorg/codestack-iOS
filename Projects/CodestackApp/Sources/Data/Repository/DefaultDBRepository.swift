@@ -10,20 +10,6 @@ import CoreData
 import RxSwift
 import Global
 
-protocol DBRepository: AnyObject {
-    func fetch(_ requestType: SubmissionMO.RequestType) -> Single<[Submission]>
-    func store(submission: Submission) -> Single<Void>
-    func remove() -> Single<Void>
-    func remove(_ requestType: SubmissionMO.RequestType) -> Completable
-    func update(submission: Submission, type request: SubmissionMO.RequestType) -> Single<Void>
-    
-    func fetchProblemState() -> Single<[ProblemSubmissionState]>
-    func fetchSubmissionCalendar() -> Single<[SubmissionCalendar]>
-    
-    func store(favoriteProblem: FavoriteProblem) -> Single<Void>
-    func fetchFavoriteProblems() -> Single<[FavoriteProblem]>
-    func removeFavor(_ requestType: FavoritProblemMO.RequestType) -> Completable
-}
 
 final class DefaultDBRepository: DBRepository {
     

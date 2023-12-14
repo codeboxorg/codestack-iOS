@@ -28,6 +28,15 @@ import CodestackAPI
 //[FSubmission],FPageInfo)
 
 
+extension MemberFR {
+    func toDomain() -> MemberVO {
+        MemberVO(id: self.,
+                 email: <#T##String#>,
+                 nickName: <#T##String#>,
+                 imageURL: <#T##String#>)
+    }
+}
+
 extension SubmissionFR {
     func toDomain() -> SubmissionVO {
         SubmissionVO(id: self.id,
