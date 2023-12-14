@@ -95,9 +95,9 @@ class LoginStepper: Stepper {
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     
-    private var authService: AuthServiceType
+    private var authService: RestAPI
     
-    init(authService: AuthServiceType) {
+    init(authService: RestAPI) {
         self.authService = authService
     }
     
@@ -106,19 +106,20 @@ class LoginStepper: Stepper {
     }
     
     func readyToEmitSteps() {
+        
 //         TODO: Reissue Token Error
 //         현재 refresh TOken 으로 재발급시 서버측 Token(구버젼) 으로 발급이 되어 에러 발생 -> 현재는 명시적으로 로그인 하도록
 //        let accessToken = KeychainItem.currentAccessToken
-//        // let refreshToken = KeychainItem.currentRefreshToken
+//        let refreshToken = KeychainItem.currentRefreshToken
 //        
-//        let token = authService.reissueToken(token: ReissueAccessToken(accessToken: accessToken))
+//        let token = authService.reissueToken(token: RefreshToken(refresh: refreshToken))
 //        
 //        _ = token.subscribe(with: self, onNext: { stepper , value in
 //            let (response,data) = value
 //            switch response.statusCode {
 //            case 200..<299:
 //                do {
-//                    let reissueToken = try API.extractAccessToken(data)
+//                    let reissueToken = try API.extract(data)
 //                    try KeychainItem.saveAccessToken(access: reissueToken)
 //                    stepper.steps.accept(CodestackStep.userLoggedIn(nil, nil))
 //                } catch {
