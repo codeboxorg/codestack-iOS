@@ -196,8 +196,8 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
     // 제일 최근 제출 현황을 가져온다 생각하면
     // 0 == 없을때는 임시저장 시키면 되고,,,,,,
     // 1 == 존재했을때는 상태가 temp가 아닐경우에 temp로 변경 하면 될듯?
-    private func saveInRepository(model: SendProblemModel, submissions: [Submission]) -> Single<Void> {
-        let _submission = model.toTempDomain()
+    private func saveInRepository(model: SubmissionVO, submissions: [SubmissionVO]) -> Single<Void> {
+        let _submission = model
            
         if submissions.count == 0 {
             return store(submission: _submission)
@@ -206,18 +206,18 @@ final class DefaultSubmissionUseCase: SubmissionUseCase {
         if submissions.count == 1 {
             let fetchedSubmission = submissions.first!
             
-            if let statusCode = fetchedSubmission.statusCode {
-                
-                if statusCode == "temp"  {
-                    return update(submission: _submission)
-                }
-
-                return store(submission: _submission)
-//                if _submission.sourceCode == fetchedSubmission.sourceCode,
-//                   _submission.language == fetchedSubmission.language {
-//                    return .just(())
-//                } else { }
+            let statusCode = fetchedSubmission.statusCode
+            
+            if statusCode == "temp"  {
+                return update(submission: _submission)
             }
+            
+            return store(submission: _submission)
+            //                if _submission.sourceCode == fetchedSubmission.sourceCode,
+            //                   _submission.language == fetchedSubmission.language {
+            //                    return .just(())
+            //                } else { }
+            
         }
         return .just(())
     }
