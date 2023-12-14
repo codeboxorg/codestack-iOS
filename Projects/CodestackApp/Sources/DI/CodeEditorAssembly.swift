@@ -27,7 +27,7 @@ public struct CodeEditorAssembly: Assembly {
             let dp = CodeEditorViewModel.Dependency(homeViewModel: home,
                                                     historyViewModel: history,
                                                     submissionUseCase: useCase,
-                                                    step: stepper.steps)
+                                                    stepper: stepper)
             return CodeEditorViewModel(dependency: dp)
         }
         
