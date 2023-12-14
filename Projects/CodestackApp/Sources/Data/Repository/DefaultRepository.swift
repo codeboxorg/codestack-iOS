@@ -11,6 +11,7 @@ import CodestackAPI
 import Apollo
 import Data
 import Global
+import Domain
 
 //public typealias SolvedProblems = [GetSolvedProblemQuery.Data.MatchMember.SolvedProblem]
 //

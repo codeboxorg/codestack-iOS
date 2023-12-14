@@ -9,6 +9,7 @@
 import Swinject
 import Foundation
 import Data
+import Domain
 
 public struct NetworkAssembly: Assembly {
     

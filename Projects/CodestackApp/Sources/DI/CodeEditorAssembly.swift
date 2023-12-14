@@ -8,6 +8,7 @@
 
 import Swinject
 import Network
+import Domain
 
 
 public struct CodeEditorAssembly: Assembly {

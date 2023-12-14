@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import RxFlow
 import Data
+import Domain
 
 protocol ProblemViewModelProtocol{
     associatedtype Input = CodeProblemViewModel.Input
@@ -212,9 +213,10 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
             // .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
         //TODO: 확인후 변경
             .getProblemsQuery(.PR_LIST(arg: GRAR(offset: offset)))
-            .map { frInfo in
-                frInfo.0.map { fr in fr.toDomain() }
-            }
+            .map { $0.0 }
+//            .map { frInfo in
+//                frInfo.0.map { fr in fr.toDomain() }
+//            }
             .asSignal(onErrorJustReturn: [])
     }
 }

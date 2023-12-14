@@ -12,6 +12,7 @@ import RxCocoa
 import Apollo
 import Data
 import Global
+import Domain
 
 enum FavoriteError: Error {
     case error

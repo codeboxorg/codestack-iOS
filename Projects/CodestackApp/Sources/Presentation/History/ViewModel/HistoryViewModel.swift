@@ -11,6 +11,7 @@ import RxCocoa
 import RxRelay
 import Global
 import Data
+import Domain
 
 protocol HistoryViewModelType: ViewModelType, AnyObject {
     var sendSubmission: PublishRelay<SubmissionVO> { get set }
@@ -196,7 +197,9 @@ class HistoryViewModel: HistoryViewModelType {
         return service
             .getSubmission(.SUB_LIST(arg: GRAR.init(offset: self.currentPage)), cache: nil)
             .map { frinfo in
-                frinfo.0.map { fr in fr.toDomain() }
+                frinfo.0
+                // TODO: 확인
+//                frinfo.0.map { fr in fr.toDomain() }
             }
 //            .getSubmission(query: Query.getSubmission(offest: self.currentPage),
 //                           cache: nil)
@@ -220,7 +223,9 @@ class HistoryViewModel: HistoryViewModelType {
         //            })
 //        _ = service.getSubmission(query: Query.getSubmission(),cache: .fetchIgnoringCacheCompletely)
         _ = service.getMeSubmissions(.SUB_LIST(arg: GRAR.init(offset: 0)))
-            .map { $0.map { fr in fr.toDomain() }}
+        //TODO: 확인 필요
+            .map { $0 }
+//            .map { $0.map { fr in fr.toDomain() }}
             .subscribe(with: self, onSuccess: { vm, value in
                 vm.submissionModel.accept([])
                 vm.historyData.accept([])
