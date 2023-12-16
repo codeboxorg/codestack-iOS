@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Data
 
 public struct MemberNameVO: Codable, Equatable {
     public let username: String
@@ -33,13 +32,8 @@ public struct MemberVO: Codable {
     }
 }
 
-
-extension MemberDTO {
-    public func toDomain() -> MemberVO {
-        MemberVO(email: self.email,
-                 nickName: self.nickName,
-                 username: "",
-                 solvedProblems: [],
-                 profileImage: self.imageURL ?? "codeStack")
+public extension MemberVO {
+    static var sample: Self {
+        .init(email: "GUT", nickName: "환", username: "형환", solvedProblems: [], profileImage: "codeStack")
     }
 }
