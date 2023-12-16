@@ -25,10 +25,16 @@ public protocol DBRepository: AnyObject {
     func removeFavor(_ requestType: FAV_TYPE) -> Completable
 }
 
-public typealias ProblemID = String
 public typealias StatusCode = String
 public typealias SubmissionID = String
 public typealias LanguageName = String
+public typealias State<T> = Result<T, Error>
+public typealias Token = String
+public typealias GitCode = String
+public typealias ProblemID = String
+public typealias Pwd = String
+public typealias NewPwd = String
+public typealias ImageData = Data
 
 /// SubmissionMO - Request Type
 public enum SUB_TYPE {
