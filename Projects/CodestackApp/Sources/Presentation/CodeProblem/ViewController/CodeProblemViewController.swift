@@ -67,6 +67,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
         
         if self.navigationController == nil {
             disposeBag = DisposeBag()
+            
         }
     }
     
