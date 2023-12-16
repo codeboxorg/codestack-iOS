@@ -24,7 +24,7 @@ public protocol AppleAuth: AnyObject{
 }
 
 public protocol CSAuth {
-    func request(name id: ID,password: Pwd) -> Maybe<CSTokenDTO>
+    func request(name id: String, password: Pwd) -> Maybe<CSTokenDTO>
 }
 
 

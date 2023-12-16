@@ -12,7 +12,7 @@ import RxCocoa
 //MARK: - Codestack login
 extension LoginService: CSAuth {
     
-    public func request(name id: ID,password: Pwd) -> Maybe<CSTokenDTO> {
+    public func request(name id: String, password: Pwd) -> Maybe<CSTokenDTO> {
 
         guard
             let request = try? API.rest(.auth(.email(CSDTO(id: id, password: password)))).urlRequest()
