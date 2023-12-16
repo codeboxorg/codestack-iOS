@@ -10,7 +10,6 @@ import RxCocoa
 import RxGesture
 import RxSwift
 import WebKit
-import Data
 import Global
 import Domain
 
@@ -375,8 +374,7 @@ extension ProblemPopUpView: WKNavigationDelegate{
     /// Load To WebView HTMLString
     /// - Parameter string: HTML String
     func loadHTMLToWebView(html string: String) {
-        
-        if string.isEmpty {
+        if string.isEmpty || string.count < 3 {
             wkWebView.addSubview(refreshLabel)
             wkWebView.addSubview(refreshButton)
             wkWebView.addSubview(activityIndicator)

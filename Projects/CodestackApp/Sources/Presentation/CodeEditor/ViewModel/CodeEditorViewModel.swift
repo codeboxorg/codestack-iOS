@@ -10,7 +10,6 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import Apollo
-import Data
 import Global
 import Domain
 
@@ -175,7 +174,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
     }
     
     //MARK: - Action Binding FUNC
-    private func dissmissAction(action: Driver<Void>, problemID: Driver<ID>) {
+    private func dissmissAction(action: Driver<Void>, problemID: Driver<ProblemID>) {
         action
             .asObservable()
             .withLatestFrom(sendProblemModel.asObservable()) { $1 }
@@ -234,7 +233,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
             }).disposed(by: disposeBag)
     }
     
-    private func loadSubmissionList(action: Driver<Void>, probelmID: Driver<ID>) {
+    private func loadSubmissionList(action: Driver<Void>, probelmID: Driver<ProblemID>) {
         action
             .asObservable()
             .take(1)
@@ -264,7 +263,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
     
     /// 문제제출 메소드
     /// - Parameter action: 문제 id를 관찰하고 있는 Driver
-    func sendAction(action: Signal<ID>) {
+    func sendAction(action: Signal<ProblemID>) {
         action
             .skip(1)
             .withLatestFrom(sendProblemModel.asSignal(onErrorJustReturn: .default)) { $1 }
@@ -317,20 +316,21 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
     }
     
     private func viewErrorInteractorAction(_ error: Error) {
-        if let err = error as? TokenAcquisitionError {
-            if err == TokenAcquisitionError.unowned {
-                self.stepper?.steps.accept(CodestackStep.toastMessage("서버에 response가 오지 않습니다"))
-            }
-            
-            if err == TokenAcquisitionError.unauthorized {
-                self.stepper?.steps.accept(CodestackStep.loginNeeded)
-                return
-            }
-        }
         
-        if let _ = error as? SendError {
-            self.stepper?.steps.accept(CodestackStep.toastMessage("같은 내용입니다"))
-            return
-        }
+        // FIXME: TOKEN SERVICE ERROR 변경해야됌
+//        if let err = error as? TokenAcquisitionError {
+//            if err == TokenAcquisitionError.unowned {
+//                self.stepper?.steps.accept(CodestackStep.toastMessage("서버에 response가 오지 않습니다"))
+//            }
+//            
+//            if err == TokenAcquisitionError.unauthorized {
+//                self.stepper?.steps.accept(CodestackStep.loginNeeded)
+//                return
+//            }
+//        }
+//        if let _ = error as? SendError {
+//            self.stepper?.steps.accept(CodestackStep.toastMessage("같은 내용입니다"))
+//            return
+//        }
     }
 }

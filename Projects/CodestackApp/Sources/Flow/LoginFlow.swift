@@ -9,7 +9,6 @@ import Foundation
 import RxFlow
 import RxSwift
 import RxCocoa
-import Data
 import Global
 
 class LoginFlow: Flow{
@@ -44,9 +43,10 @@ class LoginFlow: Flow{
             return .none
             
         case .logout:
-            UserManager.shared.logout {
-                KeychainItem.deleteToken()
-            }
+            // TODO: 바꿔야됌
+//            UserManager.shared.logout {
+//                KeychainItem.deleteToken()
+//            }
             self.loginViewController.navigationController?.popViewController(animated: true)
             return .none
             
@@ -94,11 +94,11 @@ class LoginFlow: Flow{
 class LoginStepper: Stepper {
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
+    // TODO: Data Layer 의존성 제거해야됨
+//    private var authService: RestAPI
     
-    private var authService: RestAPI
-    
-    init(authService: RestAPI) {
-        self.authService = authService
+    init(/*authService: RestAPI*/) {
+//        self.authService = authService
     }
     
     var initialStep: Step{

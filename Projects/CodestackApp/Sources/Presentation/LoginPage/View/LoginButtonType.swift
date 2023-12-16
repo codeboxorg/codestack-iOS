@@ -6,11 +6,11 @@
 //
 
 import Foundation
-import Data
+import Domain
 
 enum LoginButtonType{
     case gitHub
     case apple
-    case email((ID,Pwd))
+    case email((String, Pwd))
     case none
 }

@@ -7,7 +7,6 @@
 
 import Foundation
 import RxFlow
-import Data
 import Domain
 
 enum ButtonType{
@@ -36,7 +35,7 @@ enum CodestackStep: Step, CaseIterable{
     case registerPage
     case register
     case registerDissmiss
-    case userLoggedIn(ID?,Pwd?)
+    case userLoggedIn(String?,Pwd?)
     case logout
     
     
