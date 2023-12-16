@@ -6,7 +6,6 @@
 //
 
 import CoreData
-import Data
 import Domain
 
 extension FAV_TYPE {
