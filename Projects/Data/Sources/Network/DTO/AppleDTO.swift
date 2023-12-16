@@ -10,6 +10,11 @@ import Foundation
 
 
 public struct AppleDTO {
-    let authorizationCode: String
-    let user: String?
+    public let authorizationCode: String
+    public let user: String?
+    
+    public init(authorizationCode: String, user: String?) {
+        self.authorizationCode = authorizationCode
+        self.user = user
+    }
 }
