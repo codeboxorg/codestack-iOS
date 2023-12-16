@@ -8,8 +8,24 @@ import Foundation
 private class BundleFinder {}
 
 extension Foundation.Bundle {
-    /// Since Domain is a framework, the bundle for classes within this module can be used directly.
-    static let module = Bundle(for: BundleFinder.self)
+    /// Since Domain is a staticFramework, the bundle containing the resources is copied into the final product.
+    static let module: Bundle = {
+        let bundleName = "Domain_Domain"
+
+        let candidates = [
+            Bundle.main.resourceURL,
+            Bundle(for: BundleFinder.self).resourceURL,
+            Bundle.main.bundleURL,
+        ]
+
+        for candidate in candidates {
+            let bundlePath = candidate?.appendingPathComponent(bundleName + ".bundle")
+            if let bundle = bundlePath.flatMap(Bundle.init(url:)) {
+                return bundle
+            }
+        }
+        fatalError("unable to find bundle named Domain_Domain")
+    }()
 }
 
 // MARK: - Objective-C Bundle Accessor
