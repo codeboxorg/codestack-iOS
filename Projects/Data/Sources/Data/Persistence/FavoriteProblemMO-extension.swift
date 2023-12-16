@@ -12,7 +12,7 @@ extension FAV_TYPE {
     func conditionRequest() -> NSFetchRequest<FavoritProblemMO> {
         switch self {
         case .all:
-            return FavoriteProblem.fetchRequest()
+            return FavoritProblemMO.fetchRequest()
         case .isEqualID(let problemID):
             return FavoritProblemMO.isEqualID(probelmID: problemID)
         }
