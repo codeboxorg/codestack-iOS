@@ -11,16 +11,16 @@ import RxSwift
 import Global
 import Domain
 
-final class DefaultDBRepository: DBRepository {
+public final class DefaultDBRepository: DBRepository {
     
     
     private var persistentStore: PersistentStore
     
-    init(persistenStore: PersistentStore = CoreDataStack(version: 1)) {
+    public init(persistenStore: PersistentStore = CoreDataStack(version: 1)) {
         self.persistentStore = persistenStore
     }
     
-    func fetch(_ requestType: SUB_TYPE = .default) -> Single<[SubmissionVO]> {
+    public func fetch(_ requestType: SUB_TYPE = .default) -> Single<[SubmissionVO]> {
         Single<[SubmissionVO]>.create { [weak persistentStore] single in
             
             let fetchRequest = requestType.conditionRequest()
@@ -43,9 +43,9 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func fetchProblemState() -> Single<[ProblemSubmissionStateVO]> {
+    public func fetchProblemState() -> Single<[ProblemSubmissionStateVO]> {
         Single<[ProblemSubmissionStateVO]>.create { [weak persistentStore] single in
-            let fetchRequest = ProblemSubmissionState.fetchRequest()
+            let fetchRequest = ProblemSubmissionStateMO.fetchRequest()
             let observable = persistentStore?.fetch(fetchRequest, map: { value in
 //                 ProblemSubmissionState.init(managedContext: value)
                 value.toDomain()
@@ -56,7 +56,7 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func fetchSubmissionCalendar() -> Single<[SubmissionCalendarVO]> {
+    public func fetchSubmissionCalendar() -> Single<[SubmissionCalendarVO]> {
         Single<[SubmissionCalendarVO]>.create { [weak persistentStore] single in
             let request = SubmissionCalendarMO.fetchRequest()
             let observable = persistentStore?
@@ -70,7 +70,7 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func fetchFavoriteProblems() -> Single<[FavoriteProblemVO]> {
+    public func fetchFavoriteProblems() -> Single<[FavoriteProblemVO]> {
         Single<[FavoriteProblemVO]>.create { [weak persistentStore] single in
             let observable = persistentStore?
                 .fetch(FavoritProblemMO.fetchRequest(),
@@ -85,7 +85,7 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func remove(_ requestType: SUB_TYPE) -> Completable {
+    public func remove(_ requestType: SUB_TYPE) -> Completable {
         Completable.create { [weak persistentStore] complete in
             let request = requestType.conditionRequest()
             let observable = persistentStore?
@@ -99,7 +99,7 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func removeFavor(_ requestType: FAV_TYPE) -> Completable {
+    public func removeFavor(_ requestType: FAV_TYPE) -> Completable {
         Completable.create { [weak persistentStore] complete in
             let request = requestType.conditionRequest()
             let observable = persistentStore?
@@ -113,7 +113,7 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func remove() -> Single<Void> {
+    public func remove() -> Single<Void> {
         Single<Void>.create { [weak persistentStore] single in
             let observable = persistentStore?.remove(request: SubmissionMO.fetchRequest())
             .subscribe { value in
@@ -132,7 +132,7 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func update(submission: SubmissionVO, type request: SUB_TYPE) -> Single<Void> {
+    public func update(submission: SubmissionVO, type request: SUB_TYPE) -> Single<Void> {
         Single<Void>.create { [weak persistentStore] single in
             let observable = persistentStore?.update { context in
                 let request = request.conditionRequest()
@@ -149,7 +149,7 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func store(submission: SubmissionVO) -> Single<Void> {
+    public func store(submission: SubmissionVO) -> Single<Void> {
         Single<Void>.create { [weak persistentStore] single in
             let observable = persistentStore?.update { context in
                 
@@ -183,7 +183,7 @@ final class DefaultDBRepository: DBRepository {
         }
     }
     
-    func store(favoriteProblem: FavoriteProblemVO) -> Single<Void> {
+    public func store(favoriteProblem: FavoriteProblemVO) -> Single<Void> {
         Single<Void>.create { [weak persistentStore] complete in
             let observable = persistentStore?
                 .update { context in
