@@ -7,14 +7,14 @@
 //
 
 import Swinject
-import Data
+import Domain
 
 public struct RegisterAssembly: Assembly {
     
     public func assemble(container: Container) {
         container.register(RegisterViewController.self) { resolver in
-            let service = resolver.resolve(RestAPI.self)!
-            return RegisterViewController.create(with: service)
+            let usecase = resolver.resolve(AuthUsecase.self)!
+            return RegisterViewController.create(with: usecase)
         }
     }
 }
