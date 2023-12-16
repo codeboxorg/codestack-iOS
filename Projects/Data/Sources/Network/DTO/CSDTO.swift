@@ -9,6 +9,11 @@ import Foundation
 
 
 public struct CSDTO {
-    let id: String
-    let password: String
+    public let id: String
+    public let password: String
+    
+    public init(id: String, password: String) {
+        self.id = id
+        self.password = password
+    }
 }

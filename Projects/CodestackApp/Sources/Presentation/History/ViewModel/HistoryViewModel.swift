@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import RxRelay
 import Global
-import Data
+import Domain
 
 protocol HistoryViewModelType: ViewModelType, AnyObject {
     var sendSubmission: PublishRelay<SubmissionVO> { get set }
@@ -35,15 +35,12 @@ class HistoryViewModel: HistoryViewModelType {
     
     
     struct Dependency {
-        let service: WebRepository
-        let submisionUsecase: SubmissionUseCase
+        let submisionUsecase: HistoryUsecase
     }
-    private let service: WebRepository
-    private let submissionUsecase: SubmissionUseCase
+    private let historyUsecase: HistoryUsecase
     
     init(dependency: Dependency){
-        self.service = dependency.service
-        self.submissionUsecase = dependency.submisionUsecase
+        self.historyUsecase = dependency.submisionUsecase
     }
     
     private var disposeBag = DisposeBag()
@@ -95,7 +92,7 @@ class HistoryViewModel: HistoryViewModelType {
             return filteredSubmissions
         }
         
-        submissionUsecase.fetchFavoriteProblem()
+        historyUsecase.fetchFavoriteProblem()
             .subscribe(with: self, onNext: { vm, favoriteProblems in
                 Log.debug("즐겨찾기 한 문제 : \(favoriteProblems)")
             }).disposed(by: disposeBag)
@@ -126,16 +123,7 @@ class HistoryViewModel: HistoryViewModelType {
         viewDidLoad
             .asObservable()
             .withUnretained(self)
-            .flatMap { vm, _ in
-                let localTempSubmission
-                = vm.submissionUsecase
-                    .fetchProblemHistoryEqualStatus(status: "temp")
-                    .compactMap { try $0.get() }
-                
-                let fetchedSubmission = vm.requestSubmission().do(onNext: { _ in vm.currentPage += 1 })
-                return Observable<[SubmissionVO]>.concat([localTempSubmission, fetchedSubmission])
-            }
-            
+            .flatMap { vm, _ in vm.fetchSubmissionHistory() }
             .subscribe(with: self, onNext: { vm, data in
                 vm.submissionModel.accept(data)
                 vm.refreshEndEvent.accept(())
@@ -155,9 +143,10 @@ class HistoryViewModel: HistoryViewModelType {
                 return true
             }
             .delay(.milliseconds(300))
-            .flatMap {vm, _ in vm.requestSubmission().asSignal(onErrorJustReturn: []) }
+            .flatMap {vm, _ in
+                vm.historyUsecase.fetchSubmission(offset: 0).asSignal(onErrorJustReturn: [])
+            }
             .emit(with: self,onNext: { vm, datas in
-                
                 if !datas.isEmpty {
                     vm.submissionModel.accept(datas)
                     vm.currentPage += 1
@@ -173,13 +162,27 @@ class HistoryViewModel: HistoryViewModelType {
             .throttle(.milliseconds(800))
             .asObservable()
             .withUnretained(self)
-            .flatMapLatest { vm, _ in vm.requestSubmission() }
+            .flatMapLatest { vm, _ in vm.historyUsecase.fetchSubmission(offset: 0) }
             .subscribe(with: self, onNext: { vm, datas in
                 vm.submissionModel.accept(datas)
                 vm.refreshEndEvent.accept(())
                 vm.paginationLoading.accept(false)
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func fetchSubmissionHistory() -> Observable<[SubmissionVO]> {
+        let localTempSubmission
+        = historyUsecase
+            .fetchProblemHistoryEqualStatus(status: "temp")
+            .compactMap { try $0.get() }
+        
+        let fetchedSubmission =
+        historyUsecase
+            .fetchSubmission(offset: self.currentPage)
+            .do(onNext: { [weak self] _ in self?.currentPage += 1 })
+        
+        return Observable<[SubmissionVO]>.concat([localTempSubmission, fetchedSubmission])
     }
     
     private lazy var retryHandler: (Observable<Error>) -> Observable<Int> = { error in
@@ -191,18 +194,6 @@ class HistoryViewModel: HistoryViewModelType {
             return Observable<Int>.timer(.milliseconds(300), scheduler: MainScheduler.instance).take(1)
         }
     }
-    
-    private func requestSubmission() -> Observable<[SubmissionVO]> {
-        return service
-            .getSubmission(.SUB_LIST(arg: GRAR.init(offset: self.currentPage)), cache: nil)
-            .map { frinfo in
-                frinfo.0.map { fr in fr.toDomain() }
-            }
-//            .getSubmission(query: Query.getSubmission(offest: self.currentPage),
-//                           cache: nil)
-            .asObservable()
-    }
-    
     
     // TODO: - "INTERNAL_SERVER_ERROR",
     // 현재 getMe 의 submission query Internal Server Error 발생
@@ -219,12 +210,14 @@ class HistoryViewModel: HistoryViewModelType {
         //                Log.debug(me)
         //            })
 //        _ = service.getSubmission(query: Query.getSubmission(),cache: .fetchIgnoringCacheCompletely)
-        _ = service.getMeSubmissions(.SUB_LIST(arg: GRAR.init(offset: 0)))
-            .map { $0.map { fr in fr.toDomain() }}
-            .subscribe(with: self, onSuccess: { vm, value in
-                vm.submissionModel.accept([])
-                vm.historyData.accept([])
-                vm.historyData.accept(value)
-            })
+//        _ = service.getMeSubmissions(.SUB_LIST(arg: GRAR.init(offset: 0)))
+        //TODO: 확인 필요
+//            .map { $0 }
+//            .map { $0.map { fr in fr.toDomain() }}
+//            .subscribe(with: self, onSuccess: { vm, value in
+//                vm.submissionModel.accept([])
+//                vm.historyData.accept([])
+//                vm.historyData.accept(value)
+//            })
     }
 }

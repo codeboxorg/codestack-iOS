@@ -8,6 +8,7 @@
 import UIKit
 import Highlightr
 import RxSwift
+import Domain
 
 class CodeUITextView: UITextView {
     

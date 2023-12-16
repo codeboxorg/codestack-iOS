@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import RxFlow
-import Data
+import Domain
 
 protocol ProblemViewModelProtocol{
     associatedtype Input = CodeProblemViewModel.Input
@@ -22,7 +22,6 @@ protocol ProblemViewModelProtocol{
 
 class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
     
-    
     var steps = PublishRelay<Step>()
     
     struct Input {
@@ -34,7 +33,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
         var fetchProblemList: Signal<Void>
     }
     
-    struct Output{
+    struct Output {
         var seg_list_model: Driver<[DummyModel]>
         var cell_temporary_content_update: Driver<(Int,Bool)>
         var refreshEndEvnet: Driver<Void>
@@ -42,13 +41,13 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
     
     private var dummy: DummyData
     
-    private var apollo: WebRepository
+    private var useCase: ProblemUsecase
     
     var animationSelected: [String : Bool] = [:]
     
-    init(_ dummy: DummyData, _ service: WebRepository){
+    init(_ dummy: DummyData, _ service: ProblemUsecase){
         self.dummy = dummy
-        self.apollo = service
+        self.useCase = service
     }
     
     deinit{
@@ -80,6 +79,12 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
         fetchWhenPagination(input: input.fetchProblemList)
         
         fetchWhenViewDidLoad(load: input.viewDidLoad)
+        
+        //MARK: View Will Disappear
+        _ = input.viewDissapear
+            .emit(with: self, onNext: { vm , value in
+                vm.currentPage = 0
+            }).disposed(by: disposeBag)
         
         
         //MARK: - Cell Select
@@ -157,7 +162,10 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
                 return true
             }
             .delay(.milliseconds(300))
-            .flatMap { vm, _ in  vm.requestProblem(offset: vm.currentPage) }
+            .flatMap { vm, _ in
+                vm.useCase.fetchProblems(offset: vm.currentPage)
+                    .asSignal(onErrorJustReturn: [])
+            }
             .emit(with: self, onNext: { vm, problems in
                 let dummyModel = problems.map { problem in
                     let list1 = problem.toProblemList(.sample)
@@ -188,7 +196,10 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
     private func fetchWhenViewDidLoad(load: Signal<Void>) {
         _ = load
             .withUnretained(self)
-            .flatMap { vm, _ in vm.requestProblem(offset: vm.currentPage) }
+            .flatMap { vm, _ in
+                vm.useCase.fetchProblems(offset: vm.currentPage)
+                    .asSignal(onErrorJustReturn: [])
+            }
             .emit(with: self, onNext: { vm, problems in
                 let dummyModel = problems.map { problem in
                     let list = problem.toProblemList()
@@ -205,16 +216,17 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
             .disposed(by: disposeBag)
     }
     
-    private func requestProblem(offset: Int,
-                                sort: String = "id",
-                                order: String = "asc") -> Signal<[ProblemVO]> {
-        apollo
-            // .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
-        //TODO: 확인후 변경
-            .getProblemsQuery(.PR_LIST(arg: GRAR(offset: offset)))
-            .map { frInfo in
-                frInfo.0.map { fr in fr.toDomain() }
-            }
-            .asSignal(onErrorJustReturn: [])
-    }
+//    private func requestProblem(offset: Int,
+//                                sort: String = "id",
+//                                order: String = "asc") -> Signal<[ProblemVO]> {
+//        apollo
+//            // .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
+//        //TODO: 확인후 변경
+//            .getProblemsQuery(.PR_LIST(arg: GRAR(offset: offset)))
+//            .map { $0.0 }
+////            .map { frInfo in
+////                frInfo.0.map { fr in fr.toDomain() }
+////            }
+//            .asSignal(onErrorJustReturn: [])
+//    }
 }

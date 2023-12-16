@@ -9,28 +9,27 @@ import UIKit
 import RxFlow
 import RxCocoa
 import RxSwift
-import Data
 
-class LoginViewController: UIViewController,Stepper, AppleLoginViewType {
+class LoginViewController: UIViewController,Stepper /*AppleLoginViewType*/ {
     
     //MARK: - RXFLow
     let steps = PublishRelay<Step>()
     
     //MARK: -Dependency
     
-    private var loginViewModel: (any LoginViewModelProtocol)?
-    private var appleManager: AppleLoginManager?
+    private var loginViewModel: LoginViewModel?
+//    private var appleManager: AppleLoginManager?
     
     struct Dependencies{
-        var viewModel: (any LoginViewModelProtocol)?
-        var appleManager: AppleLoginManager?
+        var viewModel: LoginViewModel?
+//        var appleManager: AppleLoginManager?
     }
     
     static func create(with dependencies: Dependencies) -> LoginViewController{
         let vc = LoginViewController()
         vc.loginViewModel = dependencies.viewModel
-        vc.appleManager = dependencies.appleManager
-        vc.appleManager?.loginViewcontroller = vc
+//        vc.appleManager = dependencies.appleManager
+//        vc.appleManager?.loginViewcontroller = vc
         return vc
     }
     
@@ -53,18 +52,20 @@ class LoginViewController: UIViewController,Stepper, AppleLoginViewType {
         
         layoutConfigure()
         // Apple login buton setting
-        appleManager?.settingLoginView()
+        // TODO: APPLE LOGIN MANAGER
+//        appleManager?.settingLoginView()
         
         let loginEvent = loginView.emitButtonEvents()
         
         let registerEvent = loginView.registerEvent()
         
-        let output =
-        (loginViewModel as! LoginViewModel)
+        let output = loginViewModel?
             .transform(input: LoginViewModel.Input(loginEvent: loginEvent,
                                                   registerEvent: registerEvent))
         
-        loginView.binding(loading: output.loading)
+        if let loading = output?.loading {
+            loginView.binding(loading: loading)
+        }
     
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {

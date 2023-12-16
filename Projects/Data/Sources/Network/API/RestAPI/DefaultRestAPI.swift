@@ -11,7 +11,6 @@ import RxCocoa
 import Global
 
 
-
 public typealias ImageURL = String
 public typealias Operation<T> = (_ data: Data) throws -> T?
 

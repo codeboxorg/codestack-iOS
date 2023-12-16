@@ -9,7 +9,7 @@ import Foundation
 
 
 public struct AsessToken: Codable {
-    let accessToken: Token
+    public let accessToken: Token
     
     public init(accessToken: Token) {
         self.accessToken = accessToken
@@ -17,7 +17,7 @@ public struct AsessToken: Codable {
 }
 
 public struct RefreshToken: Codable {
-    let refresh: Token
+    public let refresh: Token
     
     public init(refresh: Token) {
         self.refresh = refresh

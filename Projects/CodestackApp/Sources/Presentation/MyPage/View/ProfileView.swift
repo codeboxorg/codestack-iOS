@@ -10,6 +10,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import Global
+import Domain
 
 class ProfileView: UIView{
 

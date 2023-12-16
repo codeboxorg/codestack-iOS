@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+// TODO: DOmain layer로 옮겨야됨
 public protocol LoginViewModelProtocol: AnyObject {
     func requestOAuth() throws
     
@@ -20,11 +21,12 @@ public protocol LoginViewModelProtocol: AnyObject {
 }
 
 
+
 public final class LoginService: NSObject {
     
     let urlSession: URLSession
     
-    public weak var loginViewModel: (any LoginViewModelProtocol)?
+    // public weak var loginViewModel: (any LoginViewModelProtocol)?
     
     var disposeBag = DisposeBag()
     

@@ -7,15 +7,15 @@
 //
 
 import Swinject
+import Domain
 
 public struct HistoryAssembly: Assembly {
     
     public func assemble(container: Container) {
         
         container.register(HistoryViewModel.self) { resolver in
-            let webRepository = resolver.resolve(WebRepository.self)!
-            let useCase = resolver.resolve(SubmissionUseCase.self)!
-            let dp = HistoryViewModel.Dependency(service: webRepository, submisionUsecase: useCase)
+            let usecase = resolver.resolve(HistoryUsecase.self)!
+            let dp = HistoryViewModel.Dependency.init(submisionUsecase: usecase)
             return HistoryViewModel(dependency: dp)
         }.inObjectScope(.container)
         

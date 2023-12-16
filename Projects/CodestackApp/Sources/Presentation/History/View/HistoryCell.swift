@@ -10,6 +10,7 @@ import SnapKit
 import RxCocoa
 import RxSwift
 import Global
+import Domain
 
 class HistoryCell: UITableViewCell {
 

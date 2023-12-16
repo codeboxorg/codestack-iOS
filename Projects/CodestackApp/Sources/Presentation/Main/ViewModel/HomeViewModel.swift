@@ -12,7 +12,7 @@ import RxCocoa
 import RxFlow
 import CodestackAPI
 import Global
-import Data
+import Domain
 
 
 protocol HomeViewModelType: ViewModelType, Stepper, AnyObject {
@@ -40,10 +40,8 @@ final class HomeViewModel: HomeViewModelType {
     
     var steps = PublishRelay<Step>()
     
+    private var homeUsecase: HomeUsecase
     private var disposeBag: DisposeBag = DisposeBag()
-    
-    private var service: WebRepository
-    private var repository: DBRepository
     
     //MARK: - Input
     var sendSubmission = PublishRelay<SubmissionVO>()
@@ -53,13 +51,11 @@ final class HomeViewModel: HomeViewModelType {
     private var submissions = PublishRelay<[RecentSubmission]>()
     
     struct Dependency {
-        let repository: DBRepository
-        let service: WebRepository
+        let homeUsecase: HomeUsecase
     }
     
     init(dependency: Dependency){
-        self.service = dependency.service
-        self.repository = dependency.repository
+        self.homeUsecase = dependency.homeUsecase
         sendSubmissionBinding()
         updateSubmissionBinding()
     }
@@ -169,14 +165,7 @@ final class HomeViewModel: HomeViewModelType {
     }
     
     func fetchProblem(using submission: SubmissionVO) -> Signal<SubmissionVO> {
-        service
-            .getProblemByID(.PR_BY_ID(submission.problem.id))
-            .map { prFR in
-                let problemVO = prFR.toDomain()
-                var submission = submission
-                submission.problemVO = problemVO
-                return submission
-            }
+        homeUsecase.fetchProblem(using: submission)
             .asSignal(onErrorRecover: { error in
                 Log.error("\(error)")
                 return .just(SubmissionVO.sample)
@@ -184,23 +173,8 @@ final class HomeViewModel: HomeViewModelType {
     }
     
     func fetchedSubmission() -> Signal<[SubmissionVO]> {
-        repository
-            .fetchProblemState()
-            .map { problemState in
-                if let state = problemState.first {
-                    return state
-                        .submissions
-                        .sorted(by: { s1,s2 in
-                            if let createdAt1 = s1.createdAt.toDateKST(),
-                               let createdAt2 = s2.createdAt.toDateKST() {
-                                return createdAt1 > createdAt2
-                            }
-                            return false
-                        })
-                } else {
-                    return []
-                }
-            }
+        homeUsecase
+            .fetchSubmissionList()
             .asSignal(onErrorJustReturn: [])
     }
     
@@ -216,13 +190,7 @@ final class HomeViewModel: HomeViewModelType {
             let newSubmissions: [SubmissionVO] = submissions.map {
                 $0.problem.id == updateSubmission.problem.id ? updateSubmission : $0
             }
-            let sortedSubmissions: [SubmissionVO] = newSubmissions.sorted(by: { first, second in
-                if let date1 = first.createdAt.toDateKST(),
-                   let date2 = second.createdAt.toDateKST() {
-                    return date1 > date2
-                }
-                return true
-            })
+            let sortedSubmissions: [SubmissionVO] = newSubmissions.sortByDate()
             return Array(sortedSubmissions.prefix(10))
         } else {
             let array = [updateSubmission] + submissions

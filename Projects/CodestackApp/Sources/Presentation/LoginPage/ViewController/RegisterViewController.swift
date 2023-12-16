@@ -4,7 +4,7 @@ import SnapKit
 import RxFlow
 import RxRelay
 import RxSwift
-import Data
+import Domain
 
 enum RError: Error{
     case invalidID
@@ -26,11 +26,11 @@ class RegisterViewController: UIViewController, Stepper{
         case wrong
     }
     
-    private var service: RestAPI?
-    
-    static func create(with dependency: RestAPI) -> RegisterViewController {
+    private var authUsecase: AuthUsecase?
+        
+    static func create(with dependency: AuthUsecase) -> RegisterViewController {
         let vc = RegisterViewController()
-        vc.service = dependency
+        vc.authUsecase = dependency
         return vc
     }
     
@@ -281,9 +281,16 @@ class RegisterViewController: UIViewController, Stepper{
                 return vc.isValid(id , password, isCorrect, email, nickname)
             }
             .filter{ $0 }
+            .withUnretained(self)
+            .compactMap { vc, _ in vc.makeUserInfo()  }
+            .flatMap { [weak authUsecase] query -> Observable<Bool> in
+                guard let authUsecase else { return .just(false) }
+                return authUsecase.signUpRequest(query: query)
+            }
             .subscribe(with: self, onNext: { vc, flag in
-                guard let userInfo = vc.makeUserInfo() else { return }
-                vc.request( userInfo )
+                flag ? vc.toast(content: "실패하였습니당") : vc.steps.accept(CodestackStep.registerDissmiss)
+                // guard let userInfo =  else { return }
+                // vc.request( userInfo )
             }).disposed(by: disposeBag)
     }
     
@@ -314,13 +321,13 @@ class RegisterViewController: UIViewController, Stepper{
     
     
     //MARK: - Send to server register message
-    private func request(_ member: MemberDTO) {
-        guard let service else { return }
-        _ = service.signUp(member: member)
-            .subscribe(with: self, onSuccess: { vc, flag in
-                flag ? vc.toast(content: "실패하였습니당") : vc.steps.accept(CodestackStep.registerDissmiss)
-            })
-    }
+//    private func request(_ member: MemberDTO) {
+//        guard let service else { return }
+//        _ = service.signUp(member: member)
+//            .subscribe(with: self, onSuccess: { vc, flag in
+//                
+//            })
+//    }
     
     
     //MARK: - Util 함수
@@ -331,14 +338,14 @@ class RegisterViewController: UIViewController, Stepper{
                            boader: UIColor.black.cgColor)
     }
     
-    private func makeUserInfo() -> MemberDTO? {
+    private func makeUserInfo() -> RegisterQuery? {
         
         guard let id = idField.text else { return nil }
         guard let password = passwordField.text else { return nil }
         guard let email = emailField.text else { return nil }
         guard let nickname = nickNameField.text else { return nil }
         
-        return MemberDTO(id: id, password: password, email: email, nickName: nickname)
+        return RegisterQuery(id: id, password: password, email: email, nickname: nickname)
     }
     
     private func markColorWhenVaild(type: Valid, view: UIView) {

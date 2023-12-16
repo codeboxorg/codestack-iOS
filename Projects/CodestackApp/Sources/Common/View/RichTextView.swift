@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RichTextKit
 import Global
+import Domain
 
 class RichTextViewController: UIViewController{
 

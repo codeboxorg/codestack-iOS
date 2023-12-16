@@ -10,19 +10,15 @@ import RxSwift
 import RxFlow
 import Swinject
 import Global
-import Data
+import Domain
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
     var coordinator: FlowCoordinator = FlowCoordinator()
+    private var gitAuthUsecase: AuthUsecase?
     var disposeBag: DisposeBag = DisposeBag()
-
-    private let loginService: Auth = LoginService()
-    private let authService: RestAPI = DefaultRestAPI()
-//    private lazy var appleLoginManger: AppleLoginManager = AppleLoginManager(serviceManager: self.loginService as AppleAuthorization)
-    
     private let injector = DefaultInjector(container: Container())
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -48,15 +44,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let flow = AppFlow(dependency: appDependency)
         
         self.coordinator.coordinate(flow: flow, with: AppStepper())
-        
+        self.gitAuthUsecase = injector.resolve(AuthUsecase.self)
         Flows.use(flow, when: .created, block: { root in
             window.rootViewController = root
             window.makeKeyAndVisible()
         })
         self.window = window
     }
-    
-    
     
     /// Git Auth 과정에서 redirect 되었을때 호출되는 함수
     /// - Parameters:
@@ -71,7 +65,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             if let flag = component.first?.elementsEqual("codestackios://git/auth"),
                flag,
                let code = component.last?.components(separatedBy: "=").last{
-                (loginService as GitAuth).gitOAuthComplete(code: code)
+                // TODO: LoginVIewModel Protocol을 어떻게든 해야댐
+                gitAuthUsecase?.gitOAuthComplete(code: code)
             }
         }
     }

@@ -10,6 +10,7 @@ import RxCocoa
 import RxFlow
 import RxSwift
 import Global
+import Domain
 
 class ContributionViewModel: ObservableObject, RxFlow.Stepper {
     
@@ -22,16 +23,13 @@ class ContributionViewModel: ObservableObject, RxFlow.Stepper {
                                                                                      depth: .one)]
     
     struct Dependency {
-        let service: WebRepository
         let submissionUsecase: SubmissionUseCase
     }
     
-    private var service: WebRepository?
     private var submissionUsecase: SubmissionUseCase?
     
     static func create(depenedency: Dependency) -> ContributionViewModel {
         let viewModel = ContributionViewModel()
-        viewModel.service = depenedency.service
         viewModel.submissionUsecase = depenedency.submissionUsecase
         viewModel.binding()
         return viewModel
@@ -66,7 +64,7 @@ class ContributionViewModel: ObservableObject, RxFlow.Stepper {
     }
     
     
-    private func caculateCurrentContribution(value: SubmissionCalendar) -> [SubmissionContribution] {
+    private func caculateCurrentContribution(value: SubmissionCalendarVO) -> [SubmissionContribution] {
         
         var dayArray: [String: SubmissionContribution] = self.getContributionDates(size: contribution_day_count)
         

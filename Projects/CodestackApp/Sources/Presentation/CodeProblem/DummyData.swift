@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Domain
 
 typealias DummyModel = (model: ProblemListItemModel, language: [LanguageVO], flag: Bool)
 

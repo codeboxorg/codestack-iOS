@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import Domain
 
 enum SolveResultType {
     case problem

@@ -7,18 +7,15 @@
 //
 
 import Swinject
-import Data
+import Domain
 
 public struct MyPageAssembly: Assembly {
     
     public func assemble(container: Container) {
         
         container.register(MyPageViewModel.self) { resolver in
-            let auth = resolver.resolve(RestAPI.self)!
-            let web = resolver.resolve(WebRepository.self)!
-            
-            let dp = MyPageViewModel.Dependency(authService: auth,
-                                                apolloService: web)
+            let useCase = resolver.resolve(ProfileUsecase.self)!
+            let dp = MyPageViewModel.Dependency(profileUsecase: useCase)
             return MyPageViewModel(dependency: dp)
         }
         
