@@ -15,21 +15,17 @@ public struct HomeAssembly: Assembly {
         
         // MARK: Home ViewModel
         container.register(HomeViewModel.self) { resolver in
-            let dbRepository = resolver.resolve(DBRepository.self)!
-            let webRepository = resolver.resolve(WebRepository.self)!
-            let homeViewModel: HomeViewModel.Dependency = .init(repository: dbRepository,
-                                                                service: webRepository)
+            let home = resolver.resolve(HomeUsecase.self)!
+            let homeViewModel: HomeViewModel.Dependency = .init(homeUsecase: home)
             return HomeViewModel(dependency: homeViewModel)
         }.inObjectScope(.container)
         
         
         // MARK: Contribution ViewModel
         container.register(ContributionViewModel.self) { resolver in
-            let dbRepository = resolver.resolve(WebRepository.self)!
             let submissionUseCase = resolver.resolve(SubmissionUseCase.self)!
             
-            let dependency = ContributionViewModel.Dependency(service: dbRepository,
-                                                              submissionUsecase: submissionUseCase)
+            let dependency = ContributionViewModel.Dependency(submissionUsecase: submissionUseCase)
             
             return ContributionViewModel.create(depenedency: dependency)
         }
