@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import Domain
 
 /// Graph Argument
 public struct GRAR {

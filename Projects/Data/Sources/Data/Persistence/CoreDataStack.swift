@@ -9,7 +9,7 @@ import CoreData
 import RxSwift
 import Global
 
-protocol PersistentStore: AnyObject {
+public protocol PersistentStore: AnyObject {
     typealias DBOperation<Result> = (NSManagedObjectContext) throws -> Result
     
     func count<T>(_ fetchRequest: NSFetchRequest<T>) -> Observable<Int>
@@ -35,13 +35,13 @@ enum StoreType {
     }
 }
 
-final class CoreDataStack: PersistentStore {
+public final class CoreDataStack: PersistentStore {
     
     private let container: NSPersistentContainer
     private let isStoreLoaded = BehaviorSubject<Bool>(value: false)
     private let bgQueue = DispatchQueue(label: "coredata")
     
-    init(directory: FileManager.SearchPathDirectory = .documentDirectory,
+    public init(directory: FileManager.SearchPathDirectory = .documentDirectory,
          domainMask: FileManager.SearchPathDomainMask = .userDomainMask,
          version vNumber: UInt) {
         let version = Version(vNumber)
@@ -64,7 +64,7 @@ final class CoreDataStack: PersistentStore {
         }
     }
     
-    func count<T>(_ fetchRequest: NSFetchRequest<T>) -> Observable<Int> {
+    public func count<T>(_ fetchRequest: NSFetchRequest<T>) -> Observable<Int> {
         return onStoreIsReady
             .flatMap { [weak container] in
                 Observable.create { observer in
@@ -79,7 +79,7 @@ final class CoreDataStack: PersistentStore {
             }
     }
     
-    func fetch<T, V>(_ fetchRequest: NSFetchRequest<T>,
+    public func fetch<T, V>(_ fetchRequest: NSFetchRequest<T>,
                      map: @escaping (T) throws -> V?) -> Observable<Result<[V],Error>> {
         assert(Thread.isMainThread)
         let fetch = Observable<Result<[V],Error>>.create { [weak container] observer in
@@ -108,7 +108,7 @@ final class CoreDataStack: PersistentStore {
             .flatMap { fetch }
     }
     
-    func remove<T>(request: NSFetchRequest<T>) -> Observable<Void> {
+    public func remove<T>(request: NSFetchRequest<T>) -> Observable<Void> {
         Observable<Void>.create { [weak bgQueue, weak container] observer in
             bgQueue?.async {
                 guard let context = container?.newBackgroundContext() else { return  }
@@ -136,7 +136,7 @@ final class CoreDataStack: PersistentStore {
         
     }
     
-    func update<T>(_ operation: @escaping DBOperation<T>) -> Observable<Result<T, Error>> {
+    public func update<T>(_ operation: @escaping DBOperation<T>) -> Observable<Result<T, Error>> {
         let updateObservable =
         Observable<Result<T, Error>>.create { [weak bgQueue, weak container] observer in
             bgQueue?.async {
@@ -174,15 +174,15 @@ final class CoreDataStack: PersistentStore {
 }
 
 // MARK: - Versioning
-extension CoreDataStack.Version {
+public extension CoreDataStack.Version {
     static var actual: UInt { 1 }
 }
 
 extension CoreDataStack {
-    struct Version {
+    public struct Version {
         private let number: UInt
         
-        init(_ number: UInt) {
+        public init(_ number: UInt) {
             self.number = number
         }
         
