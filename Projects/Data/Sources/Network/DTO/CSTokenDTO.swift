@@ -14,7 +14,7 @@ public struct CSTokenDTO: Codable {
     public let expiresIn: TimeInterval
     public let tokenType: String
     
-    init(refreshToken: String, accessToken: String, expiresIn: TimeInterval, tokenType: String) {
+    public init(refreshToken: String, accessToken: String, expiresIn: TimeInterval, tokenType: String) {
         self.refreshToken = refreshToken
         self.accessToken = accessToken
         self.expiresIn = expiresIn
