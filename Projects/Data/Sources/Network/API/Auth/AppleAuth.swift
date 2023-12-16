@@ -13,7 +13,8 @@ import RxCocoa
 extension LoginService: AppleAuth {
     
     public func oAuthComplte(token: AppleDTO) {
-        loginViewModel?.oAuthComplte(apple: token)
+        // FIXME: FIX loginVIewModel
+//        loginViewModel?.oAuthComplte(apple: token)
     }
     
     //MARK: - codeStack APPle

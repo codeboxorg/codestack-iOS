@@ -25,7 +25,9 @@ let workspace = Workspace(
     projects: [
         "Projects/CodestackApp",
         "Projects/Global",
-        "Projects/Data"
+        "Projects/Data",
+        "Projects/Domain",
+        "Projects/Module/ThirdParty"
     ])
 //let project = Project.app(name: "MyApp",
 //                          platform: .iOS,

@@ -7,14 +7,15 @@
 //
 
 import Swinject
+import Domain
 
 public struct CodeProblemAssembly: Assembly {
     
     public func assemble(container: Container) {
         
         container.register(CodeProblemViewModel.self) { resolver in
-            let web = resolver.resolve(WebRepository.self)!
-            return CodeProblemViewModel(DummyData(), web)
+            let usecase = resolver.resolve(ProblemUsecase.self)!
+            return CodeProblemViewModel(DummyData(), usecase)
         }.inObjectScope(.container)
         
         container.register(CodeProblemViewController.self) { resolver in

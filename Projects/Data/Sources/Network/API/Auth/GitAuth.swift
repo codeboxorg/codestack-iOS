@@ -15,7 +15,8 @@ extension LoginService: GitAuth {
     /// LoginViewModel에 인증완료 이벤트 전달
     /// - Parameter code: github code
     public func gitOAuthComplete(code: String){
-        loginViewModel?.oAuthComplete(code: code)
+        // TODO: LoginVIewModel 제거
+//        loginViewModel?.oAuthComplete(code: code)
     }
     
     /// Git Login URL 오픈 -> 사파리

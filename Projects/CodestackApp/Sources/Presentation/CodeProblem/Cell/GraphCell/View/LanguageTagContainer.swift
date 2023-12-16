@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import Domain
 
 extension String{
     func getColor() -> UIColor{

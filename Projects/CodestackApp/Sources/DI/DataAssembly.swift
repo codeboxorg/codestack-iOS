@@ -8,10 +8,19 @@
 
 import Swinject
 import Data
+import Domain
 
 public struct DataAssembly: Assembly {
     
     public func assemble(container: Container) {
+        
+        container.register(AuthRepository.self) { resolver in
+            let auth = resolver.resolve(Auth.self)!
+            let graph = resolver.resolve(GraphQLAPI.self)!
+            let rest = resolver.resolve(RestAPI.self)!
+            return DefaultAuthRepository(auth: auth, graph: graph, rest: rest)
+        }
+        
         container.register(WebRepository.self) { resolver in
             let graphAPI = resolver.resolve(GraphQLAPI.self)!
             let restAPI = resolver.resolve(RestAPI.self)!

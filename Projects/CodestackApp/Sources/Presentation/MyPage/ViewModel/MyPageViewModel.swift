@@ -9,8 +9,8 @@ import Foundation
 import RxFlow
 import RxSwift
 import RxCocoa
-import Data
 import Global
+import Domain
 
 class MyPageViewModel: ViewModelType, Stepper{
     
@@ -28,22 +28,19 @@ class MyPageViewModel: ViewModelType, Stepper{
     }
     
     struct Dependency {
-        let authService: RestAPI
-        let apolloService: WebRepository
+        let profileUsecase: ProfileUsecase
     }
     
     var steps = PublishRelay<Step>()
     private var disposeBag = DisposeBag()
     
-    private let authService: RestAPI
-    let apolloService: WebRepository
+    private let profileUsecase: ProfileUsecase
     
     init(dependency: Dependency) {
-        self.authService = dependency.authService
-        self.apolloService = dependency.apolloService
+        self.profileUsecase = dependency.profileUsecase
     }
     
-    private let userProfile = BehaviorRelay<MemberVO>(value: UserManager.shared.profile)
+    private let userProfile = BehaviorRelay<MemberVO>(value: MemberVO.sample)
 
     func transform(input: Input) -> Output {
         
@@ -60,8 +57,10 @@ class MyPageViewModel: ViewModelType, Stepper{
             .asObservable()
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .withUnretained(self)
-            .flatMap{ vm, _ in vm.apolloService.getMe(.ME) }
-            .map { $0.toDomain() }
+            .flatMap{ vm, _ in vm.profileUsecase.fetchME() }
+        
+        //TODO: 확인 필요
+//            .map { $0.toDomain() }
             .subscribe(with: self, onNext: { vm, member in
                 vm.userProfile.accept(member)
                 loading.onNext(.loaded(member.profileImage))
@@ -99,11 +98,13 @@ class MyPageViewModel: ViewModelType, Stepper{
             .asObservable()
             .do(onNext: { _ in loading.onNext(.loading) })
             .withUnretained(self)
-            .flatMap { vm,data in vm.authService.editProfile(data).asObservable() }
+            .flatMap { vm,data in vm.profileUsecase.editProfile(data: data) }
             .do(onNext: { image in loading.onNext(.loaded(image))})
             .do(onError: {_ in loading.onNext(.loaded(nil))})
             .subscribe(with: self, onNext: { vm, user in
                 Log.debug("success: \(user)")
+                
+                // TODO: Fix 해야됩니다.
                 //  vm.userProfile.accept(user)
             }).disposed(by: disposeBag)
         

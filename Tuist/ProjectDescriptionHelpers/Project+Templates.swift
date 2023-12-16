@@ -1,8 +1,89 @@
 
 import ProjectDescription
 
+
+extension Project {
+    public static func createModule(
+        name: String,
+        platform: Platform = .iOS,
+        product: Product,
+        bundleID: String? = nil,
+        packages: [Package] = [],
+        settings: Bool = false,
+        dependencies: [TargetDependency] = [],
+        configuration: Bool = false,
+        sources: SourceFilesList = ["Sources/**"],
+        resources: ResourceFileElements? = nil,
+        entitlement: ProjectDescription.Path? = nil,
+        infoPlist: InfoPlist = .default,
+        resourceSynthesizers: [ResourceSynthesizer] = .default
+    ) -> Project {
+        return project(
+            name: name,
+            platform: platform,
+            product: product,
+            bundleID: bundleID,
+            packages: packages,
+            settings: settings,
+            dependencies: dependencies,
+            configuration: configuration,
+            sources: sources,
+            resources: resources,
+            entitlement: entitlement,
+            infoPlist: infoPlist,
+            resourceSynthesizers: resourceSynthesizers
+        )
+    }
+}
+
 public extension Project {
-    
+    static func project(
+        name: String,
+        platform: Platform,
+        product: Product,
+        bundleID: String? = nil,
+        organizationName: String = env.organizationName,
+        packages: [Package],
+        settings: Bool,
+        deploymentTarget: DeploymentTarget? = env.deploymentTarget,
+        dependencies: [TargetDependency] = [],
+        configuration: Bool,
+        sources: SourceFilesList,
+        resources: ResourceFileElements? = nil,
+        entitlement: ProjectDescription.Path? = nil,
+        infoPlist: InfoPlist = .default,
+        resourceSynthesizers: [ResourceSynthesizer] = .default
+    ) -> Project {
+        
+        let appTarget = Project.target(name: name,
+                                    product: product,
+                                    bundleID: bundleID,
+                                    infoPlist: infoPlist,
+                                    sources: sources,
+                                    resources: resources,
+                                    entitlement: entitlement,
+                                    scripts: [],
+                                    dependencies: dependencies,
+                                    configuration: configuration ? targetSetting : defaultTargetSetting ,
+                                    coreDataModels: [])
+        
+        return Project(
+            name: name,
+            organizationName: organizationName,
+            options: .options(automaticSchemesOptions: .disabled),
+            packages: packages,
+            settings: settings ? appBuildSetting : defalutBuildSetting,
+            targets: [appTarget],
+            schemes: generateSchemes(name),
+            resourceSynthesizers: resourceSynthesizers
+        )
+    }
+}
+
+
+
+
+public extension Project {
     static func target(
         name: String,
         product: Product,

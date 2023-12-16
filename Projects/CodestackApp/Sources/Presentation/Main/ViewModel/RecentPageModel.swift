@@ -7,7 +7,7 @@
 
 import Foundation
 import RxDataSources
-
+import Domain
 //typealias RecentSubmissionSection = SectionModel<String, RecentSubmission>
 
 // MARK: 확인후 제거
