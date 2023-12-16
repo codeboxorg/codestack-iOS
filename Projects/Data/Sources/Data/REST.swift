@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Data
 
 public enum REST {
     case reissue(RefreshToken)
