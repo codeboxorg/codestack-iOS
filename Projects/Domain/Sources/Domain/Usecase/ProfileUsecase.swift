@@ -8,7 +8,6 @@
 
 import Foundation
 import RxSwift
-import Data
 
 public typealias ImageURL = String
 
