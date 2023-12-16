@@ -6,18 +6,17 @@
 //
 
 import Foundation
-import Data
 import Domain
 
 struct SendProblemModel {
-    let submissionID: ID
-    let problemID: ID
+    let submissionID: SubmissionID
+    let problemID: ProblemID
     let problemTitle: String
     let sourceCode: String
     let language: LanguageVO
     let userName: String = ""
     
-    init(submissionID: ID, problemID: ID, problemTitle: String = "", sourceCode: String, language: LanguageVO) {
+    init(submissionID: SubmissionID, problemID: ProblemID, problemTitle: String = "", sourceCode: String, language: LanguageVO) {
         self.submissionID = submissionID
         self.problemID = problemID
         self.problemTitle = problemTitle

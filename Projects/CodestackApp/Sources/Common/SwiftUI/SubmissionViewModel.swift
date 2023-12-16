@@ -23,16 +23,13 @@ class ContributionViewModel: ObservableObject, RxFlow.Stepper {
                                                                                      depth: .one)]
     
     struct Dependency {
-        let service: WebRepository
         let submissionUsecase: SubmissionUseCase
     }
     
-    private var service: WebRepository?
     private var submissionUsecase: SubmissionUseCase?
     
     static func create(depenedency: Dependency) -> ContributionViewModel {
         let viewModel = ContributionViewModel()
-        viewModel.service = depenedency.service
         viewModel.submissionUsecase = depenedency.submissionUsecase
         viewModel.binding()
         return viewModel

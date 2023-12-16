@@ -8,7 +8,6 @@
 import UIKit
 import RxFlow
 import RxCocoa
-import Data
 import Global
 
 struct SideMenuItem {
@@ -242,8 +241,9 @@ extension SideMenuViewController: UITableViewDataSource, UITableViewDelegate {
         if item.presentation == .logout{
             DispatchQueue.global().async {
                 do{
-                    try KeychainItem(service: .bundle, account: .access).deleteItem()
-                    try KeychainItem(service: .bundle, account: .refresh).deleteItem()
+                    // TODO: KeyChain 변경해야됨
+//                    try KeychainItem(service: .bundle, account: .access).deleteItem()
+//                    try KeychainItem(service: .bundle, account: .refresh).deleteItem()
                 }catch{
                     Log.error("logout but KeychainItem deleteError")
                 }
