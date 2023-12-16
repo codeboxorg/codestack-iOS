@@ -15,7 +15,7 @@ public protocol AppleLoginViewType: AnyObject {
 
 public class AppleLoginManager: NSObject, ASAuthorizationControllerDelegate {
     
-    public weak var loginViewcontroller: AppleLoginViewType?
+//    public weak var loginViewcontroller: AppleLoginViewType?
     weak var serviceManager: AppleAuth?
     
     var currentNonce: String?

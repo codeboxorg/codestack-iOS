@@ -8,9 +8,9 @@
 import Foundation
 import CodestackAPI
 
+
 public typealias Token = String
 public typealias GitCode = String
-public typealias ID = String
 public typealias ProblemID = String
 public typealias SubmissionID = String
 public typealias Pwd = String
