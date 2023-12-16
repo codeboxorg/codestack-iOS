@@ -8,10 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
-import Data
 import Global
-
-public typealias State<T> = Result<T, Error>
 
 public protocol SubmissionUseCase: AnyObject {
     func submitSubmissionAction(model: SubmissionVO) -> Observable<State<SubmissionVO>>
@@ -21,11 +18,8 @@ public protocol SubmissionUseCase: AnyObject {
     
     func updateFavoritProblem(model: FavoriteProblemVO, flag: Bool) -> Observable<State<Bool>>
     
-    func fetchFavoriteProblem() -> Observable<State<[FavoriteProblemVO]>>
-    
     func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>>
-    
-    func fetchProblemHistoryEqualStatus(status code: String) -> Observable<State<[SubmissionVO]>>
+
     func fetchSubmissionCalendar() -> Observable<State<SubmissionCalendarVO>>
 }
 
@@ -48,10 +42,10 @@ public final class DefaultSubmissionUseCase: SubmissionUseCase {
         self.webRepository = webRepository
     }
     
-    
     public func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>> {
        webRepository
-            .getProblemByID(.PR_BY_ID(id))
+            .getProblemByID(id)
+//            .getProblemByID(.PR_BY_ID(id))
             .asObservable()
             .map { problem in .success(problem)}
             .catchAndReturn(.failure(SendError.fetchFailProblem))
@@ -69,14 +63,18 @@ public final class DefaultSubmissionUseCase: SubmissionUseCase {
             }
             .observe(on: ConcurrentDispatchQueueScheduler.init(queue: .global()))
             .map { _ in
-                GRSubmit(languageId: model.language.id,
-                         problemId: model.problem.id,
-                         sourceCode: model.sourceCode)
+                SubmitMutation(languageId: model.language.id,
+                               problemId: model.problem.id,
+                               sourceCode: model.sourceCode)
+//                GRSubmit(languageId: model.language.id,
+//                         problemId: model.problem.id,
+//                         sourceCode: model.sourceCode)
             }
             .flatMap { [weak webRepository] model -> Maybe<SubmissionVO> in
                 guard let webRepository else { return .empty() }
                 return webRepository
-                    .perform(.SUBMIT_SUB(submit: model), max: 2)
+                    .perform(model, max: 2)
+//                    .perform(.SUBMIT_SUB(submit: model), max: 2)
                     // .map { submitFR in submitFR.toDomain() }
             }
             .do(onNext: { [weak self] in self?.storeInRepo(submission: $0)  })
@@ -86,12 +84,6 @@ public final class DefaultSubmissionUseCase: SubmissionUseCase {
     
     public func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<Result<[SubmissionVO], Error>> {
         dbRepository.fetch(.isNotTemp(id, code))
-            .asObservable()
-            .map { .success($0) }
-    }
-    
-    public func fetchProblemHistoryEqualStatus(status code: String) -> Observable<Result<[SubmissionVO], Error>> {
-        dbRepository.fetch(.isEqualStatusCode(code))
             .asObservable()
             .map { .success($0) }
     }
@@ -154,13 +146,6 @@ public final class DefaultSubmissionUseCase: SubmissionUseCase {
             .asObservable()
         //         _ = service?.getSubmissionDate(query: Query.getSubmissionHistory(limit: 100, offset: 0))
         //             .observe(on: MainScheduler.instance)
-    }
-    
-    public func fetchFavoriteProblem() -> Observable<State<[FavoriteProblemVO]>> {
-        dbRepository
-            .fetchFavoriteProblems()
-            .asObservable()
-            .map { .success($0) }
     }
     
     public func updateFavoritProblem(model: FavoriteProblemVO, flag: Bool) -> Observable<State<Bool>> {

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Data
 import RxSwift
 
 public final class ProblemUsecase {
@@ -20,7 +19,8 @@ public final class ProblemUsecase {
     
     public func fetchProblems(offset: Int) -> Observable<[ProblemVO]> {
         webRepository
-            .getProblemsQuery(.PR_LIST(arg: GRAR(offset: offset)))
+            .getProblemsQuery(GRQuery(offset: offset))
+//            .getProblemsQuery(.PR_LIST(arg: GRAR(offset: offset)))
             .map { $0.0 }
             .asObservable()
         // TODO: Page Info 확인하기
