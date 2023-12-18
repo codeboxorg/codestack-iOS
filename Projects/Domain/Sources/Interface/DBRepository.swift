@@ -39,10 +39,11 @@ public typealias ImageData = Data
 /// SubmissionMO - Request Type
 public enum SUB_TYPE {
     case isExist(ProblemID)
-    case isNotTemp(ProblemID, StatusCode)
+    case is_NOT_ST_Equal_ID(ProblemID, StatusCode)
+    case is_Equal_ST_ID(SubmissionID, StatusCode)
     case isEqualStatusCode(StatusCode)
     case update(SubmissionID, ProblemID)
-    case recent(ProblemID)
+    case recent(ProblemID, notContain: StatusCode)
     case `default`
     case delete(LanguageName, ProblemID, StatusCode)
 }
