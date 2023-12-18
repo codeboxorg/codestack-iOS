@@ -24,6 +24,7 @@ class HistoryViewModel: HistoryViewModelType {
         var refreshTap: Signal<Void>
         var fetchHistoryList: Signal<Void>
         var paginationLoadingInput: Signal<Bool>
+        var deleteHistory: Signal<Int>
     }
     
     struct Output{
@@ -52,7 +53,11 @@ class HistoryViewModel: HistoryViewModelType {
     private let paginationLoading = BehaviorRelay<Bool>(value: false)
     
     
-    private var currentPage: CurrentPage = 0
+    private var currentPage: CurrentPage = 0 {
+        didSet {
+            Log.debug("currentPage: \(self.currentPage)")
+        }
+    }
     private var totalPage: Int = 50
     
     //Bottom Pagination refresh
@@ -82,7 +87,32 @@ class HistoryViewModel: HistoryViewModelType {
         .subscribe(with: self,onNext: { vm, submission in
             vm.historyData.accept(submission)
         }).disposed(by: disposeBag)
+
         
+        input.deleteHistory
+            .asObservable()
+            .withUnretained(self)
+            .flatMap { vm, index -> Observable<(Int, [SubmissionVO])> in
+                let index: Observable<Int> = .just(index)
+                let data: Observable<[SubmissionVO]> = vm.historyData.take(1).asObservable()
+                return Observable.zip(index, data)
+            }
+            .withUnretained(self)
+            .flatMap { vm, tuple in
+                let (index, historydatas) = tuple
+                let deletedSubmissionVo = historydatas[index]
+                
+                let values = historydatas.filter {
+                    if deletedSubmissionVo.id == $0.id { return false }
+                    return true
+                }
+                // TODO: View에 반영 해야함
+                return vm.historyUsecase.deleteItem(item: deletedSubmissionVo)
+                    .andThen(Observable.just(values))
+            }
+            .subscribe(with: self, onNext: { vm, value in
+                vm.historyData.accept(value)
+            }).disposed(by: disposeBag)
         
         let filteredHistoryData =
         Driver<[SubmissionVO]>.combineLatest(historyData.asDriver(),
@@ -112,6 +142,7 @@ class HistoryViewModel: HistoryViewModelType {
     func observingSubmission() {
         sendSubmission
             .withLatestFrom(historyData){ value, original in
+                Log.debug("added Values : \(value)")
                 return [value] + original
             }.subscribe(with: self, onNext: { vm, value in
                 vm.historyData.accept(value)
@@ -144,7 +175,7 @@ class HistoryViewModel: HistoryViewModelType {
             }
             .delay(.milliseconds(300))
             .flatMap {vm, _ in
-                vm.historyUsecase.fetchSubmission(offset: 0).asSignal(onErrorJustReturn: [])
+                vm.historyUsecase.fetchSubmission(offset: vm.currentPage).asSignal(onErrorJustReturn: [])
             }
             .emit(with: self,onNext: { vm, datas in
                 if !datas.isEmpty {
