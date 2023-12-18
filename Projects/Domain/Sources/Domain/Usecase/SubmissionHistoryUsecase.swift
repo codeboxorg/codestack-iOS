@@ -13,6 +13,8 @@ public protocol HistoryUsecase {
     func fetchMe(name: String) -> Observable<[SubmissionVO]>
     func fetchFavoriteProblem() -> Observable<State<[FavoriteProblemVO]>>
     func fetchProblemHistoryEqualStatus(status code: String) -> Observable<Result<[SubmissionVO], Error>>
+//    func deleteItem(item: SubmissionVO) -> Observable<Bool>
+    func deleteItem(item: SubmissionVO) -> Completable
 }
 
 public final class DefaultHistoryUsecase: HistoryUsecase {
@@ -36,10 +38,13 @@ public final class DefaultHistoryUsecase: HistoryUsecase {
             .asObservable()
     }
     
+    public func deleteItem(item: SubmissionVO) -> Completable {
+        dbRepository.remove(.is_Equal_ST_ID(item.id, item.statusCode))
+    }
+    
     public func fetchMe(name: String) -> Observable<[SubmissionVO]> {
         webRepository
             .getMeSubmissions(name)
-//            .getMeSubmissions(.SUB_LIST(arg: GRAR.init(offset: offset)))
         //TODO: 확인 필요
             .map { $0 }
             .asObservable()
