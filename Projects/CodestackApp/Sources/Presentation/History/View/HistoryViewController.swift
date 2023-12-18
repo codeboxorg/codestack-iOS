@@ -10,8 +10,10 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import RxGesture
+import Global
+import Then
 
-class HistoryViewController: UIViewController, UITableViewDelegate {
+class HistoryViewController: UIViewController {
     
     var historyViewModel: (any HistoryViewModelType)?
     
@@ -46,24 +48,37 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
         return table
     }()
     
-    
+    private let editButton = UIButton().then { button in
+        button.setTitle("수정하기", for: .normal)
+        button.setTitleColor(.sky_blue, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+    }
     
     private var disposeBag = DisposeBag()
     private var _viewDidLoad = PublishSubject<Void>()
     private var fetchHistoryList = PublishRelay<Void>()
     private var paginationLoadingInput = PublishRelay<Bool>()
     
+    
+    private var deleteHistory = PublishRelay<Int>()
+    private var editModeValue = BehaviorRelay<Bool>(value: false)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         layoutConfigure()
         binding()
         _viewDidLoad.onNext(())
+        
+        view.gestureRecognizers?.forEach{
+            $0.delegate = self
+        }
     }
     
     func binding(){
         
         let rightGesture = historyList.rx.gesture(.swipe(direction: .right))
             .withUnretained(self)
+            .filter { vc, _ in !vc.historyList.isEditing }
             .compactMap{ vc, _ in
                 if vc.historySegmentList.selectedSegmentIndex != 0{
                     vc.historySegmentList.selectedSegmentIndex -= 1
@@ -75,6 +90,7 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
         
         let leftGesture = historyList.rx.gesture(.swipe(direction: .left))
             .withUnretained(self)
+            .filter { vc, _ in !vc.historyList.isEditing }
             .compactMap{ vc, _ in
                 if vc.historySegmentList.selectedSegmentIndex != 4{
                     vc.historySegmentList.selectedSegmentIndex += 1
@@ -99,6 +115,13 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
         =
         historySegmentUtil.map { value in
             let segTypeValue = SegType.Value(rawValue: value) ?? SegType.Value.all
+            
+            if case let .all = segTypeValue {
+                self.editButton.isHidden = true
+            }else {
+                self.editButton.isHidden = false
+            }
+            
             return segTypeValue
         }.asDriver()
         
@@ -111,7 +134,28 @@ class HistoryViewController: UIViewController, UITableViewDelegate {
                                                currentSegment: currentSegment,
                                                refreshTap: refreshButton.rx.tap.asSignal(),
                                                fetchHistoryList: fetchHistoryList.asSignal(),
-                                               paginationLoadingInput: paginationLoadingInput.asSignal()))
+                                               paginationLoadingInput: paginationLoadingInput.asSignal(),
+                                               deleteHistory: deleteHistory.asSignal()))
+        
+        self.historyList.setEditing(false, animated: false)
+        
+        self.historyList.rx.itemDeleted
+            .asObservable()
+            .subscribe(with: self, onNext: { vc, indexPaths in
+                // TODO:  Index Paths Delete Logic
+                vc.deleteHistory.accept(indexPaths.row)
+            }).disposed(by: disposeBag)
+        
+        let buttonTap = editButton.rx.tap.asSignal()
+        buttonTap
+            .asObservable()
+            .withUnretained(self)
+            .subscribe(with: self, onNext: { vc, value in
+                let isEditing = !vc.historyList.isEditing
+                vc.editModeValue.accept(isEditing)
+                vc.historyList.setEditing(isEditing, animated: true)
+            }).disposed(by: disposeBag)
+        
         
         output.historyData
             .drive(historyList.rx.items(cellIdentifier: HistoryCell.identifier,
@@ -170,9 +214,11 @@ extension HistoryViewController{
         
         view.addSubview(container)
         view.addSubview(historyList)
+        view.addSubview(editButton)
         container.addSubview(historySegmentList)
-        historySegmentList.selectedSegmentIndex = SegType.Value.all.rawValue
         
+        
+        historySegmentList.selectedSegmentIndex = SegType.Value.all.rawValue
         
         historyList.snp.makeConstraints{
             $0.top.equalTo(container.snp.bottom).offset(12)
@@ -193,16 +239,32 @@ extension HistoryViewController{
         historySegmentList.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.leading.equalTo(view.safeAreaLayoutGuide.snp.leading)
-            $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing).offset(-50)
+            $0.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
             $0.bottom.equalToSuperview()
         }
     }
 }
 
-extension HistoryViewController: UIGestureRecognizerDelegate{
+extension HistoryViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer)
     -> Bool {
         return false
+    }
+}
+
+extension HistoryViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        Log.debug("tableView Swped : false")
+        return true // Swipe 비활성화
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        if tableView.isEditing {
+            return .delete
+        } else {
+            return .none
+        }
     }
 }
