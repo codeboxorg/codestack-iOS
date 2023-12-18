@@ -10,10 +10,12 @@ import Global
 import Domain
 
 extension SubmissionMO {
-    static func recent(probelm id: ProblemID) -> NSFetchRequest<SubmissionMO> {
+    
+    static func recent(probelm id: ProblemID, not code: StatusCode) -> NSFetchRequest<SubmissionMO> {
         let request = newFetchRequest()
         let predicate1 = NSPredicate(format: "codeContext.problemID == %@", "\(String(describing: id))")
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1])
+        let predicate2 = NSPredicate(format: "statusCode != %@", "\(String(describing: code))")
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         request.fetchLimit = 1
         request.sortDescriptors = [ NSSortDescriptor(key: "createdAt", ascending: false)]
         return request
@@ -32,6 +34,16 @@ extension SubmissionMO {
         let predicate1 = NSPredicate(format: "statusCode == %@", "\(statusCode)")
         request.predicate = predicate1
         request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        return request
+    }
+    
+    static func isEqualIDStatus(submissionID: SubmissionID, status: StatusCode) -> NSFetchRequest<SubmissionMO> {
+        let request = newFetchRequest()
+        let predicate1 = NSPredicate(format: "statusCode == %@", "\(status)")
+        let predicate2 = NSPredicate(format: "id == %@", "\(String(describing: submissionID))")
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
+        request.fetchLimit = 1
         return request
     }
     
@@ -71,7 +83,10 @@ extension SUB_TYPE {
         case .isExist(let problemID):
             return SubmissionMO.isExistSubmission(problemID: problemID)
         
-        case .isNotTemp(let problemID, let state):
+        case .is_Equal_ST_ID(let submissionID, let statusCode):
+            return SubmissionMO.isEqualIDStatus(submissionID: submissionID, status: statusCode)
+            
+        case .is_NOT_ST_Equal_ID(let problemID, let state):
             return SubmissionMO.isNotTempSubmission(probelmID: problemID, status: state)
         
         case .isEqualStatusCode(let statusCode):
@@ -80,8 +95,8 @@ extension SUB_TYPE {
         case .update(let submissionID, let problemID):
             return SubmissionMO.isEqualID(id: submissionID, problemID)
             
-        case .recent(let problemID):
-            return SubmissionMO.recent(probelm: problemID)
+        case .recent(let problemID, let statusCode):
+            return SubmissionMO.recent(probelm: problemID, not: statusCode)
             
         case .default:
             let request = SubmissionMO.newFetchRequest()
