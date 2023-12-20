@@ -9,15 +9,23 @@
 import Swinject
 import Domain
 
+
+extension ObjectScope {
+    static let history = ObjectScope(storageFactory: PermanentStorage.init)
+}
+
 public struct HistoryAssembly: Assembly {
     
     public func assemble(container: Container) {
         
         container.register(HistoryViewModel.self) { resolver in
             let usecase = resolver.resolve(HistoryUsecase.self)!
-            let dp = HistoryViewModel.Dependency.init(submisionUsecase: usecase)
+            let home = resolver.resolve(HomeViewModel.self)!
+            let dp = HistoryViewModel.Dependency.init(submisionUsecase: usecase,
+                                                      homeViewModel: home,
+                                                      container: container)
             return HistoryViewModel(dependency: dp)
-        }.inObjectScope(.container)
+        }.inObjectScope(.history)
         
         container.register(HistoryViewController.self) { resolver in
             let viewModel = resolver.resolve(HistoryViewModel.self)!
