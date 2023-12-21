@@ -24,8 +24,9 @@ public struct NetworkAssembly: Assembly {
         
         container.register(TokenAcquisitionService<RefreshToken>.self) { resolver in
             let service = resolver.resolve(RestAPI.self)!
-            return TokenAcquisitionService(initialToken: service.initialToken,
-                                           getToken: service.reissueToken(token:),
+            let defaultService = service as! DefaultRestAPI
+            return TokenAcquisitionService(initialToken: defaultService.initialToken,
+                                           getToken: defaultService.reissueToken(token:),
                                            max: 2,
                                            extractToken: API.extractAccessToken)
         }.inObjectScope(.container)
