@@ -16,7 +16,7 @@ public struct CodeProblemAssembly: Assembly {
         container.register(CodeProblemViewModel.self) { resolver in
             let usecase = resolver.resolve(ProblemUsecase.self)!
             return CodeProblemViewModel(DummyData(), usecase)
-        }.inObjectScope(.container)
+        }
         
         container.register(CodeProblemViewController.self) { resolver in
             let viewModel = resolver.resolve(CodeProblemViewModel.self)!
