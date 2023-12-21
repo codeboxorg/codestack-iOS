@@ -31,7 +31,7 @@ public struct DataAssembly: Assembly {
         }.inObjectScope(.container)
         
         container.register(DBRepository.self) { resolver in
-            let coreDataStack = CoreDataStack(version: 1)
+            let coreDataStack = CoreDataStack(bundle: Data.DataResources.bundle, version: 1)
             return DefaultDBRepository(persistenStore: coreDataStack)
         }.inObjectScope(.container)
     }
