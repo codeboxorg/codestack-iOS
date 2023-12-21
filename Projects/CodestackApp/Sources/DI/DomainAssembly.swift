@@ -24,7 +24,10 @@ public struct DomainAssembly: Assembly {
         
         container.register(ProblemUsecase.self) { resolver in
             let web = resolver.resolve(WebRepository.self)!
-            return ProblemUsecase(webRepository: web)
+            let db = resolver.resolve(DBRepository.self)!
+            
+            let dp = ProblemUsecase.Dependency.init(web: web, db: db)
+            return ProblemUsecase(dependency: dp)
         }
         
         container.register(HistoryUsecase.self) { resolver in
