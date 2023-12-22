@@ -13,10 +13,9 @@ import Domain
 
 public final class DefaultDBRepository: DBRepository {
     
-    
     private var persistentStore: PersistentStore
     
-    public init(persistenStore: PersistentStore = CoreDataStack(version: 1)) {
+    public init(persistenStore: PersistentStore) {
         self.persistentStore = persistenStore
     }
     
@@ -43,12 +42,11 @@ public final class DefaultDBRepository: DBRepository {
         }
     }
     
-    public func fetchProblemState() -> Single<[ProblemSubmissionStateVO]> {
+    public func fetchProblemState(_ requestType: PR_SUB_ST_TYPE = .all) -> Single<[ProblemSubmissionStateVO]> {
         Single<[ProblemSubmissionStateVO]>.create { [weak persistentStore] single in
-            let fetchRequest = ProblemSubmissionStateMO.fetchRequest()
-            let observable = persistentStore?.fetch(fetchRequest, map: { value in
-//                 ProblemSubmissionState.init(managedContext: value)
-                value.toDomain()
+            let fetchRequest = requestType.conditionRequest()
+            let observable = persistentStore?.fetch(fetchRequest, map: { prStateMo in
+                prStateMo.toDomain()
             }).subscribe(onNext: { value in
                 single(value)
             })
@@ -60,9 +58,8 @@ public final class DefaultDBRepository: DBRepository {
         Single<[SubmissionCalendarVO]>.create { [weak persistentStore] single in
             let request = SubmissionCalendarMO.fetchRequest()
             let observable = persistentStore?
-                .fetch(request, map: { value in
-//                    SubmissionCalendar(managedContext: value)
-                    value.toDomain()
+                .fetch(request, map: { calendarMO in
+                    calendarMO.toDomain()
                 }).subscribe(onNext: { result in
                     single(result)
                 })
@@ -74,12 +71,23 @@ public final class DefaultDBRepository: DBRepository {
         Single<[FavoriteProblemVO]>.create { [weak persistentStore] single in
             let observable = persistentStore?
                 .fetch(FavoritProblemMO.fetchRequest(),
-                       map: { context in
-                    context.toDomain()
-//                    FavoriteProblem(managedContext: context)
+                       map: { favoriteMO in
+                    favoriteMO.toDomain()
                 })
                 .subscribe(onNext: { result in
                     single(result)
+                })
+            return Disposables.create { observable?.dispose() }
+        }
+    }
+    
+    public func fetchFavoriteExist(_ requestType: FAV_TYPE) -> Single<Bool> {
+        Single<Bool>.create { [weak persistentStore] single in
+            let fetchRequest = requestType.conditionRequest()
+            let observable = persistentStore?
+                .count(fetchRequest)
+                .subscribe(onNext: { count in
+                    count == 1 ? single(.success(true)) : single(.success(false))
                 })
             return Disposables.create { observable?.dispose() }
         }
@@ -113,21 +121,33 @@ public final class DefaultDBRepository: DBRepository {
         }
     }
     
-    public func remove() -> Single<Void> {
+    public func removeAll() -> Single<Void> {
         Single<Void>.create { [weak persistentStore] single in
             let observable = persistentStore?.remove(request: SubmissionMO.fetchRequest())
-            .subscribe { value in
-                 Log.debug(value)
-            }
+                .subscribe { value in
+                    Log.debug(value)
+                }
             
             let observable2 = persistentStore?.remove(request: ProblemSubmissionStateMO.fetchRequest())
-            .subscribe { value in
-                 Log.debug(value)
-            }
+                .subscribe { value in
+                    Log.debug(value)
+                }
+            
+            let observable3 = persistentStore?.remove(request: SubmissionCalendarMO.fetchRequest())
+                .subscribe { value in
+                    Log.debug(value)
+                }
+            
+            let observable4 = persistentStore?.remove(request: FavoritProblemMO.fetchRequest())
+                .subscribe { value in
+                    Log.debug(value)
+                }
             
             return Disposables.create { 
                 observable?.dispose()
                 observable2?.dispose()
+                observable3?.dispose()
+                observable4?.dispose()
             }
         }
     }
@@ -154,7 +174,7 @@ public final class DefaultDBRepository: DBRepository {
             let observable = persistentStore?.update { context in
                 
                 // TODO: Submission -> SubmissionVO
-                guard let submissionMO = submission.toMO(in: context) else { return }
+                guard let submissionMO: SubmissionMO = submission.toMO(in: context) else { return }
                 
                 if submission.statusCode != "temp" && submission.statusCode != "favorite" {
                     // TODO: Submission Calendar 에 Submission 관계 설정
@@ -187,8 +207,8 @@ public final class DefaultDBRepository: DBRepository {
         Single<Void>.create { [weak persistentStore] complete in
             let observable = persistentStore?
                 .update { context in
-                    // TODO: 변경 해야됨
-//                    favoriteProblem.store(in: context)
+                    // TODO: 변경 해야됨 -> 변경 완료 toMO
+                    favoriteProblem.toMO(in: context)
                 }
                 .subscribe(onNext: { _ in
                     complete(.success(()))
