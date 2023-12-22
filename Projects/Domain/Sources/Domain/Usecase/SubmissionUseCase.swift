@@ -17,6 +17,7 @@ public protocol SubmissionUseCase: AnyObject {
     func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<State<[SubmissionVO]>>
     
     func updateFavoritProblem(model: FavoriteProblemVO, flag: Bool) -> Observable<State<Bool>>
+    func fetchIsFavorite(problemID: ProblemID) -> Observable<Bool>
     
     func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>>
 
@@ -27,6 +28,8 @@ public enum SendError: Error {
     case isEqualSubmission
     case isNotStoreState
     case fetchFailProblem
+    case unowned
+    case unauthorized
     case none
 }
 
@@ -45,47 +48,42 @@ public final class DefaultSubmissionUseCase: SubmissionUseCase {
     public func fetchProblem(id: ProblemID) -> Observable<State<ProblemVO>> {
        webRepository
             .getProblemByID(id)
-//            .getProblemByID(.PR_BY_ID(id))
             .asObservable()
             .map { problem in .success(problem)}
             .catchAndReturn(.failure(SendError.fetchFailProblem))
     }
     
     public func submitSubmissionAction(model: SubmissionVO) -> Observable<State<SubmissionVO>> {
-        dbRepository.fetch(.recent(model.problem.id))
+        dbRepository.fetch(.recent(model.problem.id, notContain: "temp"))
             .asObservable()
             .subscribe(on: MainScheduler.instance)
-        // TODO: View에서 판단하는게 맞음
-            .filter { value in
-                guard let recentSubmission = value.first else { return true }
+            .map { $0.first }
+            .filter { subVO in
+                guard let recentSubmission = subVO else { return true }
                 if recentSubmission.isEqualContent(other: model) { throw SendError.isEqualSubmission }
                 return true
             }
             .observe(on: ConcurrentDispatchQueueScheduler.init(queue: .global()))
-            .map { _ in
-                SubmitMutation(languageId: model.language.id,
-                               problemId: model.problem.id,
-                               sourceCode: model.sourceCode)
-//                GRSubmit(languageId: model.language.id,
-//                         problemId: model.problem.id,
-//                         sourceCode: model.sourceCode)
-            }
-            .flatMap { [weak webRepository] model -> Maybe<SubmissionVO> in
-                guard let webRepository else { return .empty() }
-                return webRepository
-                    .perform(model, max: 2)
-//                    .perform(.SUBMIT_SUB(submit: model), max: 2)
-                    // .map { submitFR in submitFR.toDomain() }
+            .map { _ in model.toSubmitMut() }
+            .withUnretained(self)
+            .flatMap { useCase, model -> Maybe<SubmissionVO> in
+                useCase.webRepository.perform(model, max: 2)
             }
             .do(onNext: { [weak self] in self?.storeInRepo(submission: $0)  })
             .map { .success($0) }
-            .catch { .just(.failure($0)) }
+            .catch { error in .just(.failure(error)) }
     }
     
     public func fetchProblemSubmissionHistory(id: ProblemID, state code: String) -> Observable<Result<[SubmissionVO], Error>> {
-        dbRepository.fetch(.isNotTemp(id, code))
+        dbRepository.fetch(.is_NOT_ST_Equal_ID(id, code))
             .asObservable()
             .map { .success($0) }
+    }
+    
+    public func fetchIsFavorite(problemID: ProblemID) -> Observable<Bool> {
+        dbRepository
+            .fetchFavoriteExist(.isEqualID(problemID))
+            .asObservable()
     }
     
      
@@ -93,7 +91,7 @@ public final class DefaultSubmissionUseCase: SubmissionUseCase {
         // MARK: 이미 임시저장이 되어있을 경우 무시
         // 최근 기록이 같을때
         dbRepository
-            .fetchProblemState()
+            .fetchProblemState(.all)
             .asObservable()
             .flatMap { states throws -> Observable<[SubmissionVO]> in
                 if let state = states.first {
@@ -148,21 +146,44 @@ public final class DefaultSubmissionUseCase: SubmissionUseCase {
         //             .observe(on: MainScheduler.instance)
     }
     
+    
+    // TODO: !!!
+    // 이미 추가된 상태에 따라서 즉, 이미 저장되어있다면 아무것도 저장하지 않아야 함
     public func updateFavoritProblem(model: FavoriteProblemVO, flag: Bool) -> Observable<State<Bool>> {
-        if flag {
-            return dbRepository
-                .store(favoriteProblem: model)
-                .asObservable()
-                .map { _ -> State<Bool> in
-                    return .success(true)
-                }
-        } else {
-            return dbRepository
-                .removeFavor(.isEqualID(model.problemID))
-                .andThen(Observable.just(false).map { value in
-                    return .success(value)
-                })
-        }
+        Observable.just((model, flag))
+            .withUnretained(self)
+            .flatMap { useCase, tuple in
+                let (model, flag) = tuple
+                return flag
+                ?
+                useCase
+                    .fetchIsFavorite(problemID: model.problemID)
+                    .filter { !$0 }
+                    .flatMapFirst { _ in
+                        useCase.dbRepository.store(favoriteProblem: model)
+                    }
+                    .map { _ -> State<Bool> in .success(true)}
+                :
+                useCase.dbRepository.removeFavor(.isEqualID(model.problemID))
+                    .andThen(.just(false))
+                    .map { value in
+                        return .success(value)
+                    }
+            }
+//        if flag {
+//            return dbRepository
+//                .store(favoriteProblem: model)
+//                .asObservable()
+//                .map { _ -> State<Bool> in
+//                    return .success(true)
+//                }
+//        } else {
+//            return dbRepository
+//                .removeFavor(.isEqualID(model.problemID))
+//                .andThen(Observable.just(false).map { value in
+//                    return .success(value)
+//                })
+//        }
     }
       
     // TODO: Update 필요
