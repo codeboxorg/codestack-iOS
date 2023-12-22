@@ -13,15 +13,16 @@ import RxSwift
 public protocol DBRepository: AnyObject {
     func fetch(_ requestType: SUB_TYPE) -> Single<[SubmissionVO]>
     func store(submission: SubmissionVO) -> Single<Void>
-    func remove() -> Single<Void>
+    func removeAll() -> Single<Void>
     func remove(_ requestType: SUB_TYPE) -> Completable
     func update(submission: SubmissionVO, type request: SUB_TYPE) -> Single<Void>
     
-    func fetchProblemState() -> Single<[ProblemSubmissionStateVO]>
+    func fetchProblemState(_ requestType: PR_SUB_ST_TYPE) -> Single<[ProblemSubmissionStateVO]>
     func fetchSubmissionCalendar() -> Single<[SubmissionCalendarVO]>
     
     func store(favoriteProblem: FavoriteProblemVO) -> Single<Void>
     func fetchFavoriteProblems() -> Single<[FavoriteProblemVO]>
+    func fetchFavoriteExist(_ requestType: FAV_TYPE) -> Single<Bool>
     func removeFavor(_ requestType: FAV_TYPE) -> Completable
 }
 
