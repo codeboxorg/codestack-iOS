@@ -7,6 +7,27 @@
 
 import UIKit
 
+enum ProblemStatus {
+    case temp
+    case favorite
+    case solve(SolvedStatus)
+    case fail(FailStatus)
+}
+
+enum SolvedStatus {
+    case AC   // 정답 green
+}
+
+enum FailStatus {
+    case WA   // 오답 red
+    case PE   // 출력 형식 다름 yellow
+    case RE   // 준비중 yellow
+    case TLE  // 시간 초과 red
+    case MLE  // 메모리 초과 red
+    case OLE  // 값 출력 초과 yello
+    case none
+}
+
 enum SolveStatus: String, CaseIterable{
     
     static var allCases: [SolveStatus] = [.temp,.fail,.favorite,.solve]
@@ -29,7 +50,7 @@ enum SolveStatus: String, CaseIterable{
     var tag: String {
         switch self {
         case .temp:
-            return "임시저장"
+            return "임시"
         case .favorite:
             return "즐겨찾기"
         case .solve:
@@ -58,9 +79,9 @@ enum SolveStatus: String, CaseIterable{
     var value: String {
         switch self {
         case .temp:
-            return "임시저장"
+            return "임시"
         case .favorite:
-            return "즐겨찾기"
+            return "좌요"
         case .solve:
             return "성공"
         case .fail:
