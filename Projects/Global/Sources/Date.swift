@@ -12,16 +12,16 @@ public enum DATE {
     case DOT
     case FULL
     case YYYYMMDD
+    case YMD
 }
 
 public extension Date {
     
     func toString(format: DATE = .FULL) -> String {
-        let formatter: DateFormatter = DateFormatter()
-        formatter.dateFormat = getDateForMat(format)
-        formatter.locale = Locale(identifier: "ko_kr")
-        formatter.timeZone = TimeZone(abbreviation: "KST") // "2018-03-21 18:07:27"
-        return formatter.string(from: self)
+        Fommater.formatter.dateFormat = getDateForMat(format)
+        Fommater.formatter.locale = Locale(identifier: "ko_kr")
+        Fommater.formatter.timeZone = TimeZone(abbreviation: "KST") // "2018-03-21 18:07:27"
+        return Fommater.formatter.string(from: self)
     }
     
     private func getDateForMat(_ format: DATE) -> String {
@@ -32,6 +32,8 @@ public extension Date {
             return "yyyy-MM-dd HH:mm:ss"
         case .YYYYMMDD:
             return "yyyy-MM-dd"
+        case .YMD:
+            return "yyyy년 MM월 dd일"
         }
     }
     
