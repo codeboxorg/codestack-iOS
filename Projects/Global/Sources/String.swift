@@ -12,6 +12,7 @@ public extension String {
     func toYYMMDD() -> Date? {
         Fommater.formatter.dateFormat = "yyyy-MM-dd"
         Fommater.formatter.timeZone = TimeZone(abbreviation: "KST")
+        Fommater.formatter.locale = Locale(identifier: "ko_kr")
         guard let date: Date = Fommater.formatter.date(from: self) else { return nil }
         return date
     }
@@ -26,8 +27,8 @@ public extension String {
     func toDateKST() -> Date? {
         Fommater.formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         Fommater.formatter.timeZone = TimeZone(abbreviation: "KST")
-        guard let date: Date = Fommater.formatter.date(from: self)
-        else { return Date() }
+        Fommater.formatter.locale = Locale(identifier: "ko_kr")
+        guard let date: Date = Fommater.formatter.date(from: self) else { return nil }
         return date
     }
     
@@ -38,8 +39,14 @@ public extension String {
         self.toDateUTC()?.toString(format: format)
     }
     
-    public func toDateStringKST(format: DATE) -> String? {
+    func toDateStringKST(format: DATE) -> String? {
         self.toDateKST()?.toString(format: format)
+    }
+    
+    func isKSTORUTC() -> Date {
+        if let kst = self.toDateKST() { return kst }
+        if let utc = self.toDateUTC() { return utc }
+        return Date()
     }
 }
 
