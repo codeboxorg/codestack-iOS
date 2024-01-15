@@ -9,8 +9,25 @@ import UIKit
 
 struct Position {
     
-    static let screenWidth = UIApplication.shared.keyWindow?.frame.width ?? 0
-    static let screenHeihgt = UIApplication.shared.keyWindow?.frame.height ?? 0
+    enum Y {
+        case top
+        case mid
+        case bottom
+    }
+    
+    static func getYpos(_ y: Y) -> CGFloat {
+        switch y {
+        case .top:
+            return 0
+        case .mid:
+            return Position.screenHeihgt / 2
+        case .bottom:
+            return Position.screenHeihgt
+        }
+    }
+    
+    static let screenWidth = UIApplication.shared.keyWindow?.frame.width ?? UIScreen.main.bounds.width
+    static let screenHeihgt = UIApplication.shared.keyWindow?.frame.height ?? UIScreen.main.bounds.height
     
     static func getPosition(xPosition: CGFloat,
                             yPosition: CGFloat = 0,
