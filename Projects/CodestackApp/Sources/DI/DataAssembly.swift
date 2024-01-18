@@ -9,6 +9,7 @@
 import Swinject
 import Data
 import Domain
+import CSNetwork
 
 public struct DataAssembly: Assembly {
     
@@ -33,6 +34,11 @@ public struct DataAssembly: Assembly {
         container.register(DBRepository.self) { resolver in
             let coreDataStack = CoreDataStack(bundle: Data.DataResources.bundle, version: 1)
             return DefaultDBRepository(persistenStore: coreDataStack)
+        }.inObjectScope(.container)
+        
+        container.register(FBRepository.self) { resolver in
+            let restAPi = resolver.resolve(RestAPI.self)!
+            return DefaultFBRepository(rest: restAPi)
         }.inObjectScope(.container)
     }
 }

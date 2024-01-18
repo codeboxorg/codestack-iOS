@@ -16,7 +16,9 @@ public struct HomeAssembly: Assembly {
         // MARK: Home ViewModel
         container.register(HomeViewModel.self) { resolver in
             let home = resolver.resolve(HomeUsecase.self)!
-            let homeViewModel: HomeViewModel.Dependency = .init(homeUsecase: home)
+            let codestackUseCase = resolver.resolve(CodestackUsecase.self)!
+            let homeViewModel: HomeViewModel.Dependency = .init(homeUsecase: home,
+                                                                codestackUsecase: codestackUseCase)
             return HomeViewModel(dependency: homeViewModel)
         }.inObjectScope(.container)
         
@@ -24,9 +26,7 @@ public struct HomeAssembly: Assembly {
         // MARK: Contribution ViewModel
         container.register(ContributionViewModel.self) { resolver in
             let submissionUseCase = resolver.resolve(SubmissionUseCase.self)!
-            
             let dependency = ContributionViewModel.Dependency(submissionUsecase: submissionUseCase)
-            
             return ContributionViewModel.create(depenedency: dependency)
         }
         
@@ -42,7 +42,6 @@ public struct HomeAssembly: Assembly {
             let sideMenuViewController = resolver.resolve(SideMenuViewController.self)!
             
             let dependency = HomeViewController.Dependencies(homeViewModel: homeViewModel,
-                                                             contiributionViewModel: contributionViewModel,
                                                              sidemenuVC: sideMenuViewController)
             
             return HomeViewController.create(with: dependency)

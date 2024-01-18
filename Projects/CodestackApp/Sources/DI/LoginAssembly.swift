@@ -14,7 +14,6 @@ public struct LoginAssembly: Assembly {
     public func assemble(container: Container) {
         
         container.register(LoginStepper.self) { resolver in
-//            let service = resolver.resolve(RestAPI.self)!
             return LoginStepper()
         }.inObjectScope(.container)
         
