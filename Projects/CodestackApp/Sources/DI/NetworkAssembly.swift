@@ -10,6 +10,8 @@ import Swinject
 import Foundation
 import Data
 import Domain
+import Global
+import CSNetwork
 
 public struct NetworkAssembly: Assembly {
     
