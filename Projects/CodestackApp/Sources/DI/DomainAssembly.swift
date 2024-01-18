@@ -19,7 +19,8 @@ public struct DomainAssembly: Assembly {
         }
         container.register(ProfileUsecase.self) { resolver in
             let web = resolver.resolve(WebRepository.self)!
-            return ProfileUsecase(webRepository: web)
+            let fbRepo = resolver.resolve(FBRepository.self)!
+            return ProfileUsecase(dependency: .init(webRepository: web, fbRepository: fbRepo))
         }
         
         container.register(ProblemUsecase.self) { resolver in
@@ -48,6 +49,11 @@ public struct DomainAssembly: Assembly {
             return DefaultSubmissionUseCase(dbRepository: db,
                                             webRepository: web)
         }.inObjectScope(.container)
+        
+        container.register(CodestackUsecase.self) { resolver in
+            let fbrepository = resolver.resolve(FBRepository.self)!
+            return CodestackUsecase(fbRepository: fbrepository)
+        }
     }
 }
 
