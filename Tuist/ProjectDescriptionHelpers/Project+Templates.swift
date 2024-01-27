@@ -8,10 +8,14 @@ extension Project {
         platform: Platform = .iOS,
         product: Product,
         bundleID: String? = nil,
+        organizationName: String = env15.organizationName,
         packages: [Package] = [],
         settings: Bool = false,
+        deploymentTarget: DeploymentTarget? = nil,//env15.deploymentTarget ,
         dependencies: [TargetDependency] = [],
+        baseSettings: SettingsDictionary = CSettings.defaults.value,
         configuration: Bool = false,
+        coreDataModels: [ProjectDescription.CoreDataModel] = [],
         sources: SourceFilesList = ["Sources/**"],
         resources: ResourceFileElements? = nil,
         entitlement: ProjectDescription.Path? = nil,
@@ -23,10 +27,14 @@ extension Project {
             platform: platform,
             product: product,
             bundleID: bundleID,
+            organizationName: organizationName,
             packages: packages,
             settings: settings,
+            deploymentTarget: deploymentTarget ,
             dependencies: dependencies,
+            baseSettings: baseSettings,
             configuration: configuration,
+            coreDataModels: coreDataModels,
             sources: sources,
             resources: resources,
             entitlement: entitlement,
@@ -42,12 +50,14 @@ public extension Project {
         platform: Platform,
         product: Product,
         bundleID: String? = nil,
-        organizationName: String = env.organizationName,
+        organizationName: String,
         packages: [Package],
         settings: Bool,
-        deploymentTarget: DeploymentTarget? = env.deploymentTarget,
+        deploymentTarget: DeploymentTarget?,
         dependencies: [TargetDependency] = [],
+        baseSettings: SettingsDictionary = [:],
         configuration: Bool,
+        coreDataModels: [ProjectDescription.CoreDataModel] = [],
         sources: SourceFilesList,
         resources: ResourceFileElements? = nil,
         entitlement: ProjectDescription.Path? = nil,
@@ -56,16 +66,18 @@ public extension Project {
     ) -> Project {
         
         let appTarget = Project.target(name: name,
-                                    product: product,
-                                    bundleID: bundleID,
-                                    infoPlist: infoPlist,
-                                    sources: sources,
-                                    resources: resources,
-                                    entitlement: entitlement,
-                                    scripts: [],
-                                    dependencies: dependencies,
-                                    configuration: configuration ? targetSetting : defaultTargetSetting ,
-                                    coreDataModels: [])
+                                       product: product,
+                                       bundleID: bundleID,
+                                       deploymentTarget: deploymentTarget,
+                                       infoPlist: infoPlist,
+                                       sources: sources,
+                                       resources: resources,
+                                       entitlement: entitlement,
+                                       scripts: [],
+                                       dependencies: dependencies,
+                                       baseSettings: baseSettings,
+                                       configuration: configuration ? targetSetting : defaultTargetSetting ,
+                                       coreDataModels: coreDataModels)
         
         return Project(
             name: name,
@@ -75,12 +87,30 @@ public extension Project {
             settings: settings ? appBuildSetting : defalutBuildSetting,
             targets: [appTarget],
             schemes: generateSchemes(name),
+            additionalFiles: [
+                .glob(pattern: .relativeToRoot("Projects/CodestackApp/Config/Dev.xcconfig")),
+                .glob(pattern: .relativeToRoot("Projects/CodestackApp/Config/Prod.xcconfig")),
+                .glob(pattern: .relativeToRoot("Projects/CodestackApp/Config/Shared.xcconfig"))
+            ],
             resourceSynthesizers: resourceSynthesizers
         )
     }
 }
 
 
+public enum CSettings {
+    case objc
+    case defaults
+    
+    public var value: ProjectDescription.SettingsDictionary {
+        switch self {
+        case .objc:
+            return ["OTHER_LDFLAGS": "$(inherited) -ObjC"]
+        default:
+            return ["OTHER_LDFLAGS": "$(inherited)"]
+        }
+    }
+}
 
 
 public extension Project {
@@ -88,13 +118,14 @@ public extension Project {
         name: String,
         product: Product,
         bundleID: String? = nil,
+        deploymentTarget: DeploymentTarget?,
         infoPlist: InfoPlist = .default,
         sources: SourceFilesList,
         resources: ResourceFileElements? = nil,
         entitlement: ProjectDescription.Path? = nil,
         scripts: [TargetScript] = [],
         dependencies: [TargetDependency] = [],
-        baseSettings: ProjectDescription.SettingsDictionary = [:],
+        baseSettings: ProjectDescription.SettingsDictionary,
         configuration: [ProjectDescription.Configuration] = [],
         coreDataModels: [CoreDataModel] = []
     ) -> Target {
@@ -103,7 +134,7 @@ public extension Project {
                product: product,
                productName: "\(name)",
                bundleId: bundleID ?? "com.co.kr.\(name.lowercased())",
-               deploymentTarget: .iOS(targetVersion: "15.0", devices: .iphone, supportsMacDesignedForIOS: false),
+               deploymentTarget: deploymentTarget,
                infoPlist: infoPlist,
                sources: sources,
                resources: resources,
@@ -113,14 +144,12 @@ public extension Project {
                scripts: scripts,
                dependencies: dependencies,
                settings: .settings( // target settings
-                base: [
-                    "OTHER_LDFLAGS": "$(inherited) "
-                ].merging (baseSettings) { $1 },
+                base: baseSettings.merging (baseSettings) { $1 },
                 configurations: configuration,
                 defaultSettings:
                         .recommended (excluding: [
-                            "TARGETED_DEVICE_FAMILY",
-                            "SWIFT_ACTIVE_COMPILATION_CONDITIONS"])
+                            "TARGETED_DEVICE_FAMILY",])
+                            //"SWIFT_ACTIVE_COMPILATION_CONDITIONS" ])
                                   ),
                coreDataModels: coreDataModels,
                environment: [ "OS_ACTIVITY_MODE" : "FALSE" ],
