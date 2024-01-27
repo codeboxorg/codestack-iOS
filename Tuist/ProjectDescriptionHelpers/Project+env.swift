@@ -13,9 +13,17 @@ public struct Environment {
     public let platform: Platform
 }
 
-public let env = Environment(
+public let env15 = Environment(
     organizationName: "hyeong",
     deploymentTarget: .iOS(targetVersion: "15.0", 
+                           devices: .iphone,
+                           supportsMacDesignedForIOS: true),
+    platform: .iOS
+)
+
+public let env13 = Environment(
+    organizationName: "hyeong",
+    deploymentTarget: .iOS(targetVersion: "13.0",
                            devices: .iphone,
                            supportsMacDesignedForIOS: true),
     platform: .iOS

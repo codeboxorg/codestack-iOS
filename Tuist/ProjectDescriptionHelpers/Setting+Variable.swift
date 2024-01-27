@@ -11,31 +11,34 @@ let appBuildSetting: Settings = .settings(configurations: [
     .debug(name: "Dev",
            settings: [:],
            xcconfig: "Config/BuildSetting.xcconfig"),
-    .debug(name: "Prod",
+    .release(name: "Prod",
            settings: [:],
            xcconfig: "Config/BuildSetting.xcconfig"),
   ])
 
 let targetSetting: [ProjectDescription.Configuration] = [
      .debug(name: "Dev",
-            settings: [:],
+            settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG")],
             xcconfig: "Config/Codestack.xcconfig"),
-     .debug(name: "Prod",
-            settings: [:],
-            xcconfig: "Config/Codestack.xcconfig")
+     .release(name: "Prod",
+              settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("PROD")],
+              xcconfig: "Config/Codestack.xcconfig")
 ]
 
+
 let defalutBuildSetting: Settings = .settings(configurations: [
-    .debug(name: "Dev"),
-    .debug(name: "Prod")
+    .debug(name: "Dev", 
+           xcconfig: .relativeToRoot("Projects/CodestackApp/Config/Dev.xcconfig")),
+    .release(name: "Prod",
+             xcconfig: .relativeToRoot("Projects/CodestackApp/Config/Prod.xcconfig"))
 ])
 
 
 let defaultTargetSetting: [ProjectDescription.Configuration] = [
     .debug(name: "Dev",
            settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG")]),
-    .debug(name: "Prod",
-           settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("PROD")])
+    .release(name: "Prod",
+             settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("PROD")])
 ]
 
 
