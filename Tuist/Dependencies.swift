@@ -7,6 +7,7 @@
 
 import ProjectDescription
 
+
 public extension Package {
     static let rxSwift: Package = .remote(url: "https://github.com/ReactiveX/RxSwift.git",
                                           requirement: .upToNextMajor(from: "6.5.0"))
@@ -38,15 +39,19 @@ public extension Package {
     static let swinject: Package = .remote(url: "https://github.com/Swinject/Swinject.git",
                                            requirement: .upToNextMajor(from: "2.8.4"))
     
-    static let codestackAPI: Package = .local(path: .relativeToRoot("Projects/CodestackAPI"))
+    static let codestackAPI: Package = .local(path: .relativeToRoot("Projects/Module/CodestackAPI"))
     
-    static let highlightr: Package = .local(path: .relativeToRoot("Projects/Highlightr"))
+    static let highlightr: Package = .local(path: .relativeToRoot("Projects/Module/Highlightr"))
     
+    static let firebase: Package = .remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "10.19.1"))
+    
+    static let richText: Package = .remote(url: "https://github.com/NuPlay/RichText.git", requirement: .upToNextMajor(from: "2.0.0"))
+    
+    static let reactorKit: Package = .remote(url: "https://github.com/ReactorKit/ReactorKit.git", requirement: .upToNextMajor(from: "3.2.0"))
 }
 
-
 public let dependencies = Dependencies(
-    carthage: [],
+    carthage: nil,
     swiftPackageManager:
         SwiftPackageManagerDependencies.init(
             [
@@ -58,16 +63,21 @@ public let dependencies = Dependencies(
                 .rxdatasources,
                 .rxFlow,
                 .rxGesture,
-                .sqlite,
                 .swinject,
                 .codestackAPI,
-                .highlightr
+                .highlightr,
+                .firebase,
+                .richText,
+                .reactorKit,
             ],
-            productTypes: [ "CodestackAPI" : .framework ,
-                            "Highlightr" : .framework ],
+            productTypes: [// "CodestackAPI" : .framework ,
+                "ApolloAPI" : .staticFramework,
+                "Apollo" : .staticFramework,
+                "Highlightr" : .staticFramework ,
+                "SQLite" : .framework],
             baseSettings: .settings(configurations: [
                 .debug(name: "Dev"),
-                .debug(name: "Prod"),
+                .release(name: "Prod"),
             ]),
             targetSettings: [ : ],
             projectOptions: [:])
