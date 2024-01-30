@@ -16,7 +16,7 @@ public struct FBTokenVO: Codable {
     public let expiresIn: String
     public let localId: String
     
-    public init(kind: String, idToken: String, refreshToken: String, expiresIn: String, localId: String) {
+    public init(kind: String, idToken: String, refreshToken: String, expiresIn: String = "", localId: String) {
         self.kind = kind
         self.idToken = idToken
         self.refreshToken = refreshToken
