@@ -86,3 +86,18 @@ public enum AuthFIRError: Int, Error {
     case FIRAuthErrorCodeUserTokenExpired = 17021
 
 }
+
+public extension AuthFIRError {
+    func toMessage() -> String {
+        if case .FIRAuthErrorCodeEmailAlreadyInUse = self {
+            return "이미 사용중인 이메일 입니다"
+        }
+        switch self {
+            case .FIRAuthErrorCodeInvalidCustomToken, .FIRAuthErrorCodeInvalidUserToken, .FIRAuthErrorCodeUserTokenExpired:
+            return "세션이 만료되었습니다 다시 로그인 해주세요"
+        default:
+            break
+        }
+        return "에러가 발생 했습니다."
+    }
+}
