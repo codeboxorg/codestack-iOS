@@ -8,6 +8,7 @@
 import UIKit
 import CoreImage
 import CoreFoundation
+import Global
 
 protocol TextViewSizeTracker: AnyObject{
     func updateNumberViewsHeight(_ height: CGFloat)
