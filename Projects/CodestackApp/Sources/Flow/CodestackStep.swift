@@ -16,7 +16,7 @@ enum ButtonType{
 }
 
 
-enum CodestackStep: Step, CaseIterable{
+enum CodestackStep: Step, CaseIterable {
     static var allCases: [CodestackStep] = []
     
     //onBoarding
@@ -32,16 +32,22 @@ enum CodestackStep: Step, CaseIterable{
     
     // Login
     case loginNeeded
-    case registerPage
-    case register
-    case registerDissmiss
     case userLoggedIn(String?,Pwd?)
     case logout
+    
+    // Register Flow
+    case register
+    case email
+    case password
+    case additionalInfo
+    case registerDissmiss(MemberVO)
+    case exitRegister
+    case registerSuccess(MemberVO)
     
     
     //myPage
     case profilePage
-    case profileEdit
+    case profileEdit(MemberVO, Data)
     case profileEditDissmiss
     
     //Home Step
@@ -54,6 +60,7 @@ enum CodestackStep: Step, CaseIterable{
     case problemPick(ProblemListItemModel)
     case recentSolveList(ProblemListItemModel?)
     case toastMessage(String)
+    case toastV2Message(ToastStyle, String)
     case recommendPage
     
     case sideMenuDelegate(String)
@@ -64,24 +71,11 @@ enum CodestackStep: Step, CaseIterable{
     case codestack
     
     case historyflow
-    case richText([ProblemVO])
+    case richText(String)
     
     case none
     
 }
 
 extension CodestackStep: Equatable{
-//    static func == (lhs: CodestackStep, rhs: CodestackStep) -> Bool{
-//        switch (lhs, rhs) {
-//        case (.recentSolveList(let list, _), .recentSolveList(let list2, _)):
-//            guard let list,
-//                  let list2
-//            else {return false}
-//            return list.problemNumber == list2.problemNumber
-//        case (.logout,.logout):
-//            return true
-//        default:
-//            return false
-//        }
-//    }
 }

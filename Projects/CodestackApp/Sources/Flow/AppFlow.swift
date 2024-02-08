@@ -10,7 +10,7 @@ import RxFlow
 import RxCocoa
 import RxSwift
 
-class AppFlow: Flow{
+class AppFlow: Flow {
     
     var root: Presentable {
         self.rootViewController
