@@ -30,7 +30,7 @@ public extension TargetDependency.SPM {
     static let reactorKit: TargetDependency = .external(name: "ReactorKit")
 }
 
-public enum P {
+public enum P { 
     public static let app: Path = .relativeToRoot("Projects/CodestackApp")
     public static let global: Path = .relativeToRoot("Projects/Module/Global")
     public static let data: Path = .relativeToRoot( "Projects/Data")

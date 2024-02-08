@@ -7,18 +7,40 @@
 
 import ProjectDescription
 
+
+
+public enum CSettings {
+    case objc
+    case defaults
+    
+    public var value: ProjectDescription.SettingsDictionary {
+        switch self {
+        case .objc:
+            return ["OTHER_LDFLAGS": "$(OTHER_LDFLAGS) -ObjC"]
+        default:
+            return [
+                "OTHER_LDFLAGS": "$(inherited)"
+            ]
+        }
+    }
+}
+
+//"SWIFT_ACTIVE_COMPILATION_CONDITIONS" : DEBUG, QA etc..
+
 let appBuildSetting: Settings = .settings(configurations: [
     .debug(name: "Dev",
-           settings: [:],
-           xcconfig: "Config/BuildSetting.xcconfig"),
+           settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG"),],
+           xcconfig: "Config/Codestack.xcconfig"),
     .release(name: "Prod",
-           settings: [:],
-           xcconfig: "Config/BuildSetting.xcconfig"),
+           settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("PROD")],
+           xcconfig: "Config/Codestack.xcconfig"),
   ])
 
 let targetSetting: [ProjectDescription.Configuration] = [
      .debug(name: "Dev",
-            settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG")],
+            settings: [
+                "SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG"),
+            ],
             xcconfig: "Config/Codestack.xcconfig"),
      .release(name: "Prod",
               settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("PROD")],
@@ -44,18 +66,22 @@ let defaultTargetSetting: [ProjectDescription.Configuration] = [
 
 func generateSchemes(_ name: String) -> [Scheme] {
     [
-        Scheme(name: "\(name)-Dev",
+        
+        Scheme(name: "\(name)",
                shared: true,
                buildAction: .buildAction(targets: ["\(name)"]),
-               testAction: .targets(["\(name)Tests"],
-                                    configuration: .configuration("Dev"),
-                                    options: .options(coverage: true)),
-               runAction: .runAction(configuration: .configuration("Dev"),
-                                     arguments: .init(environment: ["OS_ACTIVITY_MODE" : "disable"],
-                                                      launchArguments: [])),
+               testAction: .targets(
+                ["\(name)Tests"],
+                configuration: .configuration("Dev"),
+                options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
+               ),
+               runAction: .runAction(
+                configuration: .configuration("Dev")
+               ),
                archiveAction: .archiveAction(configuration: .configuration("Dev")),
                profileAction: .profileAction(configuration: .configuration("Dev")),
                analyzeAction: .analyzeAction(configuration: .configuration("Dev"))),
+        
         Scheme(name: "\(name)-Prod",
                shared: true,
                buildAction: .buildAction(targets: ["\(name)"]),

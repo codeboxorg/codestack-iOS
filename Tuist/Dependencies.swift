@@ -78,9 +78,7 @@ public let dependencies = Dependencies(
             baseSettings: .settings(configurations: [
                 .debug(name: "Dev"),
                 .release(name: "Prod"),
-            ]),
-            targetSettings: [ : ],
-            projectOptions: [:])
+            ]))
     ,
     platforms: [.iOS]
 )
