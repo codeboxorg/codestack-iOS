@@ -7,8 +7,7 @@
 
 import UIKit
 import RxCocoa
-
-
+import CommonUI
 
 ///  Title Label 1개
 ///  description Label 1개
@@ -25,17 +24,18 @@ class TwoLabelOneButton: UIView{
     
     private lazy var headLine_label: UILabel = {
         let label = UILabel()
+        label.layer.cornerRadius = 8
         return label.headLineLabel(text: "오늘의 문제 보러가기")
     }()
     
     private lazy var description_label: UILabel = {
         let label = UILabel()
+        label.layer.cornerRadius = 4
         return label.descriptionLabel(text: "오늘도 같이 문제를 해결하러 가볼까요?")
     }()
     
     lazy var today_problem_btn: HighlightButton = {
         let button = HighlightButton(frame: .zero)
-        button.addTarget(self, action: #selector(navigationButton(_:)), for: .touchUpInside)
         return button
     }()
 
@@ -47,22 +47,6 @@ class TwoLabelOneButton: UIView{
     
     func buttonTapSignal() -> Signal<ButtonType>{
         today_problem_btn.rx.tap.map{ self.buttonType! }.asSignal(onErrorJustReturn: .none)
-    }
-    
-    @objc func navigationButton(_ sender: UIButton){
-        //viewModel 에 주입 해서 navigation 하면 될거 같은데
-//        guard let buttonType else {return}
-//        switch buttonType{
-//        case .today_problem:
-//            print("navigationButton : \(delegate)")
-//            delegate?.moveToVC("문제")
-//
-//        case .recommand_problem:
-//            delegate?.moveToVC("추천")
-//            print("navigationButton : \(delegate)")
-//        case .none:
-//            break
-//        }
     }
     
     private var observation : NSKeyValueObservation?
@@ -95,7 +79,7 @@ class TwoLabelOneButton: UIView{
     
     // offset
     let leading: CGFloat = 16
-    let offset_top_head: CGFloat = 35
+    let offset_top_head: CGFloat = 20
     let offset_top_desc: CGFloat = 12
     let offset_top_btn: CGFloat = 20
     let button_height: CGFloat = 44
