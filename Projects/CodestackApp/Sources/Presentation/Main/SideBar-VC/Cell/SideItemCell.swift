@@ -14,14 +14,14 @@ final class SideMenuItemCell: UITableViewCell {
 
     private var itemIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.tintColor = UIColor.black
+        imageView.tintColor = UIColor.label
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
 
     private var itemLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -37,7 +37,7 @@ final class SideMenuItemCell: UITableViewCell {
     }
 
     private func configureView() {
-        contentView.backgroundColor = .whiteGray
+        contentView.backgroundColor = .tertiarySystemBackground
         contentView.addSubview(itemIcon)
         contentView.addSubview(itemLabel)
     }
@@ -59,7 +59,7 @@ final class SideMenuItemCell: UITableViewCell {
     }
 
     func configureCell(icon: UIImage?, text: String) {
-        itemIcon.image =  icon
+        itemIcon.image = icon?.withTintColor(UIColor.label)
         itemLabel.text = text
     }
 }
