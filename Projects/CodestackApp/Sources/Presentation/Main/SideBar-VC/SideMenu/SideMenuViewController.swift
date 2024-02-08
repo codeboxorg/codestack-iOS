@@ -36,7 +36,7 @@ struct SideMenuItem {
 }
 
 //TODO: - SideTabBar Color 정하기
-final class SideMenuViewController: UIViewController ,Stepper{
+final class SideMenuViewController: UIViewController ,Stepper {
     
     static func create(with items: [SideMenuItem] = []) -> SideMenuViewController{
         return SideMenuViewController(sideMenuItems: SideMenuItem.items)
@@ -45,7 +45,7 @@ final class SideMenuViewController: UIViewController ,Stepper{
     private var headerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .whiteGray
+        view.backgroundColor = .tertiarySystemBackground
         return view
     }()
     
@@ -57,7 +57,7 @@ final class SideMenuViewController: UIViewController ,Stepper{
     }()
     private lazy var headerTitle: UILabel = {
         var label = UILabel()
-        label = label.headLineLabel(size: 35, text: "CodeStack", color: .black)
+        label = label.headLineLabel(size: 35, text: "CodeStack", color: .label)
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -86,8 +86,13 @@ final class SideMenuViewController: UIViewController ,Stepper{
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     
     
-    deinit{
+    deinit {
         Log.debug("sideMenu Deinit")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureView()
     }
     
     convenience init(sideMenuItems: [SideMenuItem]) {
@@ -95,24 +100,13 @@ final class SideMenuViewController: UIViewController ,Stepper{
         self.sideMenuItems = sideMenuItems
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureView()
-        
-        self.view.backgroundColor = .clear
-        headerView.layer.cornerRadius = 12
-        headerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-        tableView.layer.cornerRadius = 12
-        tableView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        
-    }
-    
     func show() {
         self.view.frame.origin.x = 0
         self.view.backgroundColor = self.shadowColor
+        self.view.isHidden = false
         UIView.animate(withDuration: 0.3) {
             self.sideMenuViewLeadingContraint.constant = 0
-            if let parent = self.parent{
+            if let parent = self.parent {
                 parent.navigationController?.navigationBar.isHidden = true
                 parent.navigationController?.navigationItem.titleView?.tintColor = .black
             }
@@ -131,16 +125,29 @@ final class SideMenuViewController: UIViewController ,Stepper{
             self.view.layoutIfNeeded()
         } completion: { _ in
             self.view.frame.origin.x = -UIApplication.getScreenSize()
+            self.view.isHidden = true
         }
     }
     
     private func configureView() {
         view.backgroundColor = .clear
         view.frame.origin.x = -UIApplication.getScreenSize()
-
+        headerView.layer.cornerRadius = 12
+        headerView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+        tableView.layer.cornerRadius = 12
+        tableView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         addSubviews()
         configureTableView()
         configureTapGesture()
+    }
+    
+    func removeView() {
+        self.view.removeFromSuperview()
+        headerView.removeFromSuperview()
+        headerTitle.removeFromSuperview()
+        logoView.removeFromSuperview()
+        tableView.removeFromSuperview()
+        sideMenuView.removeFromSuperview()
     }
 
     private func addSubviews() {
@@ -185,7 +192,7 @@ final class SideMenuViewController: UIViewController ,Stepper{
     }
 
     private func configureTableView() {
-        tableView.backgroundColor = UIColor.whiteGray
+        tableView.backgroundColor = UIColor.tertiarySystemBackground
         tableView.dataSource = self
         tableView.delegate = self
         tableView.bounces = false
@@ -244,7 +251,7 @@ extension SideMenuViewController: UITableViewDataSource, UITableViewDelegate {
                     // TODO: KeyChain 변경해야됨
 //                    try KeychainItem(service: .bundle, account: .access).deleteItem()
 //                    try KeychainItem(service: .bundle, account: .refresh).deleteItem()
-                }catch{
+                } catch {
                     Log.error("logout but KeychainItem deleteError")
                 }
             }
