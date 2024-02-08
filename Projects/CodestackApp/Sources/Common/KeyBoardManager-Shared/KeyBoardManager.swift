@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class KeyBoardManager{
+final class KeyBoardManager {
     
     static let shared = KeyBoardManager()
     
