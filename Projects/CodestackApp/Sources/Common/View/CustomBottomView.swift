@@ -8,7 +8,7 @@ import UIKit
 
 class CustomBottomView: UIView {
     
-    lazy var label: UILabel = {
+    private let label: UILabel = {
         let label = UILabel()
         label.text = "The end !"
         label.textColor = .white
@@ -17,7 +17,7 @@ class CustomBottomView: UIView {
         return label
     }()
     
-    lazy var activityIndicator: UIActivityIndicatorView = {
+    private let activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
         activityIndicator.style = UIActivityIndicatorView.Style.large
         activityIndicator.startAnimating()

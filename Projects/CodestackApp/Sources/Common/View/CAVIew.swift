@@ -9,7 +9,7 @@ import UIKit
 
 
 
-class CAView: UIView,CAAnimationDelegate {
+class CAView: UIView, CAAnimationDelegate {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,6 +44,7 @@ class CAView: UIView,CAAnimationDelegate {
         path.stroke()
         
     }
+    
     
     func startAnimation() {
         let value = self.values[currentIndex]

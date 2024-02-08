@@ -21,7 +21,6 @@ class ContributionViewModel: ObservableObject, RxFlow.Stepper {
     @Published var contributions: [SubmissionContribution] = [SubmissionContribution(date: .now,
                                                                                      submit: 1,
                                                                                      depth: .one)]
-    
     struct Dependency {
         let submissionUsecase: SubmissionUseCase
     }
@@ -40,11 +39,9 @@ class ContributionViewModel: ObservableObject, RxFlow.Stepper {
         // GraphQL API 아직 없는 상황
         // -> 그냥 Core Data Layer추가 하는게 나을듯 하다
         // submissionUsecase?.fetchProblemHistoryEqualStatus(status: {})
-        
         _ = submissionUsecase?.fetchSubmissionCalendar()
             .map { try $0.get() }
             .subscribe(with: self, onNext: { vm, calendar in
-                Log.debug("calendar date : \(calendar.dates)")
                 vm.contributions = vm.caculateCurrentContribution(value: calendar)
             })
     }
@@ -76,9 +73,8 @@ class ContributionViewModel: ObservableObject, RxFlow.Stepper {
         })
         
         contributionDic.forEach { key, value in
-            guard let date = key.toDateKST() else { return }
-            dayArray[key] = SubmissionContribution(date: date,
-                                                   submit: value)
+            guard let date = key.toYYMMDD() else { return }
+            dayArray[key] = SubmissionContribution(date: date, submit: value)
         }
         return dayArray.sortDictionaryKeysByDate()
     }

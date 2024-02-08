@@ -9,6 +9,7 @@ import SwiftUI
 import RxSwift
 import RxCocoa
 import RxFlow
+import CommonUI
 
 
 //TODO: 시스템 설정 다크/라이트 모드 분기처리 Setting 해줘야함 , 다크 모드일때 opacity reverse 해야함
@@ -45,36 +46,7 @@ struct SubmissionChartView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text("제출 기록")
-                    .font(.title3)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 10)
-                Spacer()
-            }
-            
-            HStack {
-                ForEach(calendarDate, id: \.self) { month in
-                    Text(month)
-                        .bold()
-                        .font(.system(size: 13))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 5)
-                }
-            }
-            .padding(.leading, 20)
-            .padding(.trailing, 5)
-            
             HStack{
-                VStack(alignment: .center ,spacing: spacing){
-                    ForEach(0..<rows, id: \.self) { colum in
-                        Text("\(days[colum])")
-                            .bold()
-                            .font(.system(size: 12))
-                            
-                    }.padding(.trailing, 5)
-                }
-                
                 SubmissionChart(columns: 15, spacing: spacing) { row, column in
                     if let color = 
                         viewModel.setCellColor(columnsCount: 15)
@@ -87,7 +59,7 @@ struct SubmissionChartView: View {
                             .cornerRadius(cornerRadius)
                     }
                 }
-                .frame(width: UIScreen.main.bounds.width - 90, height: 130)
+                .frame(width: Position.screenWidth - 80, height: 130)
             }
             
             HStack {
@@ -102,7 +74,7 @@ struct SubmissionChartView: View {
                 Text("More")
                     .font(.caption)
             }
-            .padding(.vertical, 20)
+            .padding(.top, 8)
         }
         .padding([.leading, .trailing], 10)
     }
