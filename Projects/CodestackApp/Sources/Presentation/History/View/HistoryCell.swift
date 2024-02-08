@@ -26,14 +26,15 @@ class HistoryCell: UITableViewCell {
     
     private lazy var explainLabel: UILabel = {
         let label = UILabel()
-        let label2 = label.introduceLable(15, "", style: .body)
+        let label2 = label.introduceLable(15, "TestTestTestTestTestTest", style: .body)
+        label2.layer.cornerRadius = 4
         label2.textAlignment = .left
         return label2
     }()
     
     private lazy var statusLabel: UILabel = {
         let label = UILabel()
-        return label.descriptionLabel(text: "")
+        return label.descriptionLabel(text: "임시")
     }()
     
     private let timeLabel: UILabel = {
@@ -48,9 +49,8 @@ class HistoryCell: UITableViewCell {
         configuration.titlePadding = 10
         let button = LanguageButton().makeLanguageButton()
         button.configuration = configuration
-        button.tintColor = .label
-        button.titleLabel?.textColor = .label
-        button.isEnabled = false
+        button.setTitleColor(.label, for: .normal)
+        button.setTitle("   ", for: .normal)
         return button
     }()
     
@@ -68,33 +68,60 @@ class HistoryCell: UITableViewCell {
         Driver.zip(onHistoryData.asDriver(onErrorJustReturn: .sample),
                    onStatus.asDriver(onErrorJustReturn: .none))
         .drive(with: self,onNext: { cell, data in
-            
             let (submission, solveStatus) = data
             cell.statusLabel.pr_status_label(solveStatus, default: false)
             cell.titleBoxContainerSetting(status: solveStatus)
-            cell.descriptionSetting(status: solveStatus, problem: submission.problem.title )
+            cell.descriptionSetting(status: solveStatus, problem: submission.problem.title)
             cell.problemName.text = submission.problem.title
-            cell.languageBtn.setTitle(submission.language.name , for: .disabled)
             
-            if let date = submission.createdAt.toDateStringUTC(format: .FULL) {
-                let dateString = DateCalculator().caluculateTime(date)
-                cell.timeLabel.text = dateString
-                return
+            /// Skeleton Layer 추가 삭제
+            if submission.isMock {
+                cell.layoutIfNeeded()
+                cell.applySkeletonView(submission.language.name)
+            } else {
+                cell.languageBtn.setTitle(submission.language.name , for: .normal)
+                cell.contentView.removeSkeletonViewFromSuperView {
+                    cell.languageBtn.layer.borderColor = UIColor.sky_blue.cgColor
+                }
             }
             
-            if let date = submission.createdAt.toDateStringKST(format: .FULL) {
+            if let date = submission.createdAt.toDateStringUTCORKST(format: .FULL) {
                 let dateString = DateCalculator().caluculateTime(date)
                 cell.timeLabel.text = dateString
                 return
             }
         })
-        .disposed(by: disposeBag)
+        .disposed(by: cellDisposeBag)
     }
     
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+    }
+    
+    
+    private func applySkeletonView(_ languageName: String) {
+        let height = "Test".height(withConstrainedWidth: 0, font: explainLabel.font)
+        let width = explainLabel.attributedText?.string.width(withConstrainedHeight: height, font: explainLabel.font)
+        let prHeight = problemName.text?.height(withConstrainedWidth: 10, font: problemName.font)
+        let prWidth = problemName.text?.width(withConstrainedHeight: prHeight ?? 10, font: problemName.font)
+        let _prWidth = (prWidth ?? 30) + 20
+        let _prHeight = (prHeight ?? 30) + 10
+        let btnwidth = "C+++".width(withConstrainedHeight: 30, font: explainLabel.font)
+        let tHeight = "10 시간전".height(withConstrainedWidth: 10, font: timeLabel.font)
+        let tWidth = "10 시간전".width(withConstrainedHeight: tHeight, font: timeLabel.font)
+        languageBtn.layer.borderColor = UIColor.clear.cgColor
+        
+        explainLabel.addSkeletonView(width: width ?? 0,height: height)
+        boxContainer.addSkeletonView(width: _prWidth, height: _prHeight)
+        languageBtn.addSkeletonView(width: btnwidth + 30)
+        statusLabel.addSkeletonView()
+        timeLabel.addSkeletonView(width: tWidth, height: tHeight )
+    }
     
     private func layoutConfigure() {
         self.contentView.addSubview(statusLabel)
@@ -112,7 +139,7 @@ class HistoryCell: UITableViewCell {
             make.top.equalToSuperview().inset(16)
             make.leading.equalTo(statusLabel.snp.trailing).offset(12)
             make.trailing.lessThanOrEqualToSuperview().inset(12)
-            make.height.equalTo(30).priority(.low)
+            make.height.equalTo(30)//.priority(.low)
         }
         
         problemName.snp.makeConstraints { make in
@@ -128,7 +155,7 @@ class HistoryCell: UITableViewCell {
         explainLabel.snp.makeConstraints { make in
             make.top.equalTo(boxContainer.snp.bottom).offset(8)
             make.leading.equalTo(statusLabel.snp.trailing).offset(12)
-            make.trailing.equalToSuperview().inset(8).priority(.low)
+            make.trailing.lessThanOrEqualTo(languageBtn.snp.leading).offset(-8)
             make.bottom.equalTo(self.contentView.snp.bottom).offset(-16)
         }
         

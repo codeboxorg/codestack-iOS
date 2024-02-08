@@ -8,9 +8,9 @@
 import UIKit
 import SnapKit
 
-class NumberButton: UIButton {
+public final class NumberButton: UIButton {
     
-    var container: UIView = {
+    public var container: UIView = {
         let view = UIView()
         return view
     }()
@@ -34,13 +34,13 @@ class NumberButton: UIButton {
     }()
     
     
-    func setTextColor(color: UIColor) {
+    public func setTextColor(color: UIColor) {
         numberLabel.textColor = color
         textlabel.textColor = color
     }
     
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         layoutConfigure()
     }
@@ -50,12 +50,11 @@ class NumberButton: UIButton {
         
     }
     
-    func settingNumber(for index: Int){
+    public func settingNumber(for index: Int){
         numberLabel.text = "\(index)"
-
     }
     
-    func settingText(for text: String){
+    public func settingText(for text: String){
         textlabel.text = text
     }
     

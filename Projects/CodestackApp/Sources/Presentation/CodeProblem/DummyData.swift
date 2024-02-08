@@ -8,6 +8,8 @@
 import Foundation
 import Domain
 
+
+// TODO: DummyMOdel 확인후 모델명 변경 해야함
 typealias DummyModel = (model: ProblemListItemModel, language: [LanguageVO], flag: Bool)
 
 struct DummyData{
@@ -26,7 +28,7 @@ struct DummyData{
             num + (10 * index)
         }
         
-        let model = [getDummyDataModel(name: "hellow World \(index)",problemNumber: String(numbers[0])),
+        let model = [getDummyDataModel(name: "hello World \(index)",problemNumber: String(numbers[0])),
                      getDummyDataModel(name: "ABC \(index)", problemNumber: String(numbers[1])),
                      getDummyDataModel(name: "별찍기 \(index)", problemNumber: String(numbers[2])),
                      getDummyDataModel(name: "Three Sum \(index)", problemNumber: String(numbers[3])),

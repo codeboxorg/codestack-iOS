@@ -12,10 +12,12 @@ import RxCocoa
 import RxGesture
 import Global
 import Then
+import Domain
+
 
 class HistoryViewController: UIViewController {
     
-    var historyViewModel: (any HistoryViewModelType)?
+    weak var historyViewModel: (any HistoryViewModelType)?
     
     static func create(with dependency: any HistoryViewModelType) -> HistoryViewController {
         let history = HistoryViewController()
@@ -48,6 +50,11 @@ class HistoryViewController: UIViewController {
         return table
     }()
     
+    let emptyLabel: UILabel = {
+        let label = UILabel()
+        return label.headLineLabel(size: 18, text: "💡현재 기록된 활동이 없습니다", color: .dynamicLabelColor)
+    }()
+    
     private let editButton = UIButton().then { button in
         button.setTitle("수정하기", for: .normal)
         button.setTitleColor(.sky_blue, for: .normal)
@@ -55,27 +62,93 @@ class HistoryViewController: UIViewController {
     }
     
     private var disposeBag = DisposeBag()
-    private var _viewDidLoad = PublishSubject<Void>()
+    
     private var fetchHistoryList = PublishRelay<Void>()
-    private var paginationLoadingInput = PublishRelay<Bool>()
-    
-    
+    private var paginationLoadingInput = BehaviorRelay<Bool>(value: false)
+
     private var deleteHistory = PublishRelay<Int>()
     private var editModeValue = BehaviorRelay<Bool>(value: false)
+    
+    /// 로그아웃시 Swinject Custom Scope History 초기화를 위한 Relay
+    private var deinitPublisher = PublishRelay<Void>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         layoutConfigure()
         binding()
-        _viewDidLoad.onNext(())
-        
-        view.gestureRecognizers?.forEach{
-            $0.delegate = self
-        }
+        view.gestureRecognizers?.forEach{ $0.delegate = self }
     }
     
-    func binding(){
+    deinit { deinitPublisher.accept(()) }
+
+    private func binding(){
+        let currentSegment = gestureBinding()
         
+        let output
+        =
+        (historyViewModel as! HistoryViewModel)
+            .transform (
+                input: HistoryViewModel.Input(
+                    viewDidLoad: OB.justVoid(),
+                    currentSegment: currentSegment,
+                    refreshTap: refreshButton.rx.tap.asSignal(),
+                    fetchHistoryList: fetchHistoryList.asSignal(),
+                    paginationLoadingInput: paginationLoadingInput.asSignal(onErrorJustReturn: false),
+                    deleteHistory: deleteHistory.asSignal(),
+                    logout: deinitPublisher.asSignal()
+                )
+            )
+            
+        historyList.setEditing(false, animated: false)
+        historyList.rx.setDelegate(self)
+            .disposed(by: disposeBag)
+        
+        historyDeleteBinding(deleteAction: historyList.rx.itemDeleted.asObservable())
+        editButtonBinding(editButton: editButton.rx.tap.asSignal(), count: output.historyData.map(\.count))
+        
+        scrollBinding(scroll: historyList.rx.didScroll.asDriver(), currentSegment: currentSegment, paginationLoading: output.paginationLoading)
+        
+        outputBinding(output: output, paginationLoading: output.paginationLoading)
+    }
+    
+    private func outputBinding(output: HistoryViewModel.Output, paginationLoading: Driver<Bool>) {
+        Observable
+            .combineLatest(output.historyIsEmpty.asObservable(), paginationLoading.asObservable())
+            .asDriver(onErrorJustReturn: (false, false))
+            .drive(with: self, onNext: { vc, tuple in
+                let (dataEmpty, loading) = tuple
+                if !dataEmpty {
+                    vc.emptyLabel.removeFromSuperview()
+                    return
+                }
+                loading ? vc.emptyLabel.removeFromSuperview(): vc.addEmptylabel()
+            }).disposed(by: disposeBag)
+        
+        output.historyData
+            .drive(historyList.rx.items(cellIdentifier: HistoryCell.identifier,
+                                        cellType: HistoryCell.self))
+        { index , submission , cell in
+            cell.selectionStyle = .none
+            cell.separatorInset = UIEdgeInsets.zero
+            cell.onHistoryData.accept(submission)
+            cell.onStatus.accept(submission.statusCode.convertSolveStatus() )
+        }.disposed(by: disposeBag)
+        
+        output.paginationRefreshEndEvent
+            .emit(with: self,onNext: { vc, _ in
+                vc.historyList.removeBottomRefresh()
+            }).disposed(by: disposeBag)
+        
+        output.refreshClearEvent
+            .emit(with: self,onNext: { vc, value in
+                Toast.toastMessage("...새로고침 완료...",
+                                   offset: UIScreen.main.bounds.height - 250,
+                                   background: .sky_blue,
+                                   boader: UIColor.black.cgColor)
+            }).disposed(by: disposeBag)
+    }
+    
+    private func gestureBinding() -> Driver<SegType.Value> {
         let rightGesture = historyList.rx.gesture(.swipe(direction: .right))
             .withUnretained(self)
             .filter { vc, _ in !vc.historyList.isEditing }
@@ -99,103 +172,67 @@ class HistoryViewController: UIViewController {
                 return nil
             }.asDriver(onErrorJustReturn: 0)
         
-        
         let historyDriver = historySegmentList.rx.selectedSegmentIndex.asDriver()
         
-        let historySegmentUtil = Driver.merge([rightGesture,leftGesture,historyDriver])
+        let historySegmentUtil = Driver.merge([rightGesture,leftGesture,historyDriver]).asDriver()
         
         historySegmentUtil
             .drive(with: self,
                    onNext: { vm, _ in
-                vm.historySegmentList.setNeedsDisplay()
+                vm.historySegmentList.layer.setNeedsDisplay()
             }).disposed(by: disposeBag)
         
         
         let currentSegment
         =
-        historySegmentUtil.map { value in
+        historySegmentUtil.map { [weak self] value in
             let segTypeValue = SegType.Value(rawValue: value) ?? SegType.Value.all
-            
-            if case let .all = segTypeValue {
-                self.editButton.isHidden = true
-            }else {
-                self.editButton.isHidden = false
-            }
-            
+            if case .all = segTypeValue { self?.editButton.isHidden = true }
+            else { self?.editButton.isHidden = false }
             return segTypeValue
         }.asDriver()
         
-        
-        let output
-        =
-        (historyViewModel as! HistoryViewModel)
-            .transform(input:
-                        HistoryViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(onErrorJustReturn: ()),
-                                               currentSegment: currentSegment,
-                                               refreshTap: refreshButton.rx.tap.asSignal(),
-                                               fetchHistoryList: fetchHistoryList.asSignal(),
-                                               paginationLoadingInput: paginationLoadingInput.asSignal(),
-                                               deleteHistory: deleteHistory.asSignal()))
-        
-        self.historyList.setEditing(false, animated: false)
-        
+        return currentSegment
+    }
+    
+    private func historyDeleteBinding(deleteAction: Observable<IndexPath>) {
         self.historyList.rx.itemDeleted
-            .asObservable()
+            .map { $0.row }
             .subscribe(with: self, onNext: { vc, indexPaths in
                 // TODO:  Index Paths Delete Logic
-                vc.deleteHistory.accept(indexPaths.row)
+                vc.deleteHistory.accept(indexPaths)
             }).disposed(by: disposeBag)
-        
-        let buttonTap = editButton.rx.tap.asSignal()
-        buttonTap
+    }
+    
+    private func editButtonBinding(editButton: Signal<Void>, count: Driver<Int>) {
+        editButton
             .asObservable()
             .withUnretained(self)
-            .subscribe(with: self, onNext: { vc, value in
+            .flatMapFirst { vm, _ in  count.asObservable().take(1) }
+            .filter { $0 != 0 }
+            .subscribe(with: self, onNext: { vc, count in
                 let isEditing = !vc.historyList.isEditing
                 vc.editModeValue.accept(isEditing)
                 vc.historyList.setEditing(isEditing, animated: true)
             }).disposed(by: disposeBag)
-        
-        
-        output.historyData
-            .drive(historyList.rx.items(cellIdentifier: HistoryCell.identifier,
-                                        cellType: HistoryCell.self))
-        {  index , submission , cell in
-            cell.selectionStyle = .none
-            cell.separatorInset = UIEdgeInsets.zero
-            cell.onHistoryData.accept(submission)
-            cell.onStatus.accept(submission.statusCode.convertSolveStatus() )
-        }.disposed(by: disposeBag)
-        
-        
-        output.paginationRefreshEndEvent
-            .emit(with: self,onNext: { vc, _ in
-                vc.historyList.removeBottomRefresh()
-            }).disposed(by: disposeBag)
-        
-        
-        let paginationLoding = output.paginationLoading.asObservable()
-        let scroll = historyList.rx.didScroll.asDriver()
-        
-        historyList.rx.setDelegate(self)
-            .disposed(by: disposeBag)
-        
-        output.refreshClearEvent
-            .emit(with: self,onNext: { vc, value in
-                Toast.toastMessage("...새로고침 완료...",
-                                   offset: UIScreen.main.bounds.height - 250,
-                                   background: .sky_blue,
-                                   boader: UIColor.black.cgColor)
-            }).disposed(by: disposeBag)
-
+    }
+    
+    private func scrollBinding(scroll: Driver<Void>,
+                       currentSegment: Driver<SegType.Value>,
+                       paginationLoading: Driver<Bool> ) {
         Driver.combineLatest(scroll, currentSegment)
             .throttle(.milliseconds(500))
             .filter { $1.isAll() }
-            .flatMapLatest{ _ in paginationLoding.take(1).asDriver(onErrorJustReturn: false) }
+            .flatMapLatest{ _ in
+                paginationLoading
+                    .asObservable()
+                    .take(1)
+                    .asDriver(onErrorJustReturn: false)
+            }
             .filter { !$0 }
             .drive(with: self,onNext: { vc , _ in
                 let table = vc.historyList
-                if table.contentOffset.y > table.contentSize.height - table.bounds.height{
+                if table.contentOffset.y > table.contentSize.height - table.bounds.height {
                     table.addBottomRefresh(width: vc.view.frame.width)
                     vc.paginationLoadingInput.accept(true)
                     vc.fetchHistoryList.accept(())
@@ -205,7 +242,15 @@ class HistoryViewController: UIViewController {
 }
 
 //MARK: - Layout configure
-extension HistoryViewController{
+extension HistoryViewController {
+    
+    func addEmptylabel() {
+        self.historyList.addSubview(self.emptyLabel)
+        emptyLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(12)
+            make.leading.trailing.equalToSuperview().inset(12)
+        }
+    }
     
     func layoutConfigure(){
         
@@ -260,7 +305,7 @@ extension HistoryViewController: UIGestureRecognizerDelegate {
 
 extension HistoryViewController: UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    private func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         Log.debug("tableView Swped : false")
         return true // Swipe 비활성화
     }

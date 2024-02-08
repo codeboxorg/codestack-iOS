@@ -10,7 +10,6 @@ import RxFlow
 import RxRelay
 import RxSwift
 import RxCocoa
-import Global
 import Domain
 
 enum LoginError: Error{
@@ -32,19 +31,14 @@ class LoginViewModel: /*LoginViewModelProtocol*/ Stepper{
     }
     
     struct Dependency {
-//        let loginService: Auth
-//        let apolloService: WebRepository
         let authUsecase: AuthUsecase
         let stepper: LoginStepper
     }
     
-//    private var loginService: Auth
-//    private var apolloService: WebRepository
     private var disposeBag = DisposeBag()
     private let authUsecase: AuthUsecase
+    
     init(dependency: Dependency){
-//        self.loginService = dependency.loginService
-//        self.apolloService = dependency.apolloService
         self.authUsecase = dependency.authUsecase
         self.steps = dependency.stepper.steps
         
@@ -77,15 +71,20 @@ class LoginViewModel: /*LoginViewModelProtocol*/ Stepper{
                     do{
                         try vm.authUsecase.gitOAuthrization()
                     }catch{
-                        Log.error("github 로그인 실패 : \(error)")
+                        // Log.error("github 로그인 실패 : \(error)")
                     }
                 case .email((let id, let pwd)):
-//                    vm.loginLoadingEvent.accept(.success(true))
-//                    vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
-//                    vm.loginLoadingEvent.accept(.success(false))
+                    
+                    // MARK: 익명 로그인
+                    vm.loginLoadingEvent.accept(.success(true))
+                    // vm.requestFirebaseAnonymousAuth()
+                    
+                    vm.requestFirebaseAuth(email: id, password: pwd)
+                    
                     #if DEBUG
                     // TODO: 502 Bad Gate Way
-                     vm.requestAuth(id: id, pwd: pwd)
+//                    vm.loginLoadingEvent.accept(.success(true))
+//                    vm.requestAuth(id: id, pwd: pwd)
                     #endif
                 case .none:
                     break
@@ -108,66 +107,79 @@ class LoginViewModel: /*LoginViewModelProtocol*/ Stepper{
 //            throw LoginError.gitOAuthError
 //        }
     }
+    
+    func requestFirebaseAuth(email: String, password: String) {
+        authUsecase
+            .firebaseAuth(email: email, pwd: password)
+            .do(onError: { [weak self] _ in
+                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
+            })
+            .subscribe(with: self, onNext: { vm, value in
+                vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
+                vm.loginLoadingEvent.accept(.success(false))
+            }).disposed(by: disposeBag)
+    }
+    
+    func requestFirebaseAnonymousAuth() {
+        authUsecase
+            .firebaseAnonymousAuth()
+            .do(onError: { [weak self] _ in
+                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
+            })
+            .subscribe(with: self, onNext: { vm, value in
+                vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
+                vm.loginLoadingEvent.accept(.success(false))
+            }).disposed(by: disposeBag)
+    }
 
     
     func oAuthComplte(apple code: String, user: String) {
-        //        _ = loginService
-        //            .request(with: token)
         _ = authUsecase
             .request(apple: code , user: user )
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
             .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false)) })
             .do(onError: { [weak self] _ in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
             .flatMap { token in self.saveToken(token: token) }
-            .subscribe(with: self, onNext: { owner, user in owner.saveUserInfo(memeber: user) },
-                       onError: { owner , err in Log.error(err) })
+            .subscribe(with: self, onNext: { owner, user in owner.saveUserInfo(member: user) },
+                       onError: { owner , err in /*Log.error(err)*/ })
     }
     
     /// gitHub OAuh 가 끝나고 다시 서버로 token 요청하는 함수
     /// - Parameter code: github code
     func oAuthComplete(code: GitCode){
-//        _ = loginService
-//            .request(with: code)
         _ = authUsecase
             .request(with: code)
             .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
             .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false))})
             .do(onError: { [weak self] err in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
             .flatMap { token in self.saveToken(token: token) }
-            .subscribe(with: self,onNext: { owner, user in owner.saveUserInfo(memeber: user)},
-                                    onError: { owner , err in Log.error(err) })
+            .subscribe(with: self,onNext: { owner, user in owner.saveUserInfo(member: user)},
+                                    onError: { owner , err in /*Log.error(err)*/ })
     }
     
     private func requestAuth(id: String, pwd: String){
-//        _ = loginService.request(name: id, password: pwd)
         _ = authUsecase
-            .request(name: id, password: pwd)
-            .observe(on: ConcurrentDispatchQueueScheduler.init(qos: .default))
-            .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false)) })
+            .requestLogin(name: id, password: pwd)
+            .do(onNext: { [weak self] _ in self?.loginLoadingEvent.accept(.success(false))})
             .do(onError: { [weak self] _ in self?.loginLoadingEvent.accept(.failure(LoginError.timeOut)) })
-            .flatMap { token in
-                // FIXME: KeyChain 계층 변경ㅇ해야됌
-//                Log.debug(KeychainItem.currentAccessToken)
-                return self.saveToken(token: token) }
-            .subscribe(with: self,onNext: { owner, user in owner.saveUserInfo(memeber: user) },
-                                    onError: { owner , err in Log.error(err) })
+            .map { _ in CodestackStep.userLoggedIn(nil, nil)}
+            .subscribe(with: self, onNext: { vm, stpes in
+                vm.steps.accept(stpes)
+            }, onError: { vm, err in
+//                Log.debug("err: \(err)")
+            })
+            .disposed(by: disposeBag)
     }
     
     
     private func saveToken(token: CSTokenVO) -> Observable<MemberVO> {
-        // TODO: 바꿔야됌
-//        UserManager.shared.saveTokenInfo(with: TokenInfo(expiresIn: token.expiresIn,
-//                                                         tokenType: token.tokenType))
-//        
-//        KeychainItem.saveTokens(access: token.accessToken, refresh: token.refreshToken)
-//        
+        authUsecase.saveToken(token: token)
         return authUsecase.fetchMe()
-//            .map { fr in fr.toDomain() }
     }
     
-    private func saveUserInfo(memeber: MemberVO){
+    private func saveUserInfo(member: MemberVO){
         // TODO: 바꿔야됌
-        //UserManager.shared.saveUser(with: memeber)
+        authUsecase.saveMember(member: member)
         steps.accept(CodestackStep.userLoggedIn(nil, nil))
     }
 }

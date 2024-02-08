@@ -12,6 +12,7 @@ import RxSwift
 import WebKit
 import Global
 import Domain
+import CommonUI
 
 //TODO: View -> UIViewCOntroller 로 변경해야됨
 
@@ -122,7 +123,6 @@ final class ProblemPopUpView: UIView {
     
     private lazy var languageButton: LanguageButton = {
         let button = LanguageButton().makeLanguageButton()
-        
         return button
     }()
     
@@ -136,7 +136,7 @@ final class ProblemPopUpView: UIView {
     }()
     
     // 결과 보여주는 뷰
-    private lazy var resultStatusView: SubmissionResultView = {
+    private let resultStatusView: SubmissionResultView = {
         let resultStatusView = SubmissionResultView()
         return resultStatusView
     }()
@@ -255,7 +255,6 @@ final class ProblemPopUpView: UIView {
         
         problemState
             .subscribe(with: self, onNext: { view, value in
-                
                 // Refresh end
                 view.activityIndicator.stopAnimating()
                 view.refreshButton.isHidden = false
@@ -375,6 +374,7 @@ extension ProblemPopUpView: WKNavigationDelegate{
     /// - Parameter string: HTML String
     func loadHTMLToWebView(html string: String) {
         if string.isEmpty || string.count < 3 {
+//            problemState
             wkWebView.addSubview(refreshLabel)
             wkWebView.addSubview(refreshButton)
             wkWebView.addSubview(activityIndicator)
@@ -431,7 +431,7 @@ extension ProblemPopUpView{
     
     @objc func hidebuttonTapped(_ sender: UIButton){
         feedbackGenerator.impactOccurred()
-        flag == true ? show() : hide(completion: nil)
+        flag == true ? show() : hide(completion: {})
         flag.toggle()
     }
     
@@ -462,9 +462,7 @@ extension ProblemPopUpView{
     
     func hide(completion: (() -> Void)? ) {
         let buttonHeight: CGFloat = 44
-        
         hideRemakeAnimation()
-        
         self.delegate!.dismissProblemDiscription(button: buttonHeight)
         
         UIView.animate(
@@ -478,7 +476,7 @@ extension ProblemPopUpView{
             },
             completion: { flag in
                 if flag == true,
-                   completion != nil{
+                   completion != nil {
                     completion!()
                 }
             }
@@ -695,7 +693,7 @@ extension ProblemPopUpView{
 //MARK: View 오토레이아웃 재생성
 extension ProblemPopUpView{
     
-    func showRemakeAnimation(){
+    func showRemakeAnimation() {
         problemTitle.isHidden = false
         resultStepButton.isHidden = false
         submissionListStepButton.isHidden = false
@@ -707,7 +705,7 @@ extension ProblemPopUpView{
         down_remake_languageButton()
     }
     
-    func hideRemakeAnimation(){
+    func hideRemakeAnimation() {
         problemTitle.isHidden = true
         resultStepButton.isHidden = true
         submissionListStepButton.isHidden = true

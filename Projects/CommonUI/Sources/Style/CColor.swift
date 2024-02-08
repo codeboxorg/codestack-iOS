@@ -10,9 +10,9 @@ import SwiftUI
 
 // CustomColor
 
-typealias CColor = CustomColor
+public typealias CColor = CustomColor
 
-enum CustomColor {
+public enum CustomColor {
     
     case juhwang
     case juhwang_2
@@ -30,11 +30,11 @@ enum CustomColor {
     case threadBlack
     
     @available(iOS 15.0, *)
-    var sColor: Color {
+    public var sColor: Color {
         Color(uiColor: self.color)
     }
     
-    var color: UIColor {
+    public var color: UIColor {
         switch self {
         case .juhwang:
             return UIColor(hexCode: "#ff7f00")
@@ -66,13 +66,14 @@ enum CustomColor {
             return UIColor(hexCode: "000000")
         }
     }
-    var cgColor: CGColor{
+    
+    public var cgColor: CGColor{
         return self.color.cgColor
     }
 }
 
 extension UIColor {
-    static func getRandomColor() -> UIColor{
+    public static func getRandomColor() -> UIColor{
         let randomRed:CGFloat = CGFloat(drand48())
         
         let randomGreen:CGFloat = CGFloat(drand48())
@@ -83,18 +84,37 @@ extension UIColor {
     }
 }
 
-extension UIColor {
+public extension UIColor {
     static let juhwang: UIColor = UIColor(hexCode: "#ff7f00")
     static let whiteGray: UIColor = UIColor(hexCode: "F4EEEE")
     static let red_c: UIColor = UIColor(hexCode: "#FAE9DE")
     static let juhwang_2: UIColor = UIColor(hexCode: "#FC4F08")
     static let powder_blue: UIColor = UIColor(hexCode: "#B0E0E6")
     static let sky_blue: UIColor = UIColor(hexCode: "#87CEEB")
+    
+    static let skeletonBack = UIColor.init(hexCode: "#D2D2D2")
+    static let skeletonHighlight = UIColor.init(hexCode: "#EBEBEB")
+    
+    static let codestackGradient = [
+        UIColor(hexCode: "#2AA5E2"),
+        UIColor(hexCode: "#407DEB"),
+        UIColor(hexCode: "#5754F5")
+    ]
+    
+    static var dynamicLabelColor: UIColor {
+        UIColor(dynamicProvider: { trait in
+            if trait.userInterfaceStyle == .dark {
+                return .whiteGray
+            } else {
+                return .label
+            }
+        })
+    }
 }
 
 
 
-extension UIColor {
+public extension UIColor {
     
     convenience init(hexCode: String, alpha: CGFloat = 1.0) {
         var hexFormatted: String = hexCode.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
