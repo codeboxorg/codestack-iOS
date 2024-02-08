@@ -9,7 +9,7 @@ import UIKit
 import RxFlow
 import RxSwift
 import RxCocoa
-
+import Swinject
 
 class HistoryFlow: Flow {
     
@@ -25,7 +25,7 @@ class HistoryFlow: Flow {
     
     private let rootViewController: UINavigationController = {
         let viewController = UINavigationController()
-        
+        viewController.view.backgroundColor = UIColor.systemBackground
         viewController.setNavigationBarHidden(false, animated: false)
         return viewController
     }()
@@ -35,6 +35,9 @@ class HistoryFlow: Flow {
         switch codestackStep{
         case .historyflow:
             return navigateToHistory()
+        case .logout:
+            injector.container.resetObjectScope(.history)
+            return .none
         default:
             return .none
         }

@@ -29,6 +29,7 @@ class CodeProblemFlow: Flow{
     
     private let rootViewController: UINavigationController = {
         let viewController = UINavigationController()
+        viewController.view.backgroundColor = UIColor.systemBackground
         viewController.setNavigationBarHidden(false, animated: true)
         return viewController
     }()
@@ -41,6 +42,7 @@ class CodeProblemFlow: Flow{
             
         case .problemPick(let problem):
             rootViewController.tabBarController?.tabBar.isHidden = true
+            
             return navigateToProblemPick(problem: problem)
             
         case .problemComplete:
@@ -58,14 +60,6 @@ class CodeProblemFlow: Flow{
             return .none
         case .loginNeeded:
             return .end(forwardToParentFlowWithStep: CodestackStep.logout)
-            
-        case .richText(let problems):
-            
-            let vc = RichTextViewController.create(with: problems)
-            
-            self.rootViewController.show(vc, sender: nil)
-            
-            return .none
         default:
             return .none
         }
@@ -73,39 +67,20 @@ class CodeProblemFlow: Flow{
     
     func navigateToProblemList() -> FlowContributors{
         let problemVC = injector.resolve(CodeProblemViewController.self)
-        let codeViewModel = injector.resolve(CodeProblemViewModel.self)
         rootViewController.pushViewController(problemVC, animated: false)
         
         return .one(flowContributor: .contribute(withNextPresentable: problemVC,
-                                                 withNextStepper: codeViewModel))
+                                                 withNextStepper: problemVC.viewModel as! CodeProblemViewModel))
     }
     
     
     func navigateToProblemPick(problem: ProblemListItemModel) -> FlowContributors{
-//        let editorvc = injector.resolve(CodeEditorViewController.self, problem)
+        let editorVC = injector.resolve(CodeEditorViewController.self, problem)
+        let stepper = injector.resolve(CodeEditorStepper.self)        
+        editorVC.hidesBottomBarWhenPushed = true
+        rootViewController.pushViewController(editorVC, animated: true)
         
-//        let stepper = injector.resolve(CodeEditorStepper.self)
-        let stepper = CodeEditorStepper.init()
-        let home = injector.resolve(HomeViewModel.self)
-        let his = injector.resolve(HistoryViewModel.self)
-        let sub = injector.resolve(SubmissionUseCase.self)
-        
-        let dp1 = CodeEditorViewModel.Dependency.init(homeViewModel: home,
-                                                     historyViewModel: his,
-                                                     submissionUseCase: sub,
-                                                     stepper: stepper)
-        
-        let viewModel = CodeEditorViewModel(dependency: dp1)
-        
-        let dp = CodeEditorViewController.Dependency(viewModel: viewModel,
-                                                     problem: problem)
-        
-        let editorvc = CodeEditorViewController.create(with: dp)
-        
-        editorvc.hidesBottomBarWhenPushed = true
-        rootViewController.pushViewController(editorvc, animated: true)
-        
-        return .one(flowContributor: .contribute(withNextPresentable: editorvc, withNextStepper: stepper))
+        return .one(flowContributor: .contribute(withNextPresentable: editorVC, withNextStepper: stepper))
     }
     
 }
