@@ -8,7 +8,7 @@
 import UIKit
 import RxCocoa
 import RxSwift
-
+import CommonUI
 
 class LoginView: UIView{
     
@@ -98,34 +98,18 @@ class LoginView: UIView{
         button.tintColor = .white
         button.setTitle("로그인", for: .normal)
         button.titleLabel?.font = .boldSystemFont(ofSize: 20)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.backgroundColor = .powder_blue
+        button.setTitleColor(UIColor.label, for: .normal)
+        button.backgroundColor = dynamicSysBackground
         button.layer.cornerRadius = (button.titleLabel?.font.pointSize ?? 24) / 2
         return button
     }()
-    
     
     private lazy var githubLoginButton: GitHubLoginButton = {
         let button = GitHubLoginButton(frame: .zero)
         return button
     }()
     
-    
-    private let registerButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("회원가입", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        button.setTitleColor(.sky_blue, for: .normal)
-        return button
-    }()
-    
-    private lazy var infoLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.text = "하러가기"
-        label.textColor = .label
-        return label
-    }()
+    private let registerButton = RegisterButton.init(title: "회원가입")
     
     lazy var loginProviderStackView: UIStackView = {
         let stackView = UIStackView()
@@ -146,6 +130,9 @@ class LoginView: UIView{
         super.init(frame: frame)
         addContentView()
         addAutoLayout()
+        
+        registerButton.setTitleColor(.dynamicLabelColor, for: .normal)
+        registerButton.backgroundColor = dynamicSysBackground
     }
     
     func debugIDPwd(){
@@ -282,7 +269,6 @@ extension LoginView {
          loginPlaceHolderView,
          passwordPlaceHolderView,
          registerButton,
-         infoLabel,
          loginProviderStackView
         ].forEach{
             containerView.addSubview($0)
@@ -417,16 +403,10 @@ extension LoginView {
         
     
         NSLayoutConstraint.activate([
+            registerButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,constant: leading_Trailing_contant),
             registerButton.topAnchor.constraint(equalTo: githubLoginButton.bottomAnchor, constant: info_top_constant - 8),
-            registerButton.trailingAnchor.constraint(equalTo: infoLabel.leadingAnchor,constant: -6)
-        ])
-        
-        
-        NSLayoutConstraint.activate([
-            infoLabel.topAnchor.constraint(equalTo: githubLoginButton.bottomAnchor, constant: info_top_constant),
-            infoLabel.centerYAnchor.constraint(equalTo: registerButton.centerYAnchor),
-            infoLabel.centerXAnchor.constraint(equalTo: githubLoginButton.centerXAnchor,constant: 24),
-            infoLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor,constant: -12)
+            registerButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,constant: -leading_Trailing_contant),
+            registerButton.heightAnchor.constraint(equalToConstant: 55)
         ])
     }
 }
