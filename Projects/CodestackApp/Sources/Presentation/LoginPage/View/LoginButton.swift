@@ -10,39 +10,30 @@ import UIKit
 
 
 class LoginButton: UIButton {
-    // 2
+    
     var spinner = UIActivityIndicatorView()
-    // 3
+    
     var isLoading = false {
         didSet {
-            // whenever `isLoading` state is changed, update the view
             updateView()
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        // 4
         setupView()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupView()
     }
     
     func setupView() {
-        // 5
         spinner.hidesWhenStopped = true
-        // to change spinner color
-        spinner.color = .black
-        // default style
+        spinner.color = .label
         spinner.style = .medium
         
-        // 6
-        // add as button subview
         addSubview(spinner)
-        // set constraints to always in the middle of button
         spinner.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             spinner.centerXAnchor.constraint(equalTo: self.centerXAnchor),
@@ -50,13 +41,11 @@ class LoginButton: UIButton {
         ])
     }
     
-    // 7
     func updateView() {
         if isLoading {
             spinner.startAnimating()
             titleLabel?.alpha = 0
             imageView?.alpha = 0
-            // to prevent multiple click while in process
             isEnabled = false
         } else {
             spinner.stopAnimating()
