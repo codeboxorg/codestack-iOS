@@ -11,7 +11,7 @@ import Foundation
 
 enum SegType: String,CaseIterable{
     case favorite = "즐겨찾기"
-    case tempSave = "임시저장"
+    case tempSave = "임시"
     // case success = "성공"
     // case failure = "실패"
     case all = "전체"
