@@ -11,7 +11,6 @@ import SnapKit
 
 class StatusView: UIView{
     
-    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Solved Problems"
@@ -22,7 +21,7 @@ class StatusView: UIView{
     }()
 
     
-     let circleProgressView: CircleProgressView = {
+    let circleProgressView: CircleProgressView = {
         let view = CircleProgressView()
         view.progress = 0.3
         return view
@@ -49,10 +48,9 @@ class StatusView: UIView{
         return view
     }()
     
-    
     private lazy var solvedAllCount: UILabel = {
         let label = UILabel()
-        label.text = "999"
+        label.text = "0"
         label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
         label.textColor = .powder_blue
         label.textAlignment = .center
@@ -62,11 +60,7 @@ class StatusView: UIView{
     override init(frame: CGRect) {
         super.init(frame: frame)
         layoutConfigure()
-        
-        self.backgroundColor = .tertiarySystemBackground
-        self.layer.borderColor = UIColor.lightGray.cgColor
-        self.layer.borderWidth = 1
-        
+        circleProgressView.backgroundColor = .systemBackground
         circleProgressView.progressColor = .juhwang
         circleProgressView.progressBackgroundColor = .gray
         circleProgressView.progressWidth = 8

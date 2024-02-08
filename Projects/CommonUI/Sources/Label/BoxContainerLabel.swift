@@ -8,7 +8,7 @@
 import UIKit
 import Global
 
-class BoxContainerLabel: UILabel{
+public final class BoxContainerLabel: UILabel {
     
     private let maxWidth: (String,UIFont) -> CGFloat =
     { text, font in
@@ -26,7 +26,7 @@ class BoxContainerLabel: UILabel{
         return view
     }()
     
-    let label: UILabel = {
+    public let label: UILabel = {
         let label = UILabel()
         return label
     }()
@@ -53,23 +53,20 @@ class BoxContainerLabel: UILabel{
         ])
     }
     
-    func settingBorader(color: CGColor, width: CGFloat = 1, corner: CGFloat = 8){
+    public func settingBorader(color: CGColor, width: CGFloat = 1, corner: CGFloat = 8){
         container.layer.borderColor = color
         container.layer.borderWidth = 1
         container.layer.cornerRadius = corner
     }
     
-    func setContainer(_ font: UIFont = UIFont.boldSystemFont(ofSize: 16),
+    public func setContainer(_ font: UIFont = UIFont.boldSystemFont(ofSize: 16),
                       _ text: String)
     {
-//        DispatchQueue.main.async { [weak self] in
-//            guard let self else {return }
-        self.layoutIfNeeded()
         self.label.font = font
         self.label.text = text
         self.label.sizeToFit()
+        self.layoutIfNeeded()
         self.label.center = container.center
-//        }
     }
     
 }

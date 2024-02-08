@@ -11,15 +11,17 @@ import SnapKit
 import RxFlow
 import RxCocoa
 import Global
-import RxSwift
+import CommonUI
+import ReactorKit
 
-class CodeEditorViewController: UIViewController, Stepper {
+class CodeEditorViewController: UIViewController, ReactorKit.View, Stepper {
+    typealias Reactor = CodeEditorReactor
     
     var steps = PublishRelay<Step>()
     
     private var editorViewModel: CodeEditorViewModel?
     
-    private var disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     var problemItem: ProblemListItemModel?
     
@@ -28,12 +30,14 @@ class CodeEditorViewController: UIViewController, Stepper {
     struct Dependency{
         var viewModel: CodeEditorViewModel
         var problem: ProblemListItemModel
+        var editorReactor: CodeEditorReactor
     }
     
     static func create(with dependency: Dependency) -> CodeEditorViewController {
         let vc = CodeEditorViewController()
         vc.editorViewModel = dependency.viewModel
         vc.problemItem = dependency.problem
+        vc.reactor = dependency.editorReactor
         vc.problemPopUpView.setLangueMenu(languages: dependency.problem.language)
         return vc
     }
@@ -81,31 +85,23 @@ class CodeEditorViewController: UIViewController, Stepper {
         return popView
     }()
     
-
-    
-   
     override func viewDidLoad() {
+        Log.debug("viewDidLoad")
         super.viewDidLoad()
-        
         layoutConfigure()
-        
         settingBackground()
         self.numbersView.settingTextView(self.codeUITextView,tracker: self)
         self.view.bringSubviewToFront(problemPopUpView)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
-        
         binding()
     }
     
     func settingBackground() {
         let black = self.highlightr?.theme.themeBackgroundColor
-        
         let white = CColor.whiteGray.color
-        
         self.codeUITextView.backgroundColor = black
         self.codeUITextView.layer.borderColor = black?.cgColor
         self.codeUITextView.tintColor = white
-        
         numberTextViewContainer.backgroundColor = black
         self.view.backgroundColor = black
     }
@@ -113,148 +109,179 @@ class CodeEditorViewController: UIViewController, Stepper {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.problemPopUpView.show()   
+        self.problemPopUpView.show()
     }
     
     private var sourceCodeState = false
+    private var problemContext = BehaviorRelay<String>(value: "")
+    
+    func bind(reactor: CodeEditorReactor) {
+        Log.debug("codeReactor: Reactor: \(reactor)")
+        
+        problemPopUpView.sendSubmissionAction()
+            .map { "hello Send Button" }
+            .map(Reactor.Action.send)
+            .drive(reactor.action)
+            .disposed(by: disposeBag)
+        
+        //reactor.pulse(\.$alert)
+        //    .map(CodestackStep.toastMessage)
+        //    .bind(to: steps)
+        //    .disposed(by: disposeBag)
+    }
     
     func binding(){
+        Log.debug("Binding: ")
+        guard let id = problemItem?.problemNumber,
+              let title = problemItem?.problemTitle else { return }
+        
+        let sendSubmissionAction
+        =
+        problemPopUpView
+            .sendSubmissionAction()
+            .map { _ in "\(id)" }
+            .startWith("\(id)")
+            .asDriverJust()
+        
+        if let sourceCode = problemItem?.sourceCode,
+           let language = problemItem?.seletedLanguage {
+            codeUITextView.text = sourceCode
+            sourceCodeState = true
+            if sourceCode.isEmpty { sourceCodeState = false }
+            problemPopUpView.languageRelay.accept(language)
+        }
+        
+        if problemItem?.sourceCode == nil {
+            sourceCodeState = false
+        }
+        
+        if let context = problemItem?.contenxt {
+            problemContext.accept(context)
+        }
+        
+        let textChange = codeUITextView.rx.text
+            .debounce(.milliseconds(300),
+                      scheduler: MainScheduler.instance)
+            .compactMap { $0 }
+            .asDriverJust()
+        
+        let submissionID = problemItem?.submissionID
+        
+        let submissionIDOb =
+        Observable
+            .just(submissionID)
+            .compactMap { $0 == nil ? "" : $0 }
+            .asDriverJust()
+        
+        let languageAction = problemPopUpView.languageAction()
+        let titleOb: Driver<String> = .just(title)
+        let submissionListGesture = problemPopUpView.submissionListGesture.map { _ in }
+        let problemRefreshTap = problemPopUpView.problemRefreshTap
+        let favoriteTap = problemPopUpView.favoriteTap
+        let problemContext = problemContext.asSignalJust()
         let dissmissAction = problemPopUpView.dissmissAction()
         
-        if let id = problemItem?.problemNumber,
-           let title = problemItem?.problemTitle {
-            
-            let sendSubmissionAction 
-            =
-            problemPopUpView
-                .sendSubmissionAction()
-                .map { _ in "\(id)" }
-                .startWith("\(id)")
-                .asDriver(onErrorJustReturn: "")
-            
-            if let sourceCode = problemItem?.sourceCode,
-               let language = problemItem?.seletedLanguage {
-                codeUITextView.text = sourceCode
-                sourceCodeState = true
-                if sourceCode.isEmpty { sourceCodeState = false }
-                problemPopUpView.languageRelay.accept(language)
-            }
-            
-            if problemItem?.sourceCode == nil {
-                sourceCodeState = false
-            }
-            
-            let languageAction = problemPopUpView.languageAction()
-            
-            let textChange = codeUITextView.rx.text
-                .debounce(.milliseconds(300),
-                          scheduler: MainScheduler.instance)
-                .compactMap { $0 }
-                .asDriver(onErrorJustReturn: "")
-            
-            let submissionID = problemItem?.submissionID
-            let titleOb: Driver<String> = .just(title).asDriver(onErrorJustReturn: "")
-            let submissionIDOb: Observable<String> = (submissionID == nil) ? .just("") : .just(submissionID!)
-            let submissionListGesture = problemPopUpView.submissionListGesture.map { _ in }
-            let problemRefreshTap = problemPopUpView.problemRefreshTap
-            let favoriteTap = problemPopUpView.favoriteTap
-            
-            let output = editorViewModel?.transform(input:.init(dismissAction: dissmissAction,
-                                                                sendAction: sendSubmissionAction,
-                                                                problemTitle: titleOb,
-                                                                language: languageAction,
-                                                                sourceCode: textChange, 
-                                                                submissionID: submissionIDOb.asDriver(onErrorJustReturn: ""),
-                                                                submissionListGesture: submissionListGesture,
-                                                                problemRefreshTap: problemRefreshTap,
-                                                                favoriteTap: favoriteTap))
-            
-            if let loadSourceCode = output?.loadSourceCode {
-                languageAction
-                    .distinctUntilChanged()
-                    .withLatestFrom(loadSourceCode) { language, sourceCode in
-                        return (language, sourceCode)
+        let output = editorViewModel?
+            .transform(input:.init(viewDidLoad: OB.justVoid(),
+                                   problemContext: problemContext,
+                                   dismissAction: dissmissAction,
+                                   sendAction: sendSubmissionAction,
+                                   problemTitle: titleOb,
+                                   language: languageAction,
+                                   sourceCode: textChange,
+                                   submissionID: submissionIDOb,
+                                   submissionListGesture: submissionListGesture,
+                                   problemRefreshTap: problemRefreshTap,
+                                   favoriteTap: favoriteTap))
+        
+        if let loadSourceCode = output?.loadSourceCode {
+            languageAction
+                .distinctUntilChanged()
+                .withLatestFrom(loadSourceCode) { language, sourceCode in
+                    return (language, sourceCode)
+                }
+                .drive(with: self, onNext: { vm, tuple  in
+                    let (language, sourceCode) = tuple
+                    vm.codeUITextView.languageBinding(language: language)
+                    if !vm.sourceCodeState {
+                        vm.codeUITextView.text = ""
+                        vm.codeUITextView.text = sourceCode
+                    } else {
+                        vm.sourceCodeState = false
                     }
-                    .drive(with: self, onNext: { vm, tuple  in
-                        let (language, sourceCode) = tuple
-                        vm.codeUITextView.languageBinding(language: language)
-                        if !vm.sourceCodeState {
-                            vm.codeUITextView.text = ""
-                            vm.codeUITextView.text = sourceCode
-                        } else {
-                            vm.sourceCodeState = false
-                        }
-                    }).disposed(by: disposeBag)
-            }
-            
-            output?.favoritProblem
-                .drive(with: self, onNext: { view, flag in
-                    view.problemPopUpView.heartButton.flag = flag
                 }).disposed(by: disposeBag)
-            
-            favoriteTap
-                .drive(with: self, onNext: { view, _ in
-                    view.problemPopUpView.heartButton.flag.toggle()
-                }).disposed(by: disposeBag)
-            
-            sendSubmissionAction
-                .skip(1)
-                .drive(with: self, onNext: { vc, _ in
-                    vc.problemPopUpView.pageValue.accept(.result(nil))
-                }).disposed(by: disposeBag)
-            
-            output?.solvedResult
-                .drive(with: self,onNext: { vc, submission in
-                    vc.problemPopUpView.pageValue.accept(.result(submission))
-                }).disposed(by: disposeBag)
-            
-            output?.submissionListResult
-                .drive(with: self, onNext: { vc, submissions in
-                    vc.problemPopUpView.pageValue.accept(.resultList([]))
-                }).disposed(by: disposeBag)
-            
-            output?.submitWaiting
-                .emit(with: self, onNext: { vc, flag in
-                    vc.problemPopUpView.submissionLoadingWating.accept(flag)
-                }).disposed(by: disposeBag)
-            
-            output?.submissionListResult
-                .drive(with: self, onNext: { vc, submissionList in
-                    vc.problemPopUpView.pageValue.accept(.resultList([]))
-                }).disposed(by: disposeBag)
-            
-            output?.problemRefreshResult
-                .emit(with: self, onNext: { vc, state in
-                    if case let .fail(error) = state {
-                        vc.steps.accept(CodestackStep.toastMessage(" \(error) 불러오는데 실패"))
-                    }
-                    vc.problemPopUpView.problemState.accept(state)
-                }).disposed(by: disposeBag)
-            
-            
-            let tableView = problemPopUpView.submissionListView.tableView
-            
-            tableView.rx
-                .setDelegate(self)
-                .disposed(by: disposeBag)
-            
-            output?.submissionListResult
-                .drive(with: self, onNext: { vc, value in
-                    vc.problemPopUpView.submissionListView.addEmptyLayout(flag: value.isEmpty)
-                }).disposed(by: disposeBag)
-            
-            output?.submissionListResult
-                .drive(tableView.rx.items(cellIdentifier: HistoryCell.identifier,
-                                          cellType: HistoryCell.self))
-            { index, submission, cell in
-                cell.selectionStyle = .none
-                cell.separatorInset = UIEdgeInsets.zero
-                cell.backgroundColor = .clear
-                cell.contentView.backgroundColor = .clear
-                cell.onHistoryData.accept(submission)
-                cell.onStatus.accept(submission.statusCode.convertSolveStatus())
-            }.disposed(by: disposeBag)
         }
+        
+        output?.laguageBinding
+            .drive(with: self, onNext: { vc, langVO in
+                vc.problemPopUpView.languageRelay.accept(langVO)
+            }).disposed(by: disposeBag)
+        
+        output?.favoritProblem
+            .drive(with: self, onNext: { view, flag in
+                view.problemPopUpView.heartButton.flag = flag
+            }).disposed(by: disposeBag)
+        
+        favoriteTap
+            .drive(with: self, onNext: { view, _ in
+                view.problemPopUpView.heartButton.flag.toggle()
+            }).disposed(by: disposeBag)
+        
+        sendSubmissionAction
+            .skip(1)
+            .drive(with: self, onNext: { vc, _ in
+                vc.problemPopUpView.pageValue.accept(.result(nil))
+            }).disposed(by: disposeBag)
+        
+        output?.solvedResult
+            .drive(with: self,onNext: { vc, submission in
+                vc.problemPopUpView.pageValue.accept(.result(submission))
+            }).disposed(by: disposeBag)
+        
+        output?.submissionListResult
+            .drive(with: self, onNext: { vc, submissions in
+                vc.problemPopUpView.pageValue.accept(.resultList([]))
+            }).disposed(by: disposeBag)
+        
+        output?.submitWaiting
+            .emit(with: self, onNext: { vc, flag in
+                vc.problemPopUpView.submissionLoadingWating.accept(flag)
+            }).disposed(by: disposeBag)
+        
+        output?.submissionListResult
+            .drive(with: self, onNext: { vc, submissionList in
+                vc.problemPopUpView.pageValue.accept(.resultList([]))
+            }).disposed(by: disposeBag)
+        
+        output?.problemRefreshResult
+            .skip(1)
+            .emit(with: self, onNext: { vc, state in
+                if case let .fail(error) = state {
+                    vc.steps.accept(CodestackStep.toastMessage(" \(error) 불러오는데 실패"))
+                }
+                vc.problemPopUpView.problemState.accept(state)
+            }).disposed(by: disposeBag)
+        
+        
+        let tableView = problemPopUpView.submissionListView.tableView
+        
+        output?.submissionListResult
+            .drive(with: self, onNext: { vc, value in
+                vc.problemPopUpView.submissionListView.addEmptyLayout(flag: value.isEmpty)
+            }).disposed(by: disposeBag)
+        
+        output?.submissionListResult
+            .drive(tableView.rx.items(cellIdentifier: HistoryCell.identifier,
+                                      cellType: HistoryCell.self))
+        { index, submission, cell in
+            cell.selectionStyle = .none
+            cell.separatorInset = UIEdgeInsets.zero
+            cell.backgroundColor = .clear
+            cell.contentView.backgroundColor = .clear
+            cell.onHistoryData.accept(submission)
+            cell.onStatus.accept(submission.statusCode.convertSolveStatus())
+        }.disposed(by: disposeBag)
+        
     }
     
     private func keyBoardLayoutManager(){
@@ -315,7 +342,6 @@ extension CodeEditorViewController{
         let initialHeight = 44
         problemPopUpView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-//            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(60)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(initialHeight)
         }

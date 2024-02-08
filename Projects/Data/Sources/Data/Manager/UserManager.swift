@@ -8,6 +8,7 @@
 import Foundation
 import Global
 import Domain
+import CSNetwork
 
 @propertyWrapper
 struct UserDefault<T> {
@@ -64,6 +65,7 @@ final class UserManager {
     
     @UserDefault(key: UserManagerKey.tokenType.rawValue)
     static var tokenType: String?
+    
 }
 
 extension UserManager {

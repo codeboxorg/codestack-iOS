@@ -7,6 +7,7 @@
 
 import Foundation
 import Domain
+import Global
 
 struct SendProblemModel {
     let submissionID: SubmissionID
@@ -53,6 +54,7 @@ extension SendProblemModel {
     }
     
     func toTempDomain() -> SubmissionVO {
+        Log.debug("self.submissionID: \(self.submissionID)")
         let submissionID = self.submissionID.isEmpty ? UUID().uuidString : self.submissionID
         return SubmissionVO.init(id: submissionID,
                                  sourceCode: self.sourceCode,

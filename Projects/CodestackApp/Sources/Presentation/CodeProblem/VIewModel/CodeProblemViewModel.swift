@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import RxFlow
 import Domain
+import Global
 
 protocol ProblemViewModelProtocol{
     associatedtype Input = CodeProblemViewModel.Input
@@ -26,7 +27,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
     
     struct Input {
         var viewDidLoad: Signal<Void>
-        var viewDissapear: Signal<Void>
+        var deinitVC: Signal<Void>
         var segmentIndex: Signal<Int>
         var foldButtonSeleted: Signal<(Int,Bool)>
         var cellSelect: Signal<DummyModel>
@@ -50,9 +51,7 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
         self.useCase = service
     }
     
-    deinit{
-        print("\(String(describing: Self.self)) - deinint")
-    }
+    deinit { print("\(String(describing: Self.self)) - deinint") }
     
     //Output
     private var seg_list_model = PublishRelay<[DummyModel]>()
@@ -74,27 +73,28 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
     var disposeBag = DisposeBag()
     
     func transform(_ input: Input) -> Output{
-        
-        
         fetchWhenPagination(input: input.fetchProblemList)
         
         fetchWhenViewDidLoad(load: input.viewDidLoad)
         
         //MARK: View Will Disappear
-        _ = input.viewDissapear
-            .emit(with: self, onNext: { vm , value in
-                vm.currentPage = 0
-            }).disposed(by: disposeBag)
-        
+        // _ = input.deinitVC
+        //     .emit(with: self, onNext: { vm , value in
+        //     }).disposed(by: disposeBag)
         
         //MARK: - Cell Select
         _ = input.cellSelect
+            .withUnretained(self)
+            .flatMapFirst { vm, model in
+                return Signal.just(model)
+            }
             .map{ model in CodestackStep.problemPick(model.model) }
             .emit(to: steps)
             .disposed(by: disposeBag)
         
         //MARK: - Segment action = Index ? strech OR Fold (all presented Problem Cell)
         _ = input.segmentIndex
+            .map { $0 }
             .emit(to: segmentIndex)
             .disposed(by: disposeBag)
         
@@ -142,7 +142,6 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
         .bind(to: seg_list_model)
         .disposed(by: disposeBag)
         
-        
         return Output(seg_list_model: seg_list_model.asDriver(onErrorJustReturn: []),
                       cell_temporary_content_update: foldButton.asDriver(onErrorJustReturn: (0,false)),
                       refreshEndEvnet: refreshEnd.asDriver(onErrorJustReturn: ()))
@@ -153,22 +152,21 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
         //fetch logic
         _ = list
             .withUnretained(self)
-            .filter{ vm,_ in
-                if vm.currentPage >= vm.totalPage{
+            .filter { vm,_ in
+                if vm.currentPage >= vm.totalPage {
                     vm.isLoading = false
                     vm.refreshEnd.accept(())
                     return false
                 }
                 return true
             }
-            .delay(.milliseconds(300))
             .flatMap { vm, _ in
                 vm.useCase.fetchProblems(offset: vm.currentPage)
+                    .map { $0.probleminfoList }
                     .asSignal(onErrorJustReturn: [])
             }
             .emit(with: self, onNext: { vm, problems in
                 let dummyModel = problems.map { problem in
-                    let list1 = problem.toProblemList(.sample)
                     let list = problem.toProblemList()
                     return (model: list,language: problem.languages, flag: false)
                 }
@@ -197,21 +195,33 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
         _ = load
             .withUnretained(self)
             .flatMap { vm, _ in
-                vm.useCase.fetchProblems(offset: vm.currentPage)
+                vm.isLoading = true
+                return vm.useCase.fetchProblems(offset: vm.currentPage)
+                    .do(onNext: { pageInfo in vm.totalPage = pageInfo.pageInfo.limit },
+                        onError: { err in Log.debug("err: \(err)") })
+                    .map { $0.probleminfoList }
                     .asSignal(onErrorJustReturn: [])
             }
             .emit(with: self, onNext: { vm, problems in
-                let dummyModel = problems.map { problem in
-                    let list = problem.toProblemList()
-                    return (model: list,language: problem.languages, flag: false)
+                if problems.isEmpty {
+                    let tempModel = vm.dummy.getAllModels(index: vm.currentPage)
+                    tempModel.forEach { model in
+                        vm.animationSelected[model.model.problemNumber] = model.flag
+                    }
+                    vm.listModel.accept(tempModel)
+                } else {
+                    let dummyModel = problems.map { problem in
+                        let list = problem.toProblemList()
+                        return (model: list,language: problem.languages, flag: false)
+                    }
+                    dummyModel.forEach { model in
+                        vm.animationSelected[model.model.problemNumber] = model.flag
+                    }
+                    vm.listModel.accept(dummyModel)
                 }
-                
-                dummyModel.forEach { model in
-                    vm.animationSelected[model.model.problemNumber] = model.flag
-                }
-                
                 vm.currentPage += 1
-                vm.listModel.accept(dummyModel)
+                vm.isLoading = false
+                vm.refreshEnd.accept(())
             })
             .disposed(by: disposeBag)
     }

@@ -8,7 +8,7 @@
 import UIKit
 
 
-class BackButton: UIButton{
+public final class BackButton: UIButton{
     
     override init(frame: CGRect) {
         super.init(frame: frame)

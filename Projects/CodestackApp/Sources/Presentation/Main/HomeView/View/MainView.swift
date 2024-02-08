@@ -8,8 +8,9 @@
 import UIKit
 import RxCocoa
 import RxSwift
+import CommonUI
 
-class MainView: UIView{
+class MainView: UIView {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -63,14 +64,6 @@ class MainView: UIView{
     
     //MARK: - Events merge to Signal
     func emitTodayAndRecommendBtnEvent() -> Signal<ButtonType>{
-        
-//        #if DEBUG
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-//            guard let self else {return}
-//            subView_1.today_problem_btn.sendActions(for: .touchUpInside)
-//        })
-//        #endif
-
         let events = [subView_1.buttonTapSignal(),subView_2.buttonTapSignal()]
         return Signal.merge(events).asSignal()
     }
@@ -87,6 +80,17 @@ class MainView: UIView{
     private let introduce_small_offset: CGFloat = 20
     
     lazy var container_height = subViews_1_height + subViews_2_height + 10
+    
+    func skeletonLayout() {
+        subView_1.layoutIfNeeded()
+        subView_2.layoutIfNeeded()
+        subView_1.subviews.forEach { subView in
+            subView.addSkeletonAndRemoveView()
+        }
+        subView_2.subviews.forEach { subView in
+            subView.addSkeletonAndRemoveView()
+        }
+    }
     
     private func layoutConfigure(){
         self.addSubview(containerView)

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CommonUI
 
 
 extension UITextField {
@@ -26,7 +27,7 @@ extension UITextField {
     
     func textFieldSetting(place: String,
                           tag: Int,
-                          vc: RegisterViewController,
+                          vc: UITextFieldDelegate,
                           secure: Bool = false ) -> UITextField {
         if secure {
             self.isSecureTextEntry = true

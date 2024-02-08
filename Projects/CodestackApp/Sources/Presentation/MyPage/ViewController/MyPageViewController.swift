@@ -13,66 +13,68 @@ import PhotosUI
 import Photos
 import RxGesture
 import Global
+import SwiftUI
 
 typealias ProfileImage = UIImage
 
 final class MyPageViewController: UIViewController{
     
-    static func create(with dependency: MyPageViewModel) -> MyPageViewController {
+    struct Dependency {
+        var myPageViewModel: MyPageViewModel
+        var contiributionViewModel: ContributionViewModel?
+    }
+    
+    static func create(with dependency: Dependency) -> MyPageViewController {
         let vc = MyPageViewController()
-        vc.myPageViewModel = dependency
+        vc.myPageViewModel = dependency.myPageViewModel
+        vc.contiributionViewModel = dependency.contiributionViewModel
         return vc
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         addAutoLayout()
+        calendarView()
         self.view.backgroundColor = UIColor.systemBackground
         binding()
         DispatchQueue.main.asyncAfter(deadline: .now() , execute: {
             self.statusView.circleProgressView.startProgressAnimate()
             self.statusView.settingProgressViewAnimation(0.3, 0.6, 0.9)
         })
-        
-        //MARK: Notify ViewDidLoad To ViewModel
+        // MARK: Notify ViewDidLoad To ViewModel
         //  _viewDidLoad 는 Behavior라서 초기값으로 인해 accept로 값을 보내주면 2번 호출이 되버림 _viewDidLoad.accept(())
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        _viewWillDisapear.accept(())
-    }
-    
-    private var myPageViewModel: MyPageViewModel?
+    var myPageViewModel: MyPageViewModel?
+    private(set) var contiributionViewModel: ContributionViewModel?
     private var disposeBag = DisposeBag()
     
-    private let _viewDidLoad = BehaviorRelay<Void>(value: ())
-    private let _viewWillDisapear = PublishRelay<Void>()
-    private let profileImageValue = PublishRelay<Data>()
+    private let profileImageValue = BehaviorRelay<Data>(value: Data())
     
     lazy var profileEditEvent = profileView.editProfileEvent()
-    lazy var output = myPageViewModel?.transform(input:.init(editProfileEvent: profileEditEvent,
-                                                             profileImageValue: profileImageValue.asSignal(),
-                                                             viewDidLoad: _viewDidLoad.asSignal(onErrorJustReturn: ())))
+    
     
     private func binding() {
-        
         // TODO: Image 413 code, payload가 너무 큰 상황 -> 이미지 리사이즈 필요
         // TODO: Image 401 unAuthorization -> Authorization header의 토큰이 잘못되었음...
         // TODO: statusCode 400 "Bad Request" -> field
         // MARK: ContentDisposition의 name은 서버에서 받는 field 이름으로
         // MARK: "https://api-v2.codestack.co.kr/v1/member/profile" -i -v Success (984ms): Status 200 성공
+        let output = myPageViewModel?
+            .transform(input:.init(editProfileEvent: profileEditEvent,
+                                   profileImageValue: profileImageValue.asDriver(),
+                                   viewDidLoad: OB.justVoid()))
         
-        profileEditEvent
-            .emit(with: self, onNext: { vc, _ in
-                vc.checkAuthorize()
-            }).disposed(by: disposeBag)
-
+        // MARK: Check Authroize
+//        profileEditEvent
+//            .emit(with: self, onNext: { vc, _ in
+//                vc.checkAuthorize()
+//            }).disposed(by: disposeBag)
+        
         output?.userProfile
-            .drive(with: self, onNext: { vc, profile in
-                vc.profileView.profileBinder.onNext(profile)
-            }).disposed(by: disposeBag)
-
+            .drive(profileView.profileBinder)
+            .disposed(by: disposeBag)
+        
         if let loading = output?.loading.asDriver() {
             profileView.loadingBinding(loading)
         }
@@ -85,26 +87,13 @@ final class MyPageViewController: UIViewController{
                 imageVC.modalPresentationStyle = .automatic
                 vc.present(imageVC, animated: true)
             }).disposed(by: disposeBag)
-        
-
-//        viewModel.activated
-//            .map { !$0 }
-//            .observeOn(MainScheduler.instance)
-//            .do(onNext: { [weak self] finished in
-//                if finished {
-//                    self?.tableView.refreshControl?.endRefreshing()
-//                }
-//            })
-//            .bind(to: activityIndicator.rx.isHidden)
-//            .disposed(by: disposeBag)
-        
     }
-    
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
+        scrollView.contentInset = .init(top: 0, left: 0, bottom: 50, right: 0)
         return scrollView
     }()
     
@@ -115,24 +104,40 @@ final class MyPageViewController: UIViewController{
     
     private let profileView: ProfileView = {
         let view = ProfileView(frame: .zero)
+        view.backgroundColor = .systemBackground
         view.layer.cornerRadius = 12
         return view
     }()
     
     private let statusView: StatusView = {
         let view = StatusView(frame: .zero)
+        view.backgroundColor = .systemBackground
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderWidth = 1
+        view.layer.cornerRadius = 12
+        return view
+    }()
+    
+    let graphContainerView: UIView = {
+       let view = UIView()
+        view.backgroundColor = .systemBackground
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderWidth = 1
         view.layer.cornerRadius = 12
         return view
     }()
 }
 
 private extension MyPageViewController {
-    func addAutoLayout(){
+    func addAutoLayout() {
         view.addSubview(scrollView)
         scrollView.addSubview(containerView)
         [profileView,statusView].forEach{
             containerView.addSubview($0)
         }
+        containerView.addSubview(graphContainerView)
         
         scrollView.snp.makeConstraints{
             $0.leading.trailing.bottom.equalToSuperview()
@@ -151,10 +156,17 @@ private extension MyPageViewController {
             $0.height.equalTo(250).priority(.low)
         }
         
-        statusView.snp.makeConstraints{
-            $0.top.equalTo(profileView.snp.bottom).offset(25)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(300).priority(.low)
+        graphContainerView.snp.makeConstraints { make in
+            make.top.equalTo(profileView.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.height.equalTo(180) //.priority(.low)
+        }
+        
+        statusView.snp.makeConstraints { make in
+            make.top.equalTo(graphContainerView.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.height.equalTo(300).priority(.high)
+            make.bottom.equalToSuperview()
         }
     }
 }
@@ -187,7 +199,6 @@ extension MyPageViewController: PHPickerViewControllerDelegate {
                 }
             }
         } else {
-            
             // TODO: Handle empty results or item provider not being able load UIImage
             // TODO: 선택된 이미지 없다고 표시하기
         }
@@ -235,8 +246,36 @@ extension MyPageViewController {
             default:
                 break
                 //FIXME: Implement handling for all authorizationStatus
-                print("Unimplemented")
+                // print("Unimplemented")
             }
         }
+    }
+}
+
+extension MyPageViewController {
+    //MARK: - 컨티리뷰션 그래프 뷰
+    func calendarView() {
+        guard let viewModel = self.contiributionViewModel else { return }
+        
+        let vc = UIHostingController(rootView: SubmissionChartView(viewModel: viewModel))
+        
+        let submissionChartView = vc.view!
+        submissionChartView.translatesAutoresizingMaskIntoConstraints = false
+        submissionChartView.backgroundColor = .systemBackground
+        submissionChartView.layer.cornerRadius = 12
+        
+        addChild(vc)
+        graphContainerView.addSubview(submissionChartView)
+        
+        NSLayoutConstraint.activate([
+            submissionChartView.topAnchor.constraint(equalTo: graphContainerView.topAnchor, constant: 12),
+            submissionChartView.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor),
+            submissionChartView.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor),
+            submissionChartView.bottomAnchor.constraint(equalTo: graphContainerView.bottomAnchor)
+        ])
+        
+        // 4
+        // Notify the child view controller that the move is complete.
+        vc.didMove(toParent: self)
     }
 }
