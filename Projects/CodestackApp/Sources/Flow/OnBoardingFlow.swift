@@ -33,9 +33,7 @@ class OnBoardingFlow: Flow{
     }
     
     func navigate(to step: Step) -> FlowContributors {
-        guard
-            let codeStep = step as? CodestackStep
-        else { Log.error("Step unwrappingError");  return .none}
+        guard let codeStep = step as? CodestackStep else { Log.error("Step unwrappingError");  return .none}
         switch codeStep{
         case .onBoardingRequired:
             return navigateToOnBoardingVC()
