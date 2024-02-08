@@ -12,6 +12,9 @@ import Domain
 
 extension ObjectScope {
     static let history = ObjectScope(storageFactory: PermanentStorage.init)
+    // MARK: resetObjectScope로 초기화 가능
+    // 기존 객체가 Custom Storage에 저장되어 있다가 특정 시점에 deinit 하고 싶을때 사용
+    // vm.container.resetObjectScope(.history)
 }
 
 public struct HistoryAssembly: Assembly {

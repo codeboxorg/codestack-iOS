@@ -76,26 +76,9 @@ class TabBarFlow: Flow{
             let historyVC = histoty
             let myPageVC = myPage
             
-            homeVC.tabBarItem = UITabBarItem(title: nil,
-                                             image: UIImage(systemName: "house")?.baseOffset(),
-                                             tag: 0)
-            
-            problemVC.tabBarItem = UITabBarItem(title: nil,
-                                                image: UIImage(systemName: "list.bullet.rectangle.portrait")?.baseOffset(),
-                                                tag: 1)
-            
-            historyVC.tabBarItem = UITabBarItem(title: nil,
-                                                image: UIImage(systemName: "clock")?.baseOffset(),
-                                                tag: 2)
-            
-            myPageVC.tabBarItem = UITabBarItem(title: nil,
-                                               image: UIImage(systemName: "person")?.baseOffset(),
-                                               tag: 3)
-            
-            self.rootViewTabController.setViewControllers([homeVC,
-                                                           problemVC,
-                                                           historyVC,
-                                                           myPageVC], animated: true)
+            let dummyViewConroller = CodeEditorViewController()
+            self.rootViewTabController.setViewControllers([homeVC, problemVC,dummyViewConroller, historyVC, myPageVC], animated: true)
+            rootViewTabController.addTabBarItems()
         }
         
         return .multiple(flowContributors: [

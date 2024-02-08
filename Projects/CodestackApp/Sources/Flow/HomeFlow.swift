@@ -9,7 +9,7 @@ import UIKit
 import RxFlow
 import RxSwift
 import RxCocoa
-
+import Global
 
 class HomeStepper: Stepper{
     
@@ -29,6 +29,7 @@ class HomeFlow: Flow{
     
     private let rootViewController: UINavigationController = {
         let viewController = UINavigationController()
+        viewController.view.backgroundColor = UIColor.systemBackground
         viewController.setNavigationBarHidden(false, animated: false)
         return viewController
     }()
@@ -43,7 +44,7 @@ class HomeFlow: Flow{
     private weak var tabbarDelegate: TabBarDelegate?
     private let injector: Injectable
     
-    init(dependency: Dependency){
+    init(dependency: Dependency) {
         self.tabbarDelegate = dependency.tabbarDelegate
         self.injector = dependency.injector
         self.sideVC = injector.resolve(SideMenuViewController.self)
@@ -83,12 +84,7 @@ class HomeFlow: Flow{
             return .none
             
         case .toastMessage(let message):
-            Toast.toastMessage("\(message)",
-                               container: rootViewController.presentedViewController?.view,
-                               offset: UIScreen.main.bounds.height - 150,
-                               background: .sky_blue,
-                               boader: UIColor.black.cgColor)
-            return .none
+            return toastMessage(message)
             
         case .loginNeeded:
             return .end(forwardToParentFlowWithStep: CodestackStep.logout)
@@ -100,6 +96,11 @@ class HomeFlow: Flow{
             guard let item else {return .none}
             return navigateToRecentSolveList(problem: item)
             
+        case .richText(let problems):
+            let vc = RichTextViewController.create(with: problems)
+            rootViewController.pushViewController(vc, animated: true)
+            return .none
+            
         case .historyflow:
             tabbarDelegate?.setSelectedItem(for: .history)
             return .none
@@ -110,27 +111,34 @@ class HomeFlow: Flow{
     }
 
     private func navigateToHome() -> FlowContributors {
-        
         let homeVC = injector.resolve(HomeViewController.self)
         let homeViewModel = injector.resolve(HomeViewModel.self)
         
         rootViewController.pushViewController(homeVC, animated: false)
                 
-        return .one(flowContributor:
-                .contribute(withNextPresentable: homeVC,
-                            withNextStepper: CompositeStepper(steppers: [homeViewModel,sideVC]))
-        )
+        let composite = CompositeStepper(steppers: [homeViewModel,sideVC])
+        return .one(flowContributor: .contribute(withNextPresentable: homeVC,
+                                                 withNextStepper: composite))
     }
     
     private func navigateToRecentSolveList(problem item: ProblemListItemModel) -> FlowContributors {
         let editorVC = injector.resolve(CodeEditorViewController.self, item)
         let stepper = injector.resolve(CodeEditorStepper.self)
         editorVC.hidesBottomBarWhenPushed = true
-        
         rootViewController.pushViewController(editorVC, animated: true)
-        return .one(flowContributor: .contribute(withNextPresentable: editorVC, withNextStepper: stepper))
+        let composite = CompositeStepper(steppers: [stepper, editorVC])
+        return .one(flowContributor: .contribute(withNextPresentable: editorVC,
+                                                 withNextStepper: composite))
     }
     
+    private func toastMessage(_ msg: String) -> FlowContributors {
+        Toast.toastMessage("\(msg)",
+                           container: rootViewController.presentedViewController?.view,
+                           offset: Position.screenHeihgt - 150,
+                           background: .sky_blue,
+                           boader: UIColor.black.cgColor)
+        return .none
+    }
     private func showSideMenuView() -> FlowContributors {
         sideVC.show()
         return .none

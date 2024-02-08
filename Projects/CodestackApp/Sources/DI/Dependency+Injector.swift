@@ -15,7 +15,8 @@ public protocol DependencyAssemblable {
     func register<T>(_ type: T.Type, _ object: T, _ key: String)
     func resolve<T>(_ type: T.Type) -> T
     func resolve<T, U>(_ type: T.Type,_ argument: U) -> T
-    func resolve<T, U, Z>(_ type: T.Type,_ arg1: U, _ arg2: Z) -> T 
+    func resolve<T, U, Z>(_ type: T.Type,_ arg1: U, _ arg2: Z) -> T
+    var container: Container { get }
 }
 
 public protocol DependencyResolvable {
@@ -26,9 +27,9 @@ public protocol Injectable: DependencyAssemblable, DependencyResolvable { }
 
 public class DefaultInjector: Injectable {
     
-    private let container: Container
+    public let container: Container
     
-    public init(container: Container) {
+    public init(container: Container = Container()) {
         self.container = container
     }
     
