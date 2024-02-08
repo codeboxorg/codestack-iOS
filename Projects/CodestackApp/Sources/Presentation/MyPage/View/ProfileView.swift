@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import Global
 import Domain
+import CommonUI
 
 class ProfileView: UIView{
 
@@ -79,17 +80,18 @@ class ProfileView: UIView{
     var profileBinder: Binder<MemberVO> {
         Binder(self){ [weak self] target ,value  in
             guard let self else { return }
-            
-            self.nameLabel.text = value.username // ?? "Unknown"
-            
+            self.nameLabel.text = value.nickName // ?? "Unknown"
             // TODO: Rank 어떻게 해야돼ㅣㅁ?
+            if let url = URL(string: value.profileImage),
+               let data = try? Data(contentsOf: url) {
+                self.imageView.image = UIImage(data: data)
+            }
             self.rank.text = "N/A"
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         addAutoLayout()
         settingColor()
         activityIndicator.isHidden = false
@@ -99,7 +101,7 @@ class ProfileView: UIView{
     enum LoadingState: Equatable {
         case notLoading
         case loading
-        case loaded(String?)
+        case loaded(Data)
     }
     
     required init?(coder: NSCoder) {
@@ -116,34 +118,24 @@ class ProfileView: UIView{
     func stateAnimating(state: LoadingState){
         switch state {
         case .notLoading:
-            Log.debug("notLoading")
             self.imageView.image = nil
             self.activityIndicator.isHidden = false
             self.activityIndicator.startAnimating()
             
         case .loading:
-            Log.debug("loading")
             self.imageView.image = nil
             self.activityIndicator.isHidden = false
             self.activityIndicator.startAnimating()
             
-        case .loaded(let urlstring):
-            Log.debug("loaded")
-            if urlstring == nil {
-                self.imageView.image = UIImage(named: "codeStack")
-            } else {
-                //TODO: 이미지 로컬 저장소에 저장해야함
-                //TODO: Cache 처리 해야되는데 .....
-                if let urlstring,
-                   let url = URL(string: urlstring) {
-                    self.imageView.load(url: url, completion: { [weak self] _ in
-                        self?.imageView.stopAnimating()
-                        self?.activityIndicator.isHidden = true
-                    })
-                }
+        case .loaded(let data):
+            //TODO: 이미지 로컬 저장소에 저장해야함
+            //TODO: Cache 처리 해야되는데 .....
+            self.imageView.load(data: data) { [weak self] _ in
+                self?.imageView.stopAnimating()
+                self?.activityIndicator.isHidden = true
+                self?.activityIndicator.stopAnimating()
+                self?.activityIndicator.isHidden = true
             }
-            self.activityIndicator.stopAnimating()
-            self.activityIndicator.isHidden = true
         }
     }
     
@@ -212,26 +204,4 @@ private extension ProfileView {
             $0.bottom.equalToSuperview().inset(16).priority(.high)
         }
     }
-}
-
-extension UIImageView {
-    
-    func load(url: URL, completion: @escaping (UIImage) -> () ) {
-        DispatchQueue.global().async { [weak self] in
-            guard let self else { return }
-            if let data = try? Data(contentsOf: url) {
-                self.load(data: data, completion: completion)
-            }
-        }
-    }
-    
-    func load(data: Data, completion: @escaping (UIImage) -> ()) {
-        if let image = UIImage(data: data) {
-            DispatchQueue.main.async {
-                self.image = image
-                completion(image)
-            }
-        }
-    }
-    
 }
