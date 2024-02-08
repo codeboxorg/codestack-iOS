@@ -10,11 +10,15 @@ import ProjectDescriptionHelpers
 
 
 let dependencies: [TargetDependency] = [
+    .PRO.domain,
     .PRO.data,
-    .PRO.domain
+    .PRO.global,
+    .PRO.csNetwork,
+    .PRO.commonUI,
+    .PRO.presentation,
 ]
 
-let entitlementPath: ProjectDescription.Path = .relativeToCurrentFile("Resources/CodeStack.entitlements")
+let entitlementPath: Path = .relativeToCurrentFile("Resources/CodeStack.entitlements")
 
 let resources: ResourceFileElements
 = [
@@ -23,22 +27,14 @@ let resources: ResourceFileElements
     "Resources/Assets.xcassets",
     "Resources/appstore.png",
     "Resources/style.css",
-    "Resources/PLanguage/c/*.txt",
-    "Resources/PLanguage/c++/*.txt",
-    "Resources/PLanguage/cpp/*.txt",
-    "Resources/PLanguage/go/*.txt",
-    "Resources/PLanguage/java/*.txt",
-    "Resources/PLanguage/javascript/*.txt",
-    "Resources/PLanguage/kotlin/*.txt",
-    "Resources/PLanguage/nodejs/*.txt",
-    "Resources/PLanguage/python3/*.txt",
-    "Resources/PLanguage/swift/*.txt",
-    "Resources/PLanguage/typescript/*.txt",
-    "Resources/Base.lproj/LaunchScreen.storyboard"
+    "Resources/PLanguage/**/*.txt",
+    "Resources/Base.lproj/*.storyboard",
+    "Resources/GoogleService-Info.plist"
 ]
 
 let project = Project.createModule(name: "CodestackApp",
                                    product: .app,
+                                   includeTestTarget: true,
                                    bundleID: "kr.co.codestack.ios",
                                    settings: true,
                                    dependencies: dependencies,
