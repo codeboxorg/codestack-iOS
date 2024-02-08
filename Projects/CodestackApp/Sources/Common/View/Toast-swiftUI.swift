@@ -11,6 +11,13 @@ import SwiftUI
 enum ToastStyle {
     case error
     case success
+    
+    var value: String {
+        switch self {
+        case .error: return "실패"
+        case .success: return "성공"
+        }
+    }
 }
 
 extension ToastStyle {
@@ -37,6 +44,14 @@ struct ToastValue: Equatable {
     
     static var sample: Self {
         .init(type: ToastStyle.error, title: "성공", message: "추가에 실패하였습니다.")
+    }
+    
+    static var register: Self {
+        .init(type: ToastStyle.success, title: "성공", message: "회원가입에 성공하셨습니다!")
+    }
+    
+    static func make(_ type: ToastStyle,_ msg: String) -> Self {
+        return .init(type: type, title: type.value, message: msg)
     }
 }
 
