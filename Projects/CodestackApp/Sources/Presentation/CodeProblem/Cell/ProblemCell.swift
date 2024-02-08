@@ -56,24 +56,14 @@ class ProblemCell: UITableViewCell{
         view.layer.borderWidth = 1
         return view
     }()
-//        private lazy var graphCollectionView: UICollectionView = {
-//            let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-//            flowLayout.minimumLineSpacing = 0 // 상하간격
-//            flowLayout.estimatedItemSize = CGSize(width: 50.0, height: 50.0)
-//            let collection = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-//            collection.delegate = self
-//            collection.dataSource = self
-//            collection.register(GraphCell.self, forCellWithReuseIdentifier: GraphCell.identifier)
-//            return collection
-//        }()
     
     private let languageContainerContainer: UIView = {
         let view = UIView()
         return view
     }()
     
-    private lazy var langugeContainer: LanguageTagContainer = {
-        let container = LanguageTagContainer(frame: self.frame, spacing: containerSpacing)
+    private lazy var langugeContainer: TagContainer = {
+        let container = TagContainer(frame: self.frame, spacing: containerSpacing)
         return container
     }()
     
@@ -146,7 +136,6 @@ class ProblemCell: UITableViewCell{
         model = nil
         languages = nil
         disposeBag = DisposeBag()
-        
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -178,70 +167,26 @@ class ProblemCell: UITableViewCell{
     
     
     private func strechTableView(){
-        
-        //        self.graphCollectionView.isHidden = false
         self.langugeContainer.isHidden = false
         self.graphSubmit.isHidden = false
         horizontalTitleContainer.snp.remakeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(52)
         }
-        
-//        problem_number.snp.remakeConstraints { make in
-//            make.top.left.equalToSuperview().inset(12)
-//            make.height.equalTo(25)
-//            make.width.equalTo(25).priority(.low)
-//        }
-        
     }
     
     
     
     //MARK: - Fold Action
     private func foldTableView(){
-        
-        
-        //        self.graphCollectionView.isHidden = true
         self.langugeContainer.isHidden = true
         self.graphSubmit.isHidden = true
-        
-//        problem_number.snp.remakeConstraints { make in
-//            make.top.equalToSuperview().inset(12)
-//            make.left.equalToSuperview().inset(12)
-//            make.centerY.equalToSuperview()
-//            make.height.equalTo(30).priority(.high)
-//            make.width.equalTo(30).priority(.low)
-//        }
         
         horizontalTitleContainer.snp.remakeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(52).priority(.high)
             make.bottom.equalToSuperview()
         }
-        
-//        problem_number.snp.remakeConstraints { make in
-//            make.top.left.equalToSuperview().inset(12)
-//            make.height.equalTo(25).priority(.high)
-//            make.width.equalTo(25).priority(.low)
-//            make.bottom.equalToSuperview().offset(-12)
-//            make.bottom.lessThanOrEqualToSuperview().inset(12)
-//        }
-        //        UIView.animate(withDuration: 0.3, animations: {
-        //            self.layoutIfNeeded()
-        //        })
-        //        problem_title.snp.remakeConstraints { make in
-        //            make.centerY.equalTo(problem_number.snp.centerY)
-        //            make.leading.equalTo(problem_number.snp.trailing).offset(8)
-        //            make.trailing.equalTo(foldButton.snp.leading).offset(-8)
-        //        }
-        //
-        //        setViewPriority()
-        //
-        //        foldButton.snp.remakeConstraints { make in
-        //            make.width.height.equalTo(30)
-        //            make.trailing.equalToSuperview().inset(12)
-        //            make.centerY.equalTo(problem_number.snp.centerY)
-        //        }
     }
     
     // MARK: - SubView array Property
@@ -313,10 +258,6 @@ class ProblemCell: UITableViewCell{
         
         setViewPriority()
         
-        
-        // foldButton.layer.borderColor = UIColor.purple.cgColor
-        // foldButton.layer.borderWidth = 2
-        
         foldButton.snp.makeConstraints { make in
             // 아 이거때문에 하ㅏㅏ
 //            make.top.equalToSuperview()
@@ -324,13 +265,6 @@ class ProblemCell: UITableViewCell{
             make.width.height.equalTo(30)
             make.centerY.equalTo(problem_number.snp.centerY)
         }
-        
-        //        graphCollectionView.snp.makeConstraints{ make in
-        //            make.top.equalTo(problem_number.snp.bottom).offset(8)
-        //            make.leading.equalTo(problem_number.snp.leading)
-        //            make.trailing.equalToSuperview().offset(-16)
-        //            make.height.equalTo(50)
-        //        }
         
         graphSubmit.snp.makeConstraints { make in
             make.top.equalTo(horizontalTitleContainer.snp.bottom).offset(12)
@@ -352,46 +286,3 @@ class ProblemCell: UITableViewCell{
         }
     }
 }
-
-//extension ProblemCell: UICollectionViewDelegateFlowLayout{
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let cell = GraphCell(frame: .zero)
-//        let width = collectionView.frame.size.width
-//
-//        cell.contentView.bounds.size.width = width
-//
-//        cell.contentView.setNeedsLayout()
-//        cell.contentView.layoutIfNeeded()
-//
-//        let height = cell.contentView.systemLayoutSizeFitting(CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)).height
-//
-//        return CGSize(width: width, height: height)
-//    }
-//}
-
-//extension ProblemCell: UICollectionViewDelegate{
-//
-//}
-//
-//
-//extension ProblemCell: UICollectionViewDataSource{
-//
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 2
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GraphCell.identifier, for: indexPath) as? GraphCell else {return UICollectionViewCell()}
-//        if indexPath.row == 1{
-//            if let model = model{
-//                cell.bind(GraphCell.GraphModel(submitCount: "\(model.submitCount)",
-//                                               correctAnswer: "\(model.correctAnswer)",
-//                                               correctRate: "\(model.correctRate)"))
-//            }
-//
-//            return cell
-//        }
-//
-//        return cell
-//    }
-//}

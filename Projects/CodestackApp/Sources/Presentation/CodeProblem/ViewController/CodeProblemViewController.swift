@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Global
 
 public typealias CurrentPage = Int
 
@@ -32,6 +33,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
         tableView.estimatedRowHeight = 200
         tableView.separatorColor = UIColor.clear
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.contentInset = .init(top: 0, left: 0, bottom: 50, right: 0)
         return tableView
     }()
     
@@ -55,22 +57,8 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
         super.viewDidLoad()
         bindingModel()
         
-        _viewDidLoad.accept(())
-        
         layoutConfigure()
     }
-    
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        _viewDissapear.accept(())
-        
-        if self.navigationController == nil {
-            disposeBag = DisposeBag()
-            
-        }
-    }
-    
     
     //MARK: - View Layout Configure
     private func layoutConfigure(){
@@ -78,7 +66,10 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
         self.navigationItem.title = "문제"
         self.view.addSubview(problemTableView)
         problemTableView.snp.makeConstraints{
-            $0.edges.equalTo(self.view.safeAreaLayoutGuide.snp.edges)
+            $0.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
+            $0.leading.equalTo(self.view.safeAreaLayoutGuide.snp.leading)
+            $0.trailing.equalTo(self.view.safeAreaLayoutGuide.snp.trailing)
+            $0.bottom.equalTo(view.snp.bottom).offset(50)
         }
         segmentControl.sizeToFit()
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: segmentControl)
@@ -86,18 +77,17 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
     
     
     //MARK: - Binding from ViewModel
-    var disposeBag: DisposeBag = DisposeBag()
-    var _viewDidLoad = PublishRelay<Void>()
-    var _viewDissapear = PublishRelay<Void>()
-    var _foldButtonSeleted = PublishRelay<(Int,Bool)>()
-    var _cellSelect = PublishRelay<DummyModel>()
+    private var disposeBag: DisposeBag = DisposeBag()
+    private var deinitVC = PublishRelay<Void>()
+    private var _foldButtonSeleted = PublishRelay<(Int,Bool)>()
+    private var _cellSelect = PublishRelay<DummyModel>()
     
     var _fetchProblemList = PublishRelay<Void>()
         
     lazy var _segmentcontrolValue = segmentControl.rx.selectedSegmentIndex.asSignal(onErrorJustReturn: 0)
     
-    lazy var input = CodeProblemViewModel.Input(viewDidLoad: _viewDidLoad.asSignal(),
-                                                viewDissapear: _viewDissapear.asSignal(),
+    lazy var input = CodeProblemViewModel.Input(viewDidLoad: OB.justVoid(),
+                                                deinitVC: deinitVC.asSignal(),
                                                 segmentIndex: _segmentcontrolValue,
                                                 foldButtonSeleted: _foldButtonSeleted.asSignal(),
                                                 cellSelect: _cellSelect.asSignal(),
@@ -105,6 +95,11 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
     
     var output: CodeProblemViewModel.Output?
     
+    
+    deinit {
+        deinitVC.accept(())
+        Log.debug("deinit ProblemVC")
+    }
     #if DEBUG
 //    func cellClickedEvent(){
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: { [weak self] in
@@ -118,7 +113,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
         let viewmodel = (viewModel as? CodeProblemViewModel)
         self.output = viewmodel?.transform(input)
         
-        let scroll = problemTableView.rx.didScroll.asDriver()
+        let scroll = problemTableView.rx.didScroll.asObservable().skip(1)
         
         output?.refreshEndEvnet
             .drive(with: self,onNext: { vc, _ in
@@ -126,60 +121,58 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
             }).disposed(by: disposeBag)
         
         scroll
-            .filter{[weak self] _ in
-                guard let self,
-                      let vm = self.viewModel
-                else {return false}
-               return vm.isLoading ? false : true
+            .throttle(.milliseconds(400), scheduler: MainScheduler.instance)
+            .withUnretained(self)
+            .compactMap { vc, _ in vc.viewModel }
+            .filter { vm in !vm.isLoading }
+            .withUnretained(self)
+            .map { vc, _ in vc.problemTableView }
+            .filter { table in
+                (table.contentOffset.y + 300) > (table.contentSize.height - table.bounds.height)
             }
-            .drive(with: self, onNext: { vc , _ in
-                let table = vc.problemTableView
-                if table.contentOffset.y > table.contentSize.height - table.bounds.height{
-                    vc.viewModel?.isLoading = true
-                    table.addBottomRefresh(width: vc.view.frame.width)
-                    vc._fetchProblemList.accept(())
-                }
+            .subscribe(with: self, onNext: { vc, _ in
+                vc.viewModel?.isLoading = true
+                vc.problemTableView.addBottomRefresh(width: vc.view.frame.width)
+                vc._fetchProblemList.accept(())
             }).disposed(by: disposeBag)
-
-        
+    
         problemTableView.rx
             .setDelegate(self)
             .disposed(by: disposeBag)
         
         guard let seg_list_model = self.output?.seg_list_model.asObservable() else {return}
         
-        
         seg_list_model.bind(to: problemTableView.rx.items(cellIdentifier: ProblemCell.identifier,
                                                           cellType: ProblemCell.self))
-        {
-            (index: Int, model : DummyModel ,cell: ProblemCell) in
+        { [weak self] (index: Int, model : DummyModel ,cell: ProblemCell) in
         
             var dummyModel = model
             
-            if let viewmodel{
+            if let viewmodel {
                 dummyModel.flag = viewmodel.animationSelected[dummyModel.model.problemNumber] ?? false
             }
             
             cell.binder.onNext(dummyModel)
             
-            self.problemTableView.showsVerticalScrollIndicator = true
+            self?.problemTableView.showsVerticalScrollIndicator = true
             
             cell.foldButtonTap?.asObservable().bind(onNext: { [weak self] in
-                guard let self = self else {return}
+                guard let self = self else { return }
                 self.problemTableView.showsVerticalScrollIndicator = false
                 let buttonSelected = cell.foldButton.isSelected
                 self.viewModel?.animationSelected[dummyModel.model.problemNumber] = buttonSelected
-                
-                self.problemTableView.performBatchUpdates({}){ _ in
+                self.problemTableView.performBatchUpdates({}){ value in
                     self.problemTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
                 }
             }).disposed(by: cell.disposeBag)
 
+            
+            guard let self else { return }
             cell.problemCell_tapGesture?.rx.event
                 .asSignal()
-                .emit(onNext: { [weak self] _ in
-                    self?._cellSelect.accept(model)
-                }).disposed(by: cell.disposeBag)
+                .map { _ in model }
+                .emit(to: _cellSelect)
+                .disposed(by: cell.disposeBag)
             
         }.disposed(by: disposeBag)
     }
