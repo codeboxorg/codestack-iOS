@@ -26,7 +26,7 @@ public struct MyPageAssembly: Assembly {
         }
         
         container.register(EditProfileViewController.self) { resolver, member, data in
-            var member: MemberVO = member
+            let member: MemberVO = member
             let data: Data = data
             let viewmodel = resolver.resolve(EditProfileViewModel.self, arguments: member, data)!
             return EditProfileViewController.create(with: viewmodel)

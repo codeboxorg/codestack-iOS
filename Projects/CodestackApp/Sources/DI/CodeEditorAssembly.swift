@@ -32,12 +32,17 @@ public struct CodeEditorAssembly: Assembly {
             return CodeEditorViewModel(dependency: dp)
         }
         
+        container.register(CodeEditorReactor.self) { resolver in
+            return CodeEditorReactor(initialState: .init(alert: ""))
+        }
         
         container.register(CodeEditorViewController.self) { resolver, problemListItem in
             let viewModel = resolver.resolve(CodeEditorViewModel.self)!
+            let reactor = resolver.resolve(CodeEditorReactor.self)!
             
             let dp = CodeEditorViewController.Dependency.init(viewModel: viewModel,
-                                                              problem: problemListItem)
+                                                              problem: problemListItem,
+                                                              editorReactor: reactor)
             return CodeEditorViewController.create(with: dp)
         }
     }

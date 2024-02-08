@@ -20,7 +20,7 @@ public struct DataAssembly: Assembly {
             let graph = resolver.resolve(GraphQLAPI.self)!
             let rest = resolver.resolve(RestAPI.self)!
             return DefaultAuthRepository(auth: auth, graph: graph, rest: rest)
-        }
+        }.inObjectScope(.container)
         
         container.register(WebRepository.self) { resolver in
             let graphAPI = resolver.resolve(GraphQLAPI.self)!
@@ -32,7 +32,7 @@ public struct DataAssembly: Assembly {
         }.inObjectScope(.container)
         
         container.register(DBRepository.self) { resolver in
-            let coreDataStack = CoreDataStack(bundle: Data.DataResources.bundle, version: 1)
+            let coreDataStack = CoreDataStack(bundle: DataResources.bundle, version: 1)
             return DefaultDBRepository(persistenStore: coreDataStack)
         }.inObjectScope(.container)
         
