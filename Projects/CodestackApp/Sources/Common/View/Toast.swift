@@ -9,16 +9,16 @@ import UIKit
 import SwiftUI
 
 struct Toast {
-    static func toastMessage(_ value: ToastValue,
-                             _ pos: Position.Y,
-                             _ xOffset: CGFloat = 12,
-                             _ yOffset: CGFloat = 140,
-                             _ height: CGFloat = 50,
+    static func toastMessage(_ value: ToastValue = .sample,
+                             pos: Position.Y,
+                             xOffset: CGFloat = 12,
+                             yOffset: CGFloat = 140,
+                             height: CGFloat = 50,
                              container: UIView? = nil) {
         
         let moveUp = Animation.moveUpElement
         let mmoveDown = Animation.moveDownElement
-        let toastV2 = ToastMessageViewV2(value: ToastValue.sample) { binding in
+        let toastV2 = ToastMessageViewV2(value: value) { binding in
             binding.wrappedValue.toggle()
         }
         
@@ -37,9 +37,14 @@ struct Toast {
                                         defaultHeight: height)
         
         let afterPos: CGPoint = rect.origin
-        let initPos: CGPoint = .init(x: afterPos.x, y: Position.screenHeihgt)
-        messageView.frame = CGRect(origin: initPos, size: rect.size)
+        var initPos: CGPoint
+        if pos == .top {
+            initPos = .init(x: afterPos.x, y: -30)
+        } else {
+            initPos = .init(x: afterPos.x, y: Position.screenHeihgt)
+        }
         
+        messageView.frame = CGRect(origin: initPos, size: rect.size)
         messageView.alpha = 0.3
         
         if let container {
