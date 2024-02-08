@@ -59,7 +59,17 @@
 	<string>$(client_secret_git)</string>
 	<key>codestack_endpoint</key>
 	<string>$(codestack_endpoint)</string>
+	<key>firestore_endpoint</key>
+	<string>$(firestore_endpoint)</string>
+	<key>firebase_annony_auth_endpoint</key>
+	<string>$(firebase_annony_auth_endpoint)</string>
 	<key>graphql_endpoint</key>
 	<string>$(graphql_endpoint)</string>
+	<key>firestorage_endpoint</key>
+	<string>$(firestorage_endpoint)</string>
+	<key>fireStorage_project_path</key>
+	<string>$(fireStorage_project_path)</string>
+	<key>firestore_project_path</key>
+	<string>$(firestore_project_path)</string>
 </dict>
 </plist>
