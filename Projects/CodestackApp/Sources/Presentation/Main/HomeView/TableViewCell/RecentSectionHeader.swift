@@ -13,7 +13,6 @@ class RecentSectionHeader: UICollectionReusableView{
     
     let label: UILabel = {
         let label = UILabel()
-        
         return label.descriptionLabel(size: 14, text: "", color: UIColor.label)
     }()
     
