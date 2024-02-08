@@ -8,8 +8,9 @@
 import UIKit
 import RxSwift
 import Domain
+import CommonUI
 
-class SubmissionResultView: UIView{
+final class SubmissionResultView: UIView{
     
     
     lazy var status = Binder<SubmissionVO>(self)
@@ -17,14 +18,14 @@ class SubmissionResultView: UIView{
         let propertyLoop = [submission.id,
                             submission.problem.title,
                             submission.member.username,
-                            "\(submission.memoryUsage ?? -1)",
-                            "\(submission.cpuTime ?? -1)",
-                            "\(submission.statusCode ?? "N/A")"]
+                            "\(submission.memoryUsage )",
+                            "\(submission.cpuTime )",
+                            "\(submission.statusCode )"]
         
         zip(target.H_stackViews,propertyLoop).forEach { value in
             let (view,pro) = value
             if let box = view.subviews.last as? BoxContainerLabel{
-                box.setContainer(SubmissionResultView.font, pro ?? "N/A")
+                box.setContainer(SubmissionResultView.font, pro)
             }
         }
     }
@@ -39,7 +40,7 @@ class SubmissionResultView: UIView{
     }()
     
     private lazy var H_stackViews: [UIStackView] = {
-        return (0..<6).map{ _ in
+        return (0..<6).map { _ in
             let stackView = UIStackView()
             stackView.alignment = .center
             stackView.distribution = .equalSpacing
@@ -58,39 +59,16 @@ class SubmissionResultView: UIView{
     lazy var maxHeight = maxString.height(withConstrainedWidth: 0, font: SubmissionResultView.font) + 10
     private let maxString = "메모리 사용"
     
-    private let problemID: BoxContainerLabel = {
-        let label = BoxContainerLabel()
-        return label
-    }()
-    
-    private let problemName: BoxContainerLabel = {
-        let label = BoxContainerLabel()
-        return label
-    }()
-    
-    private let member: BoxContainerLabel = {
-        let label = BoxContainerLabel()
-        return label
-    }()
-    
-    private let memoryUsage: BoxContainerLabel = {
-        let label = BoxContainerLabel()
-        return label
-    }()
-    
-    private let cpuTime: BoxContainerLabel = {
-        let label = BoxContainerLabel()
-        return label
-    }()
-    
-    private let statuscode: BoxContainerLabel = {
-        let label = BoxContainerLabel()
-        return label
-    }()
+    private let problemID = BoxContainerLabel()
+    private let problemName = BoxContainerLabel()
+    private let member =  BoxContainerLabel()
+    private let memoryUsage = BoxContainerLabel()
+    private let cpuTime = BoxContainerLabel()
+    private let statuscode = BoxContainerLabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-         addAutoLayout()
+        addAutoLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -133,13 +111,13 @@ class SubmissionResultView: UIView{
             
             hstack.addArrangedSubview(label)
             V_stackView.addArrangedSubview(hstack)
+            
             label.snp.makeConstraints { make in
                 make.width.equalTo(maxWidth)
                 make.height.equalTo(maxHeight)
             }
             
             label.layer.borderColor = UIColor.sky_blue.cgColor
-            
             label.setContainer(SubmissionResultView.font, "\(title)")
             label.settingBorader(color: UIColor.sky_blue.cgColor)
         }
