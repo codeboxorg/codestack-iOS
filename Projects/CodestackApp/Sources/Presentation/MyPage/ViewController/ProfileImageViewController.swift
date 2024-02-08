@@ -10,7 +10,6 @@ import UIKit
 
 class ProfileImageViewController: UIViewController {
     
-    
     var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person")
