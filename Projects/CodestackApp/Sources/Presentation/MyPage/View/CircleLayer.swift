@@ -25,7 +25,7 @@ struct Degrees{
 
 typealias Radians = CGFloat
 
-class CircleLayer: CALayer {
+class CircleLayer: CALayer, CAAnimationDelegate {
     
     var progressWidth: CGFloat = 0
     var progressColor: UIColor?
@@ -76,7 +76,11 @@ class CircleLayer: CALayer {
     }
     
     private func setProgressLayerStyle() {
-        progressLayer?.path = UIBezierPath(arcCenter: center, radius: radius - progressWidth / 2, startAngle: startAngle - Degrees(degree: 90).toRadians(), endAngle: endAngle - Degrees(degree: 90).toRadians(), clockwise: clockwise).cgPath
+        progressLayer?.path = UIBezierPath(arcCenter: center,
+                                           radius: radius - progressWidth / 2,
+                                           startAngle: startAngle - Degrees(degree: 90).toRadians(),
+                                           endAngle: endAngle - Degrees(degree: 90).toRadians(),
+                                           clockwise: clockwise).cgPath
         progressLayer?.lineCap = .round
         progressLayer?.lineWidth = progressWidth
         progressLayer?.fillColor = UIColor.clear.cgColor

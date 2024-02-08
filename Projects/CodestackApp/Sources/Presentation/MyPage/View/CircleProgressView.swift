@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import Global
+
 class CircleProgressView: UIView {
-    
     
     public var progressColor: UIColor? {
         didSet {
@@ -64,13 +65,10 @@ class CircleProgressView: UIView {
         super.init(coder: coder)
     }
     
-    
-    
     public func configureAttributes(color: UIColor,
                                     background: UIColor,
                                     progress: CGFloat,
                                     clockwise: Bool = false){
-        
         self.progressColor = color
         self.progressBackgroundColor = background
         self.progress = progress
