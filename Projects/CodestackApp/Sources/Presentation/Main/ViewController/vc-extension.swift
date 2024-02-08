@@ -8,36 +8,53 @@
 import UIKit
 import SwiftUI
 
-extension ViewController {
-    //MARK: - 컨티리뷰션 그래프 뷰
-    func calendarView() {
+extension UIViewController {
+    func adjustLargeTitleSize(title: String = "Codestack") {
+        self.navigationItem.title = title
+        self.navigationController?.navigationBar.tintColor = UIColor.label
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.largeTitleDisplayMode = .automatic
+    }
+}
+
+extension HomeViewController {
+    
+    
+    func sideMenuVCSetting() {
+        // SideMenu ViewController setting
+        if let sidemenuViewController {
+            addChild(sidemenuViewController)
+            view.addSubview(sidemenuViewController.view)
+            sidemenuViewController.didMove(toParent: self)
+            sidemenuViewController.view.translatesAutoresizingMaskIntoConstraints = false
+            sidemenuViewController.view.isHidden = true
+            NSLayoutConstraint.activate([
+                sidemenuViewController.view.topAnchor.constraint(equalTo: self.view.topAnchor),
+                sidemenuViewController.view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                sidemenuViewController.view.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+                sidemenuViewController.view.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+            ])
+        }
+    }
+    
+    private var titleTextAttributesColor: UIColor { .clear }
+    
+    func navigationSetting(){
+        //라지 타이틀 적용
+        adjustLargeTitleSize()
         
-        guard let viewModel = self.contiributionViewModel else { return }
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alramView)
+        // 사이드바 보기 버튼 적용
         
-        let vc = UIHostingController(rootView: SubmissionChartView(viewModel: viewModel))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: nil)
         
-        let submissionChartView = vc.view!
-        submissionChartView.translatesAutoresizingMaskIntoConstraints = false
-        submissionChartView.backgroundColor = graphBackground
-        submissionChartView.layer.cornerRadius = 12
+        // back navigtion 백버튼 타이틀 숨기기
+        let backButtonAppearance = UIBarButtonItemAppearance(style: .plain)
+        backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: titleTextAttributesColor]
         
-        // 2
-        // Add the view controller to the destination view controller.
-        addChild(vc)
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.backButtonAppearance = backButtonAppearance
         
-        graphContainerView.addSubview(submissionChartView)
-        
-        // 3
-        // Create and activate the constraints for the swiftui's view.
-        NSLayoutConstraint.activate([
-            submissionChartView.topAnchor.constraint(equalTo: graphContainerView.topAnchor),
-            submissionChartView.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor),
-            submissionChartView.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor),
-            submissionChartView.bottomAnchor.constraint(equalTo: graphContainerView.bottomAnchor)
-        ])
-        
-        // 4
-        // Notify the child view controller that the move is complete.
-        vc.didMove(toParent: self)
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
     }
 }
