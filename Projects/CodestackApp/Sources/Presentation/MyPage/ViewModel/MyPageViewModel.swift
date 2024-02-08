@@ -14,15 +14,13 @@ import Domain
 
 class MyPageViewModel: ViewModelType, Stepper{
     
-    struct Input{
+    struct Input {
         var editProfileEvent: Signal<Void>
-        var profileImageValue: Signal<Data>
+        var profileImageValue: Driver<Data>
         var viewDidLoad: Signal<Void>
-//        var viewWillDisapear: Signal<Void>
-//        var imageLoading: Driver<ProfileView.LoadingState>
     }
     
-    struct Output{
+    struct Output {
         var userProfile: Driver<MemberVO>
         var loading: Driver<ProfileView.LoadingState>
     }
@@ -41,37 +39,49 @@ class MyPageViewModel: ViewModelType, Stepper{
     }
     
     private let userProfile = BehaviorRelay<MemberVO>(value: MemberVO.sample)
+    private let profileImageCahche = BehaviorRelay<Data>(value: Data())
 
     func transform(input: Input) -> Output {
+        let loading = profileImage(update: input.profileImageValue)
+        let activated = loading.distinctUntilChanged()
         
         input
             .editProfileEvent
-            .map{ _ in CodestackStep.profileEdit}
-            .emit(to: steps)
+            .asObservable()
+            .flatMap { [weak self] _ -> Observable<(Data, MemberVO)> in
+                guard let self else { return .just((Data(), .sample))}
+                return Observable.zip(self.profileImageCahche.asObservable(),
+                                      self.userProfile.take(1).asObservable())
+            }
+            .map { CodestackStep.profileEdit($0.1, $0.0) }
+            .bind(to: steps)
             .disposed(by: disposeBag)
-        
-        let loading = profileImage(update: input.profileImageValue)
-        let activated = loading.distinctUntilChanged()
         
         input.viewDidLoad
             .asObservable()
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .withUnretained(self)
-            .flatMap{ vm, _ in vm.profileUsecase.fetchME() }
-        
-        //TODO: 확인 필요
-//            .map { $0.toDomain() }
+            .flatMap{ vm, _ in vm.profileUsecase.fetchProfile() }
             .subscribe(with: self, onNext: { vm, member in
                 vm.userProfile.accept(member)
-                loading.onNext(.loaded(member.profileImage))
+                if let url = URL(string: member.profileImage),
+                   let data = try? Data(contentsOf: url) {
+                    loading.onNext(.loaded(data))
+                    vm.profileImageCahche.accept(data)
+                } else {
+                    let data = CodestackAppAsset.codeStack.image.pngData()!
+                    loading.onNext(.loaded(data))
+                    vm.profileImageCahche.accept(data)
+                }
             },onError: { vm, err in
-                loading.onNext(.loaded(nil))
+                let data = CodestackAppAsset.codeStack.image.pngData()!
+                vm.profileImageCahche.accept(data)
+                loading.onNext(.loaded(data))
             }).disposed(by: disposeBag)
             
         return Output(userProfile: userProfile.asDriver(),
                       loading: activated.asDriver(onErrorJustReturn: .notLoading))
     }
-    
     
     struct DetailInput {
         var viewWillDissapear: Signal<Void>
@@ -90,7 +100,7 @@ class MyPageViewModel: ViewModelType, Stepper{
             .disposed(by: disposeBag)
     }
     
-    private func profileImage(update profileImageValue: Signal<Data>) -> BehaviorSubject<ProfileView.LoadingState> {
+    private func profileImage(update profileImageValue: Driver<Data>) -> BehaviorSubject<ProfileView.LoadingState> {
         
         let loading = BehaviorSubject<ProfileView.LoadingState>(value: .notLoading)
         
@@ -98,14 +108,17 @@ class MyPageViewModel: ViewModelType, Stepper{
             .asObservable()
             .do(onNext: { _ in loading.onNext(.loading) })
             .withUnretained(self)
-            .flatMap { vm,data in vm.profileUsecase.editProfile(data: data) }
-            .do(onNext: { image in loading.onNext(.loaded(image))})
-            .do(onError: {_ in loading.onNext(.loaded(nil))})
-            .subscribe(with: self, onNext: { vm, user in
-                Log.debug("success: \(user)")
-                
-                // TODO: Fix 해야됩니다.
-                //  vm.userProfile.accept(user)
+            .flatMap { vm,data in
+                // TODO: Cache 처리 해야함
+                Observable.zip(vm.profileImageCahche.take(1).asObservable(),
+                               vm.profileUsecase.editProfile(data: data))
+            }
+            .subscribe(with: self, onNext: { vm, tuple in
+                let (before, newImageURL) = tuple
+                if newImageURL == PRConstants.fail.value {
+                    // MARK: 실패시 이전 이미지로 교체
+                    loading.onNext(.loaded(before))
+                }
             }).disposed(by: disposeBag)
         
         return loading
