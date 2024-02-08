@@ -16,11 +16,15 @@ public struct DomainAssembly: Assembly {
         container.register(AuthUsecase.self) { resolver in
             let authRepo = resolver.resolve(AuthRepository.self)!
             return AuthUsecase(authRepository: authRepo)
-        }
+        }.inObjectScope(.container)
+        
         container.register(ProfileUsecase.self) { resolver in
             let web = resolver.resolve(WebRepository.self)!
             let fbRepo = resolver.resolve(FBRepository.self)!
-            return ProfileUsecase(dependency: .init(webRepository: web, fbRepository: fbRepo))
+            let authRepo = resolver.resolve(AuthRepository.self)!
+            return ProfileUsecase(dependency: .init(webRepository: web,
+                                                    fbRepository: fbRepo,
+                                                    authRepository: authRepo))
         }
         
         container.register(ProblemUsecase.self) { resolver in

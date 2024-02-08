@@ -9,6 +9,10 @@
 import Swinject
 import Domain
 
+extension ObjectScope {
+    static let home = ObjectScope(storageFactory: PermanentStorage.init)
+}
+
 public struct HomeAssembly: Assembly {
     
     public func assemble(container: Container) {
@@ -20,7 +24,7 @@ public struct HomeAssembly: Assembly {
             let homeViewModel: HomeViewModel.Dependency = .init(homeUsecase: home,
                                                                 codestackUsecase: codestackUseCase)
             return HomeViewModel(dependency: homeViewModel)
-        }.inObjectScope(.container)
+        }.inObjectScope(.home)
         
         
         // MARK: Contribution ViewModel
@@ -34,11 +38,11 @@ public struct HomeAssembly: Assembly {
         // MARK: SideMenu VC
         container.register(SideMenuViewController.self) { resolver in
             SideMenuViewController.create()
-        }.inObjectScope(.container)
+        }.inObjectScope(.home)
         
         container.register(HomeViewController.self) { resolver in
             let homeViewModel = resolver.resolve(HomeViewModel.self)!
-            let contributionViewModel = resolver.resolve(ContributionViewModel.self)!
+            _ = resolver.resolve(ContributionViewModel.self)!
             let sideMenuViewController = resolver.resolve(SideMenuViewController.self)!
             
             let dependency = HomeViewController.Dependencies(homeViewModel: homeViewModel,

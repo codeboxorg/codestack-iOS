@@ -14,7 +14,8 @@ public struct LoginAssembly: Assembly {
     public func assemble(container: Container) {
         
         container.register(LoginStepper.self) { resolver in
-            return LoginStepper()
+            let useCase = resolver.resolve(AuthUsecase.self)!
+            return LoginStepper(authUsecase: useCase)
         }.inObjectScope(.container)
         
         container.register(LoginViewModel.self) { resolver in

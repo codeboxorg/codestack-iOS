@@ -5,13 +5,13 @@
 //  Created by 박형환 on 2023/06/07.
 //
 
-import Foundation
 import RxFlow
 import RxSwift
 import RxCocoa
 import Global
+import Domain
 
-class LoginFlow: Flow{
+class LoginFlow: Flow {
     
     var root: Presentable {
         return self.loginViewController
@@ -44,9 +44,9 @@ class LoginFlow: Flow{
             
         case .logout:
             // TODO: 바꿔야됌
-//            UserManager.shared.logout {
-//                KeychainItem.deleteToken()
-//            }
+            // UserManager.shared.logout { // KeychainItem.deleteToken() // }
+            injector.container.resetObjectScope(.home)
+            self.loginViewController.view.subviews.forEach { $0.isHidden = false }
             self.loginViewController.navigationController?.popViewController(animated: true)
             return .none
             
@@ -55,6 +55,17 @@ class LoginFlow: Flow{
             
         case .register:
             return navigateToRegisterViewController()
+        
+        case .registerDissmiss:
+            self.loginViewController.navigationController?.popViewController(animated: true)
+            return .none
+            
+        case .registerSuccess(let memberVO):
+            // MARK: Welcom View 띄우기
+            self.loginViewController.view.subviews.forEach { $0.isHidden = true }
+            self.loginViewController.navigationController?.popToRootViewController(animated: false)
+            injector.container.resetObjectScope(.register)
+            return navigateToHomeViewController()
             
         default:
             return .none
@@ -62,17 +73,23 @@ class LoginFlow: Flow{
     }
     
     private func navigateToRegisterViewController() -> FlowContributors {
-        
-        let registerViewController = injector.resolve(RegisterViewController.self)
-        
-        registerViewController.adjustLargeTitleSize(title: "회원가입")
-        self.loginViewController.navigationController?.isNavigationBarHidden = false
-        self.loginViewController.navigationController?.pushViewController(registerViewController, animated: false)
-        return .one(flowContributor: .contribute(withNext: registerViewController))
+        let registerFlow = RegisterFlow(injector: injector)
+        let viewmodel = injector.resolve(RegisterViewModel.self)
+        Flows.use(registerFlow, when: .created) { root in
+            self.loginViewController.navigationController?.isNavigationBarHidden = true
+            self.loginViewController.navigationController?.pushViewController(root, animated: false)
+        }
+        let composite = CompositeStepper(steppers: [ OneStepper(withSingleStep: CodestackStep.register),
+                                                     viewmodel])
+        return .one(flowContributor:
+                .contribute (
+                    withNextPresentable: registerFlow,
+                    withNextStepper: composite
+                )
+        )
     }
     
-    
-    private func navigateToHomeViewController() -> FlowContributors{
+    private func navigateToHomeViewController() -> FlowContributors {
         
         let dependency = TabBarFlow.Dependency(
             injector: self.injector
@@ -95,10 +112,10 @@ class LoginStepper: Stepper {
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     // TODO: Data Layer 의존성 제거해야됨
-//    private var authService: RestAPI
+    private var authUsecase: AuthUsecase
     
-    init(/*authService: RestAPI*/) {
-//        self.authService = authService
+    init(authUsecase: AuthUsecase) {
+        self.authUsecase = authUsecase
     }
     
     var initialStep: Step{
@@ -106,7 +123,18 @@ class LoginStepper: Stepper {
     }
     
     func readyToEmitSteps() {
-        
+        _ = authUsecase
+            .firebaseTokenReissue()
+            .subscribe(with: self,
+                       onCompleted: { stepper in
+                stepper.steps.accept(CodestackStep.userLoggedIn(nil, nil))
+            }, onError: { stepper, error in
+                Log.debug("readyToEmitSteps -> \(error)")
+                //stepper.steps.accept(CodestackStep.userLoggedIn(nil, nil))
+            })
+    }
+    
+//    func readyToEmitSteps() {
 //         TODO: Reissue Token Error
 //         현재 refresh TOken 으로 재발급시 서버측 Token(구버젼) 으로 발급이 되어 에러 발생 -> 현재는 명시적으로 로그인 하도록
 //        let accessToken = KeychainItem.currentAccessToken
@@ -129,5 +157,5 @@ class LoginStepper: Stepper {
 //                stepper.steps.accept(CodestackStep.none)
 //            }
 //        })
-    }
+//    }
 }
