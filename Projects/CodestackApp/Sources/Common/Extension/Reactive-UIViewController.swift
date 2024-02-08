@@ -27,7 +27,7 @@ public extension OB {
     }
 }
 
-extension ObservableConvertibleType where Element == String {
+public extension ObservableConvertibleType where Element == String {
     func asDriverJust() -> Driver<String> {
         self.asObservable().asDriver(onErrorJustReturn: "")
     }
@@ -36,3 +36,9 @@ extension ObservableConvertibleType where Element == String {
         self.asObservable().asSignal(onErrorJustReturn: "")
     }
 }
+public extension Observable {
+    func skeletonDelay() -> Observable<Element> {
+        self.delay(.milliseconds(400), scheduler: MainScheduler.instance)
+    }
+}
+
