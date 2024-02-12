@@ -11,6 +11,7 @@ import RxSwift
 import Domain
 import Global
 import CSNetwork
+import FirebaseAuth
 
 public final class DefaultFBRepository: FBRepository {
     
@@ -42,8 +43,31 @@ public final class DefaultFBRepository: FBRepository {
         .empty()
     }
     
-    public func fsProfileImageUpdate(_ name: String, _ data: Data) -> Observable<String> {
-        let endPoint = StorageEndPoint(name, body: data, token: KeychainItem.currentFBIdToken)
+    public func update(email: String) -> Maybe<String> {
+        Maybe<String>.create { maybe in
+            let dispatchItem = DispatchWorkItem {
+                // MARK: Send Email Using FB
+                FAuth.auth().currentUser?.updateEmail(to: email) { error in
+                    if let error { maybe(.error(error))}
+                    else { maybe(.success(email))}
+                }
+            }
+            dispatchItem.perform()
+            return Disposables.create { dispatchItem.cancel() }
+        }
+    }
+    
+    public func update(nickname: String) -> Completable {
+        let firebaseIDToken = KeychainItem.currentFBIdToken
+        let uid = KeychainItem.currentFBLocalID
+        let query = UserGetQuery(uid: uid, token: firebaseIDToken, method: .patch)
+        let userQuery = UserQuery(nickname: nickname, preferLanguage: "", query: query)
+        return rest.post(FireStoreUserPostEndPoint(patch: userQuery))
+    }
+    
+    public func update(profileImage: Data) -> Observable<String> {
+        let path = KeychainItem.currentFBLocalID
+        let endPoint = StorageEndPoint(path, body: profileImage, token: KeychainItem.currentFBIdToken)
         return rest.request(endPoint) {
             Log.debug("test: \($0)")
             return ""
