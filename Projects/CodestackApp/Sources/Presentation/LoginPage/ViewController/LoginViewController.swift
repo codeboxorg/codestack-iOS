@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import Global
+import AuthenticationServices
 import RxFlow
 import RxCocoa
 import RxSwift
 
-class LoginViewController: UIViewController,Stepper /*AppleLoginViewType*/ {
+class LoginViewController: UIViewController,Stepper {
     
     //MARK: - RXFLow
     let steps = PublishRelay<Step>()
@@ -18,18 +20,15 @@ class LoginViewController: UIViewController,Stepper /*AppleLoginViewType*/ {
     //MARK: -Dependency
     
     private var loginViewModel: LoginViewModel?
-//    private var appleManager: AppleLoginManager?
+    private var currentNonce: String?
     
     struct Dependencies{
         var viewModel: LoginViewModel?
-//        var appleManager: AppleLoginManager?
     }
     
     static func create(with dependencies: Dependencies) -> LoginViewController{
         let vc = LoginViewController()
         vc.loginViewModel = dependencies.viewModel
-//        vc.appleManager = dependencies.appleManager
-//        vc.appleManager?.loginViewcontroller = vc
         return vc
     }
     
@@ -51,13 +50,10 @@ class LoginViewController: UIViewController,Stepper /*AppleLoginViewType*/ {
         super.viewDidLoad()
         
         layoutConfigure()
-        // Apple login buton setting
-        // TODO: APPLE LOGIN MANAGER
-//        appleManager?.settingLoginView()
         
         let loginEvent = loginView.emitButtonEvents()
         
-        let registerEvent = loginView.registerEvent()
+        let registerEvent = loginView.registerButton.rx.tap.asSignal()
         
         let output = loginViewModel?
             .transform(input: LoginViewModel.Input(loginEvent: loginEvent,
@@ -67,7 +63,6 @@ class LoginViewController: UIViewController,Stepper /*AppleLoginViewType*/ {
             loginView.binding(loading: loading)
         }
     
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
             self.loginView.debugIDPwd()
         })
@@ -104,6 +99,3 @@ class LoginViewController: UIViewController,Stepper /*AppleLoginViewType*/ {
         
     }
 }
-
-
-
