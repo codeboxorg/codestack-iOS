@@ -56,11 +56,9 @@ public final class DefaultAuthRepository: AuthRepository {
     }
     
     public func gitOAuthComplete(code: String){
-//        loginViewModel?.oAuthComplete(code: code)
         auth.gitOAuthComplete(code: code)
     }
     
-//    /// Git Login URL 오픈 -> 사파리
     public func gitOAuthrization() throws {
         try auth.gitOAuthrization()
     }
@@ -91,9 +89,10 @@ public final class DefaultAuthRepository: AuthRepository {
     }
 }
 
+public typealias FAuth = FirebaseAuth.Auth
+
+
 public extension DefaultAuthRepository {
-    typealias FAuth = FirebaseAuth.Auth
-    
     // TODO: 업데이트 이메일 , 프로필, Token 유효성 처리.....
             // 로그인 할때마다 토큰 업데이트
     // TODO: 로그아웃시 유저 nickname 여부
@@ -122,20 +121,6 @@ public extension DefaultAuthRepository {
                     }
                     KeychainItem.saveFirebaseIDToken(idToken: idToken)
                     complete(.completed)
-                }
-            }
-            dispatchItem.perform()
-            return Disposables.create { dispatchItem.cancel() }
-        }
-    }
-    
-    func updateProfile(memberVO: MemberVO) -> Maybe<MemberVO> {
-        Maybe<MemberVO>.create { maybe in
-            let dispatchItem = DispatchWorkItem {
-                // MARK: Send Email Using FB
-                FAuth.auth().currentUser?.updateEmail(to: memberVO.email) { error in
-                    if let error { maybe(.error(error))}
-                    else { maybe(.success(memberVO))}
                 }
             }
             dispatchItem.perform()
@@ -203,14 +188,14 @@ public extension DefaultAuthRepository {
     func firebaseStoreUserInfoSave(token: String, uid: String, nickname: String) -> Completable {
         let query = UserGetQuery(uid: uid, token: token, method: .post)
         let userQuery = UserQuery(nickname: nickname, preferLanguage: "",query: query)
-        return rest.post(FireStoreUserPostEndPoint(userQuery))
+        return rest.post(FireStoreUserPostEndPoint(post: userQuery))
     }
     
     func fetchfirebaseStoreUserInfo() -> Observable<FBUserNicknameVO> {
         let currentUID = KeychainItem.currentFBLocalID
         let idtoken = KeychainItem.currentFBIdToken
         let query = UserGetQuery(uid: currentUID, token: idtoken, method: .get)
-        return rest.request(FireStoreUserPostEndPoint(query: query)) { data in
+        return rest.request(FireStoreUserPostEndPoint(get: query)) { data in
             try JSONDecoder().decode(FBUserDTO.self, from: data)
         }
         .map {$0.toDomain()}
