@@ -8,10 +8,12 @@
 
 import Foundation
 import RxSwift
-import CSNetwork
+
 
 public protocol RestAPI {
     func request<T>(_ endpoint: EndPoint, operation: @escaping Operation<T>) -> Maybe<T>
+    func post(_ endpoint: EndPoint) -> Completable
+    func post(_ endpoint: EndPoint, operation: Operation<Void>?) -> Completable
     func request<T>(_ api: API, operation: @escaping Operation<T>) -> Maybe<T>
     func request<T>(_ request: URLRequest, operation: @escaping Operation<T>) -> Maybe<T>    
     func reissueToken(token: RefreshToken) -> Observable<(response: HTTPURLResponse, data: Data)>
