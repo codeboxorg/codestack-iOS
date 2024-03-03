@@ -37,8 +37,42 @@ public struct StorageEndPoint: EndPoint {
             self.path
             = 
             "\(storagePath)"
-            + "/\(path)"
-            + "/profile.png"
+            + "/\(path)%2F"
+            + "profile.png"
+        }
+    }
+}
+
+
+public struct StorageProfileEndPoint: EndPoint {
+    
+    public var host: String {
+        fireStorageBase
+    }
+    
+    public var path: String
+    
+    public var method: RequestMethod {
+        .get
+    }
+    
+    public var header: [String : String]
+    
+    public var body: Data?
+    
+    public var queryParams: [String : String]? {
+        ["alt" : "media"]
+    }
+    
+    public init(_ path: String) {
+        self.header = ["Content-Type": "image/png"]
+        self.path = ""
+        defer {
+            self.path
+            =
+            "\(storagePath)"
+            + "/\(path)%2F"
+            + "profile.png"
         }
     }
 }
