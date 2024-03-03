@@ -23,14 +23,19 @@ public struct UserGetQuery {
 public struct UserQuery {
     public let nickname: String
     public let preferLanguage: String
+    public let profileImagePath: String
     public let query: UserGetQuery
     
-    public init(nickname: String, preferLanguage: String, query: UserGetQuery) {
+    public init(nickname: String, preferLanguage: String,
+                profileImagePath: String, query: UserGetQuery)
+    {
         self.nickname = nickname
         self.preferLanguage = preferLanguage
         self.query = query
+        self.profileImagePath = profileImagePath
     }
 }
+
 
 
 public struct FireStoreUserPostEndPoint: EndPoint {
@@ -65,7 +70,9 @@ public struct FireStoreUserPostEndPoint: EndPoint {
     public init(post query: UserQuery) {
         self.init(get: query.query)
         self.queryParams = ["documentId" : "\(query.query.uid)"]
-        let dto = FBUserDTO(nickname: query.nickname, preferLanguage: query.preferLanguage)
+        let dto = FBUserDTO(nickname: query.nickname,
+                            preferLanguage: query.preferLanguage,
+                            profileURL: query.profileImagePath)
         let jsondata = try? JSONEncoder().encode(dto)
         self.body = jsondata
         
@@ -78,10 +85,10 @@ public struct FireStoreUserPostEndPoint: EndPoint {
     
     public init(patch query: UserQuery) {
         self.init(get: query.query)
-        //self.queryParams = ["documentId" : "\(query.query.uid)"]
-        let dto = FBUserDTO(nickname: query.nickname, preferLanguage: query.preferLanguage)
+        let dto = FBUserDTO(nickname: query.nickname,
+                            preferLanguage: query.preferLanguage,
+                            profileURL: query.profileImagePath)
         let jsondata = try? JSONEncoder().encode(dto)
         self.body = jsondata
     }
-    
 }
