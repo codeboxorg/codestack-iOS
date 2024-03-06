@@ -99,15 +99,6 @@ class LoginViewModel: /*LoginViewModelProtocol*/ Stepper{
             .disposed(by: disposeBag)
     }
     
-    
-    func requestOAuth() throws {
-//        do {
-//            try loginService.gitOAuthrization()
-//        }catch{
-//            throw LoginError.gitOAuthError
-//        }
-    }
-    
     func requestFirebaseAuth(email: String, password: String) {
         authUsecase
             .firebaseAuth(email: email, pwd: password)

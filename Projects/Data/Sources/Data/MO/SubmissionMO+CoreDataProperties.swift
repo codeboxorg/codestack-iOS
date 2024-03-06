@@ -1,14 +1,14 @@
 //
 //  SubmissionMO+CoreDataProperties.swift
-//  CodeStack
+//  Data
 //
-//  Created by 박형환 on 12/5/23.
+//  Created by 박형환 on 12/16/23.
+//  Copyright © 2023 hyeong. All rights reserved.
 //
 //
 
 import Foundation
 import CoreData
-import Global
 import Domain
 
 extension SubmissionMO {
@@ -21,9 +21,9 @@ extension SubmissionMO {
     @NSManaged public var id: String?
     @NSManaged public var statusCode: String?
     @NSManaged public var codeContext: CodeContextMO?
+    @NSManaged public var language: LanguageMO?
     @NSManaged public var problemSubmissionState: ProblemSubmissionStateMO?
     @NSManaged public var submissionCalendar: SubmissionCalendarMO?
-    @NSManaged public var language: LanguageMO?
 
 }
 
@@ -61,9 +61,10 @@ extension SubmissionVO {
         mo.language?.name = self.language.name
         mo.language?.extension = self.language.extension
         mo.statusCode = self.statusCode
-        mo.createdAt = self.createdAt.toDateKST()
+        mo.createdAt = self.createdAt.isKSTORUTC()
         return mo
     }
+    
     func toMO(in context: NSManagedObjectContext) -> SubmissionMO? {
         guard
             let submissionMO = SubmissionMO.insertNew(in: context),
@@ -78,7 +79,7 @@ extension SubmissionVO {
         guard let codeContextMO = codeContextVO.toMO(in: context) else {
             return nil }
         
-        submissionMO.createdAt = self.createdAt.toDateKST()
+        submissionMO.createdAt = self.createdAt.isKSTORUTC()
         submissionMO.id = self.id
         submissionMO.statusCode = self.statusCode
         submissionMO.codeContext = codeContextMO
@@ -89,3 +90,4 @@ extension SubmissionVO {
         return submissionMO
     }
 }
+

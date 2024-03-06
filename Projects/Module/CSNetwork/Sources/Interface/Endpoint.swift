@@ -40,6 +40,22 @@ public extension EndPoint {
         return self
     }
     
+    func createURLRequest() throws -> URLRequest {
+        var urlString = "https://" + "\(self.host)" + "\(self.path)"
+        self.queryParams?.forEach { key, value in
+            urlString += "?\(key)=\(value)"
+        }
+        let url = URL(string: urlString)!
+        var request = URLRequest(url: url)
+        request.httpMethod = self.method.rv
+        request.allHTTPHeaderFields = self.header
+        if let body = self.body {
+            request.httpBody = body
+        }
+        return request
+    }
+    
+    
     func createRequest() throws -> URLRequest {
         var urlComponents = URLComponents()
         urlComponents.scheme = self.scheme

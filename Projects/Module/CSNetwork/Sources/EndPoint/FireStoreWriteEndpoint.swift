@@ -8,10 +8,13 @@
 
 import Foundation
 
+
 public struct FireStoreWirteEndPoint: EndPoint {
-    public var path: String {
-        firestoreBase + "/\(FireStore.stores.value)"
+    public var host: String {
+        firestoreBase
     }
+    
+    public var path: String
     
     public var method: RequestMethod {
         .post
@@ -23,8 +26,17 @@ public struct FireStoreWirteEndPoint: EndPoint {
     
     public var queryParams: [String : String]?
     
-    public init(_ token: String) {
+    public init(_ token: String, _ post: Post) {
         self.header = ["Content-Type": "application/json",
                        "Authorization" : "Bearer \(token)"]
+        self.path = ""
+        
+        self.body = try? JSONEncoder().encode(post)
+        
+        defer {
+            self.path =
+            "\(self.projectPath)"
+            + "/\(FireStore.documents)"
+        }
     }
 }
