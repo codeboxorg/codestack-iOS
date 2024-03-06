@@ -9,8 +9,9 @@ import UIKit
 import RxCocoa
 import RxSwift
 import CommonUI
+import Then
 
-class LoginView: UIView{
+final class LoginView: UIView {
     
     private let containerView: UIView = {
         let view = UIView()
@@ -19,7 +20,7 @@ class LoginView: UIView{
     
     private let codestackLogo: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "codeStack")
+        imageView.image = UIImage(named: "codeStack")?.resize(targetSize: CGSize(width: 50, height: 50))
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -77,22 +78,6 @@ class LoginView: UIView{
         return textField
     }()
     
-    private let rememberCheckBox: UIButton = {
-        let button = UIButton()
-        button.tintColor = .label
-        button.setImage(UIImage(systemName: "rectangle"), for: .normal)
-        button.setImage(UIImage(systemName: "checkmark.rectangle"), for: .selected)
-        return button
-    }()
-    
-    private let rememberLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.text = "아이디 / 비밀번호 찾기"
-        label.textColor = .label
-        return label
-    }()
-    
     lazy var loginButton: LoginButton = {
         let button = LoginButton()
         button.tintColor = .white
@@ -104,20 +89,7 @@ class LoginView: UIView{
         return button
     }()
     
-    private lazy var githubLoginButton: GitHubLoginButton = {
-        let button = GitHubLoginButton(frame: .zero)
-        return button
-    }()
-    
-    private let registerButton = RegisterButton.init(title: "회원가입")
-    
-    lazy var loginProviderStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.alignment = .fill
-        stackView.axis = .horizontal
-        return stackView
-    }()
-    
+    let registerButton = RegisterButton.init(title: "회원가입")
     
     private var idPlaceHolder_Center_Constraint: NSLayoutConstraint?
     private var passwordPlaceHolder_Center_Constraint: NSLayoutConstraint?
@@ -164,10 +136,6 @@ class LoginView: UIView{
     
     //MARK: emit RX button Tap Event to login
     func emitButtonEvents() -> Signal<LoginButtonType>{
-        let git = githubLoginButton.rx.tap
-            .map{ _ in return LoginButtonType.gitHub }
-            .asSignal(onErrorJustReturn: .none)
-        
         let email = loginButton.rx.tap
             .map{ [weak self] _ in
                 if let id = self?.idTextField.text,
@@ -179,11 +147,7 @@ class LoginView: UIView{
             }
             .asSignal(onErrorJustReturn: .none)
         
-        return Signal.merge([git,email]).asSignal(onErrorJustReturn: .none)
-    }
-    
-    func registerEvent() -> Signal<Void>{
-        registerButton.rx.tap.asSignal()
+        return Signal.merge([email]).asSignal(onErrorJustReturn: .none)
     }
     
     required init?(coder: NSCoder) {
@@ -193,7 +157,7 @@ class LoginView: UIView{
 }
 
 
-protocol TextFieldAnimationDelegate: AnyObject{
+protocol TextFieldAnimationDelegate: AnyObject {
     func placeUpAnimation(_ textField: CustomTextField,_ type: CustomTextField.FieldType)
     
     func placeDownAnimation(_ textField: CustomTextField,_ type: CustomTextField.FieldType)
@@ -230,8 +194,6 @@ extension LoginView: TextFieldAnimationDelegate {
 }
 
 
-
-
 extension LoginView {
     
     func changePlaceOffsetAnimation(_ layout: NSLayoutConstraint,_ offset: CGFloat){
@@ -262,14 +224,10 @@ extension LoginView {
          codestackLogo,
          loginCheckButton,
          passwordCheckButton,
-         rememberCheckBox,
-         rememberLabel,
          loginButton,
-         githubLoginButton,
          loginPlaceHolderView,
          passwordPlaceHolderView,
-         registerButton,
-         loginProviderStackView
+         registerButton
         ].forEach{
             containerView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -289,7 +247,7 @@ extension LoginView {
         let heightAnchor = containerView.heightAnchor.constraint(equalToConstant: 300)
         
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: self.topAnchor),
+            containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
             containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
@@ -368,45 +326,18 @@ extension LoginView {
         ])
         
         NSLayoutConstraint.activate([
-            rememberLabel.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-             rememberLabel.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: info_top_constant)
-        ])
-        
-        NSLayoutConstraint.activate([
-            rememberCheckBox.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: info_top_constant),
-            rememberCheckBox.widthAnchor.constraint(equalToConstant: 24),
-            rememberCheckBox.heightAnchor.constraint(equalToConstant: 24),
-            rememberCheckBox.trailingAnchor.constraint(equalTo: rememberLabel.leadingAnchor, constant: -(info_top_constant / 2))
-        ])
-        
-        NSLayoutConstraint.activate([
             loginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
             loginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
-            loginButton.topAnchor.constraint(equalTo: rememberLabel.bottomAnchor, constant: info_top_constant),
+            loginButton.topAnchor.constraint(equalTo: passwordCheckButton.bottomAnchor, constant: 30),
             loginButton.heightAnchor.constraint(equalToConstant: 55)
         ])
-        
-        NSLayoutConstraint.activate([
-            loginProviderStackView.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 12),
-            loginProviderStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: leading_Trailing_contant),
-            loginProviderStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -leading_Trailing_contant),
-            loginProviderStackView.heightAnchor.constraint(equalToConstant: 55)
-        ])
-        
-        
-        NSLayoutConstraint.activate([
-            githubLoginButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,constant: leading_Trailing_contant),
-            githubLoginButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,constant: -leading_Trailing_contant),
-            githubLoginButton.topAnchor.constraint(equalTo: loginProviderStackView.bottomAnchor,constant: info_top_constant),
-            githubLoginButton.heightAnchor.constraint(equalToConstant: 55)
-        ])
-        
     
         NSLayoutConstraint.activate([
             registerButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,constant: leading_Trailing_contant),
-            registerButton.topAnchor.constraint(equalTo: githubLoginButton.bottomAnchor, constant: info_top_constant - 8),
+            registerButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: info_top_constant - 8),
             registerButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,constant: -leading_Trailing_contant),
-            registerButton.heightAnchor.constraint(equalToConstant: 55)
+            registerButton.heightAnchor.constraint(equalToConstant: 55),
+            registerButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8)
         ])
     }
 }
