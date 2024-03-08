@@ -22,6 +22,22 @@ public struct CSTokenDTO: Codable {
     }
 }
 
+public struct AsessToken: Codable {
+    public let accessToken: Token
+    
+    public init(accessToken: Token) {
+        self.accessToken = accessToken
+    }
+}
+
+public struct RefreshToken: Codable {
+    public let refresh: Token
+    
+    public init(refresh: Token) {
+        self.refresh = refresh
+    }
+}
+
 
 public struct TokenInfo {
     
