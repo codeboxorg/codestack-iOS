@@ -42,14 +42,15 @@ public struct Store: Codable, Equatable {
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: FieldKeys.self)
-        try container.encode(StringValue(value: title), forKey: .title)
-        try container.encode(StringValue(value: name), forKey: .name)
-        try container.encode(StringValue(value: markdownID), forKey: .markdownID)
-        try container.encode(StringValue(value: date), forKey: .date)
-        try container.encode(StringValue(value: description), forKey: .description)
+        var container = encoder.container(keyedBy: StoreKey.self)
+        var fieldContainer = container.nestedContainer(keyedBy: FieldKeys.self, forKey: .fields)
+        try fieldContainer.encode(StringValue(value: title), forKey: .title)
+        try fieldContainer.encode(StringValue(value: name), forKey: .name)
+        try fieldContainer.encode(StringValue(value: markdownID), forKey: .markdownID)
+        try fieldContainer.encode(StringValue(value: date), forKey: .date)
+        try fieldContainer.encode(StringValue(value: description), forKey: .description)
         let strValues = tags.map { StringValue(value: $0) }
-        try container.encode(ArrayValue(arrayValue: ["values" : strValues]), forKey: .tags)
+        try fieldContainer.encode(ArrayValue(arrayValue: ["values" : strValues]), forKey: .tags)
     }
     
     public init(from decoder: Decoder) throws {
