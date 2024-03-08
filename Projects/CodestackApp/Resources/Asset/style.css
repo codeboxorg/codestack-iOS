@@ -7,7 +7,14 @@ h1 {
     color: #ffffff;
 }
 
-h2{
+h2 {
+    font-size: x-large;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+h3 {
     font-size: x-large;
     font-weight: 600;
     margin-bottom: 10px;
@@ -16,6 +23,10 @@ h2{
 
 p {
     margin-bottom: 30px;
+    color: #ffffff;
+}
+
+li {
     color: #ffffff;
 }
 
