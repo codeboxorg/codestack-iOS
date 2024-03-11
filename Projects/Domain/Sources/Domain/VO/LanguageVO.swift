@@ -22,19 +22,40 @@ public struct LanguageVO: Codable, Equatable {
 }
 
 public extension LanguageVO {
+    
+    static var languageMap: [String: LanguageVO] {
+        [
+            "C": LanguageVO(id: "50", name: "C", extension: ".c"),
+            "C++": LanguageVO(id: "54", name: "C++", extension: ".cpp"),
+            "Node": LanguageVO(id: "93", name: "Node", extension: ".c"),
+            "Python3": LanguageVO(id: "92", name: "Python3", extension: ".py"),
+            "Swift": LanguageVO(id: "83", name: "Swift", extension: ".swift"),
+            "Go": LanguageVO(id: "95", name: "Go", extension: ".go")
+        ]
+    }
+    
+    static var languageID: [Int: LanguageVO] {
+        [
+            50: LanguageVO(id: "50", name: "C", extension: ".c"),
+            54: LanguageVO(id: "54", name: "C++", extension: ".cpp"),
+            93: LanguageVO(id: "93", name: "Node", extension: ".c"),
+            92: LanguageVO(id: "92", name: "Python3", extension: ".py"),
+            83: LanguageVO(id: "83", name: "Swift", extension: ".swift"),
+            95: LanguageVO(id: "95", name: "Go", extension: ".go")
+        ]
+    }
+    
     static var `default`: Self {
-        LanguageVO(id: "1",
-                   name: "C",
-                   extension: ".c")
+        LanguageVO(id: "54", name: "C++", extension: ".cpp")
     }
     
     static var sample: [Self] {
-        let lang =  ["C", "C++", "Node", "GO", "Python3"]
-        let `extension` = [".c",".cpp", ".js", ".go", ".py"]
+        let lang =  ["C", "C++", "Node", "GO", "Python3", "Swift"]
+        let `extension` = [".c",".cpp", ".js", ".go", ".py", ".swift"]
         
         let languages = zip(lang,`extension`).enumerated().map { (value) in
             let (offset, (name, ex)) = value
-            return LanguageVO(id: "\(offset + 1)", name: name, extension: "\(ex)")
+            return languageMap[name] ?? .default
         }
         return languages
     }

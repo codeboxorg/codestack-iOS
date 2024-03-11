@@ -12,11 +12,11 @@ public struct FBUserNicknameVO: Codable {
     
     public let nickname: String
     public let preferLanguage: String
-//    public var imageURL: String
+    public var profileImagePath: String
     
-    public init(nickname: String, preferLanguage: String) {
+    public init(nickname: String, preferLanguage: String, profileImagePath: String) {
         self.nickname = nickname
         self.preferLanguage = preferLanguage
-//        self.imageURL = imageURL
+        self.profileImagePath = profileImagePath
     }
 }

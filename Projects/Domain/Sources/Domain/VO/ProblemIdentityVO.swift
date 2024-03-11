@@ -21,7 +21,6 @@ public struct ProblemIdentityVO: Codable, Equatable {
 
 
 public extension ProblemIdentityVO {
-    
     func toProblemVO() -> ProblemVO {
         ProblemVO(id: self.id,
                   title: self.title,
