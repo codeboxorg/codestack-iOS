@@ -14,11 +14,11 @@ let dependencies: [TargetDependency] = [
     .PRO.data,
     .PRO.global,
     .PRO.csNetwork,
-    .PRO.commonUI,
-    .PRO.presentation,
+    .PRO.commonUI
+    // .PRO.presentation,
 ]
 
-let entitlementPath: Path = .relativeToCurrentFile("Resources/CodeStack.entitlements")
+let entitlementPath: Entitlements = .file(path: .path("Resources/CodeStack.entitlements"))
 
 let resources: ResourceFileElements
 = [
@@ -28,7 +28,7 @@ let resources: ResourceFileElements
     "Resources/appstore.png",
     "Resources/style.css",
     "Resources/PLanguage/**/*.txt",
-    "Resources/Base.lproj/*.storyboard",
+    // "Resources/Base.lproj/*.storyboard",
     "Resources/GoogleService-Info.plist"
 ]
 

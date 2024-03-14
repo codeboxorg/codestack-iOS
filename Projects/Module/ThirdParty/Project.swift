@@ -20,6 +20,6 @@ let project = Project.createModule(name: "ThirdParty",
                                                   .SPM.rxGesture,
                                                   .SPM.sqlite,
                                                   .SPM.swinject,
-                                                  .SPM.codestackAPI,
+                                                  // .SPM.codestackAPI,
                                                   .SPM.highlightr])
 

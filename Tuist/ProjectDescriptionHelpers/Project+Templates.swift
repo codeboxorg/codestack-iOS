@@ -12,14 +12,14 @@ extension Project {
         organizationName: String = env15.organizationName,
         packages: [Package] = [],
         settings: Bool = false,
-        deploymentTarget: DeploymentTarget = env15.deploymentTargets ,
+        deploymentTarget: DeploymentTargets = env15.deploymentTarget ,
         dependencies: [TargetDependency] = [],
         baseSettings: SettingsDictionary = CSettings.defaults.value,
         configuration: Bool = false,
         coreDataModels: [ProjectDescription.CoreDataModel] = [],
         sources: SourceFilesList = ["Sources/**"],
         resources: ResourceFileElements? = nil,
-        entitlement: Path? = nil,
+        entitlement: Entitlements? = nil,
         infoPlist: InfoPlist = .default,
         resourceSynthesizers: [ResourceSynthesizer] = .default
     ) -> Project {
@@ -56,51 +56,59 @@ public extension Project {
         organizationName: String,
         packages: [Package],
         settings: Bool,
-        deploymentTarget: DeploymentTarget,
+        deploymentTarget: DeploymentTargets,
         dependencies: [TargetDependency],
         baseSettings: SettingsDictionary,
         configuration: Bool,
         coreDataModels: [ProjectDescription.CoreDataModel],
         sources: SourceFilesList,
         resources: ResourceFileElements?,
-        entitlement: Path?,
+        entitlement: Entitlements?,
         infoPlist: InfoPlist,
         resourceSynthesizers: [ResourceSynthesizer]
     ) -> Project {
         
-        var bundleID = bundleID ?? "com.co.kr.\(name.lowercased())"
         var appTargets: [ProjectDescription.Target] = []
         
-        let appTarget = Project.target(name: name,
-                                    product: product,
-                                    bundleID: bundleID,
-                                    deploymentTargets: deploymentTarget,
-                                    infoPlist: infoPlist,
-                                    sources: sources,
-                                    resources: resources,
-                                    entitlement: entitlement,
-                                    scripts: [],
-                                    dependencies: dependencies,
-                                    baseSettings: baseSettings,
-                                    configuration: configuration ? targetSetting : defaultTargetSetting ,
-                                    coreDataModels: coreDataModels)
+        let appTarget = Target.target(
+            name: name,
+            destinations: .iOS,
+            product: product,
+            bundleId: "\(organizationName).\(name)",
+            deploymentTargets: env15.deploymentTarget,
+            infoPlist: infoPlist,
+            sources: sources,
+            resources: resources,
+            entitlements: entitlement,
+            dependencies: dependencies,
+            settings: .settings( // target settings
+             base: baseSettings.merging (baseSettings) { $1 },
+             configurations: configuration ? targetSetting : defaultTargetSetting,
+             defaultSettings: .recommended (excluding: [ "TARGETED_DEVICE_FAMILY",])
+                               ),
+            coreDataModels: coreDataModels
+        )
+        
         appTargets.append(appTarget)
         
         if includeTestTarget {
-            let testTarget = Target(
+            let testTarget = Target.target(
                 name: "\(name)Tests",
-                platform: platform,
+                destinations: .iOS,
                 product: .unitTests,
-                bundleId: "\(bundleID).\(name)Tests",
-                deploymentTarget: deploymentTarget,
+                bundleId: "\(organizationName).\(name)Tests",
+                deploymentTargets: env15.deploymentTarget,
                 infoPlist: .default,
                 sources: ["Tests/**"],
                 entitlements: entitlement,
-                dependencies: [.target(name: "\(name)")],
-                settings: .settings(configurations: defaultTargetSetting)
+                dependencies: [.target(name: name)],
+                settings: .settings(base: ["ENABLE_MODULE_VERIFIER": "YES"],configurations: [])
             )
             appTargets.append(testTarget)
         }
+        
+        let scheme: [Scheme] = [.makeScheme(target: .configuration("Dev"), name: name),
+                                .makeScheme(target: .configuration("Prod"), name: name)]
         
         return Project(
             name: name,
@@ -109,7 +117,7 @@ public extension Project {
             packages: packages,
             settings: settings ? appBuildSetting : defalutBuildSetting,
             targets: appTargets,
-            schemes: generateSchemes(name),
+            schemes: scheme,
             additionalFiles: [
                 .glob(pattern: .relativeToRoot("Projects/CodestackApp/Config/Dev.xcconfig")),
                 .glob(pattern: .relativeToRoot("Projects/CodestackApp/Config/Prod.xcconfig")),
@@ -120,46 +128,64 @@ public extension Project {
     }
 }
 
-
-public extension Project {
-    static func target(
-        name: String,
-        product: Product,
-        bundleID: String,
-        deploymentTargets: DeploymentTarget,
-        infoPlist: InfoPlist,
-        sources: SourceFilesList,
-        resources: ResourceFileElements?,
-        entitlement: Path?,
-        scripts: [TargetScript],
-        dependencies: [TargetDependency],
-        baseSettings: ProjectDescription.SettingsDictionary,
-        configuration: [ProjectDescription.Configuration],
-        coreDataModels: [CoreDataModel]
-    ) -> Target {
-        Target(name: name,
-               platform: .iOS,
-               product: product,
-               productName: "\(name)",
-               bundleId: bundleID,
-               deploymentTarget: deploymentTargets,
-               infoPlist: infoPlist,
-               sources: sources,
-               resources: resources,
-               copyFiles: nil,
-               headers: nil,
-               entitlements: entitlement,
-               scripts: scripts,
-               dependencies: dependencies,
-               settings: .settings( // target settings
-                base: baseSettings.merging (baseSettings) { $1 },
-                configurations: configuration,
-                defaultSettings: .recommended (excluding: [ "TARGETED_DEVICE_FAMILY",])
-                                  ),
-               coreDataModels: coreDataModels,
-               environment: [ "OS_ACTIVITY_MODE" : "FALSE" ],
-               launchArguments: [],
-               additionalFiles: [],
-               buildRules: [])
+extension Scheme {
+    static func makeScheme(target: ConfigurationName, name: String) -> Scheme {
+        return Scheme.scheme(
+            name: name,
+            shared: true,
+            buildAction: .buildAction(targets: ["\(name)"]),
+            testAction: .targets(
+                ["\(name)Tests"],
+                configuration: target,
+                options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
+            ),
+            runAction: .runAction(configuration: target),
+            archiveAction: .archiveAction(configuration: target),
+            profileAction: .profileAction(configuration: target),
+            analyzeAction: .analyzeAction(configuration: target)
+        )
     }
 }
+
+//public extension Project {
+//    static func target(
+//        name: String,
+//        product: Product,
+//        bundleID: String,
+//        deploymentTargets: DeploymentTarget,
+//        infoPlist: InfoPlist,
+//        sources: SourceFilesList,
+//        resources: ResourceFileElements?,
+//        entitlement: Path?,
+//        scripts: [TargetScript],
+//        dependencies: [TargetDependency],
+//        baseSettings: ProjectDescription.SettingsDictionary,
+//        configuration: [ProjectDescription.Configuration],
+//        coreDataModels: [CoreDataModel]
+//    ) -> Target {
+//        Target(name: name,
+//               platform: .iOS,
+//               product: product,
+//               productName: "\(name)",
+//               bundleId: bundleID,
+//               deploymentTarget: deploymentTargets,
+//               infoPlist: infoPlist,
+//               sources: sources,
+//               resources: resources,
+//               copyFiles: nil,
+//               headers: nil,
+//               entitlements: entitlement,
+//               scripts: scripts,
+//               dependencies: dependencies,
+//               settings: .settings( // target settings
+//                base: baseSettings.merging (baseSettings) { $1 },
+//                configurations: configuration,
+//                defaultSettings: .recommended (excluding: [ "TARGETED_DEVICE_FAMILY",])
+//                                  ),
+//               coreDataModels: coreDataModels,
+//               environment: [ "OS_ACTIVITY_MODE" : "FALSE" ],
+//               launchArguments: [],
+//               additionalFiles: [],
+//               buildRules: [])
+//    }
+//}

@@ -64,30 +64,30 @@ let defaultTargetSetting: [ProjectDescription.Configuration] = [
 ]
 
 
-func generateSchemes(_ name: String) -> [Scheme] {
-    [
-        
-        Scheme(name: "\(name)",
-               shared: true,
-               buildAction: .buildAction(targets: ["\(name)"]),
-               testAction: .targets(
-                ["\(name)Tests"],
-                configuration: .configuration("Dev"),
-                options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
-               ),
-               runAction: .runAction(
-                configuration: .configuration("Dev")
-               ),
-               archiveAction: .archiveAction(configuration: .configuration("Dev")),
-               profileAction: .profileAction(configuration: .configuration("Dev")),
-               analyzeAction: .analyzeAction(configuration: .configuration("Dev"))),
-        
-        Scheme(name: "\(name)-Prod",
-               shared: true,
-               buildAction: .buildAction(targets: ["\(name)"]),
-               runAction: .runAction(configuration: .configuration("Prod")),
-               archiveAction: .archiveAction(configuration: .configuration("Prod")),
-               profileAction: .profileAction(configuration: .configuration("Prod")),
-               analyzeAction: .analyzeAction(configuration: .configuration("Prod")))
-        ]
-}
+//func generateSchemes(_ name: String) -> [Scheme] {
+//    [
+//        
+//        Scheme(name: "\(name)",
+//               shared: true,
+//               buildAction: .buildAction(targets: ["\(name)"]),
+//               testAction: .targets(
+//                ["\(name)Tests"],
+//                configuration: .configuration("Dev"),
+//                options: .options(coverage: true, codeCoverageTargets: ["\(name)"])
+//               ),
+//               runAction: .runAction(
+//                configuration: .configuration("Dev")
+//               ),
+//               archiveAction: .archiveAction(configuration: .configuration("Dev")),
+//               profileAction: .profileAction(configuration: .configuration("Dev")),
+//               analyzeAction: .analyzeAction(configuration: .configuration("Dev"))),
+//        
+//        Scheme(name: "\(name)-Prod",
+//               shared: true,
+//               buildAction: .buildAction(targets: ["\(name)"]),
+//               runAction: .runAction(configuration: .configuration("Prod")),
+//               archiveAction: .archiveAction(configuration: .configuration("Prod")),
+//               profileAction: .profileAction(configuration: .configuration("Prod")),
+//               analyzeAction: .analyzeAction(configuration: .configuration("Prod")))
+//        ]
+//}

@@ -9,13 +9,18 @@ import ProjectDescription
 
 public struct Environment {
     public let organizationName: String
-    public let deploymentTargets: DeploymentTarget
+    public let deploymentTarget: DeploymentTargets
     public let platform: Platform
 }
 
 public let env15 = Environment(
-    organizationName: "hyeong",
-    deploymentTargets: DeploymentTarget.iOS(targetVersion: "15.0", devices: .iphone, supportsMacDesignedForIOS: true),
+    organizationName: "com.hwan",
+    deploymentTarget: .iOS("15.0"),
     platform: .iOS
 )
 
+public let env13 = Environment(
+    organizationName: "com.hwan",
+    deploymentTarget: .iOS("13.0"),
+    platform: .iOS
+)
