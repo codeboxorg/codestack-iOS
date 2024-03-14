@@ -26,7 +26,7 @@ let paths = [
 
 let coreDataPaths: [CoreDataModel] =
 paths.map { path in
-    CoreDataModel(Path.relativeToCurrentFile(path))
+    CoreDataModel.coreDataModel(Path.relativeToCurrentFile(path))
 }
 
 let baseSetting: SettingsDictionary =

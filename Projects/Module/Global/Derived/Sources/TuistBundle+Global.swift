@@ -8,9 +8,9 @@ import Foundation
 private class BundleFinder {}
 
 extension Foundation.Bundle {
-/// Since Data is a staticFramework, the bundle containing the resources is copied into the final product.
+/// Since Global is a staticFramework, the bundle containing the resources is copied into the final product.
 static let module: Bundle = {
-    let bundleName = "Data_Data"
+    let bundleName = "Global_Global"
 
     let candidates = [
         Bundle.main.resourceURL,
@@ -24,14 +24,14 @@ static let module: Bundle = {
             return bundle
         }
     }
-    fatalError("unable to find bundle named Data_Data")
+    fatalError("unable to find bundle named Global_Global")
 }()
 }
 
 // MARK: - Objective-C Bundle Accessor
 
 @objc
-public class DataResources: NSObject {
+public class GlobalResources: NSObject {
 @objc public class var bundle: Bundle {
     return .module
 }

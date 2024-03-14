@@ -13,6 +13,6 @@ let workspace = Workspace(
         P.csNetwork,
         P.global,
         P.thirdParty,
-        P.commonUI,
-        P.presentation
+        P.commonUI
+        //P.presentation
     ])
