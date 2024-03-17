@@ -8,9 +8,10 @@
 import UIKit
 import RxSwift
 import RxFlow
-import Swinject
-import Global
 import Domain
+import Swinject
+import FirebaseCore
+import CSNetwork
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -24,9 +25,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windoScene = (scene as? UIWindowScene) else { return }
         
-        let window = UIWindow(windowScene: windoScene)
+        UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         
+        let window = UIWindow(windowScene: windoScene)
         let appDependency = AppFlow.Dependency(injector: self.injector)
+        
         injector.assemble([
             NetworkAssembly(),
             DataAssembly(),
@@ -38,11 +41,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             HistoryAssembly(),
             OnBoardingAssembly(),
             MyPageAssembly(),
-            CodeEditorAssembly()
+            CodeEditorAssembly(),
+            WritePostingAssembly()
         ])
         
         let flow = AppFlow(dependency: appDependency)
-        
         self.coordinator.coordinate(flow: flow, with: AppStepper())
         self.gitAuthUsecase = injector.resolve(AuthUsecase.self)
         Flows.use(flow, when: .created, block: { root in
@@ -57,10 +60,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ///   - scene: 현재의 scene
     ///   - URLContexts: app build setting에서 정의한 URL Type으로 redirect 된다.
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        Log.debug("\(URLContexts)")
+        // Log.debug("\(URLContexts)")
         if let url = URLContexts.first?.url {
             //MARK: - Github url open
-            
             let component = url.absoluteString.components(separatedBy: "?")
             if let flag = component.first?.elementsEqual("codestackios://git/auth"),
                flag,
@@ -70,6 +72,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
     }
-    
 }
-
