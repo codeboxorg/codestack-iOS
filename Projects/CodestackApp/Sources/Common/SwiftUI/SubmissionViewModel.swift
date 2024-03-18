@@ -35,14 +35,14 @@ class ContributionViewModel: ObservableObject, RxFlow.Stepper {
     }
     
     func binding() {
-        //TODO: 해야할일 -> 지금 날짜별로 자신의 submission을 가져오는게 불가능 하다....
+        // TODO: 해야할일 -> 지금 날짜별로 자신의 submission을 가져오는게 불가능 하다....
         // GraphQL API 아직 없는 상황
         // -> 그냥 Core Data Layer추가 하는게 나을듯 하다
         // submissionUsecase?.fetchProblemHistoryEqualStatus(status: {})
         _ = submissionUsecase?.fetchSubmissionCalendar()
             .map { try $0.get() }
             .subscribe(with: self, onNext: { vm, calendar in
-                vm.contributions = vm.caculateCurrentContribution(value: calendar)
+                vm.contributions = vm.caculateCurrentContribution(value: SubmissionCalendarVO.generateMockCalendar())
             })
     }
     

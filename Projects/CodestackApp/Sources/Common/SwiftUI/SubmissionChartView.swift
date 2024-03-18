@@ -12,7 +12,7 @@ import RxFlow
 import CommonUI
 
 
-//TODO: 시스템 설정 다크/라이트 모드 분기처리 Setting 해줘야함 , 다크 모드일때 opacity reverse 해야함
+// TODO: 시스템 설정 다크/라이트 모드 분기처리 Setting 해줘야함 , 다크 모드일때 opacity reverse 해야함
 struct CellColor {
     static let cellColor: Color = CColor.sky_blue.sColor
     

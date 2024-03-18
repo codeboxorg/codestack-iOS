@@ -1,9 +1,4 @@
-//
-//  MainSubView-(label 2, button 1).swift
-//  CodeStack
-//
-//  Created by 박형환 on 2023/04/15.
-//
+
 
 import UIKit
 import RxCocoa
@@ -14,7 +9,6 @@ import CommonUI
 ///  action Button 1개
 ///   Vertical
 class TwoLabelOneButton: UIView{
-    
     
     struct LabelBtnText{
         let headLine: String

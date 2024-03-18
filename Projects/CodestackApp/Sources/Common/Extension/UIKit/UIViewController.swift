@@ -38,6 +38,7 @@ enum PATTERN {
 
 extension UIViewController {
     func markColorWhenVaild(type: Valid, view: UIView) {
+ 
         switch type {
         case .empty:
             view.layer.borderColor = CColor.whiteGray.cgColor
