@@ -16,6 +16,7 @@ public protocol DependencyAssemblable {
     func resolve<T>(_ type: T.Type) -> T
     func resolve<T, U>(_ type: T.Type,_ argument: U) -> T
     func resolve<T, U, Z>(_ type: T.Type,_ arg1: U, _ arg2: Z) -> T
+    func resolve<T, U, Z, Q>(_ type: T.Type,_ arg1: U, _ arg2: Z, _ arg3: Q) -> T 
     var container: Container { get }
 }
 
@@ -81,6 +82,15 @@ public class DefaultInjector: Injectable {
     public func resolve<T, U, Z>(_ type: T.Type,_ arg1: U, _ arg2: Z) -> T {
         guard
             let object = container.resolve(type, arguments: arg1, arg2)
+        else {
+            fatalError("did not found \(type) Type Object ")
+        }
+        return object
+    }
+    
+    public func resolve<T, U, Z, Q>(_ type: T.Type,_ arg1: U, _ arg2: Z, _ arg3: Q) -> T {
+        guard
+            let object = container.resolve(type, arguments: arg1, arg2, arg3)
         else {
             fatalError("did not found \(type) Type Object ")
         }
