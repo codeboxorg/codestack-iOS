@@ -8,7 +8,7 @@
 
 import UIKit
 import CommonUI
-
+import Domain
 
 extension UILabel {
     

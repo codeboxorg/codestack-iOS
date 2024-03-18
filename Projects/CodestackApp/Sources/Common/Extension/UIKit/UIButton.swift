@@ -40,19 +40,6 @@ final class HeartButton: FavoriteButton {
 
 extension UIButton {
     
-    /// Send Button Attribute Setting
-    func applySubmitAttrubutes(title: String = "제출하기") {
-        var configuration = UIButton.Configuration.plain()
-        configuration.titlePadding = 10
-        self.configuration = configuration
-        self.setTitle("\(title)", for: .normal)
-        self.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        self.tintColor = .label
-        self.layer.borderColor = UIColor.sky_blue.cgColor
-        self.layer.borderWidth = 1
-        self.layer.cornerRadius = 5
-    }
-    
     func makeHideButton(height: CGFloat) -> HideButton {
         let button = UIButton(frame: .zero)
         button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
