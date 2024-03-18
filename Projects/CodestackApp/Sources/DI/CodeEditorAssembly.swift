@@ -24,28 +24,32 @@ public struct CodeEditorAssembly: Assembly {
             let history = resolver.resolve(HistoryViewModel.self)!
             let useCase = resolver.resolve(SubmissionUseCase.self)!
             let stepper = resolver.resolve(CodeEditorStepper.self)!
+            let codeUsecase = resolver.resolve(CodeUsecase.self)!
+            let jzUsecase = resolver.resolve(JZUsecase.self)!
             
             let dp = CodeEditorViewModel.Dependency(homeViewModel: home,
                                                     historyViewModel: history,
                                                     submissionUseCase: useCase,
-                                                    stepper: stepper)
-            return CodeEditorViewModel(dependency: dp)
+                                                    stepper: stepper,
+                                                    codeuseCase: codeUsecase,
+                                                    jzuseCase: jzUsecase)
+            let editorViewModel = CodeEditorViewModel(dependency: dp)
+            
+            
+            return editorViewModel
         }
         
         container.register(CodeEditorReactor.self) { resolver in
             return CodeEditorReactor(initialState: .init(alert: ""))
         }
         
-        container.register(CodeEditorViewController.self) { resolver, problemListItem in
+        container.register(CodeEditorViewController.self) { resolver, editorType in
             let viewModel = resolver.resolve(CodeEditorViewModel.self)!
             let reactor = resolver.resolve(CodeEditorReactor.self)!
-            
             let dp = CodeEditorViewController.Dependency.init(viewModel: viewModel,
-                                                              problem: problemListItem,
-                                                              editorReactor: reactor)
+                                                              editorReactor: reactor,
+                                                              editorType: editorType)
             return CodeEditorViewController.create(with: dp)
         }
     }
-    
-    
 }
