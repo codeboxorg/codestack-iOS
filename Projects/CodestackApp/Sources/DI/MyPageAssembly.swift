@@ -21,7 +21,11 @@ public struct MyPageAssembly: Assembly {
         
         container.register(MyPageViewModel.self) { resolver in
             let useCase = resolver.resolve(ProfileUsecase.self)!
-            let dp = MyPageViewModel.Dependency(profileUsecase: useCase)
+            let codeUsecase = resolver.resolve(CodeUsecase.self)!
+            let firebaseUsecase = resolver.resolve(FirebaseUsecase.self)!
+            let dp = MyPageViewModel.Dependency(profileUsecase: useCase,
+                                                firebaseUsecase: firebaseUsecase, 
+                                                codeUsecase: codeUsecase)
             return MyPageViewModel(dependency: dp)
         }
         
