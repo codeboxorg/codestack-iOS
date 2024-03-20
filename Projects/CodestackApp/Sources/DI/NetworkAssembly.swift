@@ -24,16 +24,6 @@ public struct NetworkAssembly: Assembly {
             LoginService()
         }.inObjectScope(.container)
         
-        container.register(TokenAcquisitionService<RefreshToken>.self) { resolver in
-            let service = resolver.resolve(RestAPI.self)!
-            let defaultService = service as! DefaultRestAPI
-            return TokenAcquisitionService(initialToken: defaultService.initialToken,
-                                           getToken: defaultService.reissueToken(token:),
-                                           max: 2,
-                                           extractToken: API.extractAccessToken)
-        }.inObjectScope(.container)
-        
-        
         container.register(GraphQLAPI.self) { resolver in
             let graphAPIDependency = DefaultGraphQLAPI.Dependency.init(baseURL: DefaultRepository.baseURL,
                                                                        configuration: .default)
