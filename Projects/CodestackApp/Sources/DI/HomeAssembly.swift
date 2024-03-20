@@ -20,7 +20,7 @@ public struct HomeAssembly: Assembly {
         // MARK: Home ViewModel
         container.register(HomeViewModel.self) { resolver in
             let home = resolver.resolve(HomeUsecase.self)!
-            let codestackUseCase = resolver.resolve(CodestackUsecase.self)!
+            let codestackUseCase = resolver.resolve(FirebaseUsecase.self)!
             let homeViewModel: HomeViewModel.Dependency = .init(homeUsecase: home,
                                                                 codestackUsecase: codestackUseCase)
             return HomeViewModel(dependency: homeViewModel)
@@ -34,10 +34,21 @@ public struct HomeAssembly: Assembly {
             return ContributionViewModel.create(depenedency: dependency)
         }
         
+        container.register(RichTextViewController.self) { resolver, markdown, storeVO, viewType in
+            let firebaseUsecase = resolver.resolve(FirebaseUsecase.self)!
+            let dependency = RichTextViewController.Dependency(html: markdown,
+                                                               storeVO: storeVO,
+                                                               usecase: firebaseUsecase,
+                                                               viewType: viewType)
+            let vc = RichTextViewController.create(with: dependency)
+            return vc
+        }
+        
         
         // MARK: SideMenu VC
         container.register(SideMenuViewController.self) { resolver in
-            SideMenuViewController.create()
+            let authUsecase = resolver.resolve(AuthUsecase.self)!
+            return SideMenuViewController.create(usecase: authUsecase)
         }.inObjectScope(.home)
         
         container.register(HomeViewController.self) { resolver in
