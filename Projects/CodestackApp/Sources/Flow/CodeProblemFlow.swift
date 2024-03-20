@@ -10,6 +10,7 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import Domain
+import SafariServices
 
 class CodeProblemFlow: Flow{
     
@@ -36,19 +37,27 @@ class CodeProblemFlow: Flow{
     
     func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
-        switch codestackStep{
+        switch codestackStep {
         case .problemList:
             return navigateToProblemList()
             
-        case .problemPick(let problem):
-            rootViewController.tabBarController?.tabBar.isHidden = true
+        case .problemLink(let url):
+            self.rootViewController.pushViewController(SFSafariViewController(url: url), animated: false)
+            return .none
             
-            return navigateToProblemPick(problem: problem)
+        case .problemPick(let editor):
+            rootViewController.tabBarController?.tabBar.isHidden = true
+            return navigateToProblemPick(editor: editor)
             
         case .problemComplete:
             rootViewController.tabBarController?.tabBar.isHidden = false
             rootViewController.setNavigationBarHidden(false, animated: true)
             rootViewController.popViewController(animated: true)
+            return .none
+        
+        case .toastV2Message(let style, let message):
+            let value = ToastValue.make(style, message)
+            Toast.toastMessage(value,pos: .top, xOffset: 12, yOffset: -120)
             return .none
             
         case .toastMessage(let message):
@@ -74,9 +83,9 @@ class CodeProblemFlow: Flow{
     }
     
     
-    func navigateToProblemPick(problem: ProblemListItemModel) -> FlowContributors{
-        let editorVC = injector.resolve(CodeEditorViewController.self, problem)
-        let stepper = injector.resolve(CodeEditorStepper.self)        
+    func navigateToProblemPick(editor: EditorTypeProtocol) -> FlowContributors{
+        let editorVC = injector.resolve(CodeEditorViewController.self, editor)
+        let stepper = injector.resolve(CodeEditorStepper.self)
         editorVC.hidesBottomBarWhenPushed = true
         rootViewController.pushViewController(editorVC, animated: true)
         
