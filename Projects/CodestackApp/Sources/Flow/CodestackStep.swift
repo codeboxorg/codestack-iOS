@@ -54,13 +54,30 @@ enum CodestackStep: Step, CaseIterable {
     case firstHomeStep
     case projectHomeStep
     
+    
+    // TabBar middle button
+    case writeSelectStep
+    case postingWrtieStep
+    case markDownPreview(String)
+    case postingEndStep
+    case postEditorStep
+    case postTagAddStep
+    
+    // TabBar middle button & editor
+    case codeEditorStep(CodeEditor)
+    
     //problemSolve VC
+    case problemLink(URL)
     case problemComplete
     case problemList
-    case problemPick(ProblemListItemModel)
-    case recentSolveList(ProblemListItemModel?)
+    case problemPick(ProblemSolveEditor)
+    case codeEditor(CodeEditor)
+    case recentSolveList(ProblemSolveEditor)
+    
     case toastMessage(String)
     case toastV2Message(ToastStyle, String)
+    case toastV2Value(ToastValue)
+    
     case recommendPage
     
     case sideMenuDelegate(String)
@@ -71,11 +88,8 @@ enum CodestackStep: Step, CaseIterable {
     case codestack
     
     case historyflow
-    case richText(String)
+    case richText(String, StoreVO)
     
     case none
     
-}
-
-extension CodestackStep: Equatable{
 }
