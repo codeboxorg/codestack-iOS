@@ -52,13 +52,5 @@ class OnBoardingFlow: Flow{
         let vc = injector.resolve(PagingOnboardingViewController.self)
         rootViewController.pushViewController(vc, animated: false)
         return .one(flowContributor: .contribute(withNext: vc))
-        
-//        let onBoarding = OnBoardingVC()
-//
-//        Log.debug(rootViewController.isNavigationBarHidden)
-//
-//        rootViewController.pushViewController(onBoarding, animated: false)
-//
-//        return .one(flowContributor: .contribute(withNext: onBoarding))
     }
 }
