@@ -97,18 +97,23 @@ class LoginFlow: Flow {
         
         let flow = TabBarFlow(dependency: dependency)
         
+        let tabBarStepper = TabBarStepper()
+        
         Flows.use(flow, when: .ready, block: { root in
+            if let rootVC = root as? CustomTabBarController {
+                rootVC.stepper = tabBarStepper
+            }
             self.loginViewController.navigationController?.isNavigationBarHidden = true
             self.loginViewController.navigationController?.pushViewController(root, animated: false)
         })
 
         return .one(flowContributor: .contribute(withNextPresentable: flow,
-                                                 withNextStepper: OneStepper(withSingleStep: CodestackStep.firstHomeStep)))
+                                                 withNextStepper: tabBarStepper))
     }
 }
 
 
-class LoginStepper: Stepper {
+final class LoginStepper: Stepper {
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     // TODO: Data Layer 의존성 제거해야됨
@@ -127,35 +132,11 @@ class LoginStepper: Stepper {
             .firebaseTokenReissue()
             .subscribe(with: self,
                        onCompleted: { stepper in
+                Log.debug("readyToEmitSteps ->")
                 stepper.steps.accept(CodestackStep.userLoggedIn(nil, nil))
             }, onError: { stepper, error in
                 Log.debug("readyToEmitSteps -> \(error)")
                 //stepper.steps.accept(CodestackStep.userLoggedIn(nil, nil))
             })
     }
-    
-//    func readyToEmitSteps() {
-//         TODO: Reissue Token Error
-//         현재 refresh TOken 으로 재발급시 서버측 Token(구버젼) 으로 발급이 되어 에러 발생 -> 현재는 명시적으로 로그인 하도록
-//        let accessToken = KeychainItem.currentAccessToken
-//        let refreshToken = KeychainItem.currentRefreshToken
-//        
-//        let token = authService.reissueToken(token: RefreshToken(refresh: refreshToken))
-//        
-//        _ = token.subscribe(with: self, onNext: { stepper , value in
-//            let (response,data) = value
-//            switch response.statusCode {
-//            case 200..<299:
-//                do {
-//                    let reissueToken = try API.extract(data)
-//                    try KeychainItem.saveAccessToken(access: reissueToken)
-//                    stepper.steps.accept(CodestackStep.userLoggedIn(nil, nil))
-//                } catch {
-//                    Log.error(error)
-//                }
-//            default:
-//                stepper.steps.accept(CodestackStep.none)
-//            }
-//        })
-//    }
 }
