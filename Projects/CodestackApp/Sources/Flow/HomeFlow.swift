@@ -10,20 +10,22 @@ import RxFlow
 import RxSwift
 import RxCocoa
 import Global
+import Domain
+import SafariServices
 
-class HomeStepper: Stepper{
+class HomeStepper: Stepper {
     
     var steps = PublishRelay<Step>()
     
-    var initialStep: Step{
+    var initialStep: Step {
         CodestackStep.projectHomeStep
     }
 }
 
 
-class HomeFlow: Flow{
+class HomeFlow: Flow {
     
-    var root: Presentable{
+    var root: Presentable {
         rootViewController
     }
     
@@ -50,10 +52,10 @@ class HomeFlow: Flow{
         self.sideVC = injector.resolve(SideMenuViewController.self)
     }
     
-    
     func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
-        switch codestackStep{
+        switch codestackStep {
+            
         case .projectHomeStep:
             return navigateToHome()
             
@@ -93,11 +95,13 @@ class HomeFlow: Flow{
             return .end(forwardToParentFlowWithStep: CodestackStep.logout)
             
         case .recentSolveList(let item):
-            guard let item else {return .none}
-            return navigateToRecentSolveList(problem: item)
+            return navigateToRecentSolveList(editor: item)
             
-        case .richText(let problems):
-            let vc = RichTextViewController.create(with: problems)
+        case .richText(let markdown, let storeVO):
+            let vc = injector.resolve(RichTextViewController.self,
+                                      markdown,
+                                      storeVO,
+                                      RichViewModel.ViewType.posting)
             rootViewController.pushViewController(vc, animated: true)
             return .none
             
@@ -121,8 +125,8 @@ class HomeFlow: Flow{
                                                  withNextStepper: composite))
     }
     
-    private func navigateToRecentSolveList(problem item: ProblemListItemModel) -> FlowContributors {
-        let editorVC = injector.resolve(CodeEditorViewController.self, item)
+    private func navigateToRecentSolveList(editor: EditorTypeProtocol) -> FlowContributors {
+        let editorVC = injector.resolve(CodeEditorViewController.self, editor)
         let stepper = injector.resolve(CodeEditorStepper.self)
         editorVC.hidesBottomBarWhenPushed = true
         rootViewController.pushViewController(editorVC, animated: true)
