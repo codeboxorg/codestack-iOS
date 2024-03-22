@@ -16,7 +16,7 @@ import Domain
 
 class MyPageFlow: Flow {
     
-    var root: Presentable{
+    var root: Presentable {
         rootViewController
     }
     
@@ -39,19 +39,38 @@ class MyPageFlow: Flow {
     
     func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
-        switch codestackStep{
+        
+        switch codestackStep {
+        
         case .profilePage:
             return navigateToMyPage()
+        
         case .profileEdit(let memberVO, let profile):
             return navigateToDetailProfile(memberVO, profile)
+        
         case .profileEditDissmiss:
             self.rootViewController.dismiss(animated: true)
-            return .none
-        case .toastMessage(let message):
-            return toastMessage(message)
-        default:
-            return .none
+        
+        case .richText(let markdown, let storeVO):
+            let vc = injector.resolve(RichTextViewController.self,
+                                      markdown,
+                                      storeVO,
+                                      RichViewModel.ViewType.posting)
+            rootViewController.pushViewController(vc, animated: true)
+            
+        case .toastV2Value(let toastValue):
+            return toast(toastValue)
+        
+        case .codeEditorStep(let editor):
+            return navigateCodeEditorVC(editor)
+            
+        case .problemComplete:
+            self.rootViewController.setNavigationBarHidden(false, animated: true)
+            self.rootViewController.popViewController(animated: true)
+            
+        default: return .none
         }
+        return .none
     }
     
     func navigateToDetailProfile(_ memberVO: MemberVO, _ profile: Data) -> FlowContributors {
@@ -61,6 +80,16 @@ class MyPageFlow: Flow {
         rootViewController.present(editProfileVC, animated: true)
         return .one(flowContributor: .contribute(withNextPresentable: editProfileVC,
                                                  withNextStepper: editProfileVC.editViewModel))
+    }
+    
+    private func navigateCodeEditorVC(_ editor: EditorTypeProtocol) -> FlowContributors {
+        let editorVC = injector.resolve(CodeEditorViewController.self, editor)
+        let stepper = injector.resolve(CodeEditorStepper.self)
+        editorVC.hidesBottomBarWhenPushed = true
+        
+        self.rootViewController.pushViewController(editorVC, animated: true)
+        
+        return .one(flowContributor: .contribute(withNextPresentable: editorVC, withNextStepper: stepper))
     }
     
     func navigateToMyPage() -> FlowContributors {
@@ -81,11 +110,11 @@ class MyPageFlow: Flow {
         return .none
     }
     
-    func toastMessage(_ msg: String) -> FlowContributors {
+    func toast(_ toastValue: ToastValue) -> FlowContributors {
         rootViewController.dismiss(animated: true) { [weak self] in
             guard let self else { return }
             let container = self.rootViewController.presentedViewController?.view
-            Toast.toastMessage(ToastValue.sample, pos: .bottom, container: container)
+            Toast.toastMessage(toastValue, pos: .bottom, container: container)   
         }
         return .none
     }
