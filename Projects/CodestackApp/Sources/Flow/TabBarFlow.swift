@@ -9,10 +9,20 @@ import UIKit
 import RxFlow
 import RxSwift
 import RxCocoa
+import Global
+import Domain
 
-class TabBarFlow: Flow{
+final class TabBarStepper: Stepper {
+    var steps: PublishRelay<Step> = PublishRelay<Step>()
     
-    var root: RxFlow.Presentable{
+    var initialStep: Step {
+        CodestackStep.firstHomeStep
+    }
+}
+
+final class TabBarFlow: Flow{
+    
+    var root: Presentable {
         self.rootViewTabController
     }
     
@@ -33,22 +43,105 @@ class TabBarFlow: Flow{
         switch codestackStep {
         case .logout:
             return .end(forwardToParentFlowWithStep: CodestackStep.logout)
+        
         case .firstHomeStep:
             return navigateToTabBarController()
-        case .alert(_):
+            
+        case .toastV2Message(let style, let message):
+            let value = ToastValue.make(style, message)
+            Toast.toastMessage(value,pos: .top, xOffset: 12, yOffset: -80)
             return .none
-        case .fakeStep:
+            
+        case .writeSelectStep:
+            return navigateToShowSelectVC()
+        
+        case .codeEditorStep(let editor):
+            return navigateCodeEditorVC(editor)
+            
+        case .postingWrtieStep:
+            return navigateToWritePostingVC()        
+            
+        case .postingEndStep:
             return .none
+            
+        case let .richText(html, storeVO):
+            showPreviewRichText(html, storeVO)
+            
+        case .problemComplete:
+            self.rootViewTabController
+                .selectedViewController?
+                .navigationController?
+                .popViewController(animated: true)
+            return .none
+            
         case .problemList:
             rootViewTabController.selectedIndex = 1
             return .none
         default:
-            print("codestackStep: \(codestackStep)")
             return .none
         }
+        return .none
     }
     
-    private func navigateToTabBarController() -> FlowContributors{
+    private func showPreviewRichText(_ html: String, _ storeVO: StoreVO) {
+        let vc = injector.resolve(RichTextViewController.self,
+                                  html,
+                                  storeVO,
+                                  RichViewModel.ViewType.preview)
+        
+        self.rootViewTabController
+            .selectedViewController?
+            .navigationController?
+            .pushViewController(vc, animated: false)
+    }
+    
+    private func navigateToWritePostingVC() -> FlowContributors {
+        let viewController = injector.resolve(WritePostingViewController.self)
+        viewController.modalPresentationStyle = .fullScreen
+        viewController.hidesBottomBarWhenPushed = true
+        //viewController.navigationController?.setNavigationBarHidden(true, animated: false)
+        
+        self.rootViewTabController.selectedViewController?.dismiss(animated: true)
+        
+        self.rootViewTabController
+            .selectedViewController?
+            .navigationController?
+            .pushViewController(viewController, animated: true)
+        
+        return .one(flowContributor:
+                .contribute(withNextPresentable: viewController,
+                            withNextStepper: viewController.viewModel)
+        )
+    }
+    
+    private func navigateToShowSelectVC() -> FlowContributors {
+        let postingVC = WriteSelectViewController()
+        postingVC.modalPresentationStyle = .automatic
+        postingVC.sheetPresentationController?.detents = [.medium(), .large()]
+        
+        self.rootViewTabController.selectedViewController?
+            .navigationController?
+            .present(postingVC, animated: true)
+        
+        return .one(flowContributor: .contribute(withNext: postingVC))
+    }
+    
+    private func navigateCodeEditorVC(_ editor: EditorTypeProtocol) -> FlowContributors {
+        let editorVC = injector.resolve(CodeEditorViewController.self, editor)
+        let stepper = injector.resolve(CodeEditorStepper.self)
+        editorVC.hidesBottomBarWhenPushed = true
+        
+        self.rootViewTabController.selectedViewController?.dismiss(animated: true)
+        
+        self.rootViewTabController
+            .selectedViewController?
+            .navigationController?
+            .pushViewController(editorVC, animated: true)
+        
+        return .one(flowContributor: .contribute(withNextPresentable: editorVC, withNextStepper: stepper))
+    }
+    
+    private func navigateToTabBarController() -> FlowContributors {
         let tabBarDelegate = rootViewTabController
         
         let codeDependency = CodeProblemFlow.Dependency(
@@ -76,7 +169,7 @@ class TabBarFlow: Flow{
             let historyVC = histoty
             let myPageVC = myPage
             
-            let dummyViewConroller = CodeEditorViewController()
+            let dummyViewConroller = MockViewController()
             self.rootViewTabController.setViewControllers([homeVC, problemVC,dummyViewConroller, historyVC, myPageVC], animated: true)
             rootViewTabController.addTabBarItems()
         }
