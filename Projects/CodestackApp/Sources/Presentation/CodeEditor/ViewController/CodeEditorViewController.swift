@@ -13,176 +13,146 @@ import RxCocoa
 import Global
 import CommonUI
 import ReactorKit
+import SafariServices
+import Domain
 
-class CodeEditorViewController: UIViewController, ReactorKit.View, Stepper {
+
+class CodeEditorViewController: UIViewController,
+                                ReactorKit.View,
+                                Stepper {
+    
     typealias Reactor = CodeEditorReactor
-    
     var steps = PublishRelay<Step>()
-    
     private var editorViewModel: CodeEditorViewModel?
-    
     var disposeBag = DisposeBag()
+    var editorType: EditorTypeProtocol = ProblemSolveEditor()
     
-    var problemItem: ProblemListItemModel?
-    
-    private weak var highlightr: Highlightr?
-    
-    struct Dependency{
+    struct Dependency {
         var viewModel: CodeEditorViewModel
-        var problem: ProblemListItemModel
         var editorReactor: CodeEditorReactor
+        var editorType: EditorTypeProtocol
     }
     
     static func create(with dependency: Dependency) -> CodeEditorViewController {
         let vc = CodeEditorViewController()
         vc.editorViewModel = dependency.viewModel
-        vc.problemItem = dependency.problem
         vc.reactor = dependency.editorReactor
-        vc.problemPopUpView.setLangueMenu(languages: dependency.problem.language)
+        vc.editorType = dependency.editorType
+        vc.editorViewModel?.editorType = dependency.editorType
+        vc.problemPopUpView.setLangueMenu(languages: dependency.editorType.getDefaultLanguage() )
         return vc
     }
     
-    private let numberTextViewContainer: UIView = {
-        let view = UIView()
-        return view
-    }()
-    
-    private let numbersView: LineNumberRulerView = {
-        let view = LineNumberRulerView(frame: .zero, textView: nil)
-        return view
-    }()
-    
-    
-    lazy var codeUITextView: CodeUITextView = {
-        let textStorage = CodeAttributedString()
-        let layoutManager = NSLayoutManager()
-        
-        textStorage.addLayoutManager(layoutManager)
-        let textContainer = NSTextContainer()
-        layoutManager.addTextContainer(textContainer)
-        
-        highlightr = textStorage.highlightr
-        highlightr?.setTheme(to: "Chalk")
-        
-        let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
-        layoutManager.delegate = self
-        textView.delegate = self
-        
-        return textView
-    }()
-    
-    
     lazy var problemPopUpView: ProblemPopUpView = {
         let popView = ProblemPopUpView(frame: .zero,self)
-        
-        if let html = problemItem?.contenxt {
-            popView.loadHTMLToWebView(html: html)
-        }
-        
-        if let title = problemItem?.problemTitle {
-            popView.problemTitle.text = "\(title)"
-        }
+        let html = editorType.problemContext
+        popView.loadHTMLToWebView(html: html)
+        popView.problemTitle.text = editorType.problemTitle
         return popView
     }()
     
+    lazy var ediotrContainer = EditorContainerView().then { container in
+        container.setDelegate(self)
+    }
+    
     override func viewDidLoad() {
-        Log.debug("viewDidLoad")
         super.viewDidLoad()
         layoutConfigure()
-        settingBackground()
-        self.numbersView.settingTextView(self.codeUITextView,tracker: self)
+        datainit()
+        self.view.backgroundColor = .black
         self.view.bringSubviewToFront(problemPopUpView)
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         binding()
+        problemPopUpView.settingEditor(type: self.editorType)
     }
-    
-    func settingBackground() {
-        let black = self.highlightr?.theme.themeBackgroundColor
-        let white = CColor.whiteGray.color
-        self.codeUITextView.backgroundColor = black
-        self.codeUITextView.layer.borderColor = black?.cgColor
-        self.codeUITextView.tintColor = white
-        numberTextViewContainer.backgroundColor = black
-        self.view.backgroundColor = black
-    }
-    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.problemPopUpView.show()
+        if editorType.isProblemSolve() { problemPopUpView.show() }
     }
     
+    /// TextView 의 무결성을 위한 Bool 값입니다.
+    /// True일때는 최근에 제출했었던 source를 TextView에 적용합니다.
     private var sourceCodeState = false
+    
     private var problemContext = BehaviorRelay<String>(value: "")
     
     func bind(reactor: CodeEditorReactor) {
-        Log.debug("codeReactor: Reactor: \(reactor)")
-        
-        problemPopUpView.sendSubmissionAction()
-            .map { "hello Send Button" }
-            .map(Reactor.Action.send)
-            .drive(reactor.action)
-            .disposed(by: disposeBag)
-        
-        //reactor.pulse(\.$alert)
-        //    .map(CodestackStep.toastMessage)
-        //    .bind(to: steps)
-        //    .disposed(by: disposeBag)
+        // TODO: Input View Reactor 킷으로 맵핑
+//        problemPopUpView.sendSubmissionAction()
+//            .map { "hello Send Button" }
+//            .map(Reactor.Action.send)
+//            .drive(reactor.action)
+//            .disposed(by: disposeBag)
     }
     
-    func binding(){
-        Log.debug("Binding: ")
-        guard let id = problemItem?.problemNumber,
-              let title = problemItem?.problemTitle else { return }
-        
-        let sendSubmissionAction
-        =
-        problemPopUpView
+    private func datainit() {
+        if editorType.isOnlyEditor() {
+            let codestackVO = editorType.getCodestackVO()
+            sourceCodeState = true
+            ediotrContainer.codeUITextView.text = codestackVO.sourceCode
+            problemPopUpView.editorTitleField.text = codestackVO.name
+            
+        } else if editorType.isProblemSolve() {
+            let problemItem = editorType.getProblemList()
+            let sourceCode = problemItem.sourceCode
+            ediotrContainer.codeUITextView.text = sourceCode
+            sourceCodeState = true
+            if let sourceCode, sourceCode.isEmpty { sourceCodeState = false }
+            if let language = problemItem.seletedLanguage { problemPopUpView.languageRelay.accept(language) }
+            if problemItem.sourceCode == nil { sourceCodeState = false }
+            if let context = problemItem.contenxt { problemContext.accept(context) }
+        }
+    }
+    
+    private func inputSubmissionID() -> Driver<String> {
+        let submissionID = editorType.getSubmissionID()
+        return Observable
+            .just(submissionID)
+            .asDriverJust()
+    }
+    
+    private func inputSubmissionAction() -> Driver<String> {
+        let id = editorType.problemID
+        return problemPopUpView
             .sendSubmissionAction()
             .map { _ in "\(id)" }
             .startWith("\(id)")
             .asDriverJust()
-        
-        if let sourceCode = problemItem?.sourceCode,
-           let language = problemItem?.seletedLanguage {
-            codeUITextView.text = sourceCode
-            sourceCodeState = true
-            if sourceCode.isEmpty { sourceCodeState = false }
-            problemPopUpView.languageRelay.accept(language)
-        }
-        
-        if problemItem?.sourceCode == nil {
-            sourceCodeState = false
-        }
-        
-        if let context = problemItem?.contenxt {
-            problemContext.accept(context)
-        }
-        
-        let textChange = codeUITextView.rx.text
+    }
+    
+    private func inputTextChangeAction() -> Driver<String> {
+        ediotrContainer.codeUITextView.rx.text
             .debounce(.milliseconds(300),
                       scheduler: MainScheduler.instance)
             .compactMap { $0 }
             .asDriverJust()
-        
-        let submissionID = problemItem?.submissionID
-        
-        let submissionIDOb =
-        Observable
-            .just(submissionID)
-            .compactMap { $0 == nil ? "" : $0 }
-            .asDriverJust()
-        
-        let languageAction = problemPopUpView.languageAction()
-        let titleOb: Driver<String> = .just(title)
-        let submissionListGesture = problemPopUpView.submissionListGesture.map { _ in }
-        let problemRefreshTap = problemPopUpView.problemRefreshTap
-        let favoriteTap = problemPopUpView.favoriteTap
-        let problemContext = problemContext.asSignalJust()
-        let dissmissAction = problemPopUpView.dissmissAction()
+    }
+    
+    private func binding() {
+        let output = inputBinding()
+        outputBinding(output)
+    }
+    
+    private func inputBinding() -> CodeEditorViewModel.Output? {
+        let title                 : String             = editorType.problemTitle
+        let sendSubmissionAction  : Driver<String>     = inputSubmissionAction()
+        let submissionIDOb        : Driver<String>     = inputSubmissionID()
+        let textChange            : Driver<String>     = inputTextChangeAction()
+        let languageAction        : Driver<LanguageVO> = problemPopUpView.languageAction()
+        let titleOb               : Driver<String>     = Driver.just(title)
+        let submissionListGesture : Driver<Void>       = problemPopUpView.submissionListGesture.map { _ in }
+        let problemRefreshTap     : Driver<Void>       = problemPopUpView.problemRefreshTap
+        let favoriteTap           : Driver<Bool>       = problemPopUpView.favoriteTap
+        let problemContext        : Signal<String>     = problemContext.asSignalJust()
+        let dissmissAction        : Driver<Void>       = problemPopUpView.dissmissAction()
+        let editorTitleField      : Driver<String>     = problemPopUpView.editorTitleField.rx.text.orEmpty.asDriver()
+        let linkDetector          : Signal<String>     = problemPopUpView.linkDetector.asSignalJust()
+        let problemVO             : Signal<ProblemVO>  = Signal.just(editorType.getProblemVO())
         
         let output = editorViewModel?
             .transform(input:.init(viewDidLoad: OB.justVoid(),
+                                   problemVO: problemVO,
                                    problemContext: problemContext,
                                    dismissAction: dissmissAction,
                                    sendAction: sendSubmissionAction,
@@ -192,26 +162,19 @@ class CodeEditorViewController: UIViewController, ReactorKit.View, Stepper {
                                    submissionID: submissionIDOb,
                                    submissionListGesture: submissionListGesture,
                                    problemRefreshTap: problemRefreshTap,
-                                   favoriteTap: favoriteTap))
+                                   favoriteTap: favoriteTap,
+                                   sourceCodenameWhenEditorOnly: editorTitleField.asDriver()))
         
-        if let loadSourceCode = output?.loadSourceCode {
-            languageAction
-                .distinctUntilChanged()
-                .withLatestFrom(loadSourceCode) { language, sourceCode in
-                    return (language, sourceCode)
-                }
-                .drive(with: self, onNext: { vm, tuple  in
-                    let (language, sourceCode) = tuple
-                    vm.codeUITextView.languageBinding(language: language)
-                    if !vm.sourceCodeState {
-                        vm.codeUITextView.text = ""
-                        vm.codeUITextView.text = sourceCode
-                    } else {
-                        vm.sourceCodeState = false
-                    }
-                }).disposed(by: disposeBag)
-        }
+        viewBinding(language: languageAction,output)
+        viewBinding(favor: favoriteTap,
+                    action: sendSubmissionAction,
+                    linkDetector: linkDetector)
+        submissionHistoryViewBinding()
         
+        return output
+    }
+    
+    func outputBinding(_ output: CodeEditorViewModel.Output?) {
         output?.laguageBinding
             .drive(with: self, onNext: { vc, langVO in
                 vc.problemPopUpView.languageRelay.accept(langVO)
@@ -222,19 +185,8 @@ class CodeEditorViewController: UIViewController, ReactorKit.View, Stepper {
                 view.problemPopUpView.heartButton.flag = flag
             }).disposed(by: disposeBag)
         
-        favoriteTap
-            .drive(with: self, onNext: { view, _ in
-                view.problemPopUpView.heartButton.flag.toggle()
-            }).disposed(by: disposeBag)
-        
-        sendSubmissionAction
-            .skip(1)
-            .drive(with: self, onNext: { vc, _ in
-                vc.problemPopUpView.pageValue.accept(.result(nil))
-            }).disposed(by: disposeBag)
-        
         output?.solvedResult
-            .drive(with: self,onNext: { vc, submission in
+            .drive(with: self, onNext: { vc, submission in
                 vc.problemPopUpView.pageValue.accept(.result(submission))
             }).disposed(by: disposeBag)
         
@@ -260,8 +212,8 @@ class CodeEditorViewController: UIViewController, ReactorKit.View, Stepper {
                     vc.steps.accept(CodestackStep.toastMessage(" \(error) 불러오는데 실패"))
                 }
                 vc.problemPopUpView.problemState.accept(state)
+                
             }).disposed(by: disposeBag)
-        
         
         let tableView = problemPopUpView.submissionListView.tableView
         
@@ -279,9 +231,69 @@ class CodeEditorViewController: UIViewController, ReactorKit.View, Stepper {
             cell.backgroundColor = .clear
             cell.contentView.backgroundColor = .clear
             cell.onHistoryData.accept(submission)
-            cell.onStatus.accept(submission.statusCode.convertSolveStatus())
+            cell.onStatus.accept(submission.statusCode)
         }.disposed(by: disposeBag)
+    }
+    
+    private func submissionHistoryViewBinding() {
+        let submissionHistoryTapped = problemPopUpView.submissionListView.tableView.rx
+            .modelSelected(SubmissionVO.self)
+            .asObservable()
         
+        submissionHistoryTapped
+            .map(\.language)
+            .bind(to: problemPopUpView.languageRelay)
+            .disposed(by: disposeBag)
+            
+        submissionHistoryTapped
+            .map(\.sourceCode)
+            .bind(to: ediotrContainer.codeUITextView.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    private func viewBinding(language action: Driver<LanguageVO>, _ output: CodeEditorViewModel.Output?) {
+        // MARK: View Action
+        if let loadSourceCode = output?.loadSourceCode {
+            action
+                .distinctUntilChanged()
+                .withLatestFrom(loadSourceCode) { language, sourceCode in
+                    return (language, sourceCode)
+                }
+                .drive(with: self, onNext: { vm, tuple  in
+                    let (language, sourceCode) = tuple
+                    vm.ediotrContainer.codeUITextView.languageBinding(language: language)
+                    if !vm.sourceCodeState {
+                        vm.ediotrContainer.codeUITextView.text = ""
+                        vm.ediotrContainer.codeUITextView.text = sourceCode
+                    } else {
+                        vm.sourceCodeState = false
+                    }
+                }).disposed(by: disposeBag)
+        }
+    }
+    
+    private func viewBinding(favor favoriteTap: Driver<Bool>,
+                             action sendSubmission: Driver<String>,
+                             linkDetector: Signal<String>) {
+        
+        favoriteTap.drive(with: self, onNext: { view, _ in
+            view.problemPopUpView.heartButton.flag.toggle()
+        }).disposed(by: disposeBag)
+        
+        sendSubmission
+            .skip(1)
+            .drive(with: self, onNext: { vc, _ in
+                if vc.editorType.isProblemSolve() {
+                    vc.problemPopUpView.pageValue.accept(.result(nil))
+                }
+            }).disposed(by: disposeBag)
+
+        linkDetector.compactMap { URL(string: $0) }
+            .emit(with: self, onNext: { vc, url in
+                let sf = SFSafariViewController(url: url)
+                sf.delegate = vc
+                vc.navigationController?.pushViewController(sf, animated: false)
+            }).disposed(by: disposeBag)
     }
     
     private func keyBoardLayoutManager(){
@@ -292,16 +304,15 @@ class CodeEditorViewController: UIViewController, ReactorKit.View, Stepper {
 
 
 //MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
-extension CodeEditorViewController{
-    
-    func showProblemDiscription(){
+extension CodeEditorViewController {
+    func showProblemDiscription() {
         problemPopUpView.snp.remakeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(400)
         }
-        numbersView.layer.setNeedsDisplay()
-        self.codeUITextView.contentSize.height += problemPopUpView.bounds.height
+        ediotrContainer.numbersView.layer.setNeedsDisplay()
+        ediotrContainer.codeUITextView.contentSize.height += problemPopUpView.bounds.height
     }
     
     //이거 먼저 선언
@@ -311,42 +322,25 @@ extension CodeEditorViewController{
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(height).priority(.high)
         }
-        numbersView.layer.setNeedsDisplay()
-    }
-}
-
-
-//MARK: - TextView delegate
-extension CodeEditorViewController: UITextViewDelegate{
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        return true
-    }
-}
-
-extension CodeEditorViewController: NSLayoutManagerDelegate{
-    func layoutManager(_ layoutManager: NSLayoutManager, paragraphSpacingAfterGlyphAt glyphIndex: Int, withProposedLineFragmentRect rect: CGRect) -> CGFloat {
-        return 10
+        ediotrContainer.numbersView.layer.setNeedsDisplay()
     }
 }
 
 //MARK: - layout setting
-extension CodeEditorViewController{
-    
-    private func layoutConfigure(){
+extension CodeEditorViewController {
+    private func layoutConfigure() {
         self.view.addSubview(problemPopUpView)
-        self.view.addSubview(numberTextViewContainer)
-        numberTextViewContainer.addSubview(codeUITextView)
-        codeUITextView.addSubview(numbersView)
-        
-        
+        self.view.addSubview(ediotrContainer)
+
         let initialHeight = 44
+        
         problemPopUpView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(initialHeight)
         }
         
-        numberTextViewContainer.snp.makeConstraints { make in
+        ediotrContainer.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.equalTo(self.view.safeAreaLayoutGuide.snp.leading)
             make.trailing.equalTo(self.view.safeAreaLayoutGuide.snp.trailing)
@@ -354,32 +348,10 @@ extension CodeEditorViewController{
             make.height.equalTo(self.view.snp.height).priority(.low)
         }
         
-        codeUITextView.snp.makeConstraints { make in
+        ediotrContainer.codeUITextView.snp.remakeConstraints { make in
             make.top.equalTo(problemPopUpView.snp.bottom)
             make.trailing.bottom.equalToSuperview()
             make.leading.equalToSuperview()
-        }
-        
-        
-        //MARK: TextContainer Inset -> 넘버 뷰의 위치의 텍스트입력 방지 inset
-        var inset = codeUITextView.textContainerInset
-        
-        inset.left = 35
-        codeUITextView.textContainerInset = inset
-        numbersView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.bottom.equalToSuperview()
-            make.height.equalTo(codeUITextView.bounds.height)
-            make.width.equalTo(inset.left).priority(.high)
-        }
-    }
-}
-
-//MARK: TextView Size Tracker
-extension CodeEditorViewController: TextViewSizeTracker{
-    func updateNumberViewsHeight(_ height: CGFloat){
-        numbersView.snp.updateConstraints { make in
-            make.height.equalTo(height)
         }
     }
 }
