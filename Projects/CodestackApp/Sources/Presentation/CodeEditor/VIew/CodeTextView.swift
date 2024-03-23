@@ -19,7 +19,7 @@ class CodeUITextView: UITextView {
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
-        addDoneButtonOnKeyboard()
+        addDoneButtonOnKeyboard(#selector(doneButtonAction(_:)))
         self.isScrollEnabled = true
         self.layer.borderWidth = 1
         self.spellCheckingType = .no
@@ -35,9 +35,15 @@ int main() {
         
     return 0;
 }
-    
-    
 """
+    }
+    
+    
+    override func caretRect(for position: UITextPosition) -> CGRect {
+        var superRect = super.caretRect(for: position)
+        guard let font = self.font else { return superRect }
+        superRect.size.height = font.pointSize - font.descender
+        return superRect
     }
     
     required init?(coder: NSCoder) {
@@ -45,28 +51,15 @@ int main() {
     }
     
     deinit{
+        #if DEBUG
         print("CodeUITextView : deinit")
+        #endif
     }
     
     fileprivate func addAttributes(){
         self.font = UIFont.boldSystemFont(ofSize: 14)
     }
-    
-    fileprivate func addDoneButtonOnKeyboard() {
-        let doneToolbar: UIToolbar = UIToolbar(frame: .zero)
-        doneToolbar.barStyle = .default
-        
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
-        
-        let up: UIBarButtonItem = UIBarButtonItem(title: "up", style: .plain, target: self, action: #selector(self.doneButtonAction))
-        
-        let items = [up,flexSpace, done]
-        doneToolbar.items = items
-        doneToolbar.sizeToFit()
-        self.inputAccessoryView = doneToolbar
-    }
-    
+
     @objc func doneButtonAction(_ sender: UIBarButtonItem){
         self.endEditing(true)
     }
