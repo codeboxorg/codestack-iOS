@@ -14,7 +14,7 @@ import Global
 import Domain
 import CommonUI
 
-//TODO: View -> UIViewCOntroller 로 변경해야됨
+// TODO: View -> UIViewCOntroller 로 변경해야됨
 
 final class ProblemPopUpView: UIView {
     
@@ -34,7 +34,6 @@ final class ProblemPopUpView: UIView {
         label.numberOfLines = 1
         return label
     }()
-    
     
     private let activityIndicator = {
         let view = UIActivityIndicatorView(style: .large)
@@ -106,17 +105,9 @@ final class ProblemPopUpView: UIView {
         return button
     }()
     
-    private lazy var sendButtonHeight: CGFloat = 150
-    private lazy var sendButtonWidth: CGFloat = 28
     /// 문제 제출 버튼
     private lazy var sendButton: LoadingUIButton = {
-        var button = LoadingUIButton()
-        button.originalButtonText = "제출하기"
-        button.applySubmitAttrubutes()
-        if let font = button.titleLabel?.font {
-            sendButtonHeight = "제출하기".height(withConstrainedWidth: 150, font: font) + 16
-            sendButtonWidth = "제출하기".width(withConstrainedHeight: sendButtonHeight + 16, font: font) + 40
-        }
+        var button = LoadingUIButton(frame: .zero, title: "제출하기")
         button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
         return button
     }()
@@ -135,14 +126,20 @@ final class ProblemPopUpView: UIView {
         return webView
     }()
     
+    private(set) var editorTitleField = UITextField().then { field in
+        field.placeholder = "제목없음"
+        field.tintColor = .whiteGray
+    }
+    
     // 결과 보여주는 뷰
     private let resultStatusView: SubmissionResultView = {
         let resultStatusView = SubmissionResultView()
         return resultStatusView
     }()
     
-    lazy var submissionListView: SubmissionListView = {
+    private(set) var submissionListView: SubmissionListView = {
         let view = SubmissionListView()
+        view.setHidden(true)
         return view
     }()
     
@@ -185,7 +182,6 @@ final class ProblemPopUpView: UIView {
         sendButton.buttonColor = color
         
         heartButton.tintColor = .sky_blue
-        
         resultStatusView.setting(color: color)
     }
     
@@ -201,24 +197,19 @@ final class ProblemPopUpView: UIView {
     
     private weak var delegate: CodeEditorViewController?
     
-    let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-    
     var disposeBag = DisposeBag()
     let languageRelay = BehaviorRelay<LanguageVO>(value: LanguageVO.default)
     let pageValue = BehaviorRelay<SolveResultType>(value: .problem)
     let submissionLoadingWating = BehaviorRelay<Bool>(value: false)
     let problemState = PublishRelay<CodeEditorViewModel.ProblemState>()
-    
-    @objc func feedBackGenerate(_ button: UIButton){
-        feedbackGenerator.impactOccurred()
-    }
-    
+
     private var webViewHeight: CGFloat = 0
     private let leading_trailing_spacing: CGFloat = 8
     
     //MARK: - Observing Event
     private func observingEvent(){
         languageRelay
+            .distinctUntilChanged()
             .bind(onNext: { [weak self] language in
                 self?.languageButton.setTitle(language.name, for: .normal)
             }).disposed(by: disposeBag)
@@ -240,11 +231,6 @@ final class ProblemPopUpView: UIView {
                 vm.remakeSubmissionListResults(height: 300)
             }
         }).disposed(by: disposeBag)
-        
-//        favoriteTap
-//            .drive(with: self, onNext: { view, _ in
-//                view.heartButton.flag.toggle()
-//            }).disposed(by: disposeBag)
         
         problemRefreshTap
             .drive(with: self, onNext: { view, _ in
@@ -282,7 +268,7 @@ final class ProblemPopUpView: UIView {
             .when(.recognized).asDriver(onErrorJustReturn: .init())
             .drive(with: self,
                    onNext: { view, _ in
-                view.feedbackGenerator.impactOccurred()
+                view.impact()
                 view.pageValue.accept(.problem)
             }).disposed(by: disposeBag)
     }
@@ -292,7 +278,7 @@ final class ProblemPopUpView: UIView {
             .when(.recognized).asDriver(onErrorJustReturn: .init())
             .drive(with: self,
                    onNext: { view, _ in
-                view.feedbackGenerator.impactOccurred()
+                view.impact()
                 view.pageValue.accept(.result(nil))
             }).disposed(by: disposeBag)
     }
@@ -301,12 +287,13 @@ final class ProblemPopUpView: UIView {
         submissionListGesture
             .drive(with: self,
                    onNext: { view, _ in
-                view.feedbackGenerator.impactOccurred()
+                view.impact()
                 view.pageValue.accept(.resultList([]))
             }).disposed(by: disposeBag)
     }
     
     lazy var problemRefreshTap = refreshButton.rx.tap.asDriver()
+    let linkDetector = PublishSubject<String>()
     lazy var favoriteTap: Driver<Bool>
     =
     heartButton.rx.tap
@@ -374,7 +361,6 @@ extension ProblemPopUpView: WKNavigationDelegate{
     /// - Parameter string: HTML String
     func loadHTMLToWebView(html string: String) {
         if string.isEmpty || string.count < 3 {
-//            problemState
             wkWebView.addSubview(refreshLabel)
             wkWebView.addSubview(refreshButton)
             wkWebView.addSubview(activityIndicator)
@@ -400,6 +386,16 @@ extension ProblemPopUpView: WKNavigationDelegate{
         
         let htmlString = wkWebView.htmlSetting(string: string)
         wkWebView.loadHTMLString(htmlString, baseURL: Bundle.main.bundleURL)
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+           if navigationAction.navigationType == WKNavigationType.linkActivated,
+              let url = navigationAction.request.url {
+                linkDetector.onNext(url.absoluteString)
+               decisionHandler(WKNavigationActionPolicy.cancel)
+               return
+           }
+           decisionHandler(WKNavigationActionPolicy.allow)
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -430,9 +426,19 @@ extension ProblemPopUpView{
     }
     
     @objc func hidebuttonTapped(_ sender: UIButton){
-        feedbackGenerator.impactOccurred()
+        self.impact()
         flag == true ? show() : hide(completion: {})
         flag.toggle()
+    }
+    
+    func settingEditor(type: EditorTypeProtocol) {
+        if type.isOnlyEditor() {
+            self.editorTitleField.isHidden = false
+            self.hideButton.isHidden = true
+            self.problemStepButton.isHidden = true
+            self.wkWebView.isHidden = true
+            self.sendButton.originalButtonText = "저장하기"
+        }
     }
     
     func show() {
@@ -447,7 +453,6 @@ extension ProblemPopUpView{
             animations: { [weak self] in
                 self?.popUpContainerView.alpha = 1
                 self?.scrollView.alpha = 1
-                
                 self?.delegate!.view.layoutIfNeeded()
                 self?.layoutIfNeeded()
                 self?.resultStatusView.layoutIfNeeded()
@@ -482,7 +487,6 @@ extension ProblemPopUpView{
             }
         )
     }
-
     
     private func hiddenAlphaEnable(result: SolveResultType) {
         
@@ -568,12 +572,13 @@ extension ProblemPopUpView{
          heartButton,
          resultStepButton,
          submissionListStepButton,
+         editorTitleField
         ].forEach { view in
             self.addSubview(view)
         }
         
         
-        //TODO: fix AutoLayout constraint
+        // TODO: fix AutoLayout constraint
         [wkWebView, resultStatusView, submissionListView].forEach{
             popUpContainerView.addSubview($0)
         }
@@ -595,6 +600,15 @@ extension ProblemPopUpView{
             $0.bottom.equalToSuperview().inset(44)
             $0.height.equalTo(UIScreen.main.bounds.height / 2).priority(.low) //.priority(.low)
             $0.width.equalTo(UIScreen.main.bounds.width)
+        }
+        
+        editorTitleField.isHidden = true
+        
+        editorTitleField.snp.makeConstraints { make in
+            make.leading.equalTo(backButton.snp.trailing).offset(5)
+            make.trailing.equalTo(languageButton.snp.leading).offset(5)
+            make.height.equalTo(40)
+            make.centerY.equalTo(languageButton.snp.centerY)
         }
     }
     
@@ -655,7 +669,7 @@ extension ProblemPopUpView{
         heartButton.isHidden = true
         resultStepButton.isHidden = true
         submissionListStepButton.isHidden = true
-        
+      
         heartButton.snp.makeConstraints { make in
             make.width.equalTo(30)
             make.height.equalTo(30)
@@ -683,21 +697,22 @@ extension ProblemPopUpView{
         
         sendButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(leading_trailing_spacing)
-            make.width.equalTo(sendButtonWidth)
-            make.height.equalTo(sendButtonHeight)
+            make.width.equalTo(sendButton.sendButtonWidth)
+            make.height.equalTo(sendButton.sendButtonHeight)
             make.centerY.equalTo(hideButton.snp.centerY)
         }
     }
 }
 
 //MARK: View 오토레이아웃 재생성
-extension ProblemPopUpView{
+extension ProblemPopUpView {
     
     func showRemakeAnimation() {
         problemTitle.isHidden = false
         resultStepButton.isHidden = false
         submissionListStepButton.isHidden = false
         heartButton.isHidden = false
+        submissionListView.setHidden(false)
         down_remake_scrollView()
         down_remake_hideButton()
         down_remake_numberStepButton()
@@ -710,6 +725,7 @@ extension ProblemPopUpView{
         resultStepButton.isHidden = true
         submissionListStepButton.isHidden = true
         heartButton.isHidden = true
+        submissionListView.setHidden(true)
         up_remake_scrollView()
         up_remake_hideButton(height: 44)
         up_remake_numberStepButton()
