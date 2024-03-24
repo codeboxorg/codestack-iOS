@@ -14,7 +14,7 @@ protocol TextViewSizeTracker: AnyObject{
     func updateNumberViewsHeight(_ height: CGFloat)
 }
 
-class LineNumberRulerView: UIView {
+final class LineNumberRulerView: UIView {
     private weak var textView: UITextView?
     private var textViewContentObserver: NSKeyValueObservation?
     private weak var tracker: TextViewSizeTracker?
@@ -113,9 +113,8 @@ class LineNumberRulerView: UIView {
         layer.isHidden = false
     }
     
-    
     //MARK: textView setting
-    func settingTextView(_ textView: UITextView, tracker delegate: TextViewSizeTracker ){
+    func settingTextView(_ textView: UITextView, tracker delegate: TextViewSizeTracker?) {
         self.textView = textView
         self.tracker = delegate
         self.backgroundColor = textView.backgroundColor

@@ -12,10 +12,9 @@ import CommonUI
 
 final class SubmissionResultView: UIView{
     
-    
     lazy var status = Binder<SubmissionVO>(self)
     { target, submission in
-        let propertyLoop = [submission.id,
+        let propertyLoop = ["\(-1)",
                             submission.problem.title,
                             submission.member.username,
                             "\(submission.memoryUsage )",

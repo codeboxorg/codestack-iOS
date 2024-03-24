@@ -32,6 +32,11 @@ final class SubmissionListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func setHidden(_ hidden: Bool) {
+        self.tableView.isHidden = hidden
+        self.emptyLabel.isHidden = hidden
+    }
+    
     func addEmptyLayout(flag: Bool) {
         if flag {
             tableView.addSubview(emptyLabel)

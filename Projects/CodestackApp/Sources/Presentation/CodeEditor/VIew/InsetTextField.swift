@@ -9,7 +9,7 @@ import UIKit
 
 
 class InsetTextField: UITextField {
-    let inset: CGFloat = 20
+    let inset: CGFloat = 8
 
     
     override init(frame: CGRect) {
