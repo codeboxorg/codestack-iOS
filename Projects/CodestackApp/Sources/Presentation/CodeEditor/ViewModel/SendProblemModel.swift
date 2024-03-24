@@ -16,6 +16,8 @@ struct SendProblemModel {
     let sourceCode: String
     let language: LanguageVO
     let userName: String = ""
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
     
     init(submissionID: SubmissionID, problemID: ProblemID, problemTitle: String = "", sourceCode: String, language: LanguageVO) {
         self.submissionID = submissionID
@@ -53,17 +55,38 @@ extension SendProblemModel {
         ProblemIdentityVO(id: self.problemID, title: self.problemTitle)
     }
     
-    func toTempDomain() -> SubmissionVO {
-        Log.debug("self.submissionID: \(self.submissionID)")
+    func toSolveDomain(status: SolveStatus) -> SubmissionVO {
         let submissionID = self.submissionID.isEmpty ? UUID().uuidString : self.submissionID
         return SubmissionVO.init(id: submissionID,
                                  sourceCode: self.sourceCode,
                                  problem: self.toProblemIdentity(),
                                  member: .init(username: self.userName),
                                  language: self.language,
+                                 statusCode: status,
                                  cpuTime: 0,
                                  memoryUsage: 0,
-                                 statusCode: "temp",
+                                 createdAt: Date().toString())
+    }
+    
+    func toTempDomain() -> SubmissionVO {
+        let submissionID = self.submissionID.isEmpty ? UUID().uuidString : self.submissionID
+        return SubmissionVO.init(id: submissionID,
+                                 sourceCode: self.sourceCode,
+                                 problem: self.toProblemIdentity(),
+                                 member: .init(username: self.userName),
+                                 language: self.language,
+                                 statusCode: .temp,
+                                 cpuTime: 0,
+                                 memoryUsage: 0,
                                  createdAt: Date().toString())
     }    
+    
+    func toCodestackDomain(_ codeName: String) -> CodestackVO {
+        return CodestackVO(id: self.submissionID,
+                           name: codeName.isEmpty ? "제목없음" : codeName,
+                           sourceCode: self.sourceCode,
+                           languageVO: self.language,
+                           updatedAt: Date().toString(),
+                           createdAt: self.createdAt.toString())
+    }
 }
