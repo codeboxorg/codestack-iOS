@@ -10,6 +10,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import Domain
+import Global
 
 class ProblemCell: UITableViewCell{
     
@@ -49,7 +50,7 @@ class ProblemCell: UITableViewCell{
     }()
     
     
-    //TODO: CollectionView에서 UIView로 변경해야댐 -> 완료인가?
+    // TODO: CollectionView에서 UIView로 변경해야댐 -> 완료인가?
     private let graphSubmit: GraphSubmitView = {
         let view = GraphSubmitView()
         view.layer.borderColor = UIColor.lightGray.cgColor
@@ -76,9 +77,10 @@ class ProblemCell: UITableViewCell{
         return view
     }()
     
-    private var languages: [LanguageVO]? {
-        didSet{
-            if let languages{
+    private var languages: [LanguageVO]?
+    {
+        didSet {
+            if let languages {
                 self.langugeContainer.setLanguage(languages)
                 let height = self.langugeContainer.getCurrentIntrinsicHeight()
                 self.languageContainerContainer.snp.updateConstraints { make in
@@ -96,39 +98,36 @@ class ProblemCell: UITableViewCell{
     
     var flag: Bool = false
     
-    //foldButton Tap
-    lazy var foldButtonTap: ControlEvent<Void>? = foldButton.rx.tap
-    
     // UITapGesture
     weak var problemCell_tapGesture: UITapGestureRecognizer?
-    
     
     var disposeBag = DisposeBag()
     var cellDisposeBag = DisposeBag()
     
     
-    var binder: Binder<DummyModel> {
-        return Binder(self){ cell , dummy in
-            let (model,language,flag) = dummy
+    var binder: Binder<AnimateProblemModel> {
+        return Binder(self){ cell , animate in
+            var model = animate.problemVO.toProblemList()
             cell.problem_number.setTitle("\(model.problemNumber)", for: .normal)
             cell.problem_title.text = "\(model.problemTitle)"
             cell.model = model
-            cell.languages = language + model.tags.map{ tag in LanguageVO(id: "none",
-                                                                        name: tag.name ,
-                                                                        extension: "none")}
+            cell.languages 
+            = animate.problemVO.languages
+            +
+            model.tags.map{ tag in LanguageVO(id: "none", name: tag.name , extension: "none")}
             
             cell.graphSubmit.bind(.init(submitCount: String(describing: model.submitCount),
                                         correctAnswer: String(describing: model.correctAnswer),
                                         correctRate: String(format: "%.\(2)f", model.correctRate)))
     
-            cell.flag = flag
-            cell.styleFlag.onNext(flag)
+            cell.flag = animate.flag
+            cell.styleFlag.onNext(animate.flag)
         }
     }
     
     
-    deinit{
-        print("\(String(describing: Self.self)) - deinint")
+    deinit {
+        Log.debug("problem Cell -= \(String(describing: Self.self)) - deinint")
     }
     
     override func prepareForReuse() {
@@ -145,15 +144,7 @@ class ProblemCell: UITableViewCell{
         
         layoutConfigure()
         
-        foldButtonTap?
-            .subscribe(with:self,onNext: { cell,_ in
-                cell.foldButton.isSelected.toggle()
-                let flag = cell.foldButton.isSelected
-                flag ? cell.strechTableView() : cell.foldTableView()
-                self.layoutIfNeeded()
-            }).disposed(by: cellDisposeBag)
-        
-        _ = self.styleFlag
+        self.styleFlag
             .asDriver(onErrorJustReturn: true)
             .drive(with: self,onNext: {cell,layoutFlag in
                 layoutFlag ? cell.strechTableView() : cell.foldTableView()
@@ -166,7 +157,7 @@ class ProblemCell: UITableViewCell{
     }
     
     
-    private func strechTableView(){
+    func strechTableView(){
         self.langugeContainer.isHidden = false
         self.graphSubmit.isHidden = false
         horizontalTitleContainer.snp.remakeConstraints { make in
@@ -178,10 +169,9 @@ class ProblemCell: UITableViewCell{
     
     
     //MARK: - Fold Action
-    private func foldTableView(){
+    func foldTableView(){
         self.langugeContainer.isHidden = true
         self.graphSubmit.isHidden = true
-        
         horizontalTitleContainer.snp.remakeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(52).priority(.high)
@@ -193,7 +183,6 @@ class ProblemCell: UITableViewCell{
     private lazy var subviewsToBeAdded: [UIView] = [
         horizontalTitleContainer,
         graphSubmit,
-        //        graphCollectionView,
         languageContainerContainer
     ]
     
@@ -259,8 +248,6 @@ class ProblemCell: UITableViewCell{
         setViewPriority()
         
         foldButton.snp.makeConstraints { make in
-            // 아 이거때문에 하ㅏㅏ
-//            make.top.equalToSuperview()
             make.trailing.equalToSuperview().inset(12)
             make.width.height.equalTo(30)
             make.centerY.equalTo(problem_number.snp.centerY)
