@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Domain
 import RxSwift
 import RxCocoa
 import Global
@@ -56,7 +57,6 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         bindingModel()
-        
         layoutConfigure()
     }
     
@@ -80,7 +80,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
     private var disposeBag: DisposeBag = DisposeBag()
     private var deinitVC = PublishRelay<Void>()
     private var _foldButtonSeleted = PublishRelay<(Int,Bool)>()
-    private var _cellSelect = PublishRelay<DummyModel>()
+    private var _cellSelect = PublishRelay<AnimateProblemModel>()
     
     var _fetchProblemList = PublishRelay<Void>()
         
@@ -100,14 +100,6 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
         deinitVC.accept(())
         Log.debug("deinit ProblemVC")
     }
-    #if DEBUG
-//    func cellClickedEvent(){
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: { [weak self] in
-//            guard let self else {return}
-//            self._cellSelect.accept(())
-//        })
-//    }
-    #endif
     
     private func bindingModel(){
         let viewmodel = (viewModel as? CodeProblemViewModel)
@@ -116,7 +108,7 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
         let scroll = problemTableView.rx.didScroll.asObservable().skip(1)
         
         output?.refreshEndEvnet
-            .drive(with: self,onNext: { vc, _ in
+            .drive(with: self, onNext: { vc, _ in
                 vc.problemTableView.removeBottomRefresh()
             }).disposed(by: disposeBag)
         
@@ -144,37 +136,49 @@ class CodeProblemViewController: UIViewController, UITableViewDelegate {
         
         seg_list_model.bind(to: problemTableView.rx.items(cellIdentifier: ProblemCell.identifier,
                                                           cellType: ProblemCell.self))
-        { [weak self] (index: Int, model : DummyModel ,cell: ProblemCell) in
+        { [weak self] (index: Int, animateProblemModel : AnimateProblemModel ,cell: ProblemCell) in
         
-            var dummyModel = model
+            var animateProblemModel = animateProblemModel
             
             if let viewmodel {
-                dummyModel.flag = viewmodel.animationSelected[dummyModel.model.problemNumber] ?? false
+                animateProblemModel.flag
+                = viewmodel.animationSelected[animateProblemModel.problemVO.id] ?? false
             }
             
-            cell.binder.onNext(dummyModel)
+            cell.binder.onNext(animateProblemModel)
             
             self?.problemTableView.showsVerticalScrollIndicator = true
             
-            cell.foldButtonTap?.asObservable().bind(onNext: { [weak self] in
-                guard let self = self else { return }
-                self.problemTableView.showsVerticalScrollIndicator = false
-                let buttonSelected = cell.foldButton.isSelected
-                self.viewModel?.animationSelected[dummyModel.model.problemNumber] = buttonSelected
-                self.problemTableView.performBatchUpdates({}){ value in
-                    self.problemTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
-                }
-            }).disposed(by: cell.disposeBag)
-
+            // MARK: memory Storong Cycle self -> Cell
+            cell.foldButton.rx.tap
+                .subscribe(with:cell, onNext: { c, _ in
+                    c.foldButton.isSelected.toggle()
+                    let flag = c.foldButton.isSelected
+                    flag ? c.strechTableView() : c.foldTableView()
+                    self?.animatableTableView(index: index,
+                                              problemNumber: animateProblemModel.problemVO.id,
+                                              buttonSelected: c.foldButton.isSelected)
+                    c.layoutIfNeeded()
+                }).disposed(by: cell.disposeBag)
             
+
             guard let self else { return }
+            
             cell.problemCell_tapGesture?.rx.event
                 .asSignal()
-                .map { _ in model }
-                .emit(to: _cellSelect)
+                .map { _ in  animateProblemModel }
+                .emit(to: self._cellSelect)
                 .disposed(by: cell.disposeBag)
             
         }.disposed(by: disposeBag)
+    }
+    
+    func animatableTableView(index: Int, problemNumber: String, buttonSelected: Bool) {
+        self.problemTableView.showsVerticalScrollIndicator = false
+        self.viewModel?.animationSelected[problemNumber] = buttonSelected
+        self.problemTableView.performBatchUpdates({}){ [weak self] value in
+            self?.problemTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
+        }
     }
     
     func moveFunc(){
