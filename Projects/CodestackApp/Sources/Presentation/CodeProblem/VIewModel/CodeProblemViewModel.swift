@@ -12,7 +12,7 @@ import RxFlow
 import Domain
 import Global
 
-protocol ProblemViewModelProtocol{
+protocol ProblemViewModelProtocol {
     associatedtype Input = CodeProblemViewModel.Input
     associatedtype Output = CodeProblemViewModel.Output
     
@@ -30,82 +30,42 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
         var deinitVC: Signal<Void>
         var segmentIndex: Signal<Int>
         var foldButtonSeleted: Signal<(Int,Bool)>
-        var cellSelect: Signal<DummyModel>
+        var cellSelect: Signal<AnimateProblemModel>
         var fetchProblemList: Signal<Void>
     }
     
     struct Output {
-        var seg_list_model: Driver<[DummyModel]>
+        var seg_list_model: Driver<[AnimateProblemModel]>
         var cell_temporary_content_update: Driver<(Int,Bool)>
         var refreshEndEvnet: Driver<Void>
     }
     
-    private var dummy: DummyData
-    
-    private var useCase: ProblemUsecase
-    
-    var animationSelected: [String : Bool] = [:]
-    
-    init(_ dummy: DummyData, _ service: ProblemUsecase){
-        self.dummy = dummy
+    init(_ problem: AnimateProblemModel, _ service: ProblemUsecase){
+        self.problemModel = problem
         self.useCase = service
     }
     
     deinit { print("\(String(describing: Self.self)) - deinint") }
     
+    private var problemModel: AnimateProblemModel
+    private var useCase: ProblemUsecase
+    internal var animationSelected: [String : Bool] = [:]
+    
     //Output
-    private var seg_list_model = PublishRelay<[DummyModel]>()
+    private var seg_list_model = PublishRelay<[AnimateProblemModel]>()
     
     //handler
-    private var listModel = PublishRelay<[DummyModel]>()
+    private var listModel = PublishRelay<[AnimateProblemModel]>()
     private var segmentIndex = BehaviorSubject<Int>(value: 0)
     private var foldButton = PublishSubject<(Int,Bool)>()
-    
-    
     private var refreshEnd = PublishRelay<Void>()
-    private var fetchListModels = PublishRelay<[DummyModel]>()
-    
+    private var fetchListModels = PublishRelay<[AnimateProblemModel]>()
     var isLoading: Bool = false
-    
     private var currentPage: CurrentPage = 0
     private var totalPage: Int = 10
-    
     var disposeBag = DisposeBag()
     
-    func transform(_ input: Input) -> Output{
-        fetchWhenPagination(input: input.fetchProblemList)
-        
-        fetchWhenViewDidLoad(load: input.viewDidLoad)
-        
-        //MARK: View Will Disappear
-        // _ = input.deinitVC
-        //     .emit(with: self, onNext: { vm , value in
-        //     }).disposed(by: disposeBag)
-        
-        //MARK: - Cell Select
-        _ = input.cellSelect
-            .withUnretained(self)
-            .flatMapFirst { vm, model in
-                return Signal.just(model)
-            }
-            .map{ model in CodestackStep.problemPick(model.model) }
-            .emit(to: steps)
-            .disposed(by: disposeBag)
-        
-        //MARK: - Segment action = Index ? strech OR Fold (all presented Problem Cell)
-        _ = input.segmentIndex
-            .map { $0 }
-            .emit(to: segmentIndex)
-            .disposed(by: disposeBag)
-        
-        
-        //MARK: - Problem Cell Fold Button
-        _ = input.foldButtonSeleted
-            .withUnretained(self)
-            .emit(onNext: { vm, model in
-                vm.foldButton.onNext(model)
-            })
-            .disposed(by: disposeBag)
+    func transform(_ input: Input) -> Output {
         
         //MARK: - Problem Cell Fold Button
         foldButton
@@ -118,7 +78,6 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
             .bind(to: seg_list_model)
             .disposed(by: disposeBag)
         
-        
         //MARK: - Add Fetched Data -> to listModel
         fetchListModels
             .withLatestFrom(listModel){ model, originals in
@@ -130,23 +89,53 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
         //MARK: CombinLatest (list,seg)
         Observable
             .combineLatest(listModel, segmentIndex, resultSelector: { [weak self] model, index  in
-                guard let self else {return .init()}
-            let flag = index == 0 ? true : false
-            let model = model.map
-            { problem, lang, _ in
-                self.animationSelected[problem.problemNumber] = flag
-                return DummyModel(model: problem,language: lang, flag: flag )
-            }
-            return model
-        })
-        .bind(to: seg_list_model)
-        .disposed(by: disposeBag)
+                guard let self else { return [] }
+                let flag = index == 0 ? true : false
+                let model: [AnimateProblemModel] = model.map
+                { animate in
+                    self.animationSelected[animate.problemVO.id] = flag
+                    return AnimateProblemModel(problemVO: animate.problemVO, flag: flag)
+                }
+                return model
+            })
+            .bind(to: seg_list_model)
+            .disposed(by: disposeBag)
+        
+        fetchWhenPagination(input: input.fetchProblemList)
+        
+        fetchWhenViewDidLoad(load: input.viewDidLoad)
+        
+        viewActionBinding(input: input)
         
         return Output(seg_list_model: seg_list_model.asDriver(onErrorJustReturn: []),
                       cell_temporary_content_update: foldButton.asDriver(onErrorJustReturn: (0,false)),
                       refreshEndEvnet: refreshEnd.asDriver(onErrorJustReturn: ()))
     }
     
+    private func viewActionBinding(input: Input) {
+        //MARK: - Cell Select
+        _ = input.cellSelect
+            .withUnretained(self)
+            .flatMapFirst { vm, animateModel in Signal.just(animateModel) }
+            .map { ProblemSolveEditor(problemVO: $0.problemVO, submissionVO: nil)}
+            .map{ editor in CodestackStep.problemPick(editor) }
+            .emit(to: steps)
+            .disposed(by: disposeBag)
+        
+        //MARK: - Segment action = Index ? strech OR Fold (all presented Problem Cell)
+        _ = input.segmentIndex
+            .map { $0 }
+            .emit(to: segmentIndex)
+            .disposed(by: disposeBag)
+        
+        //MARK: - Problem Cell Fold Button
+        _ = input.foldButtonSeleted
+            .withUnretained(self)
+            .emit(onNext: { vm, model in
+                vm.foldButton.onNext(model)
+            })
+            .disposed(by: disposeBag)
+    }
     
     private func fetchWhenPagination(input list: Signal<Void>) {
         //fetch logic
@@ -166,59 +155,40 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
                     .asSignal(onErrorJustReturn: [])
             }
             .emit(with: self, onNext: { vm, problems in
-                let dummyModel = problems.map { problem in
-                    let list = problem.toProblemList()
-                    return (model: list,language: problem.languages, flag: false)
-                }
+                // Data fetch 실패시 기본 default 값 fetch
+                vm.modelUpdate(problems, model: vm.fetchListModels)
                 vm.currentPage += 1
                 vm.isLoading = false
                 vm.refreshEnd.accept(())
-                
-                // Data fetch 실패시 기본 default 값 fetch
-                if dummyModel.isEmpty {
-                    let tempModel = vm.dummy.getAllModels(index: vm.currentPage)
-                    tempModel.forEach { model in
-                        vm.animationSelected[model.model.problemNumber] = model.flag
-                    }
-                    vm.fetchListModels.accept(tempModel)
-                } else {
-                    dummyModel.forEach { model in
-                        vm.animationSelected[model.model.problemNumber] = model.flag
-                    }
-                    vm.fetchListModels.accept(dummyModel)
-                }
             }).disposed(by: disposeBag)
     }
     
     
     private func fetchWhenViewDidLoad(load: Signal<Void>) {
+        
+        let fetchFB = useCase.fetchProblemList()
+        
+        let fetchGraph =
+        useCase.fetchProblems(offset: currentPage)
+            .do(onNext: { [weak self] pageInfo in self?.totalPage = pageInfo.pageInfo.limit },
+                onError: { err in Log.debug("err: \(err)") })
+            .map { $0.probleminfoList }
+            .asSignal(onErrorJustReturn: [])
+        
+        load.withUnretained(self)
+            .flatMap { _ in fetchFB.asSignal(onErrorJustReturn: []) }
+            .map { $0.map { problem in AnimateProblemModel(problemVO: problem, flag: false) } }
+            .emit(to: listModel)
+            .disposed(by: disposeBag)
+        
         _ = load
             .withUnretained(self)
             .flatMap { vm, _ in
                 vm.isLoading = true
-                return vm.useCase.fetchProblems(offset: vm.currentPage)
-                    .do(onNext: { pageInfo in vm.totalPage = pageInfo.pageInfo.limit },
-                        onError: { err in Log.debug("err: \(err)") })
-                    .map { $0.probleminfoList }
-                    .asSignal(onErrorJustReturn: [])
+                return fetchGraph
             }
             .emit(with: self, onNext: { vm, problems in
-                if problems.isEmpty {
-                    let tempModel = vm.dummy.getAllModels(index: vm.currentPage)
-                    tempModel.forEach { model in
-                        vm.animationSelected[model.model.problemNumber] = model.flag
-                    }
-                    vm.listModel.accept(tempModel)
-                } else {
-                    let dummyModel = problems.map { problem in
-                        let list = problem.toProblemList()
-                        return (model: list,language: problem.languages, flag: false)
-                    }
-                    dummyModel.forEach { model in
-                        vm.animationSelected[model.model.problemNumber] = model.flag
-                    }
-                    vm.listModel.accept(dummyModel)
-                }
+                vm.modelUpdate(problems, model: vm.listModel)
                 vm.currentPage += 1
                 vm.isLoading = false
                 vm.refreshEnd.accept(())
@@ -226,17 +196,21 @@ class CodeProblemViewModel: ProblemViewModelProtocol,Stepper {
             .disposed(by: disposeBag)
     }
     
-//    private func requestProblem(offset: Int,
-//                                sort: String = "id",
-//                                order: String = "asc") -> Signal<[ProblemVO]> {
-//        apollo
-//            // .getProblemsQuery(query: Query.getProblems(offset: offset, sort: sort, order: order))
-//        //TODO: 확인후 변경
-//            .getProblemsQuery(.PR_LIST(arg: GRAR(offset: offset)))
-//            .map { $0.0 }
-////            .map { frInfo in
-////                frInfo.0.map { fr in fr.toDomain() }
-////            }
-//            .asSignal(onErrorJustReturn: [])
-//    }
+    private func modelUpdate(_ problems: [ProblemVO], model: PublishRelay<[AnimateProblemModel]>) {
+        if problems.isEmpty {
+            let tempModel = problemModel.getAllModels(index: currentPage)
+            tempModel.forEach { model in
+                animationSelected[model.problemVO.id] = model.flag
+            }
+            model.accept(tempModel)
+        } else {
+            let animateProblemModel = problems.map { problem in
+                return AnimateProblemModel(problemVO: problem, flag: false)
+            }
+            animateProblemModel.forEach { model in
+                animationSelected[model.problemVO.id] = model.flag
+            }
+            model.accept(animateProblemModel)
+        }
+    }
 }

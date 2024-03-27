@@ -8,42 +8,8 @@
 import Foundation
 import Domain
 
-var contextExample  =
-"""
-   <body><h1>문제</h1>
-         <p>Hello, World를 출력하세요</p>
-         <h1>입력</h1>
-         <p>없음</p>
-         <h1>출력</h1>
-         <p>Hello, World를 출력하세요</p>
-         <section class="sample-body">
-           <div class="sample-item">
-             <div>
-               <div class="sample-item-header">
-                 <div>예제입력 1</div>
-                 <button class="copy-button" data-clipboard-target="#sample-input-1">
-                   복사
-                 </button>
-               </div>
-               <div>
-                 <pre class="sample-data" id="sample-input-1">없음</pre>
-               </div>
-             </div>
-             <div>
-               <div class="sample-item-header">
-                 <div>예제출력 1</div>
-                 <button class="copy-button" data-clipboard-target="#sample-output-1">
-                   복사
-                 </button>
-               </div>
-               <div>
-                 <pre class="sample-data" id="sample-output-1">Hello, World!</pre>
-               </div>
-             </div>
-           </div>
-         </section></body>
-   """
 struct ProblemListItemModel: Equatable {
+    
     var submissionID: String?
     var seletedLanguage: LanguageVO?
     var sourceCode: String?
@@ -63,18 +29,17 @@ struct ProblemListItemModel: Equatable {
          correctRate: Double,
          tags: [TagVO] = [],
          languages: [LanguageVO] = []) {
-             self.submissionID = nil
-             self.problemNumber = problemNumber
-             self.problemTitle = problemTitle
-             self.submitCount = submitCount
-             self.correctAnswer = correctAnswer
-             self.correctRate = correctRate
-             
-             self.tags = []
-             self.language = ["C", "JAVA" , "C++", "Node.js", "Swift", "Kot", "Go", "Python", "javascript"]
-                 .map{ name in LanguageVO(id: "1", name: name, extension: "")}
-             self.contenxt = contextExample
-         }
+        
+        self.submissionID = nil
+        self.problemNumber = problemNumber
+        self.problemTitle = problemTitle
+        self.submitCount = submitCount
+        self.correctAnswer = correctAnswer
+        self.correctRate = correctRate
+        self.tags = []
+        self.language = languages
+        self.contenxt = contextExample
+    }
     
     init(submissionID: String? = nil,
          seletedLanguage: LanguageVO?,
@@ -109,6 +74,16 @@ struct ProblemListItemModel: Equatable {
         self.correctRate = 0
         self.tags = []
         self.language = []
+    }
+}
+
+extension ProblemListItemModel {
+    static var mock: Self {
+        .init(problemNumber: "0",
+              problemTitle: "0",
+              submitCount: 1,
+              correctAnswer: 1,
+              correctRate: 0)
     }
 }
 
