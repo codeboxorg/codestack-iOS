@@ -119,7 +119,7 @@ class HistoryViewModel: HistoryViewModelType {
             .emit(to: paginationLoadingInput)
             .disposed(by: disposeBag)
         
-        //TODO: - Refresh Button을 어떻게 구성할지
+        // TODO: - Refresh Button을 어떻게 구성할지
         refreshBinding(tap: input.refreshTap)
         viewDidLoadBinding(viewDidLoad: input.viewDidLoad)
         fetchHistoryBinding(fetchHistory: input.fetchHistoryList)
@@ -278,7 +278,12 @@ class HistoryViewModel: HistoryViewModelType {
         
         let localTempSubmission =
         historyUsecase
-            .fetchProblemHistoryEqualStatus(status: "temp")
+            .fetchProblemHistoryEqualStatus(status: .temp)
+            .compactMap { try $0.get() }
+        
+        let allCaseSubmission =
+        historyUsecase
+            .fetchProblemHistoryEqualStatus(status: .RE)
             .compactMap { try $0.get() }
         
         let fetchedSubmission =
@@ -287,8 +292,8 @@ class HistoryViewModel: HistoryViewModelType {
             .do(onNext: { [weak self] _ in self?.currentPage += 1 })
     
         return Observable<[SubmissionVO]>
-            .zip(favoriteProblems, localTempSubmission, fetchedSubmission) {
-                return ($0 + $1 + $2).sortByDate()
+            .zip(favoriteProblems, localTempSubmission, allCaseSubmission, fetchedSubmission) {
+                return ($0 + $1 + $2 + $3).sortByDate()
             }
     }
     
