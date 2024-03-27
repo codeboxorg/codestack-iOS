@@ -67,7 +67,7 @@ class HistoryCell: UITableViewCell {
 
         Driver.zip(onHistoryData.asDriver(onErrorJustReturn: .sample),
                    onStatus.asDriver(onErrorJustReturn: .none))
-        .drive(with: self,onNext: { cell, data in
+        .drive(with: self, onNext: { cell, data in
             let (submission, solveStatus) = data
             cell.statusLabel.pr_status_label(solveStatus, default: false)
             cell.titleBoxContainerSetting(status: solveStatus)
@@ -195,12 +195,12 @@ extension HistoryCell{
             nsMutableString.append(NSAttributedString(string: " 중입니다"))
             explainLabel.attributedText = nsMutableString
             
-        case .solve,.AC:
+        case .AC:
             nsMutableString.append(NSAttributedString(string: "성공",attributes: [key : status.color]))
             nsMutableString.append(NSAttributedString(string: " 하셨습니다"))
             explainLabel.attributedText = nsMutableString
             
-        case .fail,.MLE,.OLE,.PE,.RE,.TLE, .WA:
+        case .MLE,.OLE,.PE,.RE,.TLE, .WA:
             nsMutableString.append(NSAttributedString(string: "실패",attributes: [key : status.color]))
             nsMutableString.append(NSAttributedString(string: " 하였습니다"))
             explainLabel.attributedText = nsMutableString

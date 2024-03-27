@@ -14,19 +14,21 @@ class HistorySegmentedControl: UISegmentedControl {
     
     private var segWidths: [CGFloat] = []
     
+    
+    convenience init(frame: CGRect, types: [String]) {
+        self.init(frame: frame)
+        types
+            .enumerated()
+            .forEach { index, value in
+                self.insertSegment(withTitle: value, at: index, animated: true)
+                segWidths.append(titleForSegment(at: index)?.width(withConstrainedHeight: 0, font: font) ?? 0)
+                self.setWidth(segWidths[index] + 20, forSegmentAt: index)
+            }
+    }
     override init(frame: CGRect) {
         super.init(frame: frame)
-        UISegmentedControl.appearance()
-            .setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
+        UISegmentedControl.appearance().setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
         removeBackgroundAndDivider()
-        
-        SegType.allCases
-            .enumerated().forEach
-        { index, value in
-            self.insertSegment(withTitle: value.rawValue, at: index, animated: true)
-            segWidths.append(titleForSegment(at: index)?.width(withConstrainedHeight: 0, font: font) ?? 0)
-            self.setWidth(segWidths[index] + 20, forSegmentAt: index)
-        }
     }
     
     override func draw(_ layer: CALayer, in ctx: CGContext) {
