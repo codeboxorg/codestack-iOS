@@ -10,20 +10,35 @@ import Domain
 
 
 // TODO: DummyMOdel 확인후 모델명 변경 해야함
-typealias DummyModel = (model: ProblemListItemModel, language: [LanguageVO], flag: Bool)
+// typealias DummyModel = (model: ProblemListItemModel, language: [LanguageVO], flag: Bool)
 
-struct DummyData{
+struct AnimateProblemModel {
+    var problemVO: ProblemVO
+    var flag: Bool
     
-    func getDummyDataModel(name: String, problemNumber: String) -> DummyModel{
-        let model = ProblemListItemModel(problemNumber: problemNumber,
-                                         problemTitle: "\(name)",
-                                         submitCount: Int.random(in: 10...134),
-                                         correctAnswer: Int.random(in: 10...134),
-                                         correctRate: Double.random(in: 0...100))
-        return (model, LanguageVO.sample, true)
+    init(problemVO: ProblemVO = .sample,
+         flag: Bool = false)
+    {
+        self.problemVO = problemVO
+        self.flag = flag
+    }
+}
+
+extension AnimateProblemModel {
+    func getDummyDataModel(name: String, problemNumber: String) -> Self {
+        let problem = ProblemVO(id: problemNumber,
+                                title: name,
+                                context: "",
+                                languages: [],
+                                tags: [],
+                                accepted: 0,
+                                submission: 0,
+                                maxCpuTime: "5.0",
+                                maxMemory: 100)
+        return AnimateProblemModel(problemVO: problem, flag: false)
     }
     
-    func getAllModels(limit: Int = 15, index: Int = 0) -> [DummyModel]{
+    func getAllModels(limit: Int = 15, index: Int = 0) -> [AnimateProblemModel] {
         let numbers = (10000...100010).map { num in
             num + (10 * index)
         }
@@ -39,6 +54,7 @@ struct DummyData{
                      getDummyDataModel(name: "CompactMap \(index)", problemNumber: String(numbers[8])),
                      getDummyDataModel(name: "filter \(index)", problemNumber:String(numbers[9]))
                      ]
+        
         return model
     }
 }

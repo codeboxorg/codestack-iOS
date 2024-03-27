@@ -12,7 +12,6 @@ import Domain
 //MARK: - To View Model
 extension ProblemVO {
     func toProblemList(_ submission: SubmissionVO? = nil) -> ProblemListItemModel {
-        
         var id: String = self.id
         var title: String = self.title
         var languages: [LanguageVO] = self.languages
@@ -24,7 +23,6 @@ extension ProblemVO {
                 languages = LanguageVO.sample
             }
         }
-        
         return ProblemListItemModel(submissionID: submission?.id ?? UUID().uuidString,
                                     seletedLanguage: submission?.language ?? LanguageVO.default,
                                     sourceCode: submission?.sourceCode ?? "",
