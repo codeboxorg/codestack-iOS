@@ -32,7 +32,7 @@ class HistoryViewController: UIViewController {
     }()
     
     private let historySegmentList: HistorySegmentedControl = {
-        let seg = HistorySegmentedControl(frame: .zero)
+        let seg = HistorySegmentedControl(frame: .zero, types: SegType.allSegTypes)
         return seg
     }()
     
@@ -67,7 +67,6 @@ class HistoryViewController: UIViewController {
     private var paginationLoadingInput = BehaviorRelay<Bool>(value: false)
 
     private var deleteHistory = PublishRelay<Int>()
-    private var editModeValue = BehaviorRelay<Bool>(value: false)
     
     /// 로그아웃시 Swinject Custom Scope History 초기화를 위한 Relay
     private var deinitPublisher = PublishRelay<Void>()
@@ -100,15 +99,26 @@ class HistoryViewController: UIViewController {
             )
             
         historyList.setEditing(false, animated: false)
+        
         historyList.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
+        historyList.rx.modelSelected(SubmissionVO.self)
+            .subscribe(with: self, onNext: { vc, submissionVO in
+                Log.debug("submissionVO: \(submissionVO)")
+            }).disposed(by: disposeBag)
+        
         historyDeleteBinding(deleteAction: historyList.rx.itemDeleted.asObservable())
-        editButtonBinding(editButton: editButton.rx.tap.asSignal(), count: output.historyData.map(\.count))
         
-        scrollBinding(scroll: historyList.rx.didScroll.asDriver(), currentSegment: currentSegment, paginationLoading: output.paginationLoading)
+        editButtonBinding(editButton: editButton.rx.tap.asSignal(),
+                          count: output.historyData.map(\.count))
         
-        outputBinding(output: output, paginationLoading: output.paginationLoading)
+        scrollBinding(scroll: historyList.rx.didScroll.asDriver(), 
+                      currentSegment: currentSegment,
+                      paginationLoading: output.paginationLoading)
+        
+        outputBinding(output: output,
+                      paginationLoading: output.paginationLoading)
     }
     
     private func outputBinding(output: HistoryViewModel.Output, paginationLoading: Driver<Bool>) {
@@ -131,7 +141,7 @@ class HistoryViewController: UIViewController {
             cell.selectionStyle = .none
             cell.separatorInset = UIEdgeInsets.zero
             cell.onHistoryData.accept(submission)
-            cell.onStatus.accept(submission.statusCode.convertSolveStatus() )
+            cell.onStatus.accept(submission.statusCode)
         }.disposed(by: disposeBag)
         
         output.paginationRefreshEndEvent
@@ -212,7 +222,6 @@ class HistoryViewController: UIViewController {
             .filter { $0 != 0 }
             .subscribe(with: self, onNext: { vc, count in
                 let isEditing = !vc.historyList.isEditing
-                vc.editModeValue.accept(isEditing)
                 vc.historyList.setEditing(isEditing, animated: true)
             }).disposed(by: disposeBag)
     }
@@ -301,7 +310,6 @@ extension HistoryViewController: UIGestureRecognizerDelegate {
 extension HistoryViewController: UITableViewDelegate {
     
     private func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        Log.debug("tableView Swped : false")
         return true // Swipe 비활성화
     }
     
