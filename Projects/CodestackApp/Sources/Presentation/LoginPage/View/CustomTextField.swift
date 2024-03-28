@@ -66,27 +66,6 @@ class CustomTextField: UITextField {
         }
     }
     
-    fileprivate func addDoneButtonOnKeyboard() {
-        let doneToolbar = UIToolbar(frame: .zero)
-        
-        doneToolbar.barStyle = .default
-        
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
-        
-        let up: UIBarButtonItem = UIBarButtonItem(title: "up", style: .plain, target: self, action: #selector(self.doneButtonAction))
-        
-        let items = [up,flexSpace, done]
-        doneToolbar.setItems(items, animated: false)
-        doneToolbar.updateConstraintsIfNeeded()
-        
-        doneToolbar.isUserInteractionEnabled = true
-        
-        doneToolbar.sizeToFit()
-        
-        self.inputAccessoryView = doneToolbar
-    }
-    
     @objc fileprivate func doneButtonAction() {
         self.endEditing(true)
     }
