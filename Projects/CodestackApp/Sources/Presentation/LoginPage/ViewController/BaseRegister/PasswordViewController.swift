@@ -206,7 +206,7 @@ extension PasswordViewController: UITextFieldDelegate {
         if tag < field.count - 1 {
             field[tag + 1].becomeFirstResponder()
         } else {
-            registerButton.sendActions(for: .touchUpInside)
+            textField.endEditing(true)
         }
         textField.resignFirstResponder()
         

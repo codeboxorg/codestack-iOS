@@ -10,6 +10,7 @@ import RxCocoa
 import RxSwift
 import CommonUI
 import Then
+import Domain
 
 final class LoginView: UIView {
     
@@ -89,7 +90,9 @@ final class LoginView: UIView {
         return button
     }()
     
-    let registerButton = RegisterButton.init(title: "회원가입")
+    let registerButton = RegisterButton.init(title: "회원가입").then { button in
+        button.titleLabel?.font = .boldSystemFont(ofSize: 20)
+    }
     
     private var idPlaceHolder_Center_Constraint: NSLayoutConstraint?
     private var passwordPlaceHolder_Center_Constraint: NSLayoutConstraint?
@@ -129,7 +132,12 @@ final class LoginView: UIView {
                     owner.loginButton.isLoading = value
                 case .failure(let error):
                     owner.loginButton.isLoading = false
-                    Toast.toastMessage("서버에서 응답이 오지 않습니다.: \(error)",offset: 30)
+                    if let authError = error as? AuthFIRError,
+                       case .FIRAuthErrorCodeInvalidCredential = authError {
+                        Toast.toastMessage("정확한 아이디 비밀번호를 입력해주세요",offset: 30)
+                    } else {
+                        Toast.toastMessage("서버에서 응답이 오지 않습니다.: \(error)",offset: 30)
+                    }
                 }
             }).disposed(by: disposeBag)
     }

@@ -155,7 +155,6 @@ extension RegisterViewController{
 }
 
 
-
 extension UILabel{
     func largeLabel(_ text: String,
                      _ color: UIColor = CColor.label.color,
