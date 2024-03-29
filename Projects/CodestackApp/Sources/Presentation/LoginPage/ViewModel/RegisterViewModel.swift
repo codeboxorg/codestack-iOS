@@ -66,6 +66,7 @@ final class RegisterViewModel: ViewModelType, Stepper {
     private let emailSubject = BehaviorSubject<Bool>(value: false)
     private let nickNameSubject = BehaviorSubject<Bool>(value: false)
     
+    
     init(dependency: Dependency) {
         self.authUsecase = dependency.authUsecase
         self.step1 = dependency.step1
