@@ -43,7 +43,8 @@ extension HomeViewController {
         //라지 타이틀 적용
         adjustLargeTitleSize()
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alramView)
+        // TODO: 추후 Notification 적용시 추가
+        // self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: alramView)
         // 사이드바 보기 버튼 적용
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: nil)

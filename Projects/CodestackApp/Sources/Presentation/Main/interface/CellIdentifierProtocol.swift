@@ -16,6 +16,7 @@ extension CellIdentifierProtocol{
     }
 }
 
+extension CodestackListCell: CellIdentifierProtocol { }
 extension RecentSectionHeader: CellIdentifierProtocol { }
 extension HistoryCell: CellIdentifierProtocol { }
 extension ProblemCell: CellIdentifierProtocol { }
@@ -23,8 +24,10 @@ extension SubmissionCell: CellIdentifierProtocol{ }
 extension OnBoardingCell: CellIdentifierProtocol { }
 extension OnBoardingHeader : CellIdentifierProtocol { }
 extension WritingListCell: CellIdentifierProtocol { }
+extension PRSubmissionHistoryCell: CellIdentifierProtocol { }
+extension MyPostingListCell: CellIdentifierProtocol { }
 
-extension PRSubmissionHistoryCell: CellIdentifierProtocol {
+extension UICollectionView {
     static func submissionHistoryCellSetting(item size: CGSize = CGSize(),
                                       spacing: CGFloat = 0,
                                       insetValue: CGFloat = 0,

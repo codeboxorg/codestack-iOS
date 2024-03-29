@@ -17,7 +17,6 @@ class MainViewController: UIViewController {
      
     static func create(dependency: ContributionViewModel) -> MainViewController {
         let vc = MainViewController()
-//        vc.contiributionViewModel = dependency
         return vc
     }
     
@@ -31,8 +30,6 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .sky_blue
-    
-//        customBackKey()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
