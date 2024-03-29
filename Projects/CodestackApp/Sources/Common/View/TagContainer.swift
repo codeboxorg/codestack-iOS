@@ -7,6 +7,7 @@
 
 import UIKit
 import Domain
+import CommonUI
 
 extension String{
     func getColor() -> UIColor{
@@ -33,7 +34,7 @@ extension String{
 
 class TagContainer: UIView {
     
-    //TODO: - Backgournd Error ?
+    // TODO: - Backgournd Error ?
     private var maxWidth = Position.screenWidth
     
     private var currentWidth: CGFloat = 0
@@ -69,7 +70,7 @@ class TagContainer: UIView {
         fatalError("required init fatalError")
     }
     
-    func removeLaguageTag(){
+    func removeLaguageTag() {
         self.subviews.forEach{
             $0.removeFromSuperview()
         }
@@ -77,7 +78,6 @@ class TagContainer: UIView {
         self.currentWidth = 0
         invalidateIntrinsicContentSize()
     }
-    
     
     func setTagItem(_ items: [String]) {
         fetures = items
@@ -104,7 +104,7 @@ class TagContainer: UIView {
         }
     }
     
-    private func addLanguageTags(_ tag: TagView?){
+    private func addLanguageTags(_ tag: TagView?) {
         guard let languageTag = tag else {return}
         if self.currentWidth == 0  {
             languageTag.frame = CGRect(x: spacing, y: 0,
@@ -124,17 +124,5 @@ class TagContainer: UIView {
         self.currentWidth += languageTag.bounds.width + spacing
         
         invalidateIntrinsicContentSize()
-    }
-    
-    
-    private func settingFeatureView(_ features : [String]) {
-        if self.subviews != [] {
-            self.subviews.forEach{
-                $0.removeFromSuperview()
-                self.currentWidth = 0
-                self.currentHight = 0
-            }
-        }
-        self.fetures = features
     }
 }
