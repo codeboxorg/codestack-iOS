@@ -41,7 +41,6 @@ class LoginViewModel: /*LoginViewModelProtocol*/ Stepper{
     init(dependency: Dependency){
         self.authUsecase = dependency.authUsecase
         self.steps = dependency.stepper.steps
-        
         // TODO: 해결 해야됌
         // (self.loginService as? LoginService)?.loginViewModel = self
     }
@@ -68,16 +67,15 @@ class LoginViewModel: /*LoginViewModelProtocol*/ Stepper{
                 case .apple:
                     break
                 case .gitHub:
-                    do{
+                    do {
                         try vm.authUsecase.gitOAuthrization()
-                    }catch{
+                    } catch{
                         // Log.error("github 로그인 실패 : \(error)")
                     }
                 case .email((let id, let pwd)):
                     
                     // MARK: 익명 로그인
                     vm.loginLoadingEvent.accept(.success(true))
-                    // vm.requestFirebaseAnonymousAuth()
                     
                     vm.requestFirebaseAuth(email: id, password: pwd)
                     
@@ -102,8 +100,8 @@ class LoginViewModel: /*LoginViewModelProtocol*/ Stepper{
     func requestFirebaseAuth(email: String, password: String) {
         authUsecase
             .firebaseAuth(email: email, pwd: password)
-            .do(onError: { [weak self] _ in
-                self?.loginLoadingEvent.accept(.failure(LoginError.timeOut))
+            .do(onError: { [weak self] error in
+                self?.loginLoadingEvent.accept(.failure(error))
             })
             .subscribe(with: self, onNext: { vm, value in
                 vm.steps.accept(CodestackStep.userLoggedIn(nil, nil))
@@ -157,7 +155,7 @@ class LoginViewModel: /*LoginViewModelProtocol*/ Stepper{
             .subscribe(with: self, onNext: { vm, stpes in
                 vm.steps.accept(stpes)
             }, onError: { vm, err in
-//                Log.debug("err: \(err)")
+                // Log.debug("err: \(err)")
             })
             .disposed(by: disposeBag)
     }
