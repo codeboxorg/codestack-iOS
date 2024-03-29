@@ -8,6 +8,7 @@
 
 import UIKit
 import Global
+import CommonUI
 
 final class WritingListCell: UICollectionViewCell {
     

@@ -50,7 +50,7 @@ extension PRSubmissionHistoryCell {
                 let dateString = DateCalculator().caluculateTime(solvedDate)
                 cell.dateLabel.text = dateString
             }
-            let status = submission.statusCode.convertSolveStatus()
+            let status = submission.statusCode
             cell.statusLabel.pr_status_label(status)
             
             if submission.isMock {

@@ -16,8 +16,6 @@ import Global
 import Domain
 import CommonUI
 
-//typealias HomeViewController = ViewController
-
 
 final class HomeViewController: UIViewController {
     
@@ -73,7 +71,7 @@ final class HomeViewController: UIViewController {
     }()
     
     private let recentPagesCollectionView: UICollectionView = {
-        let collectionView = PRSubmissionHistoryCell.submissionHistoryCellSetting(background: UIColor.systemBackground)
+        let collectionView = UICollectionView.submissionHistoryCellSetting(background: UIColor.systemBackground)
         return collectionView
     }()
     
@@ -189,7 +187,6 @@ extension HomeViewController {
                 { dataSource, collectionView, section, indexPath in
                     switch section {
                     case UICollectionView.elementKindSectionHeader:
-                        // let value = dataSource.sectionModels[indexPath.section]
                         guard
                             let header = collectionView
                                 .dequeueReusableSupplementaryView(ofKind: section,
@@ -262,7 +259,7 @@ extension HomeViewController{
             make.height.equalTo(1000).priority(.low)
         }
         
-        //TODO: 추후 Line graph와 비교 해서 change 할 수 있게 구성 고려
+        // TODO: 추후 Line graph와 비교 해서 change 할 수 있게 구성 고려
         graphView.isHidden = true
         
         recentPagesCollectionView.snp.makeConstraints{
