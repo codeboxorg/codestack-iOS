@@ -9,6 +9,7 @@ import UIKit
 import RxFlow
 import RxCocoa
 import Global
+import Domain
 
 struct SideMenuItem {
     let icon: UIImage?
@@ -20,7 +21,7 @@ struct SideMenuItem {
                                      presentation: .problemList),
                         SideMenuItem(icon: UIImage(named: "submit"),
                                      name: "제출근황",
-                                     presentation: .recentSolveList(nil)),
+                                     presentation: .recentSolveList(.init())),
                         SideMenuItem(icon: UIImage(named: "my"),
                                      name: "마이 페이지",
                                      presentation: .profilePage),
@@ -35,11 +36,11 @@ struct SideMenuItem {
     
 }
 
-//TODO: - SideTabBar Color 정하기
+// TODO: - SideTabBar Color 정하기
 final class SideMenuViewController: UIViewController ,Stepper {
     
-    static func create(with items: [SideMenuItem] = []) -> SideMenuViewController{
-        return SideMenuViewController(sideMenuItems: SideMenuItem.items)
+    static func create(with items: [SideMenuItem] = [], usecase: AuthUsecase) -> SideMenuViewController{
+        return SideMenuViewController(sideMenuItems: SideMenuItem.items, usecase: usecase)
     }
     
     private var headerView: UIView = {
@@ -85,6 +86,8 @@ final class SideMenuViewController: UIViewController ,Stepper {
     
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     
+    private var authUsecase: AuthUsecase?
+    
     
     deinit {
         Log.debug("sideMenu Deinit")
@@ -95,9 +98,10 @@ final class SideMenuViewController: UIViewController ,Stepper {
         configureView()
     }
     
-    convenience init(sideMenuItems: [SideMenuItem]) {
+    convenience init(sideMenuItems: [SideMenuItem], usecase: AuthUsecase) {
         self.init()
         self.sideMenuItems = sideMenuItems
+        self.authUsecase = usecase
     }
     
     func show() {
@@ -244,11 +248,12 @@ extension SideMenuViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         let item = sideMenuItems[indexPath.row]
-    
-        if item.presentation == .logout{
-            DispatchQueue.global().async {
+        
+        if case .logout = item.presentation {
+            DispatchQueue.global().async { [weak self] in
                 do{
                     // TODO: KeyChain 변경해야됨
+                    try self?.authUsecase?.firebaseLogout()
 //                    try KeychainItem(service: .bundle, account: .access).deleteItem()
 //                    try KeychainItem(service: .bundle, account: .refresh).deleteItem()
                 } catch {

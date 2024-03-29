@@ -10,21 +10,16 @@ import UIKit
 
 
 
-
 class ProgressView: UIProgressView{
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
     
-    
     required init?(coder: NSCoder) {
         fatalError("required init fatalError")
     }
   
-    
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         let maskLayerPath = UIBezierPath(roundedRect: bounds,cornerRadius: self.frame.height / 2)
