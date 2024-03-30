@@ -50,6 +50,10 @@ struct ToastValue: Equatable {
         .init(type: ToastStyle.success, title: "성공", message: "회원가입에 성공하셨습니다!")
     }
     
+    static var fail: Self {
+        .init(type: ToastStyle.success, title: "실패", message: "추가에 실패하였습니다.")
+    }
+    
     static func make(_ type: ToastStyle,_ msg: String) -> Self {
         return .init(type: type, title: type.value, message: msg)
     }
