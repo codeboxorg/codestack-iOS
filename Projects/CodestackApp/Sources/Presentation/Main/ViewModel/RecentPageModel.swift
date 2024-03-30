@@ -63,7 +63,7 @@ struct HomeSection {
     typealias HomeSectionModel = SectionModel<HomeViewSection, HomeItem>
     
     enum HomeViewSection: String, Equatable {
-        case recent = "최근 제출 10개"
+        case recent = "임시저장"
         case writing = "관련 글"
     }
     

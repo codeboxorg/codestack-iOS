@@ -41,7 +41,7 @@ final class HomeViewModel: HomeViewModelType {
     var steps = PublishRelay<Step>()
     
     private var homeUsecase: HomeUsecase
-    private let codestackUsecase: CodestackUsecase
+    private let firebaseUsecase: FirebaseUsecase
     private var disposeBag: DisposeBag = DisposeBag()
     
     //MARK: - Input
@@ -64,12 +64,12 @@ final class HomeViewModel: HomeViewModelType {
     // 3. 데이터를 
     struct Dependency {
         let homeUsecase: HomeUsecase
-        let codestackUsecase: CodestackUsecase
+        let codestackUsecase: FirebaseUsecase
     }
     
     init(dependency: Dependency){
         self.homeUsecase = dependency.homeUsecase
-        self.codestackUsecase = dependency.codestackUsecase
+        self.firebaseUsecase = dependency.codestackUsecase
         sendSubmissionBinding()
         updateSubmissionBinding()
         deletedSubmissionBinding()
@@ -78,7 +78,7 @@ final class HomeViewModel: HomeViewModelType {
     private func sendSubmissionBinding() {
         sendSubmission
             .map { $0 }
-            .subscribe(with: self,onNext: { vm, submission in
+            .subscribe(with: self, onNext: { vm, submission in
                 vm.updateSubmission.accept(submission)
             }).disposed(by: disposeBag)
     }
@@ -119,10 +119,6 @@ final class HomeViewModel: HomeViewModelType {
         viewDidLoadAction(input.viewDidLoad)
         codestackAction()
         recentModelAction(input.recentModelSelected)
-        
-        #if DEBUG
-        // homeUsecase.removeForTest()
-        #endif
         
         return Output(
             recentSubmissionModel: recentSubmissionModel.asDriver(onErrorJustReturn: []),
@@ -182,22 +178,22 @@ final class HomeViewModel: HomeViewModelType {
         viewDidLoad
             .withUnretained(self)
             .flatMap { vm, _ in
-                vm.homeUsecase
-                    .fetchSubmissionList()
+                vm.homeUsecase.fetchSubmissionEqual(.temp)
                     .asSignal(onErrorJustReturn: [])
             }
             .map { $0 + [SubmissionVO.sample] }
         
-        loadSubmission
-            .skip(1)
-            .emit(to: recentSubmissionList)
-            .disposed(by: disposeBag)
-            
+        // MARK: TO SKELTON VIEW
         loadSubmission
             .asObservable()
             .take(1)
             .skeletonDelay()
             .bind(to: recentSubmissionList)
+            .disposed(by: disposeBag)
+        
+        loadSubmission
+            .skip(1)
+            .emit(to: recentSubmissionList)
             .disposed(by: disposeBag)
     }
 
@@ -208,12 +204,17 @@ final class HomeViewModel: HomeViewModelType {
                 else { return nil }
             }
             .withUnretained(self)
-            .flatMapLatest { vm, value in
-                vm.codestackUsecase
+            .flatMapLatest { vm, value -> Signal<(PostVO, StoreVO)> in
+                let postMarkDown = vm.firebaseUsecase
                     .fetchPostByID(value.markdownID)
                     .asSignal(onErrorJustReturn: .init(markdown: ""))
+                
+                return Signal.zip(postMarkDown, Signal.just(value))
             }
-            .map { CodestackStep.richText($0.markdown) }
+            .map { value in
+                let (post, store) = value
+                return CodestackStep.richText(post.markdown, store)
+            }
             .emit(to: steps)
             .disposed(by: disposeBag)
         
@@ -224,21 +225,22 @@ final class HomeViewModel: HomeViewModelType {
             }
             .withUnretained(self)
             .flatMapLatest { vm, submission in
-                vm.homeUsecase.fetchProblem(using: submission)
-                    .asSignal(onErrorRecover: { error in
-                        return .just(SubmissionVO.sample)
-                    })
+                vm.homeUsecase
+                    .fetchProblem(using: submission)
+                    .asSignal(onErrorRecover: { error in return .just(SubmissionVO.sample) })
             }
-            .compactMap { submission in submission.problemVO.toProblemList(submission) }
+            .compactMap { submission in
+                ProblemSolveEditor(problemVO: submission.problemVO,
+                                   submissionVO: submission)
+            }
             .map { CodestackStep.recentSolveList($0)}
             .emit(to: steps)
             .disposed(by: disposeBag)
     }
     
     private func codestackAction() {
-        let fetchStoreOB = codestackUsecase
-            .fetchPostInfoList()
-            .map(\.store)
+        let fetchStoreOB = firebaseUsecase
+            .fetchPostList()
             .map { $0.sortByDate() }
             .share()
         
