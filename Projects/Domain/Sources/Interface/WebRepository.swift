@@ -7,26 +7,13 @@
 
 import Foundation
 import RxSwift
-import Apollo
+
 
 public protocol WebRepository: AnyObject {
-    // MARK: GraphQL
-    //    func getSolvedProblems(_ graph: GRAPH) -> Maybe<[ProblemIdentityFR]>
-    
-    //    func request<T>(type: T.Type, graph: GRAPH) -> Maybe<T>
-    
-    //    func getSolvedProblems(_ query: FetchSolvedProblemQuery) -> Maybe<[ProblemIdentityVO]>
-    //    func getMe(_ graph: GRAPH) -> Maybe<MemberVO>
-    //    func updateNickName(_ graph: GRAPH) -> Maybe<MemberVO>
-    //    func getProblemByID(_ graph: GRAPH) -> Maybe<ProblemVO>
-    //    func getAllTag(_ graph: GRAPH) -> Maybe<([TagVO],PageInfoVO)>
-    //    func getAllLanguage(_ graph: GRAPH) -> Maybe<[LanguageVO]>
-    //    func getMeSubmissions(_ graph: GRAPH) -> Maybe<[SubmissionVO]>
-    
-    func perform(_ mutation: SubmitMutation, max retry: Int) -> Maybe<SubmissionVO>
-    func getProblemsQuery(_ query: GRQuery) -> Maybe<([ProblemVO],PageInfoVO)>
-    
-    func getSubmission(_ query: GRQuery) -> Maybe<([SubmissionVO],PageInfoVO)>
+    // MARK: User
+    func getMemberVO() -> MemberVO
+    func updateEmail(_ email: String)
+    func updateMember(_ nickName: String)
     
     // MARK: REST
     func signUp(member: MemberVO) -> Maybe<Bool>
@@ -37,15 +24,10 @@ public protocol WebRepository: AnyObject {
     
     
     // MARK: 지금도 사용가능
-    func getSolvedProblems(_ username: String) -> Maybe<[ProblemIdentityVO]>
     func getMe() -> Maybe<MemberVO>
     func updateNickName(_ nickname: String) -> Maybe<MemberVO>
     
-    func getProblemByID(_ problemID: String) -> Maybe<ProblemVO>
-    func getAllTag() -> Maybe<([TagVO],PageInfoVO)>
-    func getAllLanguage() -> Maybe<[LanguageVO]>
-    
-    func getMeSubmissions(_ name: String) -> Maybe<[SubmissionVO]>
+    func mapError(_ error: Error) -> Error?
 }
 
 
