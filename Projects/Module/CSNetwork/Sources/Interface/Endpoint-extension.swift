@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import CSNetwork
 
 extension EndPoint {
     var firestoreBase: String {
@@ -15,6 +14,20 @@ extension EndPoint {
         else { return "" }
         return base
     }
+    
+    var judgeZeroBase: String {
+        guard let base = Bundle.main.infoDictionary?["judgezero_endpoint"] as? String
+        else { return "" }
+        return base
+    }
+    
+    var judgeAPIKey: String {
+        guard let base = Bundle.main.infoDictionary?["judgeZero_APIKey"] as? String
+        else { return "" }
+        return base
+        
+    }
+    
     var firebaseAuthBase: String {
         guard let base = Bundle.main.infoDictionary?["firebase_annony_auth_endpoint"] as? String
         else { return "" }

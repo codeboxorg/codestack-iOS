@@ -14,13 +14,9 @@ public struct FireStoreEndPoint: EndPoint {
         firestoreBase
     }
     
-    public var path: String {
-        "\(projectPath)" + "/\(FireStore.stores.value)"
-    }
+    public var path: String = ""
     
-    public var method: RequestMethod {
-        .get
-    }
+    public var method: RequestMethod = .get
     
     public var header: [String : String]
     
@@ -31,5 +27,18 @@ public struct FireStoreEndPoint: EndPoint {
     public init(_ token: String) {
         self.header = ["Content-Type": "application/json",
                        "Authorization" : "Bearer \(token)"]
+        self.path = "\(projectPath)" + "/\(FireStore.stores.value)"
+    }
+    
+    public init(_ token: String, _ uid: String) {
+        self.init(token)
+        self.path = "\(projectPath)" + "\(FireStore.posts(uid).value)"
+    }
+    
+    public init(_ token: String, runQuery: Data?) {
+        self.init(token)
+        self.body = runQuery
+        self.method = .post
+        self.path = "\(self.projectPath)" + ":runQuery"
     }
 }

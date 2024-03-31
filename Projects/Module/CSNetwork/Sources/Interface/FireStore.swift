@@ -10,14 +10,23 @@ import Foundation
 
 public enum FireStore {
     case stores
+    case posts(String)
     case documents
+    case users
+    case problems
     
     public var value: String {
         switch self {
+        case .problems:
+            return "problems"
+        case .posts(let str):
+            return "/users/\(str)/posts"
         case .stores:
             return "stores"
         case .documents:
             return "documents"
+        case .users:
+            return "users"
         }
     }
 }
