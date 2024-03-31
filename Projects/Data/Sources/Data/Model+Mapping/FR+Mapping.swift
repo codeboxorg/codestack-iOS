@@ -9,25 +9,6 @@ import Foundation
 import CodestackAPI
 import Domain
 
-//[FProblemIdentity]
-//
-//FMember
-//
-//FSubmission
-//
-//[FProblem],FPageInfo
-//
-//FProblem
-//
-//[FTag],FPageInfo
-//
-//[FLanguage]
-//
-//[FSubmission]
-//
-//[FSubmission],FPageInfo)
-
-
 extension MemberFR {
     func toDomain() -> MemberVO {
         MemberVO(email: self.email ?? "",
@@ -45,9 +26,9 @@ extension SubmissionFR {
                      problem: self.problem.fragments.problemIdentityFR.toDomain(),
                      member: MemberNameVO(username: self.member.username),
                      language: self.language.fragments.languageFR.toDomain(),
+                     statusCode: SolveStatus(rawValue: self.statusCode ?? "none") ?? .none,
                      cpuTime: self.cpuTime ?? -1,
                      memoryUsage: self.memoryUsage ?? -1,
-                     statusCode: self.statusCode ?? "fail",
                      createdAt: self.createdAt)
     }
 }
@@ -64,9 +45,9 @@ extension ProblemIdentityFR {
                      problem: self.toDomain(),
                      member: .init(username: ""),
                      language: .init(id: "", name: "", extension: ""),
+                     statusCode: .none,
                      cpuTime: 0,
                      memoryUsage: 0,
-                     statusCode: "",
                      createdAt: "")
     }
     
@@ -89,7 +70,6 @@ extension PageInfoFR {
 }
 
 extension ProblemFR {
-    
     func toDomain() -> ProblemVO {
         ProblemVO(id: self.id,
                   title: self.title,
