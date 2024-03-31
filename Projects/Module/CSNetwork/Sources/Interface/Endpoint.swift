@@ -49,6 +49,7 @@ public extension EndPoint {
         var request = URLRequest(url: url)
         request.httpMethod = self.method.rv
         request.allHTTPHeaderFields = self.header
+        
         if let body = self.body {
             request.httpBody = body
         }
