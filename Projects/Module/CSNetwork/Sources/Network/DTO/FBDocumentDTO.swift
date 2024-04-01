@@ -25,6 +25,22 @@ public struct FBDocuments<T: Codable>: Codable {
     }
 }
 
+public struct QueryDocument<T: Codable>: Codable {
+    public let readTime: String?
+    public let document: T?
+    
+    private enum FieldKeys: String, CodingKey {
+        case readTime, document
+    }
+}
+
+public extension Array where Element == QueryDocument<Store> {
+    func toDomain() -> [Store] {
+        self.compactMap { $0.document }
+    }
+}
+
+
 
 struct ArrayValue: Codable {
     let arrayValue: [String: [StringValue]]
