@@ -10,6 +10,7 @@ import Foundation
 
 public struct Store: Codable, Equatable {
     public let id: String
+    public let userId: String
     public let title: String
     public let name: String
     public let date: String
@@ -23,6 +24,7 @@ public struct Store: Codable, Equatable {
     }
     
     private enum FieldKeys: String, CodingKey {
+        case userId
         case title
         case name
         case date
@@ -31,8 +33,10 @@ public struct Store: Codable, Equatable {
         case tags = "tag"
     }
     
-    public init(title: String, name: String, date: String, description: String, markdown: String, tags: [String]) {
+    public init(userId: String, title: String, name: String, date: String, description: String, markdown: String, tags: [String]) {
+        
         self.id = UUID().uuidString
+        self.userId = userId
         self.title = title
         self.name = name
         self.date = date
@@ -44,6 +48,7 @@ public struct Store: Codable, Equatable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StoreKey.self)
         var fieldContainer = container.nestedContainer(keyedBy: FieldKeys.self, forKey: .fields)
+        try fieldContainer.encode(StringValue(value: userId), forKey: .userId)
         try fieldContainer.encode(StringValue(value: title), forKey: .title)
         try fieldContainer.encode(StringValue(value: name), forKey: .name)
         try fieldContainer.encode(StringValue(value: markdownID), forKey: .markdownID)
@@ -56,6 +61,7 @@ public struct Store: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StoreKey.self)
         let fieldContainer = try container.nestedContainer(keyedBy: FieldKeys.self, forKey: .fields)
+        userId = try fieldContainer.decode(StringValue.self, forKey: .userId).value
         title = try fieldContainer.decode(StringValue.self, forKey: .title).value
         name = try fieldContainer.decode(StringValue.self, forKey: .name).value
         markdownID = try fieldContainer.decode(StringValue.self, forKey: .markdownID).value
