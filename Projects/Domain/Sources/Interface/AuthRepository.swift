@@ -9,25 +9,10 @@
 import Foundation
 import RxSwift
 
-//public protocol GitAuth: AnyObject {
-//    func gitOAuthrization() throws
-//    func gitOAuthComplete(code: String)
-//    
-//    func request(git serverCode: String) -> Maybe<GitTokenDTO>
-//    func request(with code: GitCode) -> Maybe<CSTokenDTO>
-//}
-//
-//public protocol AppleAuth: AnyObject{
-//    func request(with token: AppleDTO) -> Maybe<CSTokenDTO>
-//    func oAuthComplte(token: AppleDTO)
-//}
-//
-//public protocol CSAuth {
-//    func request(name id: ID,password: Pwd) -> Maybe<CSTokenDTO>
-//}
-
 public protocol AuthRepository {
-    func getMe() -> Maybe<MemberVO> 
+    func saveToken(token: CSTokenVO)
+    func saveMember(member: MemberVO)
+    func getMe() -> Maybe<MemberVO>
     func gitOAuthrization() throws
     func gitOAuthComplete(code: String)
     func request(git serverCode: String) -> Maybe<GitTokenVO>
@@ -35,8 +20,36 @@ public protocol AuthRepository {
     func request(apple code: String, user: String) -> Maybe<CSTokenVO>
     func oAuthComplte(apple code: String, user: String)
     func request(name id: String, password: String) -> Maybe<CSTokenVO>
-    
     func signUp(query: RegisterQuery) -> Maybe<Bool>
+    
+    
+    /// FireStore에 유저 정보 저장
+    /// - Parameters:
+    ///   - token: firebase Token
+    ///   - uid: user Local ID
+    ///   - nickname: nickname
+    /// - Returns: 성공여부
+    func firebaseStoreUserInfoSave(token: String, uid: String, nickname: String) -> Completable
+    
+    func fetchfirebaseStoreUserInfo() -> Observable<FBUserNicknameVO>
+    
+    /// 회원가입 요청
+    /// - Parameter query: 회원가입 정ㅇ보
+    /// - Returns: User Token 관련 + User 정보
+    func firebaseRegister(_ query: RegisterQuery) -> Maybe<FBUserInfoVO>
+    
+    /// Token 재발행
+    /// - Returns: FB token 재발행
+    func firebaseReissueToken() -> Completable
+    
+    /// 익명 로그인
+    /// - Returns: 성공여부
+    func firebaseAnonymousAuth() -> Maybe<Void>
+    
+    func firebaseAuth(email: String, pwd: String) -> Maybe<FBUserInfoVO>
+    func firebaseToeknSave(token: FBTokenVO) -> Completable
+    
+    func firebaseLogout() throws
 }
 
 public struct GitTokenVO {

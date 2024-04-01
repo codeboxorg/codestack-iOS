@@ -16,11 +16,9 @@ import Global
 
 public final class DefaultAuthRepository: AuthRepository {
     
-    
     private let auth: CSNetwork.Auth
     private let graph: GraphQLAPI
     private let rest: RestAPI
-    
     
     public init(auth: CSNetwork.Auth, graph: GraphQLAPI, rest: RestAPI) {
         self.auth = auth
@@ -93,38 +91,30 @@ public typealias FAuth = FirebaseAuth.Auth
 
 
 public extension DefaultAuthRepository {
-    // TODO: 업데이트 이메일 , 프로필, Token 유효성 처리.....
-            // 로그인 할때마다 토큰 업데이트
-    // TODO: 로그아웃시 유저 nickname 여부
-    // TODO: submission VIewModel Graph
-    // TODO: Solved Problems 멀 넣지 -> (제출 횟수) (성공) (실패) ()
-    // TODO: 인증 처리
-    // TODO: FCM
-    // TODO: Test
+    func firebaseLogout() throws {
+        try FAuth.auth().signOut()
+    }
     
     func firebaseReissueToken() -> Completable {
         Completable.create { complete in
-            let dispatchItem = DispatchWorkItem {
-                FAuth.auth().currentUser?.getIDToken { idToken, error in
-                    if let error {
-                        let fireErrorCode = AuthErrorCode(_nsError: error as NSError).errorCode
-                        guard let authError = AuthFIRError(rawValue: fireErrorCode) else {
-                            complete(.error(AuthFIRError.unknown))
-                            return
-                        }
-                        complete(.error(authError))
-                    }
-                    
-                    guard let idToken = idToken else {
+            FAuth.auth().currentUser?.getIDToken { idToken, error in
+                if let error {
+                    let fireErrorCode = AuthErrorCode(_nsError: error as NSError).errorCode
+                    guard let authError = AuthFIRError(rawValue: fireErrorCode) else {
                         complete(.error(AuthFIRError.unknown))
                         return
                     }
-                    KeychainItem.saveFirebaseIDToken(idToken: idToken)
-                    complete(.completed)
+                    complete(.error(authError))
                 }
+                
+                guard let idToken = idToken else {
+                    complete(.error(AuthFIRError.unknown))
+                    return
+                }
+                KeychainItem.saveFirebaseIDToken(idToken: idToken)
+                complete(.completed)
             }
-            dispatchItem.perform()
-            return Disposables.create { dispatchItem.cancel() }
+            return Disposables.create { }
         }
     }
     
@@ -149,45 +139,46 @@ public extension DefaultAuthRepository {
     
     func firebaseAuth(email: String, pwd: String) -> Maybe<FBUserInfoVO> {
         return Maybe<FBUserInfoVO>.create { maybe in
-            let dispatchItem = DispatchWorkItem {
-                FAuth.auth().signIn(withEmail: email, password: pwd) { authResult,error  in
-                    if let error {
-                        let fireErrorCode = AuthErrorCode(_nsError: error as NSError).errorCode
-                        guard let authError = AuthFIRError(rawValue: fireErrorCode) else {
+            FAuth.auth().signIn(withEmail: email, password: pwd) { authResult,error  in
+                if let error {
+                    let fireErrorCode = AuthErrorCode(_nsError: error as NSError).errorCode
+                    guard let authError = AuthFIRError(rawValue: fireErrorCode) else {
+                        maybe(.error(AuthFIRError.unknown))
+                        return
+                    }
+                    maybe(.error(authError))
+                }
+                
+                if let authResult {
+                    authResult.user.getIDToken { token, err in
+                        if err != nil { maybe(.error(AuthFIRError.unknown)); return }
+                        guard let idToken = token else {
                             maybe(.error(AuthFIRError.unknown))
                             return
                         }
-                        maybe(.error(authError))
-                    }
-                    
-                    if let authResult {
-                        authResult.user.getIDToken { token, err in
-                            if err != nil { maybe(.error(AuthFIRError.unknown)); return }
-                            guard let idToken = token else {
-                                maybe(.error(AuthFIRError.unknown))
-                                return
-                            }
-                            let fbToken = FBTokenVO(kind: "Bearer",
-                                                    idToken: idToken,
-                                                    refreshToken: authResult.user.refreshToken ?? "",
-                                                    localId: authResult.user.uid)
-                            let info = FBUserInfoVO(email: authResult.user.email ?? "",
-                                                    nickname: "N/A",
-                                                    password: pwd,
-                                                    fbTokenVO: fbToken)
-                            maybe(.success(info))
-                        }
+                        let fbToken = FBTokenVO(kind: "Bearer",
+                                                idToken: idToken,
+                                                refreshToken: authResult.user.refreshToken ?? "",
+                                                localId: authResult.user.uid)
+                        let info = FBUserInfoVO(email: authResult.user.email ?? "",
+                                                nickname: "N/A",
+                                                password: pwd,
+                                                fbTokenVO: fbToken)
+                        maybe(.success(info))
                     }
                 }
             }
-            dispatchItem.perform()
-            return Disposables.create { dispatchItem.cancel() }
+            return Disposables.create { }
         }
     }
     
     func firebaseStoreUserInfoSave(token: String, uid: String, nickname: String) -> Completable {
         let query = UserGetQuery(uid: uid, token: token, method: .post)
-        let userQuery = UserQuery(nickname: nickname, preferLanguage: "",query: query)
+        let profilePath = UserManager.profileImage ?? ""
+        
+        let userQuery = UserQuery(nickname: nickname, preferLanguage: "",
+                                  profileImagePath: profilePath, query: query)
+        
         return rest.post(FireStoreUserPostEndPoint(post: userQuery))
     }
     
