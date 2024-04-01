@@ -81,13 +81,95 @@ public final class DefaultDBRepository: DBRepository {
         }
     }
     
-    public func fetchFavoriteExist(_ requestType: FAV_TYPE) -> Single<Bool> {
+    public func fetchFavoriteExist(_ problemID: String) -> Single<Bool> {
         Single<Bool>.create { [weak persistentStore] single in
-            let fetchRequest = requestType.conditionRequest()
+            let fetchRequest = FAV_TYPE.isEqualID(problemID).conditionRequest()
             let observable = persistentStore?
                 .count(fetchRequest)
                 .subscribe(onNext: { count in
                     count == 1 ? single(.success(true)) : single(.success(false))
+                })
+            return Disposables.create { observable?.dispose() }
+        }
+    }
+    
+    public func fetchCodestackList() -> Single<[CodestackVO]> {
+        Single<[CodestackVO]>.create { [weak persistentStore] single in
+            let request = CodestackMO.fetchRequest()
+            request.sortDescriptors = [ NSSortDescriptor(key: "updatedAt", ascending: false)]
+            let observable = persistentStore?
+                .fetch(request,
+                       map: { codestackMO in
+                    return codestackMO.toDomain()
+                })
+                .subscribe(onNext: { result in
+                    single(result)
+                },onError: { error in
+                    single(.failure(error))
+                })
+            return Disposables.create { observable?.dispose() }
+        }
+    }
+    
+    
+    public func fetchCodestackEqual(language: LanguageVO) -> Single<[CodestackVO]> {
+        Single<[CodestackVO]>.create { [weak persistentStore] single in
+            let fetchRequest = CodestackMO.isEqualLanguage(languageVO: language)
+            let observable = persistentStore?
+                .fetch(fetchRequest, map: {
+                    $0.toDomain()
+                })
+                .subscribe(onNext: { value in
+                    single(value)
+                })
+            return Disposables.create { observable?.dispose() }
+        }
+    }
+    
+    public func fetchCodestack(id: String) -> Single<CodestackVO> {
+        Single<CodestackVO>.create { [weak persistentStore] single in
+            let fetchRequest = CodestackMO.isEqualID(id)
+            let observable = persistentStore?
+                .fetch(fetchRequest, map: {
+                    $0.toDomain()
+                }).map {
+                    do {
+                        guard let value = try $0.get().first else { throw CodestackError.isNotExist  }
+                        return value
+                    } catch {
+                        throw CodestackError.isNotExist
+                    }
+                }
+                .subscribe(onNext: { value in
+                    single(.success(value))
+                }, onError: { error in
+                    single(.failure(error))
+                })
+            return Disposables.create { observable?.dispose() }
+        }
+    }
+    
+    public func fetchCodestackExist(_ id: String) -> Single<Bool> {
+        Single<Bool>.create { [weak persistentStore] single in
+            let fetchRequest = CodestackMO.isEqualID(id)
+            let observable = persistentStore?
+                .count(fetchRequest)
+                .subscribe(onNext: { count in
+                    count == 1 ? single(.success(true)) : single(.success(false))
+                })
+            return Disposables.create { observable?.dispose() }
+        }
+    }
+    
+    public func removeCodestack(id: String) -> Completable {
+        Completable.create { [weak persistentStore] complete in
+            let request = CodestackMO.isEqualID(id)
+            let observable = persistentStore?
+                .remove(request: request)
+                .subscribe(onNext: {
+                    complete(.completed)
+                },onError: { error in
+                    complete(.error(error))
                 })
             return Disposables.create { observable?.dispose() }
         }
@@ -121,37 +203,6 @@ public final class DefaultDBRepository: DBRepository {
         }
     }
     
-    public func removeAll() -> Single<Void> {
-        Single<Void>.create { [weak persistentStore] single in
-            let observable = persistentStore?.remove(request: SubmissionMO.fetchRequest())
-                .subscribe { value in
-                    Log.debug(value)
-                }
-            
-            let observable2 = persistentStore?.remove(request: ProblemSubmissionStateMO.fetchRequest())
-                .subscribe { value in
-                    Log.debug(value)
-                }
-            
-            let observable3 = persistentStore?.remove(request: SubmissionCalendarMO.fetchRequest())
-                .subscribe { value in
-                    Log.debug(value)
-                }
-            
-            let observable4 = persistentStore?.remove(request: FavoritProblemMO.fetchRequest())
-                .subscribe { value in
-                    Log.debug(value)
-                }
-            
-            return Disposables.create { 
-                observable?.dispose()
-                observable2?.dispose()
-                observable3?.dispose()
-                observable4?.dispose()
-            }
-        }
-    }
-    
     public func update(submission: SubmissionVO, type request: SUB_TYPE) -> Single<Void> {
         Single<Void>.create { [weak persistentStore] single in
             let observable = persistentStore?.update { context in
@@ -176,7 +227,7 @@ public final class DefaultDBRepository: DBRepository {
                 // TODO: Submission -> SubmissionVO
                 guard let submissionMO: SubmissionMO = submission.toMO(in: context) else { return }
                 
-                if submission.statusCode != "temp" && submission.statusCode != "favorite" {
+                if submission.statusCode != .temp && submission.statusCode != .favorite {
                     // TODO: Submission Calendar 에 Submission 관계 설정
                     // 임시저장과 즐겨찾기가 아닐경우 즉, 제출 히스토리만 관계 설정
                     let submissionCalendar = try SubmissionCalendarMO.fetchSubmissionCalendarMO(context: context)
@@ -207,7 +258,6 @@ public final class DefaultDBRepository: DBRepository {
         Single<Void>.create { [weak persistentStore] complete in
             let observable = persistentStore?
                 .update { context in
-                    // TODO: 변경 해야됨 -> 변경 완료 toMO
                     favoriteProblem.toMO(in: context)
                 }
                 .subscribe(onNext: { _ in
@@ -219,4 +269,50 @@ public final class DefaultDBRepository: DBRepository {
         }
     }
     
+    public func store(codestackVO: CodestackVO) -> Single<Void> {
+        Single<Void>.create { [weak persistentStore] complete in
+            let observable = persistentStore?
+                .update { context in
+                    codestackVO.toMO(in: context)
+                }
+                .subscribe(onNext: { _ in
+                    complete(.success(()))
+                },onError: { error in
+                    complete(.failure(error))
+                })
+            return Disposables.create { observable?.dispose() }
+        }
+    }
+    
+    
+    public func removeAll() -> Single<Void> {
+        Single<Void>.create { [weak persistentStore] single in
+            let observable = persistentStore?.remove(request: SubmissionMO.fetchRequest())
+                .subscribe { value in
+                    Log.debug(value)
+                }
+            
+            let observable2 = persistentStore?.remove(request: ProblemSubmissionStateMO.fetchRequest())
+                .subscribe { value in
+                    Log.debug(value)
+                }
+            
+            let observable3 = persistentStore?.remove(request: SubmissionCalendarMO.fetchRequest())
+                .subscribe { value in
+                    Log.debug(value)
+                }
+            
+            let observable4 = persistentStore?.remove(request: FavoritProblemMO.fetchRequest())
+                .subscribe { value in
+                    Log.debug(value)
+                }
+            
+            return Disposables.create {
+                observable?.dispose()
+                observable2?.dispose()
+                observable3?.dispose()
+                observable4?.dispose()
+            }
+        }
+    }
 }
