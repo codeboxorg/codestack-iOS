@@ -84,12 +84,12 @@ public extension StoreVO {
         (0...count).map { _ in StoreVO.mock }
     }
     
-    static func makeViewModel(_ title: String, _ tags: [String]) -> StoreVO {
+    static func makeViewModel(_ title: String, _ description: String , _ tags: [String]) -> StoreVO {
         StoreVO(userId: "",
                 title: title,
                 name: "",
                 date: Date().toString(format: .YYYYMMDD),
-                description: "",
+                description: description,
                 markdown: "",
                 tags: tags)
     }
