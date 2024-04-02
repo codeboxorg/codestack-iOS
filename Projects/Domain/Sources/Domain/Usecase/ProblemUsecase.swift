@@ -11,20 +11,57 @@ import RxSwift
 
 public final class ProblemUsecase {
     
-    private let webRepository: WebRepository
-    
-    public init(webRepository: WebRepository) {
-        self.webRepository = webRepository
+    public struct Dependency {
+        let web: WebRepository
+        let db: DBRepository
+        let sub: SubmissionRepository
+        let fb: FBRepository
+        
+        public init(web: WebRepository, 
+                    db: DBRepository,
+                    sub: SubmissionRepository,
+                    fb: FBRepository) {
+            self.web = web
+            self.db = db
+            self.sub = sub
+            self.fb = fb
+        }
     }
     
-    public func fetchProblems(offset: Int) -> Observable<[ProblemVO]> {
-        webRepository
-            .getProblemsQuery(GRQuery(offset: offset))
-//            .getProblemsQuery(.PR_LIST(arg: GRAR(offset: offset)))
-            .map { $0.0 }
+    private let webRepository: WebRepository
+    private let dbRepoistory: DBRepository
+    private let submissionRepository: SubmissionRepository
+    private let firebaseRepository: FBRepository
+    
+    public init(dependency: Dependency) {
+        self.webRepository = dependency.web
+        self.dbRepoistory = dependency.db
+        self.submissionRepository = dependency.sub
+        self.firebaseRepository = dependency.fb
+    }
+    
+    public func upLoadProblem(_ problemVO: ProblemVO) -> Observable<State<Void>> {
+        firebaseRepository.uploadProblem(problemVO)
+    }
+    
+    public func fetchProblemList() -> Observable<[ProblemVO]> {
+        firebaseRepository.fetchProblem()
+    }
+    
+    public func fetchProblems(offset: Int) -> Observable<ProblemInfoVO> {
+        submissionRepository
+            .fetchProblemsQuery(GRQuery(offset: offset))
+            .timeout(.seconds(1), scheduler: MainScheduler.instance)
+            .map { list, info in ProblemInfoVO(probleminfoList: list, pageInfo: info) }
             .asObservable()
-        // TODO: Page Info 확인하기
-        //  .asSignal(onErrorJustReturn: [])
+    }
+    
+    public func problemSelectAction(problemID: ProblemID) -> Observable<[SubmissionVO]> {
+        return dbRepoistory
+            .fetchProblemState(.all)
+            .timeout(.seconds(1), scheduler: MainScheduler.instance)
+            .compactMap(\.first?.submissions)
+            .asObservable()
     }
     
 }
