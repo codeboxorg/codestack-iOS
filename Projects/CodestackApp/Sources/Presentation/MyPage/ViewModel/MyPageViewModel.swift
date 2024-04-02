@@ -12,75 +12,165 @@ import RxCocoa
 import Global
 import Domain
 
-class MyPageViewModel: ViewModelType, Stepper{
+class MyPageViewModel: ViewModelType, Stepper {
     
     struct Input {
-        var editProfileEvent: Signal<Void>
-        var profileImageValue: Driver<Data>
+        var editProfileEvent: Signal<Data>
         var viewDidLoad: Signal<Void>
+        var codeModelSeleted: Signal<CodestackVO>
+        var codeModelDeleted: Observable<Int>
+        var myPostSeleted: Signal<StoreVO>
+        var navigateToCodeWrite: Observable<Void>
     }
     
     struct Output {
         var userProfile: Driver<MemberVO>
         var loading: Driver<ProfileView.LoadingState>
+        var myCodestackList: Driver<[CodestackVO]>
+        var myPostingList: Driver<[StoreVO]>
     }
     
     struct Dependency {
         let profileUsecase: ProfileUsecase
+        let firebaseUsecase: FirebaseUsecase
+        let codeUsecase: CodeUsecase
     }
     
     var steps = PublishRelay<Step>()
     private var disposeBag = DisposeBag()
     
     private let profileUsecase: ProfileUsecase
+    private let codeUsecase: CodeUsecase
+    private let firebaseUsecase: FirebaseUsecase
     
     init(dependency: Dependency) {
         self.profileUsecase = dependency.profileUsecase
+        self.codeUsecase = dependency.codeUsecase
+        self.firebaseUsecase = dependency.firebaseUsecase
     }
     
-    private let userProfile = BehaviorRelay<MemberVO>(value: MemberVO.sample)
-    private let profileImageCahche = BehaviorRelay<Data>(value: Data())
+    private let imageCacheClient: ImageCacheClient = ImageCacheClient.shared
+    private let myPostingList = BehaviorSubject<[StoreVO]>(value: [])
+    
+    private lazy var userPorfileImage = profileUsecase.userProfileImage
+    private lazy var loading = BehaviorSubject<ProfileView.LoadingState>(value: .notLoading)
+    private lazy var activated = loading.distinctUntilChanged()
+    private lazy var userProfile = profileUsecase.userProfile
+    private lazy var myCodestackList = codeUsecase.myCodestackList
 
     func transform(input: Input) -> Output {
-        let loading = profileImage(update: input.profileImageValue)
-        let activated = loading.distinctUntilChanged()
+        userPorfileImage.asObservable()
+            .withUnretained(self)
+            .do(onNext: { vm, image in vm.imageCacheClient.setMyImageInCache(image) })
+            .map { .loaded($1) }
+            .bind(to: loading)
+            .disposed(by: disposeBag)
         
         input
             .editProfileEvent
             .asObservable()
-            .flatMap { [weak self] _ -> Observable<(Data, MemberVO)> in
-                guard let self else { return .just((Data(), .sample))}
-                return Observable.zip(self.profileImageCahche.asObservable(),
-                                      self.userProfile.take(1).asObservable())
+            .withUnretained(userProfile)
+            .flatMap { userProfile, imageData -> Observable<(MemberVO, Data)> in
+                let myImageFromCache = Observable.just(imageData)
+                let userProfile = userProfile.take(1).asObservable()
+                return Observable.zip(userProfile, myImageFromCache)
             }
-            .map { CodestackStep.profileEdit($0.1, $0.0) }
+            .map { value in
+                CodestackStep.profileEdit(value.0, value.1)
+            }
             .bind(to: steps)
             .disposed(by: disposeBag)
         
-        input.viewDidLoad
+        
+        // TODO: USer get
+        input.navigateToCodeWrite
+            .map { _ in CodestackStep.codeEditorStep(CodeEditor(codestackVO: .new, language: .default))}
+            .bind(to: steps)
+            .disposed(by: disposeBag)
+
+        postAction(selected: input.myPostSeleted)
+        codeAction(codeModelSeleted: input.codeModelSeleted, codeModelDeleted: input.codeModelDeleted)
+        viewDidLoadAction(input.viewDidLoad)
+            
+        return Output(userProfile: userProfile.asDriver(),
+                      loading: activated.asDriver(onErrorJustReturn: .notLoading),
+                      myCodestackList: myCodestackList.asDriver(onErrorJustReturn: [.mock]),
+                      myPostingList: myPostingList.asDriver(onErrorJustReturn: [.mock,.mock]))
+    }
+    
+    private func postAction(selected: Signal<StoreVO>) {
+        selected
+            .withUnretained(firebaseUsecase)
+            .flatMapLatest { usecase, value -> Signal<(PostVO, StoreVO)> in
+                let postMarkDown = usecase
+                    .fetchPostByID(value.markdownID)
+                    .asSignal(onErrorJustReturn: .init(markdown: ""))
+                
+                return Signal.zip(postMarkDown, Signal.just(value))
+            }
+            .map { value in
+                let (post, store) = value
+                return CodestackStep.richText(post.markdown, store)
+            }
+            .emit(to: steps)
+            .disposed(by: disposeBag)
+    }
+    
+    private func codeAction(codeModelSeleted: Signal<CodestackVO>, codeModelDeleted: Observable<Int>) {
+        codeModelDeleted
+            .withUnretained(self)
+            .flatMapLatest { vm, index in
+                vm.codeUsecase.deleteCode(index: index)
+            }
+            .subscribe(with: self, onNext: { vm, state in
+                Log.debug("delete State: \(state)")
+            }).disposed(by: disposeBag)
+        
+        codeModelSeleted
+            .map { CodestackStep.codeEditorStep(CodeEditor(codestackVO: $0, language: $0.languageVO)) }
+            .emit(to: steps)
+            .disposed(by: disposeBag)
+    }
+    
+    
+    private func viewDidLoadAction(_ viewDidLoad: Signal<Void>) {
+        viewDidLoad
+            .withUnretained(self)
+            .flatMap { vm, value in
+                vm.firebaseUsecase
+                    .fetchMePostList()
+                    .asSignal(onErrorJustReturn: [])
+            }
+            .emit(to: myPostingList)
+            .disposed(by: disposeBag)
+            
+        
+        viewDidLoad
+            .withUnretained(self)
+            .flatMap { vm, value in
+                vm.codeUsecase.fetchCodeList()
+                    .asSignal(onErrorJustReturn: .success([]))
+            }
+            .compactMap { try? $0.get() }
+            .emit(to: myCodestackList)
+            .disposed(by: disposeBag)
+        
+        
+        viewDidLoad
             .asObservable()
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
             .withUnretained(self)
+            .do(onNext: { vm, _ in vm.loading.onNext(.loading) } )
             .flatMap{ vm, _ in vm.profileUsecase.fetchProfile() }
             .subscribe(with: self, onNext: { vm, member in
+                let loading = vm.loading
+                let profileImage = member.profileImage
                 vm.userProfile.accept(member)
-                if let url = URL(string: member.profileImage),
-                   let data = try? Data(contentsOf: url) {
-                    loading.onNext(.loaded(data))
-                    vm.profileImageCahche.accept(data)
-                } else {
-                    let data = CodestackAppAsset.codeStack.image.pngData()!
-                    loading.onNext(.loaded(data))
-                    vm.profileImageCahche.accept(data)
-                }
+                vm.bindingProfileImage(loading, profileImage)
             },onError: { vm, err in
                 let data = CodestackAppAsset.codeStack.image.pngData()!
-                vm.profileImageCahche.accept(data)
-                loading.onNext(.loaded(data))
+                vm.loading.onNext(.loaded(data))
             }).disposed(by: disposeBag)
-            
-        return Output(userProfile: userProfile.asDriver(),
-                      loading: activated.asDriver(onErrorJustReturn: .notLoading))
     }
     
     struct DetailInput {
@@ -100,27 +190,21 @@ class MyPageViewModel: ViewModelType, Stepper{
             .disposed(by: disposeBag)
     }
     
-    private func profileImage(update profileImageValue: Driver<Data>) -> BehaviorSubject<ProfileView.LoadingState> {
-        
-        let loading = BehaviorSubject<ProfileView.LoadingState>(value: .notLoading)
-        
-        profileImageValue
-            .asObservable()
-            .do(onNext: { _ in loading.onNext(.loading) })
-            .withUnretained(self)
-            .flatMap { vm,data in
-                // TODO: Cache 처리 해야함
-                Observable.zip(vm.profileImageCahche.take(1).asObservable(),
-                               vm.profileUsecase.editProfile(data: data))
+    private func bindingProfileImage(_ loading: BehaviorSubject<ProfileView.LoadingState>,
+                                     _ profileImageString: String) 
+    {
+        if let myProfileImage = imageCacheClient.getMyImageFromCache() {
+            loading.onNext(.loaded(myProfileImage.pngData()!))
+        } else {
+            if let url = URL(string: profileImageString),
+               let data = try? Data(contentsOf: url) {
+                loading.onNext(.loaded(data))
+                imageCacheClient.setMyImageInCache(data)
+            } else {
+                let data = CodestackAppAsset.codeStack.image.pngData()!
+                loading.onNext(.loaded(data))
+                imageCacheClient.setMyImageInCache(data)
             }
-            .subscribe(with: self, onNext: { vm, tuple in
-                let (before, newImageURL) = tuple
-                if newImageURL == PRConstants.fail.value {
-                    // MARK: 실패시 이전 이미지로 교체
-                    loading.onNext(.loaded(before))
-                }
-            }).disposed(by: disposeBag)
-        
-        return loading
+        }
     }
 }
