@@ -44,9 +44,9 @@ extension SubmissionMO : Identifiable {
                                                             title: codeContextVO.problemTitle),
                             member: MemberNameVO(username: ""),
                             language: languageVO,
+                            statusCode: SolveStatus(rawValue: statusCode) ?? .none,
                             cpuTime: 0,
                             memoryUsage: 0,
-                            statusCode: statusCode,
                             createdAt: createdAt.toString())
               
     }
@@ -60,7 +60,7 @@ extension SubmissionVO {
         mo.language?.languageID = self.language.id
         mo.language?.name = self.language.name
         mo.language?.extension = self.language.extension
-        mo.statusCode = self.statusCode
+        mo.statusCode = self.statusCode.rawValue
         mo.createdAt = self.createdAt.isKSTORUTC()
         return mo
     }
@@ -81,7 +81,7 @@ extension SubmissionVO {
         
         submissionMO.createdAt = self.createdAt.isKSTORUTC()
         submissionMO.id = self.id
-        submissionMO.statusCode = self.statusCode
+        submissionMO.statusCode = self.statusCode.rawValue
         submissionMO.codeContext = codeContextMO
         submissionMO.language = languageMO
         
