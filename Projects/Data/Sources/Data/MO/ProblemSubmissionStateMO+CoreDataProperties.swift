@@ -40,7 +40,7 @@ extension ProblemSubmissionStateMO {
 extension ProblemSubmissionStateMO : Identifiable {
     
     func toDomain() -> ProblemSubmissionStateVO? {
-        guard var submissionSet = self.submissions else { return nil }
+        guard let submissionSet = self.submissions else { return nil }
         
         let submissionVOs = 
         submissionSet
