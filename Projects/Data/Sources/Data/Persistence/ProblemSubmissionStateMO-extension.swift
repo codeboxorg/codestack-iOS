@@ -45,6 +45,7 @@ extension ProblemSubmissionStateMO {
         }
         return stateMO
     }
+    
 }
 
 extension PR_SUB_ST_TYPE {

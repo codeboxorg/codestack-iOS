@@ -7,7 +7,6 @@
 
 import CoreData
 import RxSwift
-import Global
 
 public protocol PersistentStore: AnyObject {
     typealias DBOperation<Result> = (NSManagedObjectContext) throws -> Result
@@ -15,9 +14,9 @@ public protocol PersistentStore: AnyObject {
     func count<T>(_ fetchRequest: NSFetchRequest<T>) -> Observable<Int>
     
     func fetch<T, V>(_ fetchRequest: NSFetchRequest<T>,
-                     map: @escaping (T) throws -> V?) -> Observable<Result<[V],Error>>
+                     map: @escaping (T) throws -> V?) -> Observable<Swift.Result<[V],Error>>
     
-    func update<T>(_ operation: @escaping DBOperation<T>) -> Observable<Result<T, Error>>
+    func update<T>(_ operation: @escaping DBOperation<T>) -> Observable<Swift.Result<T, Error>>
     
     func remove<T>(request: NSFetchRequest<T>) -> Observable<Void>
 }
@@ -42,10 +41,16 @@ public final class CoreDataStack: PersistentStore {
     private let bgQueue = DispatchQueue(label: "coredata")
     
     public init(directory: FileManager.SearchPathDirectory = .documentDirectory,
-         domainMask: FileManager.SearchPathDomainMask = .userDomainMask,
+                domainMask: FileManager.SearchPathDomainMask = .userDomainMask,
+                bundle: Bundle,
          version vNumber: UInt) {
+        
         let version = Version(vNumber)
-        container = NSPersistentContainer(name: version.modelName)
+        
+        let url = bundle.url(forResource: "db_model_v1", withExtension: "momd")
+        let mom = NSManagedObjectModel(contentsOf: url!)!
+        
+        container = NSPersistentContainer(name: version.modelName, managedObjectModel: mom)
         if let url = version.dbFileURL(directory, domainMask) {
             let store = NSPersistentStoreDescription(url: url)
             container.persistentStoreDescriptions = [store]
@@ -87,12 +92,12 @@ public final class CoreDataStack: PersistentStore {
             context.performAndWait {
                 do {
                     fetchRequest.returnsObjectsAsFaults = false
-                    let managedObjects = try context.fetch(fetchRequest)
+                    let managedObjects = try context.fetch(fetchRequest) as [T]
                     
                     let mapped = managedObjects.compactMap {
                         if let mo = $0 as? NSManagedObject {
                             // Turning object into a fault
-                            context.refresh(mo, mergeChanges: true)
+                            context.refresh(mo, mergeChanges: false)
                         }
                         return try? map($0)
                     }
@@ -127,7 +132,7 @@ public final class CoreDataStack: PersistentStore {
                     observer.onNext(())
                 } catch {
                     context.reset()
-                    // observer.onNext(.failure(error))
+                    observer.onError(error)
                 }
             }
             
@@ -152,7 +157,6 @@ public final class CoreDataStack: PersistentStore {
                         observer.onNext(.success(result))
                     } catch {
                         context.reset()
-                        Log.debug("failed: Context Save")
                         observer.onNext(.failure(error))
                     }
                 }

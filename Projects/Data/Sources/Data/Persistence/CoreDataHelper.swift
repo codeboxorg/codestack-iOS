@@ -8,6 +8,9 @@
 import CoreData
 
 
+protocol ManagedEntity: NSFetchRequestResult { }
+
+
 extension ManagedEntity where Self: NSManagedObject {
     
     static var entityName: String {
@@ -17,8 +20,10 @@ extension ManagedEntity where Self: NSManagedObject {
     }
     
     static func insertNew(in context: NSManagedObjectContext) -> Self? {
-        return NSEntityDescription
-            .insertNewObject(forEntityName: entityName, into: context) as? Self
+        guard let description = NSEntityDescription.entity(forEntityName: entityName, in: context) else {
+            return nil
+        }
+        return Self.init(entity: description, insertInto: context)
     }
     
     static func newFetchRequest() -> NSFetchRequest<Self> {
@@ -26,8 +31,16 @@ extension ManagedEntity where Self: NSManagedObject {
     }
 }
 
-// MARK: - NSManagedObjectContext
+extension CodestackMO: ManagedEntity { }
+extension SubmissionMO: ManagedEntity { }
+extension CodeContextMO: ManagedEntity { }
+extension LanguageMO: ManagedEntity { }
+extension ProblemSubmissionStateMO: ManagedEntity { }
+extension SubmissionCalendarMO: ManagedEntity { }
+extension FavoritProblemMO: ManagedEntity { }
 
+
+// MARK: - NSManagedObjectContext
 extension NSManagedObjectContext {
     
     func configureAsReadOnlyContext() {
@@ -44,7 +57,6 @@ extension NSManagedObjectContext {
 }
 
 // MARK: - Misc
-
 extension NSSet {
     func toArray<T>(of type: T.Type) -> [T] {
         allObjects.compactMap { $0 as? T }

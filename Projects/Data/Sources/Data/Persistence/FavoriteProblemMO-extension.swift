@@ -28,3 +28,24 @@ extension FavoritProblemMO {
     }
     
 }
+
+
+extension CodestackMO {
+    static func isEqualID(_ id: String) -> NSFetchRequest<CodestackMO> {
+        let request = newFetchRequest()
+        let predicate1 = NSPredicate(format: "id == %@", "\(id)")
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [ predicate1 ])
+        request.fetchLimit = 1
+        return request
+    }
+    
+    static func isEqualLanguage(languageVO: LanguageVO) -> NSFetchRequest<CodestackMO> {
+        let request = newFetchRequest()
+        
+        let predicate1 = NSPredicate(format: "language.languageID == %@", "\(languageVO.id)")
+        let predicate2 = NSPredicate(format: "language.name == %@", "\(languageVO.name)")
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [ predicate1, predicate2 ])
+        return request
+    }
+    
+}

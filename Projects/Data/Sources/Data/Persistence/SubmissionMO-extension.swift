@@ -61,7 +61,7 @@ extension SubmissionMO {
         let predicate1 = NSPredicate(format: "codeContext.problemID == %@", "\(String(describing: problemID))")
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1])
         request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
-        // request.fetchLimit = 1
+//        request.fetchLimit = 1
         return request
     }
     
@@ -84,19 +84,19 @@ extension SUB_TYPE {
             return SubmissionMO.isExistSubmission(problemID: problemID)
         
         case .is_Equal_ST_ID(let submissionID, let statusCode):
-            return SubmissionMO.isEqualIDStatus(submissionID: submissionID, status: statusCode)
+            return SubmissionMO.isEqualIDStatus(submissionID: submissionID, status: statusCode.rawValue)
             
         case .is_NOT_ST_Equal_ID(let problemID, let state):
-            return SubmissionMO.isNotTempSubmission(probelmID: problemID, status: state)
+            return SubmissionMO.isNotTempSubmission(probelmID: problemID, status: state.rawValue)
         
         case .isEqualStatusCode(let statusCode):
-            return SubmissionMO.isEqualStatusCode(statusCode)
+            return SubmissionMO.isEqualStatusCode(statusCode.rawValue)
             
         case .update(let submissionID, let problemID):
             return SubmissionMO.isEqualID(id: submissionID, problemID)
             
         case .recent(let problemID, let statusCode):
-            return SubmissionMO.recent(probelm: problemID, not: statusCode)
+            return SubmissionMO.recent(probelm: problemID, not: statusCode.rawValue)
             
         case .default:
             let request = SubmissionMO.newFetchRequest()
@@ -107,7 +107,7 @@ extension SUB_TYPE {
         case .delete(let languageName, let problemID, let statusCode):
             return SubmissionMO.isEqualStatus(languageName: languageName,
                                               problemID: problemID,
-                                              statusCode: statusCode)
+                                              statusCode: statusCode.rawValue)
         }
     }
 }
