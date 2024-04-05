@@ -85,6 +85,45 @@ final class DefaultSubmissionUsecaseTest: XCTestCase {
         wait(for: [expectation], timeout: 5)
     }
     
+    func test_문제_정상적으로_Fetch_Test() throws {
+        let query = [
+            usecase.fetchProblem(id: "1"),
+            usecase.fetchProblem(id: "2"),
+            usecase.fetchProblem(id: "3"),
+            usecase.fetchProblem(id: "4"),
+            usecase.fetchProblem(id: "5"),
+            usecase.fetchProblem(id: "6"),
+            usecase.fetchProblem(id: "1020301")
+        ]
+        
+        let results = Observable.concat(query).toBlocking()
+        let value = try results.toArray()
+        let expect: [State<ProblemVO>] = ProblemVO.allcase.map { .success($0) }
+        + [.failure(SendError.fetchFailProblem)]
+        XCTAssertEqual(value, expect)
+    }
+    
+    func test_최근제출_정삭적으로_Fetch_Test() throws {
+        let testModel = SubmissionVO.mock
+        
+        // given
+        var submissionTestCase = SubmissionVO.test(problemID: "10", sourceCode: "values")
+        var submissionTestCase2 = SubmissionVO.test(problemID: "10", sourceCode: "#include stdio.h int main()")
+        let expect = submissionTestCase
+        
+        let updateAction1 = usecase.updateSubmissionAction(model: submissionTestCase).toBlocking()
+        let updateAction2 = usecase.updateSubmissionAction(model: submissionTestCase).toBlocking()
+        XCTAssertTrue(try updateAction1.toArray().first!)
+        XCTAssertTrue(try updateAction2.toArray().first!)
+        
+        // when
+        let subs = usecase.fetchRecent(id: "10").toBlocking()
+        let result = try subs.first()
+
+        // then
+        XCTAssertEqual(result!, expect)
+    }
+    
     func test_제출결과_특정_SolveStatus제외하는경우() throws {
         let expectation = XCTestExpectation(description: "error Test")
         
@@ -205,15 +244,22 @@ final class DefaultSubmissionUsecaseTest: XCTestCase {
     }
     
     func test_특정문제_즐겨찾기여부() throws {
-        let empty = usecase.fetchIsFavorite(problemID: "").toBlocking()
+        let testModel = FavoriteProblemVO(problemID: "1",
+                                          problmeTitle: "hello",
+                                          createdAt: Date())
+        let block = usecase.updateFavoritProblem(model: testModel, flag: true).toBlocking()
+        _ = try block.first()
+        
+        let empty = usecase.fetchIsFavorite(problemID: "1").toBlocking()
         let testFavorite = usecase.fetchIsFavorite(problemID: "TestID1234").toBlocking()
         
         let emptyFlag = try empty.first()
         XCTAssertNotNil(emptyFlag)
-        XCTAssertFalse(emptyFlag!, "\(emptyFlag)")
+        XCTAssertTrue(emptyFlag!, "\(emptyFlag) is True")
         
         let favoriteFlag = try testFavorite.first()
         XCTAssertNotNil(favoriteFlag)
+        XCTAssertFalse(favoriteFlag!, "\(favoriteFlag) is false")
     }
     
 }
