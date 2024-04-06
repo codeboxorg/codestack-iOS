@@ -7,7 +7,6 @@
 
 import Foundation
 import Global
-import Domain
 
 public enum AuthServiceKey: String{
     case bundle = "kr.co.codestack.ios"
@@ -64,7 +63,7 @@ public struct KeychainItem {
         
         if let existing = queryResult as? [String : AnyObject]{
             if let string = existing[kSecValueData as String]{
-                let data = string as? Data
+                let _ = string as? Data
                 // let testData = String(data: data!, encoding: .utf8)
             }else{
                 Log.error("키체인에 데이터 없음")
@@ -178,6 +177,11 @@ public extension KeychainItem {
         }
     }
     
+    
+    static func saveFirebaseIDToken(idToken: String) {
+        try? KeychainItem(service: .bundle, account: .idToken).saveItem(idToken)
+    }
+        
     static func saveFirebaseToken(idToken: String, refresh: String, localID: String) throws {
         do{
             try KeychainItem(service: .bundle, account: .idToken).saveItem(idToken)
@@ -188,11 +192,21 @@ public extension KeychainItem {
         }
     }
     
+    static func deleteFirebaseToken() throws {
+        do{
+            try KeychainItem(service: .bundle, account: .idToken).deleteItem()
+            try KeychainItem(service: .bundle, account: .fbRefreshToken).deleteItem()
+            try KeychainItem(service: .bundle, account: .localId).deleteItem()
+        }catch{
+            Log.error("currentFBIdToken Token 저장 실패")
+        }
+    }
+    
     static var currentAccessToken: String {
         do{
             let accessToken = try KeychainItem(service: .bundle, account: .access).readItem()
             return accessToken
-        }catch{
+        } catch {
             Log.debug("current AccessToken keychain에 없음")
             return ""
         }
