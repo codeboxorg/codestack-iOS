@@ -11,6 +11,11 @@ import ProjectDescriptionHelpers
 
 let project = Project.createModule(name: "Domain",
                                    product: .staticFramework,
-                                   dependencies: [ .PRO.global ],
-                                   resources: "Resources/**")
+                                   includeTestTarget: true,
+                                   hostTargetNeeded: true,
+                                   dependencies: [
+                                    .SPM.rxSwift,
+                                    .PRO.global,
+                                    .SPM.rxRelay
+                                   ])
 
