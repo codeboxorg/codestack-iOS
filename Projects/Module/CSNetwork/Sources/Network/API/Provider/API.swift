@@ -41,7 +41,7 @@ extension API {
         }
     }
     
-    //TODO: 서버에서 오는 값은 accessToken만 재발급을 해야함
+    // TODO: 서버에서 오는 값은 accessToken만 재발급을 해야함
     public static var extractToken: ExtractClosure<CSTokenDTO> {
         { data in
             do {
