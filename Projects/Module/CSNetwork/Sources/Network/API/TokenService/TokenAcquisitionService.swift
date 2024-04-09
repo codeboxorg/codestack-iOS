@@ -9,7 +9,6 @@
 import Foundation
 import RxSwift
 import Global
-import Domain
 
 public extension ObservableConvertibleType where Element == Error {
     
@@ -23,33 +22,18 @@ public extension ObservableConvertibleType where Element == Error {
     }
 }
 
-
-public final class TokenManager {
-    var token: RefreshToken
-    
-    static let shared = TokenManager()
-    
-    private init() {
-        token = RefreshToken(refresh: KeychainItem.currentRefreshToken)
-    }
-    
-    func setToken(token: RefreshToken) {
-        self.token = token
-    }
-}
-
-//TODO: Codestack Response Token을 token Obaservable stream에 저장하면 RefreshToken 이 메모리상에 올라가게됨
+// TODO: Codestack Response Token을 token Obaservable stream에 저장하면 RefreshToken 이 메모리상에 올라가게됨
 // 제네릭 타입을 변경해야함
 public final class TokenAcquisitionService<T> {
     
     /// responds with the current token immediatly and emits a new token whenver a new one is aquired. You can, for
     /// example, subscribe to it in order to save the token as it's updated. If token acquisition fails, this will emit a
     /// `.next(.failure)` event.
-    var token: Observable<Result<T, Error>> {
+    var token: Observable<Swift.Result<T, Error>> {
         return _token.asObservable()
     }
     
-    private let _token = ReplaySubject<Result<T, Error>>.create(bufferSize: 1)
+    private let _token = ReplaySubject<Swift.Result<T, Error>>.create(bufferSize: 1)
     private let relay = PublishSubject<T>()
     private let lock = NSRecursiveLock()
     private let disposeBag = DisposeBag()
@@ -75,7 +59,7 @@ public final class TokenAcquisitionService<T> {
         relay
             .flatMapFirst { token in
                 getToken(token)
-                    .map { (urlResponse) -> Result<T, Error> in
+                    .map { (urlResponse) -> Swift.Result<T, Error> in
                         count += 1
                         
                         switch urlResponse.response.statusCode {
@@ -85,7 +69,7 @@ public final class TokenAcquisitionService<T> {
                                 return .failure(TokenAcquisitionError.refusedToken(response: urlResponse.response, data: urlResponse.data))
                             }
                         
-                            let result = Result(catching: { try extractToken(urlResponse.data) })
+                            let result = Swift.Result(catching: { try extractToken(urlResponse.data) })
                             
                             if case let .success(data) = result,
                                let token = data as? RefreshToken {
@@ -101,7 +85,7 @@ public final class TokenAcquisitionService<T> {
                                                                                                                     data: urlResponse.data))
                         }
                     }
-                    .catch { Observable.just(Result.failure($0)) }
+                    .catch { Observable.just(Swift.Result.failure($0)) }
             }
             .startWith(.success(initialToken))
             .subscribe(_token)
@@ -129,7 +113,6 @@ public final class TokenAcquisitionService<T> {
         let error = source
             .asObservable()
             .map { error in
-                Log.error("trackErrors Map \(error)")
                 if let err = error as? ApolloError {
                     switch err{
                     case .gqlErrors(let graphError):
@@ -143,9 +126,8 @@ public final class TokenAcquisitionService<T> {
                 }
                 throw TokenAcquisitionError.unowned
             }
-            .flatMap { [unowned self] in Log.error("flatMap asdfsdf"); return self.token.take(1) }
+            .flatMap { [unowned self] in self.token.take(1) }
             .do(onNext: {
-                Log.error("dasfsaf \($0)")
                 guard case let .success(token) = $0 else { throw TokenAcquisitionError.unauthorized }
                 lock.lock()
                 relay.onNext(token)
@@ -153,9 +135,6 @@ public final class TokenAcquisitionService<T> {
             })
             .filter { _ in false }
             .map { _ in }
-        
-        Log.error("trackErrors \(error)")
-        
         return Observable.merge(token.skip(1).map { _ in }, error)
     }
 }

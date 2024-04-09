@@ -78,11 +78,14 @@ extension GitAuth {
     
     /// Papago API End Point
     /// - Returns: resource URL
-    func endPoint(url string: String) -> URL{
+    func endPoint(url string: String) -> URL {
         guard
             let url = URL(string: string)
         else {
+            #if DEBUG
             assert(false, "failed make EndPoint")
+            #endif
+            fatalError("fail")
         }
         return url
     }
