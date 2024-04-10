@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23C5030f" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23C5030f" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="CodeContext" representedClassName="Data.CodeContextMO" syncable="YES">
         <attribute name="code" optional="YES" attributeType="String"/>
         <attribute name="problemID" optional="YES" attributeType="String"/>
         <attribute name="problemTitle" optional="YES" attributeType="String"/>
         <relationship name="submission" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Submission" inverseName="codeContext" inverseEntity="Submission"/>
+    </entity>
+    <entity name="Codestack" representedClassName="Data.CodestackMO" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="sourceCode" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="language" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Language"/>
     </entity>
     <entity name="FavoritProblem" representedClassName="Data.FavoritProblemMO" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -14,6 +22,7 @@
     <entity name="Language" representedClassName="Data.LanguageMO" syncable="YES">
         <attribute name="extension" optional="YES" attributeType="String"/>
         <attribute name="languageID" optional="YES" attributeType="String"/>
+        <attribute name="languageName" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="submission" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Submission" inverseName="language" inverseEntity="Submission"/>
     </entity>

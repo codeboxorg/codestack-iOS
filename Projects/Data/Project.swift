@@ -12,13 +12,13 @@ import ProjectDescriptionHelpers
 
 let targetDependecies: [TargetDependency] = [
     .PRO.global,
+    .PRO.thridParty,
     .PRO.domain,
-    .PRO.csNetwork
+    .PRO.csNetwork,
+    .SPM.firebaseAuth
    ]
 
-let resources: ResourceFileElements = [
-    "Resources/*.swift"
-]
+let resources: ResourceFileElements = []
 
 let paths = [
     "Sources/Data/MO/Class/db_model_v1.xcdatamodeld",
@@ -35,10 +35,12 @@ let baseSetting: SettingsDictionary =
     "$(SRCROOT)/../../Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GTMAppAuth/GTMAppAuth/Sources/Public/GTMAppAuth",
     "$(SRCROOT)/../../Tuist/Dependencies/SwiftPackageManager/.build/checkouts/gtm-session-fetcher/Sources/Core/Public"
 ],
- "OTHER_LDFLAGS" : "-ObjC"]
+ "OTHER_LDFLAGS" : "$(OTHER_LDFLAGS) -ObjC"]
 
 let value = Project.createModule(name: "Data",
                                  product: .staticFramework,
+                                 includeTestTarget: true,
+                                 hostTargetNeeded: true,
                                  dependencies: targetDependecies,
                                  baseSettings: baseSetting,
                                  coreDataModels: coreDataPaths,

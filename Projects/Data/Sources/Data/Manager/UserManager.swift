@@ -28,6 +28,10 @@ final class UserManager {
     
     static var shared = UserManager()
     
+    var isValid: Bool {
+        self.profile.nickName != "N/A"
+    }
+    
     var profile: MemberVO {
         get {
             return MemberVO(email: UserManager.email ?? "N/A",
@@ -81,6 +85,13 @@ extension UserManager {
         case tokenType
     }
     
+    func deleteUser() {
+        UserManager.userName = nil
+        UserManager.nickName = nil
+        UserManager.email = nil
+        UserManager.profileImage = nil
+    }
+    
     func saveUser(with member: MemberVO) {
         UserManager.userName = member.username
         UserManager.nickName = member.nickName
@@ -100,7 +111,7 @@ extension UserManager {
             UserDefaults.standard.removeObject(forKey: key.rawValue)
         }
         
-        //TODO: logout 시 keychain 에 저장된 토큰 제거 -> 컴플리션 호출 완료
+        // TODO: logout 시 keychain 에 저장된 토큰 제거 -> 컴플리션 호출 완료
         completion()
     }
     
