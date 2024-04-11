@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import RxFlow
 import CommonUI
 
 protocol TabBarDelegate: AnyObject{
@@ -21,20 +22,23 @@ enum TabBarItem: Int {
     case mypage = 4
 }
 
-class CustomTabBarController: UITabBarController, TabBarDelegate, UITabBarControllerDelegate {
+final class MockViewController: UIViewController {}
+
+final class CustomTabBarController: UITabBarController, TabBarDelegate, UITabBarControllerDelegate {
+    
+    public var stepper: RxFlow.Stepper?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setValue(CustomTabBar(), forKey: "tabBar")
-        setupMiddleButton()
         
+        tabBar.clipsToBounds = false
         tabBar.isTranslucent = false
         tabBar.tintColor = .codestackGradient.first!
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithTransparentBackground()
         tabBarAppearance.backgroundColor = UIColor.clear
         tabBarAppearance.shadowColor = nil
-        
         tabBar.scrollEdgeAppearance = tabBarAppearance
         tabBar.standardAppearance = tabBarAppearance
         tabBar.backgroundImage = UIImage()
@@ -58,9 +62,12 @@ class CustomTabBarController: UITabBarController, TabBarDelegate, UITabBarContro
     ]
     
     func addTabBarItems() {
+        
         for (item, vc) in zip(tabBarItems, viewControllers ?? []) {
             vc.tabBarItem = item
         }
+        
+        setupMiddleButton()
     }
     
     func setSelectedItem(for vc: TabBarItem){
@@ -87,6 +94,6 @@ class CustomTabBarController: UITabBarController, TabBarDelegate, UITabBarContro
     }
     
     @objc func menuButtonAction(sender: UIButton) {
-        self.selectedIndex = 2
+        stepper?.steps.accept(CodestackStep.writeSelectStep)
     }
 }
