@@ -43,14 +43,43 @@ public extension String {
         self.toDateKST()?.toString(format: format)
     }
     
+    func toDateStringUTCORKST(format: DATE) -> String? {
+        if let kst = self.toDateKST()?.toString(format: format) { return kst }
+        if let utc = self.toDateUTC()?.toString(format: format) { return utc }
+        return ""
+    }
+    
     func isKSTORUTC() -> Date {
         if let kst = self.toDateKST() { return kst }
         if let utc = self.toDateUTC() { return utc }
         return Date()
     }
+    
+    func isBackSpaceKey() -> Bool{
+        let char = self.cString(using: String.Encoding.utf8)
+        let isBackSpace: Int = Int(strcmp(char, "\u{8}"))
+        if isBackSpace == -8 {
+            return true
+        }
+        return false
+    }
 }
 
 public extension String {
+    func range(from nsRange: NSRange) -> Range<String.Index>? {
+        guard
+            
+            let from16 = utf16.index(utf16.startIndex,
+                                     offsetBy: nsRange.location,
+                                     limitedBy: utf16.endIndex),
+            let to16 = utf16.index(utf16.startIndex,
+                                   offsetBy: nsRange.location + nsRange.length,
+                                   limitedBy: utf16.endIndex),
+            let from = from16.samePosition(in: self),
+            let to = to16.samePosition(in: self)
+        else { return nil }
+        return from ..< to
+    }
     
     /// String Height
     /// - Parameters:
