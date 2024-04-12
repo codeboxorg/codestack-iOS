@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public enum DATE {
     case DOT
     case FULL

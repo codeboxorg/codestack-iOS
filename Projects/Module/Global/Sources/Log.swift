@@ -18,7 +18,7 @@ public class Log {
     }
     
     static private func log(_ message: Any, level: Level, fileName: String, line: Int, funcName: String) {
-        #if DEBUG
+        #if DEV
         let logMessage = "\(message)"
         let head = level.rawValue
         let filename = fileName.components(separatedBy: "/").last
@@ -29,8 +29,6 @@ public class Log {
 
 public extension Log {
     static func verbose(_ message: Any, fileName: String = #fileID, line: Int = #line, funcName: String = #function) {
-        
-        
         log(message, level: .verbose, fileName: fileName, line: line, funcName: funcName)
     }
     
