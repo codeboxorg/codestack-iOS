@@ -15,7 +15,6 @@ public extension UITabBar {
             guard !self.isHidden else { return }
             UIView.transition(with: self, duration: 0.2, options: .curveEaseIn,
                               animations: { () -> Void in
-                print("hide height: \(self.frame.size.height)")
                 self.frame.origin.y += 100
             }, completion: { _ in
                 self.isHidden = true
@@ -30,7 +29,6 @@ public extension UITabBar {
                               animations: { () -> Void in
                 self.isHidden = false
                 self.frame.origin.y -= 100
-                print("show height: \(self.frame.size.height)")
             }, completion: nil)
         }
     }
