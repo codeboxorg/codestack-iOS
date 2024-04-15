@@ -8,7 +8,7 @@
 
 import UIKit
 
-open class BaseViewController<ContentView>: UIViewController {
+open class BaseContentViewController<ContentView>: UIViewController {
     typealias ContentView = UIView
     
     public init(contentView: ContentView) {
@@ -22,6 +22,23 @@ open class BaseViewController<ContentView>: UIViewController {
     
     open var contentView: ContentView
     
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        addAutoLayout()
+        applyAttributes()
+        binding()
+    }
+    
+    open func addAutoLayout() { }
+    
+    open func applyAttributes() { }
+    
+    open func binding() { }
+}
+
+
+open class BaseViewController: UIViewController {
+
     open override func viewDidLoad() {
         super.viewDidLoad()
         addAutoLayout()
