@@ -13,12 +13,39 @@ public final class LoadingUIButton: UIButton {
     public var indicatorColor : UIColor = .lightGray
     public var originalButtonText: String?
     
+    public var sendButtonHeight: CGFloat = 0
+    public var sendButtonWidth: CGFloat = 0
+    
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.color = indicatorColor
         return activityIndicator
     }()
+    
+    
+    public convenience init(frame: CGRect, title: String) {
+        self.init(frame: frame)
+        self.originalButtonText = title
+        self.applySubmitAttrubutes(title: title)
+        if let font = self.titleLabel?.font {
+            sendButtonHeight = title.height(withConstrainedWidth: 150, font: font) + 16
+            sendButtonWidth = title.width(withConstrainedHeight: 166, font: font) + 40
+        }
+    }
+    
+    /// Send Button Attribute Setting
+    public func applySubmitAttrubutes(title: String) {
+        var configuration = UIButton.Configuration.plain()
+        configuration.titlePadding = 10
+        self.configuration = configuration
+        self.setTitle("\(title)", for: .normal)
+        self.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        self.tintColor = .label
+        self.layer.borderColor = UIColor.sky_blue.cgColor
+        self.layer.borderWidth = 1
+        self.layer.cornerRadius = 5
+    }
 
     public func showLoading() {
         originalButtonText = self.titleLabel?.text
@@ -62,27 +89,3 @@ public final class LoadingUIButton: UIButton {
         }
     }
 }
-
-
-//import SwiftUI
-//@available(iOS 17.0, *)
-//#Preview {
-//    var sendButtonHeight: CGFloat = 150
-//    var sendButtonWidth: CGFloat = 28
-//    var button = LoadingUIButton()
-//    button.setTitleColor(.white, for: .normal)
-//    button.tintColor = .sky_blue
-//    button.buttonColor = .sky_blue
-//    button.addTarget(button, action: #selector(button.buttonTest(_:)), for: .touchUpInside)
-//    button.originalButtonText = "안녕하세요"
-//    button.applySubmitAttrubutes()
-//    if let font = button.titleLabel?.font {
-//        sendButtonHeight = button.originalButtonText!.height(withConstrainedWidth: 150, font: font) + 16
-//        sendButtonWidth = button.originalButtonText!.width(withConstrainedHeight: sendButtonHeight + 16, font: font) + 40
-//    }
-//    NSLayoutConstraint.activate([
-//        button.widthAnchor.constraint(equalToConstant: sendButtonWidth),
-//        button.heightAnchor.constraint(equalToConstant: sendButtonHeight)
-//    ])
-//    return button
-//}
