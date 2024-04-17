@@ -23,7 +23,6 @@ public final class RegisterButton: UIButton {
     
     public convenience init(title: String) {
         self.init(frame: .zero)
-        // self.tintColor = CColor.whiteGray.color
         self.setTitle("\(title)", for: .normal)
         self.setTitleColor(CColor.black.color, for: .normal)
         self.backgroundColor = CColor.whiteGray.color
