@@ -45,7 +45,7 @@ public enum CustomColor {
         case .whiteGray:
             return UIColor(hexCode: "F4EEEE")
         case .green:
-            return UIColor(hexCode: "A2FF86")
+            return UIColor(hexCode: "#A2FF86")
         case .powder_blue:
             return UIColor(hexCode: "#B0E0E6")
         case .sky_blue:

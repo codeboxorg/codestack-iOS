@@ -20,6 +20,16 @@ extension UITraitEnvironment {
         })
     }
     
+    public var dynamicLabelColor: UIColor {
+        UIColor(dynamicProvider: { trait in
+            if trait.userInterfaceStyle == .dark {
+                return .whiteGray
+            } else {
+                return .black
+            }
+        })
+    }
+    
     public var dynamicSysBackground: UIColor {
         UIColor(dynamicProvider: { trait in
             if trait.userInterfaceStyle == .dark {
