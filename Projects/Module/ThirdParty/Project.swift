@@ -9,7 +9,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.createModule(name: "ThirdParty",
-                                   product: .framework,
+                                   product: .staticFramework,
                                    dependencies: [.SPM.rxSwift,
                                                   .SPM.snapKit,
                                                   .SPM.then,
@@ -18,8 +18,12 @@ let project = Project.createModule(name: "ThirdParty",
                                                   .SPM.rxdatasources,
                                                   .SPM.rxFlow,
                                                   .SPM.rxGesture,
-                                                  .SPM.sqlite,
                                                   .SPM.swinject,
-                                                  // .SPM.codestackAPI,
-                                                  .SPM.highlightr])
+                                                  .SPM.codestackAPI,
+                                                  .SPM.highlightr,
+                                                  .SPM.richText,
+                                                  .SPM.firebaseAnalyticsSwift,
+                                                  .SPM.reactorKit
+                                   ],
+                                   baseSettings: CSettings.objc.value)
 
