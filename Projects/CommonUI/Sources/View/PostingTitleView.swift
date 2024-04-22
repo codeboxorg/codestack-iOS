@@ -13,7 +13,7 @@ public struct WriterInfo {
     public let title: String
     public let writer: String
     public let date: String
-    public let image: UIImage
+    public var image: UIImage
     
     public init(title: String, writer: String, date: String, image: UIImage) {
         self.title = title
@@ -23,25 +23,32 @@ public struct WriterInfo {
     }
     
     public static var mock: Self {
-        .init(title: "TestTestTestTestTestTestTestTestTestTest",
-              writer: "Test",
+        .init(title: "TestTestTestTest",
+              writer: "TestWriter입니다",
               date: "2012-12-12",
               image: UIImage(systemName: "circle") ?? UIImage())
+    }
+    
+    public var isMock: Bool {
+        self.writer == "TestWriter입니다"
     }
 }
 
 public final class PostingTitleView: BaseView {
     
-    private let titleLabel = UILabel()
-    private let writerLabel = UILabel()
-    private let dateLabel = UILabel()
-    private let profileImageView = UIImageView()
+    public let titleLabel = UILabel()
+    public let writerLabel = UILabel()
+    public let dateLabel = UILabel()
+    public let profileImageView = UIImageView()
     
     public override func applyAttributes() {
         let descriptor = titleLabel.create_descriptor(style: .title1)
         titleLabel.font = UIFont(descriptor: descriptor, size: 28)
         writerLabel.font = UIFont.boldSystemFont(ofSize: 13)
         dateLabel.font = UIFont.boldSystemFont(ofSize: 13)
+        
+        titleLabel.layer.cornerRadius = 12
+        writerLabel.layer.cornerRadius = 4
         
         titleLabel.textColor = .label
         writerLabel.textColor = .label
@@ -73,14 +80,16 @@ public final class PostingTitleView: BaseView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
+        titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-
+            
             profileImageView.widthAnchor.constraint(equalToConstant: 50),
             profileImageView.heightAnchor.constraint(equalToConstant: 50),
-            profileImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            profileImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             profileImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             profileImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
             
