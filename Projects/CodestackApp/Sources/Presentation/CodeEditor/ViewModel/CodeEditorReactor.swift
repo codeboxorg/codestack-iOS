@@ -50,8 +50,7 @@ final class CodeEditorReactor: Reactor {
             .compactMap { $0 as? String }
             .share(replay: 1)
         
-        let stream = asyncStream(String.self)
-        
+        let stream = asyncStream(String.self)   
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
