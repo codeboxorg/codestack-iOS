@@ -13,7 +13,7 @@ import Global
 import Domain
 import CommonUI
 
-class ProfileView: UIView{
+final class ProfileView: UIView{
 
     private let activityIndicator = UIActivityIndicatorView(style: .medium)
     
@@ -22,7 +22,7 @@ class ProfileView: UIView{
         return view
     }()
     
-    let imageView: UIImageView = {
+    private(set) var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person")
         imageView.tintColor = UIColor.gray
@@ -45,9 +45,9 @@ class ProfileView: UIView{
     }()
     
     
-    private let rank: UILabel = {
+    private let language: UILabel = {
         let label = UILabel()
-        label.text = "Rank"
+        label.text = "언어"
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.numberOfLines = 1
         label.textColor = .lightGray
@@ -55,9 +55,9 @@ class ProfileView: UIView{
         return label
     }()
     
-    private let rankLabel: UILabel = {
+    private let preferLaguageLabel: UILabel = {
         let label = UILabel()
-         label.text = "120"
+         label.text = "C"
          label.font = UIFont.boldSystemFont(ofSize: 16)
          label.numberOfLines = 1
         label.textAlignment = .left
@@ -65,7 +65,7 @@ class ProfileView: UIView{
          return label
      }()
     
-    private let editButton: UIButton = {
+    private(set) var editButton: UIButton = {
         let button = UIButton()
         button.setTitle("Edit profile", for: .normal)
         button.setTitleColor(.systemGreen, for: .normal)
@@ -80,13 +80,8 @@ class ProfileView: UIView{
     var profileBinder: Binder<MemberVO> {
         Binder(self){ [weak self] target ,value  in
             guard let self else { return }
-            self.nameLabel.text = value.nickName // ?? "Unknown"
-            // TODO: Rank 어떻게 해야돼ㅣㅁ?
-            if let url = URL(string: value.profileImage),
-               let data = try? Data(contentsOf: url) {
-                self.imageView.image = UIImage(data: data)
-            }
-            self.rank.text = "N/A"
+            self.nameLabel.text = value.nickName
+            self.preferLaguageLabel.text = value.preferLanguage.name
         }
     }
     
@@ -128,8 +123,8 @@ class ProfileView: UIView{
             self.activityIndicator.startAnimating()
             
         case .loaded(let data):
-            //TODO: 이미지 로컬 저장소에 저장해야함
-            //TODO: Cache 처리 해야되는데 .....
+            // TODO: 이미지 로컬 저장소에 저장해야함
+            // TODO: Cache 처리 해야되는데 .....
             self.imageView.load(data: data) { [weak self] _ in
                 self?.imageView.stopAnimating()
                 self?.activityIndicator.isHidden = true
@@ -137,10 +132,6 @@ class ProfileView: UIView{
                 self?.activityIndicator.isHidden = true
             }
         }
-    }
-    
-    func editProfileEvent() -> Signal<Void> {
-        editButton.rx.tap.share().asSignal(onErrorJustReturn: ())
     }
 }
 
@@ -157,7 +148,7 @@ private extension ProfileView {
     
     func addAutoLayout() {
         
-        [imageContainerView,nameLabel,rank,rankLabel,editButton].forEach {
+        [imageContainerView,nameLabel,language,preferLaguageLabel,editButton].forEach {
             self.addSubview($0)
         }
         
@@ -183,17 +174,17 @@ private extension ProfileView {
             $0.trailing.equalToSuperview().offset(-12)
         }
         
-        rank.snp.makeConstraints {
+        language.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(-25)
             $0.leading.equalTo(nameLabel.snp.leading)
         }
         
-        rank.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        rank.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        language.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        language.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
-        rankLabel.snp.makeConstraints {
+        preferLaguageLabel.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(-25)
-            $0.leading.equalTo(rank.snp.trailing).offset(8)
+            $0.leading.equalTo(language.snp.trailing).offset(8)
             $0.trailing.equalTo(nameLabel.snp.trailing)
         }
         
