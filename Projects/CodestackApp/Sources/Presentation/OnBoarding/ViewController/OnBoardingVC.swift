@@ -20,17 +20,15 @@ class OnBoardingVC: UIViewController,Stepper {
     
     private lazy var welcomLabel: UILabel = {
         let label = UILabel()
-        label.text = "환영합니다! 고갱님"
+        label.text = "환영합니다"
         label.textColor = .black
         label.font = UIFont.boldSystemFont(ofSize: 18)
         return label
     }()
     
-    
     deinit {
         Log.debug("Deinit")
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +37,6 @@ class OnBoardingVC: UIViewController,Stepper {
         welcomLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let nav = self.navigationController?.navigationBar
-        
         
         nav?.barStyle = UIBarStyle.black
         nav?.tintColor = UIColor.white
@@ -52,19 +49,6 @@ class OnBoardingVC: UIViewController,Stepper {
             welcomLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             welcomLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
-    }
-    
-    func makeSFSymbolButton(_ target: Any?, action: Selector, symbolName: String) -> UIBarButtonItem {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: symbolName), for: .normal)
-        button.addTarget(target, action: action, for: .touchUpInside)
-        button.tintColor = .black
-            
-        let barButtonItem = UIBarButtonItem(customView: button)
-        barButtonItem.customView?.translatesAutoresizingMaskIntoConstraints = false
-        barButtonItem.customView?.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        barButtonItem.customView?.widthAnchor.constraint(equalToConstant: 24).isActive = true
-        return barButtonItem
     }
     
     @objc func dismissVC(_ sender: Any){
