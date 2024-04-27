@@ -9,14 +9,15 @@ import UIKit
 import SnapKit
 import RxFlow
 import RxRelay
+import Combine
 
-class PagingOnboardingViewController: UIViewController, Stepper {
+class PagingOnboardingViewController: BaseCMViewController, Stepper {
     
-    //collectionView title content
-    let imageArray: [UIImage?] = [UIImage(named: "codeStack")]
-    
-    
-    // collectionView Content page 1,2,3 animation
+    let imageArray: [UIImage?] = [CodestackAppAsset.homeScreen.image,
+                                  CodestackAppAsset.problemScreen.image,
+                                  CodestackAppAsset.historyScreen.image,
+                                  CodestackAppAsset.myPageScreen.image]
+
     var testValue: Int = 0 {
         didSet{
             switch self.testValue {
@@ -45,9 +46,7 @@ class PagingOnboardingViewController: UIViewController, Stepper {
     private lazy var titleContent: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-//        label.textColor = UIColor(red: 0.07, green: 0.202, blue: 0.542, alpha: 1)
         label.textColor = .sky_blue
-//        label.font = UIFont(name: "NanumGothicExtraBold", size: 34)
         label.font = UIFont.boldSystemFont(ofSize: 30)
         label.lineBreakMode = .byWordWrapping
         var pargraphStyle = NSMutableParagraphStyle()
@@ -58,11 +57,8 @@ class PagingOnboardingViewController: UIViewController, Stepper {
     
     private lazy var welcomeLabel: UILabel = {
         let label = UILabel()
-        
-//        label.font = UIFont(name: "NanumGothicBold", size: 15)
         label.font = UIFont.boldSystemFont(ofSize: 15)
         label.textColor = .label
-//        label.textColor = UIColor(red: 0.529, green: 0.529, blue: 0.529, alpha: 1)
         var pargraphStyle = NSMutableParagraphStyle()
         pargraphStyle.lineHeightMultiple = 1.2
         label.attributedText = NSMutableAttributedString(string: "코드스택에 오신걸 환영합니다", attributes: [NSAttributedString.Key.kern : -0.01, NSAttributedString.Key.paragraphStyle : pargraphStyle])
@@ -87,6 +83,7 @@ class PagingOnboardingViewController: UIViewController, Stepper {
         
         return collectionView
     }()
+    
     private lazy var pageControl: UIPageControl = {
         let page = UIPageControl()
         page.pageIndicatorTintColor = .systemGray
@@ -96,7 +93,6 @@ class PagingOnboardingViewController: UIViewController, Stepper {
         page.addTarget(self, action: #selector(handlePageControl(_:)), for: .valueChanged)
         return page
     }()
-    
     
     
     @objc func handlePageControl(_ sender: UIPageControl){
@@ -115,109 +111,88 @@ class PagingOnboardingViewController: UIViewController, Stepper {
         steps.accept(CodestackStep.onBoardingComplte)
     }
     
-    
     private func navigationSetting(){
         let nav = self.navigationController?.navigationBar
-        
-//        nav?.barStyle = UIBarStyle.black
         nav?.tintColor = UIColor.white
         nav?.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.orange]
         
-        nav?.topItem?.leftBarButtonItem = makeSFSymbolButton(self, action: #selector(dismissVC(_:)), symbolName: "xmark")
+        nav?.topItem?.leftBarButtonItem
+        = makeSFSymbolButton(self, action: #selector(dismissVC(_:)), symbolName: "xmark")
+        
         nav?.topItem?.title = "OnBoarding"
     }
     
     
-    func makeSFSymbolButton(_ target: Any?, action: Selector, symbolName: String) -> UIBarButtonItem {
-        let button = UIButton(type: .system)
-        let image = UIImage(systemName: symbolName)
-        button.setImage(image, for: .normal)
-        button.addTarget(target, action: action, for: .touchUpInside)
-        button.tintColor = .sky_blue
-        let barButtonItem = UIBarButtonItem(customView: button)
-        barButtonItem.customView?.translatesAutoresizingMaskIntoConstraints = false
-        barButtonItem.customView?.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        barButtonItem.customView?.widthAnchor.constraint(equalToConstant: 24).isActive = true
-        return barButtonItem
+    private func configure() {
+        self.view.backgroundColor = .systemGray6
+        self.view.addSubview(collectionView)
+        self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        collectionView.addSubview(pageControl)
+        
+        pageControl.snp.makeConstraints { make in
+            make.top.equalTo(collectionView.snp.top).offset(10)
+            make.centerX.equalToSuperview()
+        }
+
+        collectionView.snp.makeConstraints{
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).inset(16)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
     }
     
-    
-    
-    private func configure() {
-        
-        self.view.backgroundColor = .systemGray6
-        
-        [welcomeLabel,titleContent,collectionView,pageControl].forEach{
-            self.view.addSubview($0)
-        }
-        self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        
-        welcomeLabel.snp.makeConstraints{
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).inset(16)
-            $0.leading.trailing.equalToSuperview().inset(16)
-        }
-        titleContent.snp.makeConstraints{
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.top.equalTo(welcomeLabel.snp.bottom).offset(8)
-        }
-        
-        collectionView.snp.makeConstraints{
-            $0.top.equalTo(titleContent.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(300)
-        }
-        pageControl.snp.makeConstraints{
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(collectionView.snp.bottom).offset(10)
-        }
+    func centerItemsInCollectionView(cellWidth: Double, numberOfItems: Double, spaceBetweenCell: Double, collectionView: UICollectionView) -> UIEdgeInsets {
+        let totalWidth = cellWidth * numberOfItems
+        let totalSpacingWidth = spaceBetweenCell * (numberOfItems - 1)
+        let leftInset = (collectionView.frame.width - CGFloat(totalWidth + totalSpacingWidth)) / 2
+        let rightInset = leftInset
+        return UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
     }
 }
 
-extension PagingOnboardingViewController: UIScrollViewDelegate{
+extension PagingOnboardingViewController: UIScrollViewDelegate {
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let scrollPage = scrollView.contentOffset.x / view.frame.width
         pageControl.currentPage = Int(scrollPage)
         
     }
+    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        print("tag = \(scrollView.tag)")
         let pageWidth = scrollView.frame.size.width
         let page = Int(floor(scrollView.contentOffset.x - pageWidth / 2) / pageWidth + 1)
         self.testValue = page
-        print("page = \(page)")
     }
+    
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        print("ani tag = \(scrollView.tag)")
         let pageWidth = scrollView.frame.size.width
-        print(pageWidth)
         let page = Int(floor(scrollView.contentOffset.x - pageWidth / 2) / pageWidth + 1)
         self.testValue = page
-        print("ani page = \(page)")
     }
 }
-extension PagingOnboardingViewController: UICollectionViewDelegateFlowLayout{
+
+extension PagingOnboardingViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 300, height: 300)
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 37.5, bottom: 0, right: 37.5)
+        return CGSize(width: Position.screenWidth - 10,
+                      height: Position.screenHeihgt)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 75
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
     }
     
 }
-extension PagingOnboardingViewController: UICollectionViewDelegate{
+
+extension PagingOnboardingViewController: UICollectionViewDataSource {
     
-    
-}
-extension PagingOnboardingViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return imageArray.count
     }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: OnBoardingCell.identifier, for: indexPath) as? OnBoardingCell else {return UICollectionViewCell()}
         
@@ -225,15 +200,4 @@ extension PagingOnboardingViewController: UICollectionViewDataSource{
         
         return cell
     }
-    
-    
 }
-
-// 폰트 이름 출력
-//UIFont.familyNames.sorted().forEach { familyName in
-//    print("*** \(familyName) ***")
-//    UIFont.fontNames(forFamilyName: familyName).forEach { fontName in
-//        print("\(fontName)")
-//    }
-//    print("---------------------")
-//}
