@@ -10,6 +10,8 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Global
+import CommonUI
+import RxGesture
 
 final class EditProfileViewController: UIViewController {
     
@@ -49,6 +51,8 @@ final class EditProfileViewController: UIViewController {
     
     private lazy var emailField: UITextField = {
         let field = UITextField().textFieldSetting(place: "이메일을 입력해주세요",tag: 4,vc: self)
+        field.layer.borderWidth = 0
+        field.isEnabled = false
         field.tintColor = .label
         return field
     }()
@@ -74,13 +78,32 @@ final class EditProfileViewController: UIViewController {
         return button
     }()
     
+    private let imageIndicator = UIActivityIndicatorView(style: .medium)
+    private let activityIndicator = UIActivityIndicatorView(style: .medium)
+    
+    private let photoViewController = PhotoPickerViewController()
+    
     static func create(with dp: EditProfileViewModel) -> EditProfileViewController {
-        EditProfileViewController.init(editViewModel: dp)
+        let vc = EditProfileViewController.init(editViewModel: dp)
+        return vc
     }
     
     init(editViewModel: EditProfileViewModel) {
         self.editViewModel = editViewModel
         super.init(nibName: nil, bundle: nil)
+        
+        self.photoViewController.action = { [weak self] image, error in
+            DispatchQueue.main.async {
+                if let image = image as? UIImage {
+                    let data = image.compress(to: 500)
+                    self?.imageSelected.onNext(data)
+                    self?.imageIndicator.startAnimating()
+                    self?.imageView.load(data: data, completion: { _ in
+                        self?.imageIndicator.stopAnimating()
+                    })
+                }
+            }
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -90,9 +113,9 @@ final class EditProfileViewController: UIViewController {
     let editViewModel: EditProfileViewModel
     private var disposeBag = DisposeBag()
     
-    
     let emailSubject = BehaviorSubject<Bool>(value: false)
     let nickNameSubject = BehaviorSubject<Bool>(value: false)
+    let imageSelected = PublishSubject<Data>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,7 +123,33 @@ final class EditProfileViewController: UIViewController {
         binding()
     }
     
+    lazy var editButtonBinder = Binder<Bool>(self) { target, value in
+        if value {
+            target.editButton.isEnabled = false
+            target.editButton.setTitle("", for: .normal)
+            target.activityIndicator.startAnimating()
+        } else {
+            target.editButton.isEnabled = true
+            target.editButton.setTitle("수정", for: .normal)
+            target.activityIndicator.stopAnimating()
+        }
+    }
+    
     private func binding() {
+        imageView.rx.tapGesture().when(.recognized)
+            .subscribe(with: self, onNext: { vc, _ in
+                vc.photoViewController.checkAuthorize(vc)
+            }).disposed(by: disposeBag)
+        
+        editViewModel.member
+            .take(1)
+            .bind(with: self, onNext: { vc, member in
+                vc.imageView.image = UIImage(data: member.image)
+                vc.emailField.text = member.email
+                vc.nickNameField.text = member.nickName
+            }).disposed(by: disposeBag)
+        
+        
         dismissButton.rx.tap
             .subscribe(with: self, onNext: { vc, _ in
                 vc.dismiss(animated: true)
@@ -109,11 +158,11 @@ final class EditProfileViewController: UIViewController {
         emailField.rx.text
             .distinctUntilChanged()
             .subscribe(with: self, onNext: { vc, value in
-                // Log.debug("value: \(value)")
             }).disposed(by: disposeBag)
         
         let emailValid =
         emailField.rx.text.orEmpty
+            .startWith(emailField.text ?? "")
             .withUnretained(self)
             .map { vc, value in
                 vc.isValid(pattern: PATTERN.email.pattern, text: value, view: vc.emailField)
@@ -121,6 +170,7 @@ final class EditProfileViewController: UIViewController {
         
         let nicknameValid =
         nickNameField.rx.text.orEmpty
+            .startWith(nickNameField.text ?? "")
             .withUnretained(self)
             .map { vc, value in
                 vc.isValid(pattern: PATTERN.nickname.pattern, text: value, view: vc.nickNameField)
@@ -143,32 +193,14 @@ final class EditProfileViewController: UIViewController {
                               nickName: vc.nickNameField.text ?? "")
             }.asSignal(onErrorJustReturn: .sample)
         
-        let input = EditProfileViewModel.Input(editProfileEvent: editEvent,
+        let input = EditProfileViewModel.Input(profileImageSelected: imageSelected.asObservable(),
+                                               editProfileEvent: editEvent,
                                                validState: validState)
         let output = editViewModel.transform(input: input)
         
-        output.member
-            .take(1)
-            .bind(with: self, onNext: { vc, member in
-                vc.imageView.image = UIImage(data: member.image)
-                vc.emailField.text = member.email
-                vc.nickNameField.text = member.nickName
-            }).disposed(by: disposeBag)
-    }
-    
-    
-    private func emailFieldBinding() {
-//        emailValid
-//            .bind(with: self, onNext: { vc, value in
-//                vc.emailSubject.onNext(value)
-//            }).disposed(by: disposeBag)
-    }
-    
-    private func nicknameFieldBinding() {
-//        nicknameValid
-//            .bind(with: self, onNext: { vc, value in
-//                vc.nickNameSubject.onNext(value)
-//            }).disposed(by: disposeBag)
+        output.editButtonLoading
+            .bind(to: editButtonBinder)
+            .disposed(by: disposeBag)
     }
     
     private func addAutoLayout() {
@@ -186,6 +218,11 @@ final class EditProfileViewController: UIViewController {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        editButton.addSubview(activityIndicator)
+        
+        imageIndicator.translatesAutoresizingMaskIntoConstraints = false
+        imageView.addSubview(imageIndicator)
         
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -234,7 +271,13 @@ final class EditProfileViewController: UIViewController {
             editButton.topAnchor.constraint(equalTo: nickNameField.bottomAnchor, constant: 24),
             editButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             editButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            editButton.heightAnchor.constraint(equalToConstant: 50)
+            editButton.heightAnchor.constraint(equalToConstant: 50),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: editButton.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: editButton.centerYAnchor),
+            
+            imageIndicator.centerXAnchor.constraint(equalTo: editButton.centerXAnchor),
+            imageIndicator.centerYAnchor.constraint(equalTo: editButton.centerYAnchor)
         ])
     }
 }

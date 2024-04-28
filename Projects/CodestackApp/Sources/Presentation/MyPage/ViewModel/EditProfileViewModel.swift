@@ -13,15 +13,18 @@ import RxCocoa
 import Domain
 import Global
 
+
 final class EditProfileViewModel: ViewModelType, Stepper {
     
     struct Input {
+        var profileImageSelected: Observable<Data>
         var editProfileEvent: Signal<EditViewModel>
         var validState: Driver<ValidState>
     }
     
     struct Output {
         var member: BehaviorRelay<EditViewModel>
+        var editButtonLoading: BehaviorRelay<Bool>
     }
     
     struct ValidState {
@@ -45,47 +48,68 @@ final class EditProfileViewModel: ViewModelType, Stepper {
     }
     
     private let profileUsecase: ProfileUsecase
+    
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     private var disposeBag = DisposeBag()
     
     private var validState = BehaviorRelay<ValidState>(value: .init())
-    private var member = BehaviorRelay<EditViewModel>(value: .sample)
+    public var member = BehaviorRelay<EditViewModel>(value: .sample)
+    private var editButtonLoading = BehaviorRelay<Bool>(value: false)
+    
+    private var updateCount: Int = 0
     
     func transform(input: Input) -> Output {
         input.validState
             .drive(validState)
             .disposed(by: disposeBag)
         
-        // TODO: valid State
-        // 상태를 보고 request를 보낼지 말지 판별해야함
-        // 알아서 잘 하셈
-        // vm.profileUsecase.editFBProfile
-        
         input.editProfileEvent
             .asObservable()
-            .map { ($0.toDomain(), $0.image) }
+            .withLatestFrom(member) { editMember, member in
+                member.isEqual(to: editMember)
+            }
             .withUnretained(self)
-            .flatMapFirst { vm, vo -> Observable<Result<MemberVO, Error>> in
-                let (memberVO, imageData) = vo
-                return vm.profileUsecase
-                    .updateEmail(member: memberVO)
-                    .asObservable()
-                
-                // MARK: PRofile Update Query
-//                return vm.profileUsecase
-//                    .editFBProfile(memberVO.nickName,imageData)
-//                    .asSignalJust()
+            .flatMapFirst { vm, states -> Observable<String> in
+                vm.updateUserInfo(states)
             }
             .subscribe(with: self, onNext: { vm, result in
-                switch result {
-                case .success(let vo):
-                    Log.debug("vo: \(vo)")
-                case .failure(let error):
-                    Log.debug("vo: \(error)")
+                vm.updateCount -= 1
+                if vm.updateCount == 0 {
+                    vm.editButtonLoading.accept(false)
+                    let toastValue = ToastValue(type: .success, title: "변경", message: "프로필 변경에 성공하셨습니다")
+                    vm.steps.accept(CodestackStep.toastV2Value(toastValue))
                 }
-                vm.steps.accept(CodestackStep.toastMessage("성공하였습니다."))
+            }, onError: { vm, value in
+                vm.editButtonLoading.accept(false)
+                let toastValue = ToastValue(type: .error, title: "실패", message: "프로필 변경에 실패하였습니다.")
+                vm.steps.accept(CodestackStep.toastV2Value(toastValue))
             }).disposed(by: disposeBag)
         
-        return Output(member: member)
+        return Output(member: member, editButtonLoading: editButtonLoading)
+    }
+    
+    private func updateUserInfo(_ states: [UpdateState]) -> Observable<String> {
+        var merge: [Observable<String>] = []
+        
+        for state in states {
+            switch state {
+            case .imageState(let data, let nickname):
+                merge.append(profileUsecase.update(profileImage: data, nickname: nickname, updateCount: &updateCount))
+                
+            case .email(let string):
+                merge.append(profileUsecase.update(email: string, updateCount: &updateCount))
+                
+            case .nickname(let string):
+                merge.append(profileUsecase.update(nickname: string, updateCount: &updateCount))
+            }
+        }
+        
+        if merge.count >= 1 { editButtonLoading.accept(true) }
+        else {
+            let toastValue = ToastValue(type: .success, title: "성공", message: "프로필 변경에 성공하셨습니다")
+            steps.accept(CodestackStep.toastV2Value(toastValue))
+        }
+        
+        return Observable.merge(merge)
     }
 }
