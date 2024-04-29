@@ -2,6 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Maplestory Bold.ttf</string>
+		<string>Maplestory Light.ttf</string>
+		<string>Maplestory OTF Light.otf</string>
+		<string>Maplestory OTF Bold.otf</string>
+		<string>KnightWarrior-w16n8.otf</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~iphone</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -31,6 +43,8 @@
 			<string>None</string>
 		</dict>
 	</array>
+	<key>CURRENT_PROJECT_VERSION</key>
+	<string>20240302014</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -53,23 +67,29 @@
 			</array>
 		</dict>
 	</dict>
+	<key>buildCount</key>
+	<string>14</string>
+	<key>buildDay</key>
+	<string>20240302</string>
 	<key>client_id</key>
 	<string>$(client_id)</string>
 	<key>client_secret_git</key>
 	<string>$(client_secret_git)</string>
 	<key>codestack_endpoint</key>
 	<string>$(codestack_endpoint)</string>
-	<key>firestore_endpoint</key>
-	<string>$(firestore_endpoint)</string>
-	<key>firebase_annony_auth_endpoint</key>
-	<string>$(firebase_annony_auth_endpoint)</string>
-	<key>graphql_endpoint</key>
-	<string>$(graphql_endpoint)</string>
-	<key>firestorage_endpoint</key>
-	<string>$(firestorage_endpoint)</string>
 	<key>fireStorage_project_path</key>
 	<string>$(fireStorage_project_path)</string>
+	<key>firebase_annony_auth_endpoint</key>
+	<string>$(firebase_annony_auth_endpoint)</string>
+	<key>firestorage_endpoint</key>
+	<string>$(firestorage_endpoint)</string>
+	<key>firestore_endpoint</key>
+	<string>$(firestore_endpoint)</string>
 	<key>firestore_project_path</key>
 	<string>$(firestore_project_path)</string>
+	<key>graphql_endpoint</key>
+	<string>$(graphql_endpoint)</string>
+	<key>judgezero_endpoint</key>
+	<string>$(judgeZero_endpoint)</string>
 </dict>
 </plist>
