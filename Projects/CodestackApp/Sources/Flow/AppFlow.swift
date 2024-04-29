@@ -9,6 +9,7 @@ import UIKit
 import RxFlow
 import RxCocoa
 import RxSwift
+import CommonUI
 
 class AppFlow: Flow {
     
@@ -19,7 +20,6 @@ class AppFlow: Flow {
     struct Dependency {
         let injector: Injectable
     }
-    
     
     private let injector: Injectable
     
@@ -36,11 +36,23 @@ class AppFlow: Flow {
     func navigate(to step: Step) -> FlowContributors {
         guard let codestackStep = step as? CodestackStep else {return .none}
         
-        switch codestackStep{
+        switch codestackStep {
         case .loginNeeded:
             return navigateToLoginVC()
         case .onBoardingRequired:
-            return navigateToOnBoarding()
+            // MARK: ANimate TextViewController
+//            let vc = AnimateTextViewController()
+//            let font: [UIFont] = [
+//                CodestackAppFontFamily.Maplestory.bold.font(size: 20),
+//                CodestackAppFontFamily.Maplestory.light.font(size: 20),
+//                CodestackAppFontFamily.MaplestoryOTF.bold.font(size: 20),
+//                CodestackAppFontFamily.MaplestoryOTF.light.font(size: 20)
+//            ]
+//            vc.setFont(font)
+//            
+//            rootViewController.pushViewController(vc, animated: false)
+//            return .none
+             return navigateToOnBoarding()
         case .onBoardingComplte:
             return dismissOnBoarding()
         default:
@@ -64,7 +76,6 @@ class AppFlow: Flow {
     }
     
     private func navigateToOnBoarding() -> FlowContributors {
-    
         let onBoardingFlow = OnBoardingFlow(dependency: .init(injector: injector))
         
         Flows.use(onBoardingFlow, when: .created){ [unowned self] root in
@@ -79,7 +90,7 @@ class AppFlow: Flow {
     }
     
     private func dismissOnBoarding() -> FlowContributors {
-        if let vc = self.rootViewController.presentedViewController{
+        if let vc = self.rootViewController.presentedViewController {
             vc.dismiss(animated: true)
         }
         return .none
@@ -87,7 +98,7 @@ class AppFlow: Flow {
     
 }
 
-class AppStepper: Stepper{
+final class AppStepper: Stepper {
     var steps: PublishRelay<Step> = PublishRelay<Step>()
     
     var initialStep: Step{
