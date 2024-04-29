@@ -8,6 +8,7 @@ extension Project {
         platform: Platform = .iOS,
         product: Product,
         includeTestTarget: Bool = false,
+        hostTargetNeeded: Bool = false,
         bundleID: String? = nil,
         organizationName: String = env15.organizationName,
         packages: [Package] = [],
@@ -20,19 +21,22 @@ extension Project {
         sources: SourceFilesList = ["Sources/**"],
         resources: ResourceFileElements? = nil,
         entitlement: Entitlements? = nil,
+        script: [TargetScript] = [],
         infoPlist: InfoPlist = .default,
-        resourceSynthesizers: [ResourceSynthesizer] = .default
+        resourceSynthesizers: [ResourceSynthesizer] = .default,
+        scripts: [TargetScript] = []
     ) -> Project {
         return project(
             name: name,
             platform: platform,
             product: product,
             includeTestTarget: includeTestTarget,
+            hostTargetNeeded: hostTargetNeeded,
             bundleID: bundleID,
             organizationName: organizationName,
             packages: packages,
             settings: settings,
-            deploymentTarget: deploymentTarget ,
+            deploymentTarget: deploymentTarget,
             dependencies: dependencies,
             baseSettings: baseSettings,
             configuration: configuration,
@@ -40,8 +44,10 @@ extension Project {
             sources: sources,
             resources: resources,
             entitlement: entitlement,
+            script: script,
             infoPlist: infoPlist,
-            resourceSynthesizers: resourceSynthesizers
+            resourceSynthesizers: resourceSynthesizers,
+            scripts: scripts
         )
     }
 }
@@ -52,6 +58,7 @@ public extension Project {
         platform: Platform,
         product: Product,
         includeTestTarget: Bool,
+        hostTargetNeeded: Bool,
         bundleID: String?,
         organizationName: String,
         packages: [Package],
@@ -64,22 +71,26 @@ public extension Project {
         sources: SourceFilesList,
         resources: ResourceFileElements?,
         entitlement: Entitlements?,
+        script: [TargetScript],
         infoPlist: InfoPlist,
-        resourceSynthesizers: [ResourceSynthesizer]
+        resourceSynthesizers: [ResourceSynthesizer],
+        scripts: [TargetScript]
     ) -> Project {
         
         var appTargets: [ProjectDescription.Target] = []
+        var testTargetDependency: [TargetDependency] = []
         
         let appTarget = Target.target(
             name: name,
             destinations: .iOS,
             product: product,
-            bundleId: "\(organizationName).\(name)",
+            bundleId: bundleID ?? "\(organizationName).\(name)",
             deploymentTargets: env15.deploymentTarget,
             infoPlist: infoPlist,
             sources: sources,
             resources: resources,
             entitlements: entitlement,
+            scripts: script,
             dependencies: dependencies,
             settings: .settings( // target settings
              base: baseSettings.merging (baseSettings) { $1 },
@@ -88,8 +99,36 @@ public extension Project {
                                ),
             coreDataModels: coreDataModels
         )
-        
+
         appTargets.append(appTarget)
+        testTargetDependency.append(.target(name: "\(name)"))
+        
+        if hostTargetNeeded {
+            let hostTarget = Target.target(
+                name: "\(name)Demo",
+                destinations: .iOS,
+                product: .app,
+                bundleId: "\(String(describing: bundleID)).\(name)Demo",
+                deploymentTargets: deploymentTarget,
+                infoPlist: .default,
+                sources: ["Demo/**"],
+                resources: [.glob(pattern: .relativeToRoot("Projects/CodestackApp/Config/GoogleService-Info.plist"),
+                                  excluding: [],
+                                  tags: [])],
+                entitlements: entitlement,
+                scripts: script,
+                dependencies: [ .target(name: "\(name)")],
+                settings: .settings(
+                    base: baseSettings.merging (baseSettings) { $1 },
+                    configurations: defaultTargetSetting,
+                    defaultSettings: .recommended (excluding: [ "TARGETED_DEVICE_FAMILY",])
+                ),
+                coreDataModels: coreDataModels
+            )
+            
+            appTargets.append(hostTarget)
+            testTargetDependency.append(.target(name: "\(name)Demo"))
+        }
         
         if includeTestTarget {
             let testTarget = Target.target(

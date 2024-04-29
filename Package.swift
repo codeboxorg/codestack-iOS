@@ -8,7 +8,9 @@ import PackageDescription
     import ProjectDescriptionHelpers
 
     let packageSettings = PackageSettings(
-        productTypes: [// "CodestackAPI" : .framework ,
+        productTypes: [ 
+            // "SwiftHangeul" : .staticFramework,
+            "CodestackAPI" : .framework ,
             "ApolloAPI" : .staticFramework,
             "Apollo" : .staticFramework,
             "Highlightr" : .staticFramework ,
@@ -25,6 +27,7 @@ import PackageDescription
 let package = Package(
     name: "name",
     dependencies: [
+        .package(url: "https://github.com/hyeonghwan/SwiftHangeul.git", from: "0.1.1"),
         .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.5.0"),
         .package(url: "https://github.com/SnapKit/SnapKit", from: "5.6.0"),
         .package(url: "https://github.com/devxoul/Then", from: "2.7.0"),
@@ -37,8 +40,9 @@ let package = Package(
         .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git",from:  "5.0.2"),
         .package(url: "https://github.com/RxSwiftCommunity/RxFlow.git",from:  "2.13.0"),
         .package(url: "https://github.com/stephencelis/SQLite.swift.git",from:  "0.14.1"),
-//        .package(path: "Projects/Module/CodestackAPI"),
+        .package(path: "Projects/Module/CodestackAPI"),
         .package(path: "Projects/Module/Highlightr"),
-        .package(url: "https://github.com/NuPlay/RichText.git", from: "2.0.0")
+        .package(url: "https://github.com/NuPlay/RichText.git", from: "2.0.0"),
+        .package(url: "https://github.com/qeude/SwiftDown.git", from: "0.4.1")
     ]
 )

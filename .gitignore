@@ -6,15 +6,17 @@
 xcuserdata/
 Projects/CodestackApp/Config/GoogleService-Info.plist
 ## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
-Projects/Highilighrt/**/*.*
+Projects/Module/Highilighrt/**/*.*
 *.xcscmblueprint
+Projects/CodestackApp/Resources/GoogleService-Info.plist
+Projects/CodestackApp/Derived/Sources/TuistPlists+CodestackApp.swift
 *.xccheckout
 *.xcconfig
 *.xcscheme
 *.pbxproj
-Projects/CodestackAPI/
-Projects/Highlightr/**
-Projects/Highlightr/**/*.*
+Projects/Module/CodestackAPI/
+Projects/Module/Highlightr/**
+Projects/Module/Highlightr/**/*.*
 ./*.xcconfig
 APIResource.xcconfig
 /APIResource.xcconfig
@@ -97,4 +99,16 @@ fastlane/test_output
 # After new code Injection tools there's a generated folder /iOSInjectionProject
 # https://github.com/johnno1962/injectionforxcode
 
+### Tuist derived files ###
+graph.dot
+Derived/
+FCM/
+**/*.xcconfig
+Shared.xcconfig
+*.plist
+!Info.plist
+*.entitlements
+### Tuist managed dependencies ###
+Tuist/Dependencies
+Tuist/ProjectDescription.framework/
 iOSInjectionProject/
