@@ -12,9 +12,18 @@ import ProjectDescription
 public enum CSettings {
     case objc
     case defaults
+    case cmark
     
     public var value: ProjectDescription.SettingsDictionary {
         switch self {
+        case .cmark:
+            return [
+                "HEADER_SEARCH_PATHS": [
+                    "$(inherited)",
+                    "$(SRCROOT)/../../Tuist/Dependencies/SwiftPackageManager/.build/checkouts/Down/Sources/cmark"
+                ],
+                "OTHER_LDFLAGS" : "$(OTHER_LDFLAGS) -ObjC"
+            ]
         case .objc:
             return ["OTHER_LDFLAGS": "$(OTHER_LDFLAGS) -ObjC"]
         default:

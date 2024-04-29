@@ -21,13 +21,20 @@ public extension TargetDependency.SPM {
     static let sqlite: TargetDependency    = .external(name: "SQLite")
     static let codestackAPI: TargetDependency    = .external(name: "CodestackAPI")
     static let highlightr: TargetDependency = .external(name: "Highlightr")
+    
     // static let firebase: TargetDependency = .external(name: "FirebaseFirestore")
+    
     static let firebaseAuth: TargetDependency = .external(name: "FirebaseAnalyticsSwift")
     static let firebaseAnalyticsSwift: TargetDependency = .external(name: "FirebaseAuth")
     
     static let richText: TargetDependency = .external(name: "RichText")
     
+    static let rxRelay: TargetDependency = .external(name: "RxRelay")
+    static let rxTest: TargetDependency = .external(name: "RxTest")
+    static let rxBlocking: TargetDependency = .external(name: "RxBlocking")
     static let reactorKit: TargetDependency = .external(name: "ReactorKit")
+    static let swiftHanguel: TargetDependency = .external(name: "SwiftHangeul")
+    static let swiftDown: TargetDependency = .external(name: "SwiftDown")
 }
 
 public enum P { 

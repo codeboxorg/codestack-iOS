@@ -8,13 +8,20 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-
 let dependencies: [TargetDependency] = [
     .PRO.domain,
     .PRO.data,
+    .PRO.thridParty,
     .PRO.global,
     .PRO.csNetwork,
-    .PRO.commonUI
+    .PRO.commonUI,
+    .SPM.rxdatasources,
+    .SPM.rxFlow,
+    .SPM.rxSwift,
+    .SPM.rxGesture,
+    .SPM.richText,
+    .SPM.richtextKit,
+        .SPM.swiftDown
     // .PRO.presentation,
 ]
 
@@ -24,23 +31,25 @@ let resources: ResourceFileElements
 = [
     "Resources/Apollo/codestackSchema.graphqls",
     "Resources/Apollo/graphqlQueries.graphql",
-    "Resources/Assets.xcassets",
-    "Resources/appstore.png",
-    "Resources/style.css",
+    "Resources/Asset/*.*",
+    "Resources/knight-warrior-font/KnightWarrior-w16n8.otf",
+    "Resources/**",
     "Resources/PLanguage/**/*.txt",
     // "Resources/Base.lproj/*.storyboard",
-    "Resources/GoogleService-Info.plist"
+    "Resources/GoogleService-Info.plist",
+    "Config/GoogleService-Info.plist"
 ]
 
 let project = Project.createModule(name: "CodestackApp",
                                    product: .app,
                                    includeTestTarget: true,
                                    bundleID: "kr.co.codestack.ios",
+                                   packages: [],
                                    settings: true,
                                    dependencies: dependencies,
+                                   baseSettings: CSettings.cmark.value,
                                    configuration: true,
                                    resources: resources,
                                    entitlement: entitlementPath,
+                                   script: [.BuildScript],
                                    infoPlist: "Config/Info.plist")
-
-
