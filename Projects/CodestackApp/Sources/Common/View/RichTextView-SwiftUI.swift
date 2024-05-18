@@ -12,16 +12,22 @@ import CommonUI
 
 struct RichTextSwiftUIView: View {
     
+    @State private var delayHTML: String = ""
     private var setRichTextHeightAction: (CGFloat) -> Void
-    private var html: String
-    
+    private var HTML: String
     init(_ html: String, _ setRichTextHeightAction: @escaping (CGFloat) -> Void) {
-        self.html = html
+        self.HTML = html
         self.setRichTextHeightAction = setRichTextHeightAction
     }
 
     var body: some View {
-        makeRichTextView("\(html)")
+        makeRichTextView(delayHTML)
+            .task {
+                do {
+                    try await Task.sleep(nanoseconds: 500_000_000)
+                } catch { }
+                delayHTML = HTML
+            }
     }
 
     private func makeRichTextView(_ html: String) -> some View {
@@ -32,13 +38,16 @@ struct RichTextSwiftUIView: View {
             .customCSS(Style.css)
             .placeholder {
                 SkeletonUIKit()
-                    .frame(width: Position.screenWidth,
-                           height: Position.screenHeihgt)
+                    .frame(
+                        width: Position.screenWidth,
+                        height: Position.screenHeihgt
+                    )
             }
             .tint(CColor.sky_blue.sColor)
             .onReadSize { size in
                 setRichTextHeightAction(size.height + 20)
             }
+            
         return view
     }
 }
