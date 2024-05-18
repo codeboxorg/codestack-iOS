@@ -55,7 +55,7 @@ class MyPageFlow: Flow {
             let vc = injector.resolve(RichTextViewController.self,
                                       markdown,
                                       storeVO,
-                                      RichViewModel.ViewType.posting)
+                                      RichViewModel.ViewType.myPosting)
             rootViewController.pushViewController(vc, animated: true)
             
         case .toastV2Value(let toastValue):

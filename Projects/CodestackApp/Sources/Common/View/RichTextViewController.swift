@@ -22,6 +22,12 @@ final class RichTextViewController: BaseContentViewController<UIScrollView> {
     private(set) var containerView = UIView()
     private(set) var postingTitle = PostingTitleView()
     
+    private var richTextSwiftUIView: some View {
+        RichTextSwiftUIView(htmlString, { [weak self] height in
+           self?.layoutConstraintHeight?.constant = height
+       })
+    }
+    
     struct Dependency {
         let html: String
         let storeVO: StoreVO
@@ -64,20 +70,18 @@ final class RichTextViewController: BaseContentViewController<UIScrollView> {
     
     override func addAutoLayout() {
         _addAutoLayout()
-        
-        let swiftUIView = RichTextSwiftUIView(htmlString, { [weak self] height in
-            self?.layoutConstraintHeight?.constant = height
-        })
-        add(richTextView: swiftUIView)
+        add(richTextView: richTextSwiftUIView)
     }
     
     override func binding() {
         // TODO: Tap Gesture 처리
-        let observable = [
+        _ = [
             postingTitle.writerLabel.rx.tapGesture().when(.recognized),
             postingTitle.profileImageView.rx.tapGesture().when(.recognized),
             postingTitle.dateLabel.rx.tapGesture().when(.recognized)
         ]
+        
+        postingTitle.writerBinder.onNext(.mock)
         
         viewmodel.transForm()
             .observe(on: MainScheduler.instance)
@@ -128,17 +132,14 @@ final class RichTextViewController: BaseContentViewController<UIScrollView> {
 extension PostingTitleView {
     var writerBinder: Binder<WriterInfo> {
         Binder<WriterInfo>(self) { view, writeInfo in
-            print("binder: \(writeInfo)")
             view.apply(writeInfo)
             if writeInfo.isMock {
-                print("isMock")
                 view.layoutIfNeeded()
                 view.titleLabel.addSkeletonView()
                 view.writerLabel.addSkeletonView()
                 view.dateLabel.addSkeletonView()
                 view.profileImageView.addSkeletonView()
             } else {
-                print("remove")
                 view.removeSkeletonViewFromSuperView()
             }
         }
@@ -201,7 +202,9 @@ final class RichViewModel {
     enum ViewType {
         case preview
         case posting
+        case myPosting
     }
+    
     var storeVO: StoreVO
     var viewType: ViewType = .posting
     private let observable = PublishSubject<WriterInfo>()
@@ -214,17 +217,17 @@ final class RichViewModel {
     }
     
     func transForm() -> Observable<WriterInfo> {
-        if viewType == .posting {
+        if viewType == .posting || viewType == .myPosting {
             return transFormPosting()
         } else {
             return transformPreview()
         }
     }
     
-    func transFormPosting() -> Observable<WriterInfo> {
-        let closure = {
+    private func transFormPosting() -> Observable<WriterInfo> {
+        DispatchQueue.global().asyncAfter(deadline: .now(), execute: {
             Task {
-                { [weak self] in
+                [weak self] in
                     guard let self else { return }
                     let storeVO = self.storeVO
                     let cached = ImageCacheClient.shared.getOtherImageFromCache(.init(key: .other(storeVO.userId)))
@@ -248,19 +251,13 @@ final class RichViewModel {
                         info.image = image ?? UIImage(named: "codeStack")!
                     }
                     observable.onNext(info)
-                }
             }
-        }
-        
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.2, execute: {
-            _ = closure()
         })
-        
         
         return observable.asObservable()
     }
     
-    func transformPreview() -> Observable<WriterInfo> {
+    private func transformPreview() -> Observable<WriterInfo> {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
             guard let self else { return }
             let storeVO = self.storeVO
