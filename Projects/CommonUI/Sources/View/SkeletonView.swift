@@ -19,10 +19,12 @@ public struct SkeletonUIKit: UIViewRepresentable {
         WebSkeletonView()
     }
     
-    public func updateUIView(_ uiView: WebSkeletonView, context: Context) {
-        #if DEBUG
-        // print("updateUIView :\(context)")
-        #endif
+    static public func dismantleUIView(_ uiView: WebSkeletonView, coordinator: Void) {
+        uiView.containerView.removeSkeletonView()
+    }
+    
+    public func updateUIView(_ uiView: WebSkeletonView, context: Context) { 
+        uiView.containerView.removeSkeletonView()
     }
 }
 
@@ -43,7 +45,6 @@ public final class WebSkeletonView: BaseView {
         ])
     }
     
-    
     public override func applyAttributes() {
         layer.setNeedsDisplay()
     }
@@ -58,7 +59,7 @@ public final class WebSkeletonView: BaseView {
         }
     }
     
-    var isUpdate: Bool = false
+    private var isUpdate: Bool = false
     private let xPadding: CGFloat = 20
     private lazy var doubleXPadding: CGFloat = xPadding * 2
     
