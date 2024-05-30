@@ -17,9 +17,14 @@ public protocol EndPoint {
     var header: [String: String] { get set }
     var body: Data? { get set }
     var queryParams: [String: String]? { get } // Added for query parameters
+    var port: Int? { get }
 }
 
 public extension EndPoint {
+    
+    var port: Int? {
+        nil
+    }
     
     var scheme: String {
         return "https"
@@ -63,7 +68,7 @@ public extension EndPoint {
         urlComponents.host = self.host
         urlComponents.path = self.path
         urlComponents.queryItems = []
-        
+        urlComponents.port = self.port
         self.queryParams?.forEach { key, value in
             let item = URLQueryItem(name: key, value: value)
             urlComponents.queryItems?.append(item)

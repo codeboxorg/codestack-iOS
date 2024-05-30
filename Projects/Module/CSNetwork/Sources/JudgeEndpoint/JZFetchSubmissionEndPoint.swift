@@ -2,8 +2,16 @@ import Foundation
 
 public struct JZFetchSubmissionEndpoint: EndPoint {
     
+    public var scheme: String {
+        "http"
+    }
+    
     public var host: String {
         judgeZeroBase
+    }
+    
+    public var port: Int? {
+        2358
     }
     
     public var path: String = "/submissions"
@@ -20,7 +28,8 @@ public struct JZFetchSubmissionEndpoint: EndPoint {
     public var body: Data?
     
     public var queryParams: [String : String]? = [
-        "fields"  : "stdout,time,memory,stderr,token,compile_output,message,status"
+        "base64_encoded": "true",
+        "fields": "stdout,time,memory,stderr,token,compile_output,message,status"
     ]
     
     public init(token: String) {
