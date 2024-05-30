@@ -31,6 +31,7 @@ public final class DefaultJZSubmissionRepository: JZSubmissionRepository {
     public func perform(code: String, languageID: Int, problemVO: ProblemVO) -> Observable<State<SubmissionToken>> {
         let dto = makeDTO(code: code, languageID: languageID, problemVO: problemVO)
         let endpoint = JZSubmissionEndpoint(dto: dto)
+        
         return rest.request(endpoint, operation: { data in
             try JSONDecoder().decode(JZSubmissionTokenResponse.self, from: data)
         })
@@ -58,7 +59,11 @@ public final class DefaultJZSubmissionRepository: JZSubmissionRepository {
         .retry(when: { [weak self] error -> Observable<Int> in
             guard let self else { return Observable.just(0) }
             return error.flatMap { isComplete in
-                self.isProccessing(.failure(isComplete))
+                if self.shouldRetry(for: isComplete) {
+                    return self.isProccessing()
+                } else {
+                    return Observable.error(isComplete)
+                }
             }
         })
         .take(3)
@@ -66,14 +71,12 @@ public final class DefaultJZSubmissionRepository: JZSubmissionRepository {
 }
 
 private extension DefaultJZSubmissionRepository {
+    func shouldRetry(for error: Error) -> Bool {
+        return (error as? JZError) == .isProcessing
+    }
     
-    func isProccessing(_ result: Result<Void, Error>) -> Observable<Int> {
-        switch result {
-        case let .failure(error) where (error as? JZError) == .exceededUsage:
-            return Observable<Int>.timer(.seconds(3), period: nil, scheduler: scheduler)
-        default:
-            return .never()
-        }
+    func isProccessing() -> Observable<Int> {
+        Observable<Int>.timer(.seconds(3), period: nil, scheduler: scheduler)
     }
     
     func sendError(_ result: Result<Void, Error>) -> State<SubmissionToken> {
