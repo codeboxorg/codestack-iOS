@@ -85,7 +85,7 @@ public final class DefaultRestAPI: RestAPI {
                     maybe(.success(result))
                     maybe(.completed)
                 } catch {
-                    maybe(.error(APIError.decodingError))
+                    maybe(.error(error))
                 }
             })
             task.resume()
