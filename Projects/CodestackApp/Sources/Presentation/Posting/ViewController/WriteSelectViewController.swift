@@ -63,7 +63,7 @@ final class WriteSelectViewController: BaseViewController, Stepper {
     override func binding() {
         // TODO: User Langauge
         writeCodeButton.rx.tap
-            .map { _ in CodestackStep.codeEditorStep(CodeEditor(codestackVO: .new, language: .default)) }
+            .map { _ in CodestackStep.codeEditorStep(CodeEditor(codestackVO: .new, select: .default)) }
             .bind(to: steps)
             .disposed(by: disposeBag)
         

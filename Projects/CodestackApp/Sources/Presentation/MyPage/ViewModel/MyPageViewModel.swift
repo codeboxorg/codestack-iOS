@@ -84,7 +84,7 @@ class MyPageViewModel: ViewModelType, Stepper {
         
         // TODO: USer get
         input.navigateToCodeWrite
-            .map { _ in CodestackStep.codeEditorStep(CodeEditor(codestackVO: .new, language: .default))}
+            .map { _ in CodestackStep.codeEditorStep(CodeEditor(codestackVO: .new, select: .default))}
             .bind(to: steps)
             .disposed(by: disposeBag)
 
@@ -127,7 +127,7 @@ class MyPageViewModel: ViewModelType, Stepper {
             }).disposed(by: disposeBag)
         
         codeModelSeleted
-            .map { CodestackStep.codeEditorStep(CodeEditor(codestackVO: $0, language: $0.languageVO)) }
+            .map { CodestackStep.codeEditorStep(CodeEditor(codestackVO: $0, select: $0.languageVO)) }
             .emit(to: steps)
             .disposed(by: disposeBag)
     }

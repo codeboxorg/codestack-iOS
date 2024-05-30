@@ -22,6 +22,7 @@ protocol EditorTypeProtocol {
     var problemID:      String { get }
     var problemTitle:   String { get }
     var problemContext: String { get }
+    var selectedLanguage: LanguageVO { get }
 }
 
 extension EditorTypeProtocol {
@@ -34,9 +35,10 @@ extension EditorTypeProtocol {
     func isOnlyEditor()       -> Bool { false }
     func getProblemVO()       -> ProblemVO { .sample }
     
-    var problemID: String { "" }
-    var problemTitle: String { "" }
-    var problemContext: String { "" }
+    var selectedLanguage: LanguageVO { .default }
+    var problemID:        String { "" }
+    var problemTitle:     String { "" }
+    var problemContext:   String { "" }
 }
 
 struct DefaultEditor: EditorTypeProtocol { }
@@ -78,18 +80,22 @@ struct ProblemSolveEditor: EditorTypeProtocol {
 
 struct CodeEditor: EditorTypeProtocol {
     var codestackVO: CodestackVO
-    var language: LanguageVO
+    var selectedLanguage: LanguageVO
+    var languages: [LanguageVO]
     
-    init(codestackVO: CodestackVO, language: LanguageVO) {
+    init(codestackVO: CodestackVO, select language: LanguageVO) {
         self.codestackVO = codestackVO
-        self.language = language
+        self.languages = LanguageVO.sample
+        self.selectedLanguage = codestackVO.languageVO
     }
     
     func getCodestackVO()     -> CodestackVO {
         codestackVO
     }
     
-    func getDefaultLanguage() -> [LanguageVO] { [language] }
+    func getSeletedLanguage() -> LanguageVO { selectedLanguage }
+    
+    func getDefaultLanguage() -> [LanguageVO] { languages }
     
     func isOnlyEditor() -> Bool { true }
 }
