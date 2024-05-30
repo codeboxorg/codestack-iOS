@@ -127,7 +127,7 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
                 .drive(sourceCodenameWhenEditorOnly)
                 .disposed(by: disposeBag)
             
-            lanugageFirstBinding.accept(editorType.getSeletedLanguage())
+             lanugageFirstBinding.accept(editorType.getSeletedLanguage())
             
             sendActionWhenEditorMode(action: sendTrigger)
             
@@ -543,13 +543,11 @@ extension CodeEditorViewModel {
         case let .failure(error) where (error as? Domain.TokenError) == .unauthorized:
             self.stepper?.steps.accept(CodestackStep.loginNeeded)
             
-            
         case let .failure(error) where (error as? Domain.SendError) == .isEqualSubmission:
             self.stepper?.steps.accept(CodestackStep.toastMessage("같은 내용입니다"))
                 
         case let .failure(error) where (error as? Domain.JZError) == .exceededUsage:
             self.stepper?.steps.accept(CodestackStep.toastV2Message(.error, "사용량을 초과하였습니다. 관리자에게 문의해주세요"))
-            
             
         case let .failure(error) where (error as? Domain.JZError) == .none:
             self.stepper?.steps.accept(CodestackStep.toastV2Message(.error, "잠시후에 다시 시도해 주세요"))
