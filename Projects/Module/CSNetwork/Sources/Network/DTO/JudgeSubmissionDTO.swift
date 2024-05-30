@@ -18,7 +18,39 @@ public struct JudgeSubmissionResponseDTO: Codable {
     public var compile_output: String?
     public var message:        String?
     public var status:         JudgeZeroStatusDTO?
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.token = try? container.decodeIfPresent(String.self, forKey: .token)
+        self.stdout = try? container.decodeIfPresent(String.self, forKey: .stdout).flatMap { base64String in
+            let cleanedBase64String = base64String.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let data = Data(base64Encoded: cleanedBase64String),
+               let decodedString = String(data: data, encoding: .utf8) {
+                return decodedString
+            }
+            return nil
+        }
+        
+        self.time = try? container.decodeIfPresent(String.self, forKey: .time)
+        self.memory = try? container.decodeIfPresent(Double.self, forKey: .memory)
+        self.stderr = try? container.decodeIfPresent(String.self, forKey: .stderr)
+        self.compile_output = try? container.decodeIfPresent(String.self, forKey: .compile_output)
+        self.message = try? container.decodeIfPresent(String.self, forKey: .message)
+        self.status = try? container.decodeIfPresent(JudgeZeroStatusDTO.self, forKey: .status)
+    }
+    
+    public init(token: String? = nil, stdout: String? = nil, time: String? = nil, memory: Double? = nil, stderr: String? = nil, compile_output: String? = nil, message: String? = nil, status: JudgeZeroStatusDTO? = nil) {
+        self.token = token
+        self.stdout = stdout
+        self.time = time
+        self.memory = memory
+        self.stderr = stderr
+        self.compile_output = compile_output
+        self.message = message
+        self.status = status
+    }
 }
+
 
 
 public struct JZSubmissionTokenResponse: Codable {
@@ -40,11 +72,11 @@ public struct JudgeZeroSubmissionRequestDTO: Codable {
     // (실행 시간 제한): 프로그램의 전체 실행 시간 제한입니다. CPU 시간 제한과 달리 프로그램의 시작부터 종료까지 측정합니다.
     public var wall_time_limit: Double?
     
-    public init(sourceCode: String, 
-         languageID: Int,
-         stdin: String? = nil,
-         expected_output: String? = nil, 
-         wall_time_limit: Double? = nil)
+    public init(sourceCode: String,
+                languageID: Int,
+                stdin: String? = nil,
+                expected_output: String? = nil,
+                wall_time_limit: Double? = nil)
     {
         self.sourceCode = sourceCode
         self.languageID = languageID
