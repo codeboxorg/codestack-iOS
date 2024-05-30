@@ -20,7 +20,7 @@ final class TabBarStepper: Stepper {
     }
 }
 
-final class TabBarFlow: Flow{
+final class TabBarFlow: Flow {
     
     var root: Presentable {
         self.rootViewTabController

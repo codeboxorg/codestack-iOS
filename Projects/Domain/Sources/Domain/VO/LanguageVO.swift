@@ -25,28 +25,28 @@ public extension LanguageVO {
     
     static var languageMap: [String: LanguageVO] {
         [
-            "C": LanguageVO(id: "50", name: "C", extension: ".c"),
-            "C++": LanguageVO(id: "54", name: "C++", extension: ".cpp"),
-            "Node": LanguageVO(id: "93", name: "Node", extension: ".c"),
-            "Python3": LanguageVO(id: "92", name: "Python3", extension: ".py"),
-            "Swift": LanguageVO(id: "83", name: "Swift", extension: ".swift"),
-            "Go": LanguageVO(id: "95", name: "Go", extension: ".go")
+            "C":       LanguageVO(id: "7", name: "C", extension: ".c"),
+            "C++":     LanguageVO(id: "12", name: "C++", extension: ".cpp"),
+            "Node":    LanguageVO(id: "26", name: "Node", extension: ".c"),
+            "Python3": LanguageVO(id: "38", name: "Python3", extension: ".py"),
+            "Swift":   LanguageVO(id: "83", name: "Swift", extension: ".swift"),
+            "Go":      LanguageVO(id: "22", name: "Go", extension: ".go")
         ]
     }
-    
+
     static var languageID: [Int: LanguageVO] {
         [
-            50: LanguageVO(id: "50", name: "C", extension: ".c"),
-            54: LanguageVO(id: "54", name: "C++", extension: ".cpp"),
-            93: LanguageVO(id: "93", name: "Node", extension: ".c"),
-            92: LanguageVO(id: "92", name: "Python3", extension: ".py"),
+            7: LanguageVO(id: "7", name: "C", extension: ".c"),
+            12: LanguageVO(id: "12", name: "C++", extension: ".cpp"),
+            26: LanguageVO(id: "26", name: "Node", extension: ".c"),
+            38: LanguageVO(id: "38", name: "Python3", extension: ".py"),
             83: LanguageVO(id: "83", name: "Swift", extension: ".swift"),
-            95: LanguageVO(id: "95", name: "Go", extension: ".go")
+            22: LanguageVO(id: "22", name: "Go", extension: ".go")
         ]
     }
     
     static var `default`: Self {
-        LanguageVO(id: "54", name: "C++", extension: ".cpp")
+        LanguageVO(id: "12", name: "C++", extension: ".cpp")
     }
     
     static var sample: [Self] {
