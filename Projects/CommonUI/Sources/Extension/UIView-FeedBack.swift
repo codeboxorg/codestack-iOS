@@ -10,11 +10,13 @@ import UIKit
 
 
 private struct FeedBack {
-    static var feedBack: UIImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    static var feedBack: UIImpactFeedbackGenerator {
+        UIImpactFeedbackGenerator(style: .medium)
+    }
 }
 
 public extension UIView {
-    @objc func feedBackGenerate(_ button: UIButton){
+    func feedBackGenerate(){
         FeedBack.feedBack.impactOccurred()
     }
     

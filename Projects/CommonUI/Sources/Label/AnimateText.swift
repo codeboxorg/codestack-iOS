@@ -5,6 +5,28 @@ import Combine
 import SnapKit
 import RxSwift
 
+extension Collection where Indices.Iterator.Element == Int {
+    subscript (safe index: Int) -> Iterator.Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+
+extension Array {
+    subscript(safe range: Range<Index>) -> ArraySlice<Element>? {
+        if range.endIndex > endIndex {
+            if range.startIndex >= endIndex {
+                return nil
+            } else {
+                return self[range.startIndex..<endIndex]
+            }
+        } else {
+            return self[range]
+        }
+    }
+}
+
+
+
 open class AnimateTextViewController: UIViewController {
     
     public lazy var animateTextLabel: [AnimateTextLabel] = []
@@ -38,12 +60,12 @@ open class AnimateTextViewController: UIViewController {
         
         zip(animateTextLabel, animateFont).forEach {
             $0.0.font = $0.1 
-            $0.0.textColor = .whiteGray
+            $0.0.textColor = .black
             stackView.addArrangedSubview($0.0)
         }
         
         addAutoLayout()
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .white
         refreshButton.gesture(.tap())
             .sink(receiveValue: { [weak self] _ in
                 guard let vc = self else { return }
@@ -56,6 +78,7 @@ open class AnimateTextViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         containers.startInOrder()
+        print("viewWillApper")
     }
     
     public override func viewDidAppear(_ animated: Bool) {
@@ -163,12 +186,6 @@ public final class AnimateContainer {
             $0.text = ""
             $0.cancel()
         }
-    }
-}
-
-extension Collection where Indices.Iterator.Element == Index {
-    subscript (safe index: Index) -> Iterator.Element? {
-        return indices.contains(index) ? self[index] : nil
     }
 }
 
