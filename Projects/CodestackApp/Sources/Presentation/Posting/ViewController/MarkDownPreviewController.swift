@@ -18,9 +18,8 @@ final class MarkDownPreviewController: BaseContentViewController<UIScrollView> {
     private var disposeBag = DisposeBag()
     lazy var dismissButton: UIButton = UIView().makeSFSymbolButton(symbolName: "xmark")
     private(set) lazy var sendButton: LoadingUIButton = {
-        var button = LoadingUIButton(frame: .zero, title: "발행하기")
-        button.addTarget(self, action: #selector(button.feedBackGenerate(_:)), for: .touchUpInside)
-        return button
+        let feedBack = BaseFeedBack(LoadingUIButton(frame: .zero, title: "발행하기"))
+        return feedBack.button
     }()
     
     static func create(_ markdown: String) -> MarkDownPreviewController {
