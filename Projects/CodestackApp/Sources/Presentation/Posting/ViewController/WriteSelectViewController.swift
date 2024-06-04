@@ -13,7 +13,7 @@ import RxSwift
 import RxCocoa
 import RxFlow
 
-final class ContainerViewController: BaseViewController {
+final class ClearContainerViewController: BaseViewController {
     override func applyAttributes() {
         self.view.backgroundColor = .clear
     }
