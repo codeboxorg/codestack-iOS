@@ -8,17 +8,24 @@
 import UIKit
 import Global
 
-public final class BoxContainerLabel: UILabel {
+public final class BoxContainerLabel: UIView {
     
-    private let maxWidth: (String,UIFont) -> CGFloat =
-    { text, font in
-        
-        "\(text)".width(withConstrainedHeight: 0, font: font) + 40
+    public var maxWidth: CGFloat {
+        "\(label.text ?? "")"
+            .width(
+                withConstrainedHeight: 0,
+                font: label.font
+            )
+        + 40
     }
     
-    private let maxHeight: (String,UIFont) -> CGFloat =
-    { text, font in
-        "\(text)".height(withConstrainedWidth: 0, font: font) + 10
+    public var maxHeight: CGFloat {
+        "\(label.text ?? "")"
+            .height(
+                withConstrainedWidth: 0,
+                font: label.font
+            )
+        + 10
     }
     
     private let container: UIView = {
@@ -31,7 +38,7 @@ public final class BoxContainerLabel: UILabel {
         return label
     }()
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         addAutoLayout()
     }
@@ -40,16 +47,38 @@ public final class BoxContainerLabel: UILabel {
         fatalError("required init fatalError")
     }
     
+    public convenience init(
+        color: UIColor,
+        text: String,
+        font: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .headline),
+                              size: 16),
+        border: UIColor,
+        borderwidth: CGFloat = 1,
+        corner: CGFloat = 8
+    ) {
+        self.init(frame: .zero)
+        self.label.textColor = color
+        self.label.font = font
+        self.label.text = text
+        self.container.layer.borderColor = border.cgColor
+        container.layer.borderWidth = 1
+        container.layer.cornerRadius = corner
+    }
+    
     private func addAutoLayout(){
         addSubview(container)
         container.addSubview(label)
         container.translatesAutoresizingMaskIntoConstraints = false
+        label.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             container.topAnchor.constraint(equalTo: self.topAnchor),
             container.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             container.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            container.bottomAnchor.constraint(equalTo: self.bottomAnchor)  
+            container.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            
+            label.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: container.centerYAnchor)
         ])
     }
     
@@ -59,14 +88,13 @@ public final class BoxContainerLabel: UILabel {
         container.layer.cornerRadius = corner
     }
     
-    public func setContainer(_ font: UIFont = UIFont.boldSystemFont(ofSize: 16),
-                      _ text: String)
-    {
-        self.label.font = font
+    public func setText(_ text: String) {
         self.label.text = text
-        self.label.sizeToFit()
-        self.layoutIfNeeded()
-        self.label.center = container.center
+    }
+    
+    public func setContainer(_ font: UIFont = UIFont.boldSystemFont(ofSize: 16), _ text: String) {
+        label.font = font
+        label.text = text
     }
     
 }

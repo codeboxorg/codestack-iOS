@@ -14,9 +14,68 @@ public final class CustomTabBar: UITabBar {
     
     private var shapeLayer: CALayer?
     
+    public override init(frame: CGRect) {
+        super.init(frame: .zero)
+        self.clipsToBounds = false
+        self.isTranslucent = false
+        self.tintColor = .codestackGradient.first!
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithTransparentBackground()
+        tabBarAppearance.backgroundColor = UIColor.clear
+        tabBarAppearance.shadowColor = nil
+        self.scrollEdgeAppearance = tabBarAppearance
+        self.standardAppearance = tabBarAppearance
+        self.backgroundImage = UIImage()
+        self.shadowImage = UIImage()
+    }
+    
+    convenience init(_ bounds: CGRect, _ handler: @escaping (UIAction) -> Void) {
+        self.init(frame: .zero)
+        setupMiddleButton(bounds, handler)
+    }
+    
+    public required init(coder: NSCoder) {
+        fatalError()
+    }
+    
     public override func draw(_ rect: CGRect) {
         super.draw(rect)
         self.addShape()
+    }
+    
+    public func setupMiddleButton(_ bounds: CGRect, _ handler: @escaping (UIAction) -> Void) {
+        let image = UIImage(systemName: "plus")!
+            .resize(
+                targetSize: CGSize(
+                    width: 25,
+                    height: 25
+                )
+            )
+        
+        let colorImage = image.imageWith(color: .whiteGray)
+        let width = bounds.width + 10
+        
+        let button = UIButton(
+            frame: CGRect(
+                x: (width / 2) - 25,
+                y: -20,
+                width: 50,
+                height: 50
+            )
+        )
+        
+        button.layer.cornerRadius = 25
+        button.backgroundColor = .sky_blue
+        
+        button.layer.addImageGradient(contents: colorImage)
+        
+        button
+            .addAction(
+                UIAction(handler: handler),
+                for: .touchUpInside
+            )
+        
+        self.addSubview(button)
     }
     
     private func addShape() {

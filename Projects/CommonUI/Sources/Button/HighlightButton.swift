@@ -34,11 +34,3 @@ public final class HighlightButton: UIButton {
         self.setTitleColor(.label, for: .normal)
     }
 }
-
-
-@available(iOS 17.0, *)
-#Preview {
-    let button = HighlightButton()
-    button.setTitle("안녕하세요", for: .normal)
-    return button
-}

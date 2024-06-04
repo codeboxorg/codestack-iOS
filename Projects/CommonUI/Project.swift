@@ -10,7 +10,10 @@ import ProjectDescriptionHelpers
 
 let project = Project.createModule(name: "CommonUI",
                                    product: .staticFramework,
-                                   dependencies: [.PRO.global,
-                                                  .SPM.snapKit,
-                                                  .SPM.swiftHanguel,
-                                                  .SPM.rxSwift,])
+                                   hostTargetNeeded: true,
+                                   dependencies: [
+                                    .PRO.global,
+                                    .SPM.snapKit,
+                                    .SPM.swiftHanguel,
+                                    .SPM.rxSwift
+                                   ])
