@@ -56,28 +56,25 @@ final class ProblemPopUpView: UIView {
         return button
     }()
     
-    private lazy var problemStepButton: NumberButton = {
-       let button = NumberButton()
-        button.settingNumber(for: 1)
-        button.settingText(for: "문제")
-        button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
-        return button
+    private(set) lazy var problemStepButton: NumberButton = {
+        let feedback = BaseFeedBack(NumberButton())
+        feedback.button.settingNumber(for: 1)
+        feedback.button.settingText(for: "문제")
+        return feedback.button
     }()
     
-    private lazy var resultStepButton: NumberButton = {
-       let button = NumberButton()
-        button.settingNumber(for: 2)
-        button.settingText(for: "결과")
-        button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
-        return button
+    private(set) lazy var resultStepButton: NumberButton = {
+        let feedback = BaseFeedBack(NumberButton())
+        feedback.button.settingNumber(for: 2)
+        feedback.button.settingText(for: "결과")
+        return feedback.button
     }()
     
-    private lazy var submissionListStepButton: NumberButton = {
-        let button = NumberButton()
-         button.settingNumber(for: 3)
-         button.settingText(for: "제출현황")
-         button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
-         return button
+    private(set) lazy var submissionListStepButton: NumberButton = {
+        let feedback = BaseFeedBack(NumberButton())
+        feedback.button.settingNumber(for: 3)
+        feedback.button.settingText(for: "제출현황")
+        return feedback.button
     }()
     
     private lazy var popUpContainerView: PopUpcontainer = {
@@ -91,10 +88,9 @@ final class ProblemPopUpView: UIView {
         return button
     }()
     
-    lazy var backButton: BackButton = {
-        let button = BackButton()
-        button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
-        return button
+    private(set) lazy var backButton: BackButton = {
+        let feedBack = BaseFeedBack(BackButton())
+        return feedBack.button
     }()
     
     private let button_width_height: CGFloat = 44
@@ -106,10 +102,9 @@ final class ProblemPopUpView: UIView {
     }()
     
     /// 문제 제출 버튼
-    private lazy var sendButton: LoadingUIButton = {
-        var button = LoadingUIButton(frame: .zero, title: "제출하기")
-        button.addTarget(self, action: #selector(feedBackGenerate(_:)), for: .touchUpInside)
-        return button
+    private(set) lazy var sendButton: LoadingUIButton = {
+        let feedback = BaseFeedBack(LoadingUIButton(frame: .zero, title: "제출하기"))
+        return feedback.button
     }()
     
     private lazy var languageButton: LanguageButton = {
