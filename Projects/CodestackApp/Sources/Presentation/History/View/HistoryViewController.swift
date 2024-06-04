@@ -25,8 +25,8 @@ class HistoryViewController: UIViewController {
         return history
     }
     
-    private let container: ContainerView = {
-        let view = ContainerView(frame: .zero)
+    private let container: HistoryContainer = {
+        let view = HistoryContainer(frame: .zero)
         view.backgroundColor = .tertiarySystemBackground
         return view
     }()

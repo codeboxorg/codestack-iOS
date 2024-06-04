@@ -9,7 +9,7 @@ import UIKit
 
 
 
-class ContainerView: UIView{
+class HistoryContainer: UIView{
     
     
     override init(frame: CGRect) {
