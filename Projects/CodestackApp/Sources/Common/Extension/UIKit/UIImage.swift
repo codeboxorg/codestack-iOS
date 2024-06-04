@@ -8,15 +8,13 @@
 import UIKit
 
 
-extension UIImage{
-    
-    
-    /// 탭바 이미지 위치를 맞추기 위한 함수
-    /// - Parameter size: 이미지 사이즈
-    /// - Returns: 이미지
-    func baseOffset(size: CGFloat = 12) -> UIImage {
-        return self.withBaselineOffset(fromBottom: size)
-    }
+extension UIImage {
+//    /// 탭바 이미지 위치를 맞추기 위한 함수
+//    /// - Parameter size: 이미지 사이즈
+//    /// - Returns: 이미지
+//    func baseOffset(size: CGFloat = 12) -> UIImage {
+//        return self.withBaselineOffset(fromBottom: size)
+//    }
 }
 
 
@@ -70,12 +68,12 @@ struct ImageCompressor {
 }
 
 extension UIImage {
-    func resize(targetSize: CGSize) -> UIImage {
-         let newRect = CGRect(x: 0, y: 0, width: targetSize.width, height: targetSize.height).integral
-         return UIGraphicsImageRenderer(size: targetSize).image { v in
-             draw(in: newRect)
-         }
-     }
+//    func resize(targetSize: CGSize) -> UIImage {
+//         let newRect = CGRect(x: 0, y: 0, width: targetSize.width, height: targetSize.height).integral
+//         return UIGraphicsImageRenderer(size: targetSize).image { v in
+//             draw(in: newRect)
+//         }
+//     }
     
     func scalePreservingAspectRatio(targetSize: CGSize) -> UIImage {
             // Determine the scale factor that preserves aspect ratio
@@ -107,22 +105,32 @@ extension UIImage {
 }
 
 extension UIImage {
-    func imageWithColor(color: UIColor) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(self.size, false, self.scale)
-        color.setFill()
-
-        let context = UIGraphicsGetCurrentContext()
-        context?.translateBy(x: 0, y: self.size.height)
-        context?.scaleBy(x: 1.0, y: -1.0)
-        context?.setBlendMode(CGBlendMode.normal)
-
-        let rect = CGRect(origin: .zero, size: CGSize(width: self.size.width, height: self.size.height))
-        context?.clip(to: rect, mask: self.cgImage!)
-        context?.fill(rect)
-
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return newImage!
-    }
+//    func imageWithColor(color: UIColor) -> UIImage {
+//        UIGraphicsBeginImageContextWithOptions(
+//            self.size,
+//            false,
+//            self.scale
+//        )
+//        color.setFill()
+//
+//        let context = UIGraphicsGetCurrentContext()
+//        context?.translateBy(x: 0, y: self.size.height)
+//        context?.scaleBy(x: 1.0, y: -1.0)
+//        context?.setBlendMode(CGBlendMode.normal)
+//
+//        let rect = CGRect(
+//            origin: .zero,
+//            size: CGSize(
+//                width: self.size.width,
+//                height: self.size.height
+//            )
+//        )
+//        context?.clip(to: rect, mask: self.cgImage!)
+//        context?.fill(rect)
+//
+//        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+//        UIGraphicsEndImageContext()
+//
+//        return newImage!
+//    }
 }
