@@ -15,7 +15,6 @@ import Domain
 import CommonUI
 
 // TODO: View -> UIViewCOntroller 로 변경해야됨
-
 final class ProblemPopUpView: UIView {
     
     private var popUpFlag: Bool = false
@@ -27,7 +26,7 @@ final class ProblemPopUpView: UIView {
         return scrollView
     }()
     
-    lazy var problemTitle: UILabel = {
+    private(set) var problemTitle: UILabel = {
         let label = UILabel().headLineLabel(size: 18)
         label.isHidden = true
         label.adjustsFontSizeToFitWidth = true
@@ -35,18 +34,18 @@ final class ProblemPopUpView: UIView {
         return label
     }()
     
-    private let activityIndicator = {
+    private(set) var activityIndicator = {
         let view = UIActivityIndicatorView(style: .large)
         view.color = .sky_blue
         return view
     }()
     
-    private let refreshLabel: UILabel = {
+    private(set) var refreshLabel: UILabel = {
         let label = UILabel().labelSetting("페이지 로드를 실패하였습니다", .gray, .boldSystemFont(ofSize: 20))
         return label
     }()
     
-    private lazy var refreshButton: UIButton = {
+    private(set) var refreshButton: UIButton = {
         let button = UIButton(frame: .zero)
         button.tintColor = UIColor.sky_blue
         button.imageView?.contentMode = .scaleAspectFit
@@ -77,7 +76,7 @@ final class ProblemPopUpView: UIView {
         return feedback.button
     }()
     
-    private lazy var popUpContainerView: PopUpcontainer = {
+    private let popUpContainerView: PopUpcontainer = {
         let containerView = PopUpcontainer()
         return containerView
     }()
@@ -107,7 +106,7 @@ final class ProblemPopUpView: UIView {
         return feedback.button
     }()
     
-    private lazy var languageButton: LanguageButton = {
+    private(set) var languageButton: LanguageButton = {
         let button = LanguageButton().makeLanguageButton()
         return button
     }()
@@ -127,7 +126,7 @@ final class ProblemPopUpView: UIView {
     }
     
     // 결과 보여주는 뷰
-    private let resultStatusView: SubmissionResultView = {
+    private(set) var resultStatusView: SubmissionResultView = {
         let resultStatusView = SubmissionResultView()
         return resultStatusView
     }()
@@ -146,11 +145,6 @@ final class ProblemPopUpView: UIView {
     convenience init(frame: CGRect, _ delegate: CodeEditorViewController) {
         self.init(frame: frame)
         self.delegate = delegate
-        problemGestureAction()
-        resultGestureAction()
-        submissionListGestureAction()
-        observingEvent()
-        loadingSubmitEvent()
         settingColor()
         self.popUpContainerView.layer.addBorder(side: .bottom, thickness: 1, color: UIColor.red.cgColor)
     }
@@ -192,160 +186,13 @@ final class ProblemPopUpView: UIView {
     
     private weak var delegate: CodeEditorViewController?
     
-    var disposeBag = DisposeBag()
-    let languageRelay = BehaviorRelay<LanguageVO>(value: LanguageVO.default)
-    let pageValue = BehaviorRelay<SolveResultType>(value: .problem)
-    let submissionLoadingWating = BehaviorRelay<Bool>(value: false)
-    let problemState = PublishRelay<CodeEditorViewModel.ProblemState>()
+    // TODO: ProblemPopUpVIew 에서 데이터와 View가 결합되고 있습니다.
+    // TODO: 이 의존성으로 인해 유지보수가 힘들어지고있습니다. 데이터의 양방향성 때문에
+    // TODO: 한 데이터를 변경할시에 데이터의 흐름을 파악하는데 오래 걸리고 있습니다.
+    // TODO: View를 온전히 Data를 외부에서 주입받고 ViewModel 도 여러개로 분리 하는것을 권장합니다.
 
     private var webViewHeight: CGFloat = 0
     private let leading_trailing_spacing: CGFloat = 8
-    
-    //MARK: - Observing Event
-    private func observingEvent(){
-        languageRelay
-            .distinctUntilChanged()
-            .bind(onNext: { [weak self] language in
-                self?.languageButton.setTitle(language.name, for: .normal)
-            }).disposed(by: disposeBag)
-        
-        pageValue.skip(1).subscribe(with: self,
-                            onNext: { vm, page in
-            switch page {
-            case .problem:
-                vm.remakeWkWebViewHeight(height: vm.webViewHeight)
-                
-            case .result(let submission):
-                vm.remakeResultStatus(height: 300)
-                
-                vm.scrollView.contentOffset = CGPoint.zero
-                guard let submission else { return }
-                vm.resultStatusView.status.onNext(submission)
-                
-            case .resultList(_):
-                vm.remakeSubmissionListResults(height: 300)
-            }
-        }).disposed(by: disposeBag)
-        
-        problemRefreshTap
-            .drive(with: self, onNext: { view, _ in
-                view.refreshButton.isHidden = true
-                view.refreshLabel.text = "로딩중......"
-                view.activityIndicator.startAnimating()
-            }).disposed(by: disposeBag)
-        
-        problemState
-            .subscribe(with: self, onNext: { view, value in
-                // Refresh end
-                view.activityIndicator.stopAnimating()
-                view.refreshButton.isHidden = false
-                view.refreshLabel.text = "페이지 로드를 실패하였습니다"
-                
-                if case let .fetched(problem) = value {
-                    view.refreshLabel.removeFromSuperview()
-                    view.refreshButton.removeFromSuperview()
-                    view.loadHTMLToWebView(html: problem.context)
-                    return
-                }
-            }).disposed(by: disposeBag)
-    }
-    
-    private func loadingSubmitEvent() {
-        submissionLoadingWating
-            .subscribe(with: self,onNext: { view, value in
-                value ? view.sendButton.showLoading() : view.sendButton.hideLoading()
-            }).disposed(by: disposeBag)
-    }
-    
-    
-    private func problemGestureAction() {
-        problemStepButton.container.rx.gesture(.tap())
-            .when(.recognized).asDriver(onErrorJustReturn: .init())
-            .drive(with: self,
-                   onNext: { view, _ in
-                view.impact()
-                view.pageValue.accept(.problem)
-            }).disposed(by: disposeBag)
-    }
-    
-    private func resultGestureAction() {
-        resultStepButton.container.rx.gesture(.tap())
-            .when(.recognized).asDriver(onErrorJustReturn: .init())
-            .drive(with: self,
-                   onNext: { view, _ in
-                view.impact()
-                view.pageValue.accept(.result(nil))
-            }).disposed(by: disposeBag)
-    }
-    
-    private func submissionListGestureAction() {
-        submissionListGesture
-            .drive(with: self,
-                   onNext: { view, _ in
-                view.impact()
-                view.pageValue.accept(.resultList([]))
-            }).disposed(by: disposeBag)
-    }
-    
-    lazy var problemRefreshTap = refreshButton.rx.tap.asDriver()
-    let linkDetector = PublishSubject<String>()
-    lazy var favoriteTap: Driver<Bool>
-    =
-    heartButton.rx.tap
-        .compactMap { [weak self] in
-            guard let self else { return false }
-            return !self.heartButton.flag
-        }.asDriver(onErrorJustReturn: false)
-    
-    lazy var submissionListGesture
-    =
-    submissionListStepButton.container.rx
-        .gesture(.tap())
-        .when(.recognized)
-        .asDriver(onErrorJustReturn: .init())
-    
-    //MARK: - Binding To ViewModel
-    func dissmissAction() -> Driver<Void> {
-        return backButton.rx.tap.asDriver()
-    }
-    
-    func sendSubmissionAction() -> Driver<Void> {
-        sendButton.rx.tap.asDriver()
-    }
-    
-    func languageAction() -> Driver<LanguageVO> {
-        languageRelay.asDriver()
-    }
-    
-    /// 언어 모델
-    private var languages: [LanguageVO] = []
-    
-    /// 언어 Title Action && languageRelay에 값 전달 -> ViewModel로 데이터 전달
-    private lazy var setTitleAction: (UIAction) -> () = { [weak self] action in
-        guard let self else {return}
-        self.languageButton.setTitle(action.title, for: .normal)
-        if let value = languages.filter({ $0.name == action.title }).first {
-            self.languageRelay.accept(value)
-        }
-    }
-    
-    /// 언어 설정 하기 위한 함수
-    /// - Parameter languages: 언어 배열
-    func setLangueMenu(languages: [LanguageVO]){
-        self.languages = languages
-        
-        let element = languages.map { lan in
-            UIAction(title: lan.name, handler: setTitleAction)
-        }
-        
-        if let lan = languages.first{
-            languageButton.setTitle(lan.name, for: .normal)
-        }
-        
-        languageButton.showsMenuAsPrimaryAction = true
-        languageButton.menu = UIMenu(title: "언어", image: nil, identifier: nil, options: .destructive, children: element)
-    }
-    
 }
 
 
@@ -386,7 +233,7 @@ extension ProblemPopUpView: WKNavigationDelegate{
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
            if navigationAction.navigationType == WKNavigationType.linkActivated,
               let url = navigationAction.request.url {
-                linkDetector.onNext(url.absoluteString)
+               delegate?.actionProvider.linkDector = url
                decisionHandler(WKNavigationActionPolicy.cancel)
                return
            }
@@ -399,7 +246,7 @@ extension ProblemPopUpView: WKNavigationDelegate{
             guard let self else { return }
             let float = height as! CGFloat
             self.webViewHeight = float
-            self.remakeWkWebViewHeight(height: float)
+            self.remakeWkWebViewHeight()
             self.wkWebView.isHidden = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
                 self?.wkWebView.isHidden = false
@@ -515,7 +362,7 @@ extension ProblemPopUpView{
         }
     }
     
-    private func remakeWkWebViewHeight(height: CGFloat){
+    func remakeWkWebViewHeight() {
         let height = self.webViewHeight
         hiddenAlphaEnable(result: .problem)
         
@@ -530,7 +377,7 @@ extension ProblemPopUpView{
         self.popUpContainerView.layoutIfNeeded()
     }
     
-    private func remakeResultStatus(height: CGFloat = 300) {
+    func remakeResultStatus(height: CGFloat = 300) {
         hiddenAlphaEnable(result: .result(nil))
         
         resultStatusView.snp.remakeConstraints { make in
@@ -540,7 +387,7 @@ extension ProblemPopUpView{
         }
     }
     
-    private func remakeSubmissionListResults(height: CGFloat) {
+    func remakeSubmissionListResults(height: CGFloat) {
         hiddenAlphaEnable(result: .resultList([]))
         
         submissionListView.snp.remakeConstraints { make in
