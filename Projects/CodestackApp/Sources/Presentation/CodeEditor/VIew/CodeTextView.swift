@@ -27,7 +27,7 @@ class CodeUITextView: UITextView {
         self.autocorrectionType = UITextAutocorrectionType.no
         self.autocapitalizationType = UITextAutocapitalizationType.none
         self.alwaysBounceVertical = true
-        
+        self.smartQuotesType = .no
         self.text = """
 #include <stdio.h>
     

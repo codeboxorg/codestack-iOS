@@ -10,7 +10,7 @@ import RxSwift
 import Domain
 import CommonUI
 
-final class SubmissionResultView: UIView{
+final class SubmissionResultView: UIView {
     
     lazy var status = Binder<SubmissionVO>(self)
     { target, submission in
