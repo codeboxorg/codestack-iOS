@@ -3,7 +3,7 @@ import Foundation
 public struct JZSubmissionEndpoint: EndPoint {
     
     public var scheme: String {
-        "http"
+        "https"
     }
     
     public var host: String {
@@ -14,9 +14,9 @@ public struct JZSubmissionEndpoint: EndPoint {
         "/submissions"
     }
     
-    public var port: Int? {
-        2358
-    }
+//    public var port: Int? {
+//        2358
+//    }
     
     public var method: RequestMethod {
         .post

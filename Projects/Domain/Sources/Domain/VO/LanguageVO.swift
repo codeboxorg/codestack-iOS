@@ -54,7 +54,7 @@ public extension LanguageVO {
         let `extension` = [".c",".cpp", ".js", ".go", ".py", ".swift"]
         
         let languages = zip(lang,`extension`).enumerated().map { (value) in
-            let (offset, (name, ex)) = value
+            let (_, (name, _)) = value
             return languageMap[name] ?? .default
         }
         return languages

@@ -227,20 +227,24 @@ final class CodeEditorViewModel: CodeEditorViewModelType {
                 }
                 return Observable.zip(action, model)
             }
-            .subscribe(with: self, onNext: { vm, value in
-                let (result, model) = value
-                switch result {
-                case .success(let flag):
-                    vm.favoriteProblem.accept(flag)
-                    let submissionVO = model.toSubmissionVO()
-                    // ADD OR DELETE Submission VO in history ViewModel
-                    let history = vm.historyViewModel
-                    flag ? history?.sendSubmission.accept(submissionVO) : history?.deleteSubmission.accept(submissionVO)
-                    
-                case .failure(_):
-                    vm.favoriteProblem.accept(false)
+            .subscribe(
+                with: self,
+                onNext: { vm, value in
+                    let (result, model) = value
+                    switch result {
+                    case .success(let flag):
+                        vm.favoriteProblem.accept(flag)
+                        let submissionVO = model.toSubmissionVO()
+                        // ADD OR DELETE Submission VO in history ViewModel
+                        let history = vm.historyViewModel
+                        flag ? history?.sendSubmission.accept(submissionVO) : history?.deleteSubmission.accept(submissionVO)
+                        
+                    case .failure(_):
+                        vm.favoriteProblem.accept(false)
+                    }
                 }
-            }).disposed(by: disposeBag)
+            )
+            .disposed(by: disposeBag)
     }
     
     private func problemRefreshAction(action: Driver<Void>) {

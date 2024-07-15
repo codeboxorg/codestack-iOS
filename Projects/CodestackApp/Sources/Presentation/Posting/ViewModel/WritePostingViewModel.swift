@@ -31,7 +31,7 @@ final class WritePostingViewModel: ViewModelType, Stepper {
     
     struct Input {
         var initState: Observable<StoreVO>
-        var saveAction: Observable<Void>
+        var saveAction: Observable<[String]>
     }
     
     typealias MarkDown = String
@@ -94,17 +94,24 @@ final class WritePostingViewModel: ViewModelType, Stepper {
             }).disposed(by: disposeBag)
     }
     
-    private func saveAction(save input: Observable<Void>) {
+    private func saveAction(save input: Observable<[String]>) {
         // MARK: Save Content Action Flag
         input
             .withUnretained(self)
             .do(onNext: { vm, _ in vm.loadingState.onNext(true)} )
-            .flatMap { vm, _ in
-                vm.getMeInfo()
+            .flatMap { vm, tags in
+                Observable.zip(
+                    vm.getMeInfo(),
+                    Observable.just(tags)
+                )
             }
-            .map { state in
-                var (viewModel, member) = state
-                let storeVO = viewModel.storeVO.makeViewModel(nickname: member.nickName, imageURL: member.profileImage)
+            .map { (nested: ((StoreViewModel, MemberVO), [String])) in
+                var ((viewModel, member), tags) = nested
+                let storeVO = viewModel.storeVO.makeViewModel(
+                    nickname: member.nickName,
+                    imageURL: member.profileImage,
+                    tags: tags
+                )
                 let html = try viewModel.content.toHTML()
                 return CodestackStep.richText(html, storeVO)
             }

@@ -239,7 +239,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Swinject/Swinject.git",
       "state" : {
-        "revision" : "1ed342bd22d877f8dc4765f186659b9734f04865",
+        "revision" : "3125943807991bc271d366205d98713696d65a1f",
         "version" : "2.8.8"
       }
     },

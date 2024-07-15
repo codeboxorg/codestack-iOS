@@ -72,21 +72,6 @@ public final class DefaultFBRepository: FBRepository {
         .asObservable()
     }
     
-    public func fetchPostLists(offset: Int = 0, limit: Int = 20) -> Observable<[StoreVO]> {
-        let query = FirebaseQuery.postListQuery(offset, limit)
-        let endpoint = FireStoreEndPoint(KeychainItem.currentFBIdToken, runQuery: query)
-        
-        return rest.request(endpoint) { op in
-            try JSONDecoder().decode([QueryDocument<Store>].self, from: op)
-        }
-        .retry(when: { [weak self] errorObservable in
-            guard let self else { return Observable<Void>.never() }
-            return errorObservable.renewToken(with: self.trackTokenService)
-        })
-        .map { $0.toDomain().map { dto in dto.toDomain() } }
-        .asObservable()
-    }
-    
     public func fireStorePostMe() -> Observable<DocumentVO> {
         let uid = KeychainItem.currentFBLocalID
         let token = KeychainItem.currentFBIdToken
@@ -100,82 +85,6 @@ public final class DefaultFBRepository: FBRepository {
         })
         .map { $0.toDomain() }
         .asObservable()
-    }
-    
-    public func fetchPost(_ documentID: String) -> Observable<PostVO> {
-        let endpoint = FireStorePostingEndPoint(KeychainItem.currentFBIdToken, documentID)
-        return rest.request(endpoint) { data in
-            try JSONDecoder().decode(Post.self, from: data)
-        }
-        .retry(when: { [weak self] errorObservable in
-            guard let self else { return Observable<Void>.never() }
-            return errorObservable.renewToken(with: self.trackTokenService)
-        })
-        .map { $0.toDomain() }
-        .asObservable()
-    }
-    
-    public func writePostContent(_ markDown: String) -> Observable<[String: Any]?> {
-        let firebaseIDToken = KeychainItem.currentFBIdToken
-        let post = Post(markDown)
-        let endPoint = FireStoreWirteEndPoint(firebaseIDToken, post)
-
-        return rest.request(endPoint, operation: { [weak self] data in
-            let string = String(data: data, encoding: .utf8)!
-            return try? self?.convertToDictionary(from: string)
-        })
-        .asObservable()
-        .retry(when: { [weak self] errorObservable in
-            guard let self else { return Observable<Void>.never() }
-            return errorObservable.renewToken(with: self.trackTokenService)
-        })
-    }
-    
-    public func writePostConDefaulttent(_ store: StoreVO ,_ markDown: String) -> Observable<State<Void>> {
-        var store = store
-        if store.name.isEmpty {
-            store.name = UserManager.shared.profile.nickName
-            store.imageURL = UserManager.shared.profile.profileImage
-        }
-        return writePostContent(markDown)
-            .map { dictionary in
-                guard let path = dictionary?["name"] as? String,
-                      let markdownPath = path.components(separatedBy: "/").last
-                else { return "" }
-                return markdownPath
-            }
-            .withUnretained(self)
-            .flatMap { value -> Observable<State<Void>> in
-                let (repo, markdownPath) = value
-                store.markdownID = markdownPath
-                return repo.writePost(store)
-                    .andThen(Observable.just(.success(())))
-            }
-            .retry(when: { [weak self] errorObservable in
-                guard let self else { return Observable<Void>.never() }
-                return errorObservable.renewToken(with: self.trackTokenService)
-            })
-            .catchAndReturn(.failure(SendError.unowned))
-    }
-    
-    private func writePost(_ store: StoreVO) -> Completable {
-        let firebaseIDToken = KeychainItem.currentFBIdToken
-        
-        let store = Store(userId: store.userId,
-                          title: store.title,
-                          name: store.name,
-                          date: store.date,
-                          description: store.description,
-                          markdown: store.markdownID,
-                          tags: store.tags)
-        
-        let endPoint = FireStoreWirteStoreEndPoint(firebaseIDToken, store)
-        
-        return rest.post(endPoint)
-            .retry(when: { [weak self] errorObservable in
-                guard let self else { return Observable<Void>.never() }
-                return errorObservable.renewToken(with: self.trackTokenService)
-            })
     }
     
     public func fetchOtherUser(uid: String) -> Observable<FBUserNicknameVO> {
@@ -244,6 +153,18 @@ public final class DefaultFBRepository: FBRepository {
         })
     }
     
+    public func fetchMyProfileImage() -> Observable<Data> {
+        guard let path = UserManager.profileImage else { return .empty() }
+        let endPoint = StorageProfileEndPoint(path)
+        return rest.request(endPoint, operation: { data in data}).asObservable()
+            .retry(when: { [weak self] errorObservable in
+                guard let self else { return Observable<Void>.never() }
+                return errorObservable.renewToken(with: self.trackTokenService)
+            })
+    }
+}
+
+extension DefaultFBRepository {
     private func updateProfileImageInStore() -> Observable<String> {
         let firebaseIDToken = KeychainItem.currentFBIdToken
         let uid = KeychainItem.currentFBLocalID
@@ -263,23 +184,5 @@ public final class DefaultFBRepository: FBRepository {
                 guard let self else { return Observable<Void>.never() }
                 return errorObservable.renewToken(with: self.trackTokenService)
             })
-    }
-    
-    public func fetchMyProfileImage() -> Observable<Data> {
-        guard let path = UserManager.profileImage else { return .empty() }
-        let endPoint = StorageProfileEndPoint(path)
-        return rest.request(endPoint, operation: { data in data}).asObservable()
-            .retry(when: { [weak self] errorObservable in
-                guard let self else { return Observable<Void>.never() }
-                return errorObservable.renewToken(with: self.trackTokenService)
-            })
-    }
-}
-
-extension DefaultFBRepository {
-    func convertToDictionary(from text: String) throws -> [String: Any] {
-        guard let data = text.data(using: .utf8) else { return [:] }
-        let anyResult: Any = try JSONSerialization.jsonObject(with: data, options: [])
-        return anyResult as? [String: Any] ?? [:]
     }
 }

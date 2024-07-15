@@ -10,6 +10,7 @@ import RxFlow
 import RxCocoa
 import Global
 import Domain
+import CommonUI
 
 struct SideMenuItem {
     let icon: UIImage?

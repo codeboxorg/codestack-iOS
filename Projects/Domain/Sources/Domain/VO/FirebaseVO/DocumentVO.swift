@@ -94,15 +94,17 @@ public extension StoreVO {
                 tags: tags)
     }
     
-    func makeViewModel(nickname: String, imageURL: String) -> StoreVO {
-        StoreVO(userId: "",
-                title: self.title,
-                name: nickname,
-                date: self.date,
-                imageURL: imageURL,
-                description: self.description,
-                markdown: self.markdownID,
-                tags: tags)
+    func makeViewModel(nickname: String, imageURL: String, tags: [String] = []) -> StoreVO {
+        StoreVO(
+            userId: "",
+            title: self.title,
+            name: nickname,
+            date: self.date,
+            imageURL: imageURL,
+            description: self.description,
+            markdown: self.markdownID,
+            tags: tags == [] ? self.tags : tags
+        )
     }
 }
 

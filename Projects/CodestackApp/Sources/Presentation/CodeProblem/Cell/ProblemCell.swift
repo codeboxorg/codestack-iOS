@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import Domain
 import Global
+import CommonUI
 
 class ProblemCell: UITableViewCell{
     
@@ -81,7 +82,7 @@ class ProblemCell: UITableViewCell{
     {
         didSet {
             if let languages {
-                self.langugeContainer.setLanguage(languages)
+                self.langugeContainer.setTagItem(languages.map(\.name))
                 let height = self.langugeContainer.getCurrentIntrinsicHeight()
                 self.languageContainerContainer.snp.updateConstraints { make in
                     make.height.equalTo(height).priority(.low)

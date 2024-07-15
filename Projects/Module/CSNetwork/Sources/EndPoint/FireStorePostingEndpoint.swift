@@ -27,8 +27,10 @@ public struct FireStorePostingEndPoint: EndPoint {
     public var queryParams: [String : String]?
     
     public init(_ token: String, _ docID: String) {
-        self.header = ["Content-Type": "application/json",
-                       "Authorization" : "Bearer \(token)"]
+        self.header = [
+            "Content-Type": "application/json",
+            "Authorization" : "Bearer \(token)"
+        ]
         self.path = ""
         defer {
             self.path =

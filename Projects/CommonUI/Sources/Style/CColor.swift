@@ -28,6 +28,7 @@ public enum CustomColor {
     case purpleBlack
     case customBlack
     case threadBlack
+    case editorBlack
     
     @available(iOS 15.0, *)
     public var sColor: Color {
@@ -36,6 +37,8 @@ public enum CustomColor {
     
     public var color: UIColor {
         switch self {
+        case .editorBlack:
+            return UIColor(hexCode: "#1D1F21")
         case .juhwang:
             return UIColor(hexCode: "#ff7f00")
         case .juhwang_2:
@@ -107,6 +110,16 @@ public extension UIColor {
                 return .whiteGray
             } else {
                 return .label
+            }
+        })
+    }
+    
+    static var dynamicRevertColor: UIColor {
+        UIColor(dynamicProvider: { trait in
+            if trait.userInterfaceStyle == .dark {
+                return .label
+            } else {
+                return .darkGray
             }
         })
     }

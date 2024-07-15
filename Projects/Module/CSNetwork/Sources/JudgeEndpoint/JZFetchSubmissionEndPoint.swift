@@ -3,16 +3,16 @@ import Foundation
 public struct JZFetchSubmissionEndpoint: EndPoint {
     
     public var scheme: String {
-        "http"
+        "https"
     }
     
     public var host: String {
         judgeZeroBase
     }
     
-    public var port: Int? {
-        2358
-    }
+//    public var port: Int? {
+//        2358
+//    }
     
     public var path: String = "/submissions"
     

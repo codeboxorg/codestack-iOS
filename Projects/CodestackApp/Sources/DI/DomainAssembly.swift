@@ -22,9 +22,13 @@ public struct DomainAssembly: Assembly {
             let web = resolver.resolve(WebRepository.self)!
             let fbRepo = resolver.resolve(FBRepository.self)!
             let authRepo = resolver.resolve(AuthRepository.self)!
-            return ProfileUsecase(dependency: .init(webRepository: web,
-                                                    fbRepository: fbRepo,
-                                                    authRepository: authRepo))
+            return ProfileUsecase(
+                dependency: .init(
+                    webRepository: web,
+                    fbRepository: fbRepo,
+                    authRepository: authRepo
+                )
+            )
         }.inObjectScope(.container)
         
         container.register(ProblemUsecase.self) { resolver in
@@ -40,28 +44,44 @@ public struct DomainAssembly: Assembly {
             let db = resolver.resolve(DBRepository.self)!
             let web = resolver.resolve(WebRepository.self)!
             let submission = resolver.resolve(SubmissionRepository.self)!
-            return DefaultHistoryUsecase.init(webRepository: web, dbRepository: db, submissionRepository: submission)
+            return DefaultHistoryUsecase.init(
+                webRepository: web,
+                dbRepository: db,
+                submissionRepository: submission
+            )
         }
         
         container.register(HomeUsecase.self) { resolver in
             let db = resolver.resolve(DBRepository.self)!
             let web = resolver.resolve(WebRepository.self)!
             let submission = resolver.resolve(SubmissionRepository.self)!
-            return HomeUsecase(webRepository: web, dbRepository: db, submissionRepository: submission)
+            return HomeUsecase(
+                webRepository: web,
+                dbRepository: db,
+                submissionRepository: submission
+            )
         }
         
         container.register(SubmissionUseCase.self) { resolver in
             let db = resolver.resolve(DBRepository.self)!
             let web = resolver.resolve(WebRepository.self)!
             let submission = resolver.resolve(SubmissionRepository.self)!
-            return DefaultSubmissionUseCase(dbRepository: db,
-                                            webRepository: web,
-                                            submissionReposiotry: submission)
+            
+            return DefaultSubmissionUseCase(
+                dbRepository: db,
+                webRepository: web,
+                submissionReposiotry: submission
+            )
         }.inObjectScope(.container)
         
         container.register(FirebaseUsecase.self) { resolver in
             let fbrepository = resolver.resolve(FBRepository.self)!
-            return FirebaseUsecase(fbRepository: fbrepository)
+            let postingRepostiroy = resolver.resolve(PostingRepository.self)!
+            
+            return FirebaseUsecase(
+                fbRepository: fbrepository,
+                postingRepostiroy: postingRepostiroy
+            )
         }
         
         container.register(JZUsecase.self) { resolver in

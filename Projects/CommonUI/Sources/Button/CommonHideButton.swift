@@ -11,66 +11,38 @@ import UIKit
 
 public final class CommonHideButton: BaseButton {
     
-    public enum HideType: Equatable {
-        case tagHide(Bool)
-        case nameIntroduceHide(Bool)
-        
-        public mutating func toggle() {
-            if case let .tagHide(flag) = self {
-                if flag == false {
-                    self = .tagHide(true)
-                } else {
-                    self = .nameIntroduceHide(true)
-                }
-                return
-            }
-            
-            if case let .nameIntroduceHide(flag) = self {
-                if flag == true {
-                    self = .nameIntroduceHide(false)
-                } else {
-                    self = .tagHide(false)
-                }
-            }
-            
-        }
+    convenience init(action: ((Bool) -> Void)? = nil) {
+        self.init(frame: .zero)
+        self.action = action
     }
     
     private lazy var up = UIImage(systemName: "chevron.up")?
         .resized(withPercentage: 0.9)?
         .withTintColor(dynamicLabelColor)
     
-    private lazy var down = UIImage(systemName: "chevron.down")?
-        .resized(withPercentage: 0.9)?
-        .withTintColor(dynamicLabelColor)
-    
-    public lazy var hideFlagV2: HideType = .tagHide(false) {
-        didSet {
-            var image: UIImage?
-            
-            if case let .tagHide(flag) = oldValue
-            {
-                image = flag == false ? self.up : self.down
-            } 
-            else if case let .nameIntroduceHide(flag) = oldValue
-            {
-                image = flag == false ? self.up : self.down
-            }
-            
-            self.setImage(image, for: .normal)
-        }
-    }
     public lazy var hideFlag: Bool = false {
         didSet {
-            let image = oldValue == false ? self.up : self.down
-            self.setImage(image, for: .normal)
+            action?(!oldValue)
+            UIView.animate(
+                withDuration: 0.3,
+                animations: { [weak self] in
+                    self?.transform
+                    =
+                    (self?.hideFlag ?? false) ?
+                    CGAffineTransform(rotationAngle: CGFloat.pi * 0.999)
+                    :
+                    CGAffineTransformIdentity
+                }
+            )
         }
     }
+    
+    public var action: ((Bool) -> Void)?
     
     public override func applyAttributes() {
         self.imageView?.contentMode = .scaleAspectFit
         self.contentVerticalAlignment = .fill
         self.contentHorizontalAlignment = .fill
-        self.setImage(down, for: .normal)
+        self.setImage(up, for: .normal)
     }
 }

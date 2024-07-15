@@ -12,6 +12,7 @@ import RxCocoa
 import Global
 import Domain
 import SafariServices
+import CommonUI
 
 class HomeStepper: Stepper {
     
@@ -98,10 +99,12 @@ class HomeFlow: Flow {
             return navigateToRecentSolveList(editor: item)
             
         case .richText(let markdown, let storeVO):
-            let vc = injector.resolve(RichTextViewController.self,
-                                      markdown,
-                                      storeVO,
-                                      RichViewModel.ViewType.posting)
+            let vc = injector.resolve(
+                RichTextViewController<OtherPostingActionButtonGroup>.self,
+                markdown,
+                storeVO,
+                ViewType.posting
+            )
             rootViewController.pushViewController(vc, animated: true)
             return .none
             

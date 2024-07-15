@@ -62,7 +62,9 @@ final class WritePostingViewController: BaseViewController {
     
     deinit { Log.debug("WritePostingViewController Deinit") }
     
-    override func applyAttributes() {}
+    override func applyAttributes() {
+        
+    }
     
     override func binding() {
         viewModelBinding()
@@ -71,21 +73,6 @@ final class WritePostingViewController: BaseViewController {
 }
 
 extension WritePostingViewController {
-    
-//    var previewBinding: Binder<StoreViewModel> {
-//        Binder<StoreViewModel>(self) { target, value in
-//            do {
-//                
-////                let html = try value.content.toHTML()
-////                let vc = MarkDownPreviewController.create(html)
-////                vc.modalPresentationStyle = .fullScreen
-////                target.present(vc, animated: true)
-//            } catch {
-//                assert(false, "MarkDown Failed")
-//            }
-//        }
-//    }
-    
     var postSelected: Binder<Void> {
         Binder<Void>(self) { target, _ in
             let vc = TagSeletedViewController.create(with: target.viewModel)
@@ -110,18 +97,31 @@ extension WritePostingViewController {
     }
     
     func viewModelBinding() {
-        let saveAction = topNavigation.sendButton.rx.tap.asObservable()
+        let saveAction 
+        = topNavigation.sendButton.rx.tap
+            .map { [weak self] _ in
+                self?.postingView
+                    .tagSelectedView
+                    .tags?
+                    .sorted() ?? []
+            }
+            .asObservable()
         let titleObservable = postingView.titleTextField.rx.text.orEmpty.asObservable().defaultThrottle()
-        let descriptionObservable = postingView.descriptionField.rx.text.orEmpty.asObservable().defaultThrottle()
+        let descriptionObservable = Observable.just("")
         let tagsObservable = Observable.just(["구현"]).asObservable().defaultThrottle()
         
         let combineLatestForm
-        = Observable.combineLatest(titleObservable,descriptionObservable, tagsObservable)
-            .map { title, descriptions, tags in StoreVO.makeViewModel(title,descriptions, tags) }
+        = Observable.combineLatest(titleObservable,descriptionObservable,tagsObservable)
+            .map { title, descriptions, tags in
+                StoreVO.makeViewModel(title,descriptions, tags)
+            }
         
-        let output = viewModel.transform(input:
-                .init(initState: combineLatestForm,
-                      saveAction: saveAction))
+        let output = viewModel.transform(
+            input: .init(
+                initState: combineLatestForm,
+                saveAction: saveAction
+            )
+        )
         
         output.loading
             .bind(to: loadingBinder)
@@ -134,28 +134,20 @@ extension WritePostingViewController {
     }
     
     func viewBinding() {
+        
         topNavigation.dismissButton.rx.tap
             .subscribe(with: self, onNext: { vc, _ in
                 vc.navigationController?.popViewController(animated: true)
             }).disposed(by: disposeBag)
         
-        postingView.tagSelectedView.hideButton.rx.tap
-            .subscribe(with: self, onNext: { vc, _ in
-                vc.postingView.tagHideSeletedAnimation()
-            }).disposed(by: disposeBag)
-        
-        postingView.tagSelectedView.tagAddButton.rx.tap
-            .bind(to: self.postSelected)
-            .disposed(by: disposeBag)
-        
         KeyBoardManager.shared.keyBoardAppear
             .subscribe(with: self, onNext: { vc, keyboardFrame in
-                vc.postingView.keyboardAppear(keyboardFrame)
+                vc.postingView.keyboardAppear(keyboardFrame.height)
             }).disposed(by: disposeBag)
 
         KeyBoardManager.shared.keyBoardDissapear
             .subscribe(with: self, onNext: { vc, _ in
-                vc.postingView.keyboardDisappear()
+                vc.postingView.keyboardDissapear()
             }).disposed(by: disposeBag)
     }
 }

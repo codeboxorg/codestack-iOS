@@ -76,5 +76,12 @@ public struct DataAssembly: Assembly {
                                                graphAPI: graphAPI,
                                                restAPI: restAPI)
         }.inObjectScope(.container)
+        
+        container.register(PostingRepository.self) { resolver in
+            let restAPi = resolver.resolve(RestAPI.self)!
+            let tokenService = resolver.resolve(TrackService.self)!
+            
+            return DefaultPostingRepository(rest: restAPi, trackTokenService: tokenService)
+        }.inObjectScope(.container)
     }
 }

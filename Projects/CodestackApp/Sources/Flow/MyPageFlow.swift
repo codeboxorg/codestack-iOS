@@ -12,6 +12,7 @@ import RxCocoa
 import PhotosUI
 import Photos
 import Global
+import CommonUI
 import Domain
 
 class MyPageFlow: Flow {
@@ -52,10 +53,12 @@ class MyPageFlow: Flow {
             self.rootViewController.dismiss(animated: true)
         
         case .richText(let markdown, let storeVO):
-            let vc = injector.resolve(RichTextViewController.self,
-                                      markdown,
-                                      storeVO,
-                                      RichViewModel.ViewType.myPosting)
+            let vc = injector.resolve(
+                RichTextViewController<MyPostingActionButtonGroup>.self,
+                markdown,
+                storeVO,
+                ViewType.myPosting
+            )
             rootViewController.pushViewController(vc, animated: true)
             
         case .toastV2Value(let toastValue):
@@ -97,9 +100,15 @@ class MyPageFlow: Flow {
         profileVC.navigationItem.title = "마이페이지"
         self.rootViewController.pushViewController(profileVC, animated: true)
         return .one(flowContributor:
-                .contribute(withNextPresentable: profileVC,
-                            withNextStepper: CompositeStepper(steppers: [DefaultStepper(),
-                                                                         profileVC.myPageViewModel!]))
+                .contribute(
+                    withNextPresentable: profileVC,
+                    withNextStepper: CompositeStepper(
+                        steppers: [
+                            DefaultStepper(),
+                            profileVC.myPageViewModel!
+                        ]
+                    )
+                )
         )
     }
     

@@ -42,7 +42,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             OnBoardingAssembly(),
             MyPageAssembly(),
             CodeEditorAssembly(),
-            WritePostingAssembly()
+            WritePostingAssembly(),
+            RichTextAssembly()
         ])
         
         let flow = AppFlow(dependency: appDependency)

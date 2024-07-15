@@ -23,9 +23,13 @@ class CodeEditorViewController: UIViewController,
     
     typealias Reactor = CodeEditorReactor
     var steps = PublishRelay<Step>()
-    private var editorViewModel: CodeEditorViewModel?
+    
     var disposeBag = DisposeBag()
     var editorType: EditorTypeProtocol = ProblemSolveEditor()
+    
+    private var editorViewModel: CodeEditorViewModel!
+    private(set) lazy var binderProvider = BinderProvider(self)
+    private(set) lazy var actionProvider = ActionProvider(self)
     
     struct Dependency {
         var viewModel: CodeEditorViewModel
@@ -39,17 +43,21 @@ class CodeEditorViewController: UIViewController,
         vc.reactor = dependency.editorReactor
         vc.editorType = dependency.editorType
         vc.editorViewModel?.editorType = dependency.editorType
-        vc.problemPopUpView.setLangueMenu(languages: dependency.editorType.getDefaultLanguage() )
+        vc.actionProvider.setLangueMenu(languages: dependency.editorType.getDefaultLanguage() )
         return vc
     }
     
-    lazy var problemPopUpView: ProblemPopUpView = {
-        let popView = ProblemPopUpView(frame: .zero,self)
+    lazy var _problemPopUpView: DynamicWrapperView<ProblemPopUpView> = {
+        let popView = DynamicWrapperView(ProblemPopUpView(frame: .zero,self))
         let html = editorType.problemContext
-        popView.loadHTMLToWebView(html: html)
-        popView.problemTitle.text = editorType.problemTitle
+        popView.view.loadHTMLToWebView(html: html)
+        popView.view.problemTitle.text = editorType.problemTitle
         return popView
     }()
+    
+    var problemPopUpView: ProblemPopUpView {
+        _problemPopUpView.view
+    }
     
     lazy var ediotrContainer = EditorContainerView().then { container in
         container.setDelegate(self)
@@ -73,7 +81,7 @@ class CodeEditorViewController: UIViewController,
     
     /// TextView 의 무결성을 위한 Bool 값입니다.
     /// True일때는 최근에 제출했었던 source를 TextView에 적용합니다.
-    private var sourceCodeState = false
+    var sourceCodeState = false
     
     private var problemContext = BehaviorRelay<String>(value: "")
     
@@ -99,56 +107,40 @@ class CodeEditorViewController: UIViewController,
             ediotrContainer.codeUITextView.text = sourceCode
             sourceCodeState = true
             if let sourceCode, sourceCode.isEmpty { sourceCodeState = false }
-            if let language = problemItem.seletedLanguage { problemPopUpView.languageRelay.accept(language) }
+            if let language = problemItem.seletedLanguage {
+                // TODO: Fix
+                // problemPopUpView.languageRelay.accept(language)
+                binderProvider.languageBinder.onNext(language.name)
+            }
             if problemItem.sourceCode == nil { sourceCodeState = false }
-            if let context = problemItem.contenxt { problemContext.accept(context) }
+            if let context = problemItem.contenxt {
+                problemContext.accept(context)
+            }
         }
-    }
-    
-    private func inputSubmissionID() -> Driver<String> {
-        let submissionID = editorType.getSubmissionID()
-        return Observable
-            .just(submissionID)
-            .asDriverJust()
-    }
-    
-    private func inputSubmissionAction() -> Driver<String> {
-        let id = editorType.problemID
-        return problemPopUpView
-            .sendSubmissionAction()
-            .map { _ in "\(id)" }
-            .startWith("\(id)")
-            .asDriverJust()
-    }
-    
-    private func inputTextChangeAction() -> Driver<String> {
-        ediotrContainer.codeUITextView.rx.text
-            .debounce(.milliseconds(300),
-                      scheduler: MainScheduler.instance)
-            .compactMap { $0 }
-            .asDriverJust()
     }
     
     private func binding() {
         let output = inputBinding()
+        actionProvider.actionBinding()
+        submissionHistoryViewBinding()
         outputBinding(output)
     }
     
+    /// 언어 모델
     private func inputBinding() -> CodeEditorViewModel.Output? {
-        let title                 : String             = editorType.problemTitle
-        let sendSubmissionAction  : Driver<String>     = inputSubmissionAction()
-        let submissionIDOb        : Driver<String>     = inputSubmissionID()
-        let textChange            : Driver<String>     = inputTextChangeAction()
-        let languageAction        : Driver<LanguageVO> = problemPopUpView.languageAction()
-        let titleOb               : Driver<String>     = Driver.just(title)
-        let submissionListGesture : Driver<Void>       = problemPopUpView.submissionListGesture.map { _ in }
-        let problemRefreshTap     : Driver<Void>       = problemPopUpView.problemRefreshTap
-        let favoriteTap           : Driver<Bool>       = problemPopUpView.favoriteTap
-        let problemContext        : Signal<String>     = problemContext.asSignalJust()
-        let dissmissAction        : Driver<Void>       = problemPopUpView.dissmissAction()
-        let editorTitleField      : Driver<String>     = problemPopUpView.editorTitleField.rx.text.orEmpty.asDriver()
-        let linkDetector          : Signal<String>     = problemPopUpView.linkDetector.asSignalJust()
-        let problemVO             : Signal<ProblemVO>  = Signal.just(editorType.getProblemVO())
+        let title                : String             = editorType.problemTitle
+        let sendSubmissionAction : Driver<String>     = actionProvider.sendSubmissionAction(editorType.problemID)//inputSubmissionAction()
+        let submissionIDOb       : Driver<String>     = actionProvider._submissionID
+        let textChange           : Driver<String>     = actionProvider._inputTextChangeAction
+        let languageAction       : Driver<LanguageVO> = actionProvider.$dynamicLanguage.asDriver(onErrorJustReturn: .default)
+        let titleOb              : Driver<String>     = Driver.just(title)
+        let submissionListGesture: Driver<Void>       = actionProvider._submissionListGesture
+        let problemRefreshTap    : Driver<Void>       = actionProvider._$refreshTap
+        let favoriteTap          : Driver<Bool>       = actionProvider._$favoriteTap
+        let problemContext       : Signal<String>     = problemContext.asSignalJust()
+        let dissmissAction       : Driver<Void>       = actionProvider._backButtonTap
+        let editorTitleField     : Driver<String>     = actionProvider._editorTitleFieldChange
+        let problemVO            : Signal<ProblemVO>  = Signal.just(editorType.getProblemVO())
         
         let output = editorViewModel?
             .transform(input:.init(viewDidLoad: OB.justVoid(),
@@ -165,20 +157,25 @@ class CodeEditorViewController: UIViewController,
                                    favoriteTap: favoriteTap,
                                    sourceCodenameWhenEditorOnly: editorTitleField.asDriver()))
         
-        viewBinding(language: languageAction,output)
-        viewBinding(favor: favoriteTap,
-                    action: sendSubmissionAction,
-                    linkDetector: linkDetector)
-        submissionHistoryViewBinding()
+        if let loadSourceCode = output?.loadSourceCode {
+            actionProvider._languageDriver
+                .distinctUntilChanged()
+                .withLatestFrom(loadSourceCode) { language, sourceCode in
+                    return (language, sourceCode)
+                }
+                .drive(binderProvider.sourceCodeBinder)
+                .disposed(by: disposeBag)
+        }
         
         return output
     }
     
-    func outputBinding(_ output: CodeEditorViewModel.Output?) {
+    private func outputBinding(_ output: CodeEditorViewModel.Output?) {
+        
         output?.laguageBinding
-            .drive(with: self, onNext: { vc, langVO in
-                vc.problemPopUpView.languageRelay.accept(langVO)
-            }).disposed(by: disposeBag)
+            .map(\.name)
+            .drive(binderProvider.languageBinder)
+            .disposed(by: disposeBag)
         
         output?.favoritProblem
             .drive(with: self, onNext: { view, flag in
@@ -186,36 +183,34 @@ class CodeEditorViewController: UIViewController,
             }).disposed(by: disposeBag)
         
         output?.solvedResult
-            .drive(with: self, onNext: { vc, submission in
-                vc.problemPopUpView.pageValue.accept(.result(submission))
-            }).disposed(by: disposeBag)
-        
-        output?.submissionListResult
-            .drive(with: self, onNext: { vc, submissions in
-                vc.problemPopUpView.pageValue.accept(.resultList([]))
-            }).disposed(by: disposeBag)
+            .map(SolveResultType.result)
+            .drive(binderProvider.problemPopUpViewPageBinder)
+            .disposed(by: disposeBag)
         
         output?.submitWaiting
-            .emit(with: self, onNext: { vc, flag in
-                vc.problemPopUpView.submissionLoadingWating.accept(flag)
-            }).disposed(by: disposeBag)
-        
-        output?.submissionListResult
-            .drive(with: self, onNext: { vc, submissionList in
-                vc.problemPopUpView.pageValue.accept(.resultList([]))
-            }).disposed(by: disposeBag)
+            .emit(to: binderProvider.submissionLoadingBinder)
+            .disposed(by: disposeBag)
         
         output?.problemRefreshResult
             .skip(1)
-            .emit(with: self, onNext: { vc, state in
-                if case let .fail(error) = state {
-                    vc.steps.accept(CodestackStep.toastMessage(" \(error) 불러오는데 실패"))
+            .emit(
+                with: self,
+                onNext: { vc, state in
+                    if case let .fail(error) = state {
+                        vc.steps.accept(CodestackStep.toastMessage(" \(error) 불러오는데 실패"))
+                    }
+                    vc.binderProvider.problemStateBinder.onNext(state)
                 }
-                vc.problemPopUpView.problemState.accept(state)
-                
-            }).disposed(by: disposeBag)
+            )
+            .disposed(by: disposeBag)
         
         let tableView = problemPopUpView.submissionListView.tableView
+        
+        
+        output?.submissionListResult
+            .map { _ in SolveResultType.resultList([]) }
+            .drive(binderProvider.problemPopUpViewPageBinder)
+            .disposed(by: disposeBag)
         
         output?.submissionListResult
             .drive(with: self, onNext: { vc, value in
@@ -235,65 +230,21 @@ class CodeEditorViewController: UIViewController,
         }.disposed(by: disposeBag)
     }
     
+    // TODO: As is = TextView Text 교체 , to be = New View Contruct
     private func submissionHistoryViewBinding() {
         let submissionHistoryTapped = problemPopUpView.submissionListView.tableView.rx
             .modelSelected(SubmissionVO.self)
             .asObservable()
         
         submissionHistoryTapped
-            .map(\.language)
-            .bind(to: problemPopUpView.languageRelay)
+            .map(\.language.name)
+            .bind(to: binderProvider.languageBinder)
             .disposed(by: disposeBag)
             
         submissionHistoryTapped
             .map(\.sourceCode)
             .bind(to: ediotrContainer.codeUITextView.rx.text)
             .disposed(by: disposeBag)
-    }
-    
-    private func viewBinding(language action: Driver<LanguageVO>, _ output: CodeEditorViewModel.Output?) {
-        // MARK: View Action
-        if let loadSourceCode = output?.loadSourceCode {
-            action
-                .distinctUntilChanged()
-                .withLatestFrom(loadSourceCode) { language, sourceCode in
-                    return (language, sourceCode)
-                }
-                .drive(with: self, onNext: { vm, tuple  in
-                    let (language, sourceCode) = tuple
-                    vm.ediotrContainer.codeUITextView.languageBinding(language: language)
-                    if !vm.sourceCodeState {
-                        vm.ediotrContainer.codeUITextView.text = ""
-                        vm.ediotrContainer.codeUITextView.text = sourceCode
-                    } else {
-                        vm.sourceCodeState = false
-                    }
-                }).disposed(by: disposeBag)
-        }
-    }
-    
-    private func viewBinding(favor favoriteTap: Driver<Bool>,
-                             action sendSubmission: Driver<String>,
-                             linkDetector: Signal<String>) {
-        
-        favoriteTap.drive(with: self, onNext: { view, _ in
-            view.problemPopUpView.heartButton.flag.toggle()
-        }).disposed(by: disposeBag)
-        
-        sendSubmission
-            .skip(1)
-            .drive(with: self, onNext: { vc, _ in
-                if vc.editorType.isProblemSolve() {
-                    vc.problemPopUpView.pageValue.accept(.result(nil))
-                }
-            }).disposed(by: disposeBag)
-
-        linkDetector.compactMap { URL(string: $0) }
-            .emit(with: self, onNext: { vc, url in
-                let sf = SFSafariViewController(url: url)
-                sf.delegate = vc
-                vc.navigationController?.pushViewController(sf, animated: false)
-            }).disposed(by: disposeBag)
     }
     
     private func keyBoardLayoutManager(){

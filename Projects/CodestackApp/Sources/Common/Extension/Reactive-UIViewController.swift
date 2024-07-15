@@ -17,6 +17,36 @@ extension Reactive where Base: UIViewController {
     }
 }
 
+extension Reactive where Base: UIButton {
+    var title: ControlProperty<String?> {
+        let getter: () -> String? = { [weak base] in
+            return base?.title(for: .normal)
+        }
+        
+        let setter: (String?) -> Void = { [weak base] title in
+            base?.setTitle(title, for: .normal)
+        }
+        
+        let values = Observable<String?>.create { observer in
+            // 초기 title 값을 방출
+            if let initialTitle = getter() {
+                observer.onNext(initialTitle)
+            }
+            let controlEvent = base.rx.controlEvent(.valueChanged).map { getter() }
+            let subscription = controlEvent.bind(to: observer)
+            
+            return Disposables.create {
+                subscription.dispose()
+            }
+        }
+        let valueSink = Binder(base) { button, title in
+            setter(title)
+        }
+        
+        return ControlProperty(values: values, valueSink: valueSink)
+    }
+}
+
 
 /// Name Space For Rx Observable
 public enum OB { }

@@ -13,6 +13,7 @@ import UIKit
 public final class CustomTabBar: UITabBar {
     
     private var shapeLayer: CALayer?
+    public var rotateFlag: Bool = false
     
     public override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -75,6 +76,25 @@ public final class CustomTabBar: UITabBar {
                 for: .touchUpInside
             )
         
+        button
+            .addAction(
+                UIAction(handler: {[weak self, weak button] v in
+                    self?.rotateFlag.toggle()
+                    UIView.animate(
+                        withDuration: 0.3,
+                        animations: {
+                            button?.transform
+                            =
+                            (self?.rotateFlag ?? false) ?
+                            CGAffineTransform(rotationAngle: CGFloat.pi * 0.25)
+                            :
+                            CGAffineTransform(rotationAngle: -(CGFloat.pi * 0.5))
+                        }
+                    )
+                }),
+                for: .touchUpInside
+            )
+        
         self.addSubview(button)
     }
     
@@ -101,13 +121,17 @@ public final class CustomTabBar: UITabBar {
         path.move(to: CGPoint(x: 0, y: 0))
         path.addLine(to: CGPoint(x: (centerWidth - height * 2), y: 0))
         
-        path.addCurve(to: CGPoint(x: centerWidth, y: height),
-                      controlPoint1: CGPoint(x: (centerWidth - 30), y: 0),
-                      controlPoint2: CGPoint(x: centerWidth - 35, y: height))
+        path.addCurve(
+            to: CGPoint(x: centerWidth, y: height),
+            controlPoint1: CGPoint(x: (centerWidth - 30), y: 0),
+            controlPoint2: CGPoint(x: centerWidth - 35, y: height)
+        )
         
-        path.addCurve(to: CGPoint(x: (centerWidth + height * 2), y: 0),
-                      controlPoint1: CGPoint(x: centerWidth + 35, y: height),
-                      controlPoint2: CGPoint(x: (centerWidth + 30), y: 0))
+        path.addCurve(
+            to: CGPoint(x: (centerWidth + height * 2), y: 0),
+            controlPoint1: CGPoint(x: centerWidth + 35, y: height),
+            controlPoint2: CGPoint(x: (centerWidth + 30), y: 0)
+        )
         
         path.addLine(to: CGPoint(x: self.frame.width, y: 0))
         path.addLine(to: CGPoint(x: self.frame.width, y: self.frame.height))

@@ -21,6 +21,20 @@ public final class TagView: UIView {
         return label
     }()
     
+    public var tagDeleteButton: UIButton = {
+        let button = UIButton()
+        button.isHidden = true
+        
+        button.setImage(
+            UIImage(systemName: "xmark.circle.fill"),
+            for: .normal
+        )
+        
+        button.tintColor = UIColor.dynamicRevertColor
+        
+        return button
+    }()
+    
     public override func sizeThatFits(_ size: CGSize) -> CGSize {
         return featureLabel.sizeThatFits(size) // New
     }
@@ -48,8 +62,16 @@ public final class TagView: UIView {
         super.init(frame: frame)
        
         self.addSubview(featureLabel)
+        self.addSubview(tagDeleteButton)
+        
         featureLabel.snp.makeConstraints{
             $0.centerX.centerY.equalToSuperview()
+        }
+        
+        tagDeleteButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(-5)
+            make.trailing.equalToSuperview().offset(5)
+            make.width.height.equalTo(20)
         }
     }
     

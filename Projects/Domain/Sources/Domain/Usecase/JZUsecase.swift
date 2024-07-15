@@ -38,6 +38,10 @@ public struct JZQuery {
     }
 }
 
+
+// TODO: 현재 DOCKER GCP 에러로 실제 Test EndPoint로 제출결과를 받기가 어렵습니다.
+// TODO: MOCK 데이터를 통해서 Test Case를 작성하고 그에 따른 결과를 받을 것을 권장합니다.
+// TODO: GCP 가 아니라면 어떻게 가상화를 할지 생각 해야 합니다.
 public final class JZUsecase {
     
     private let repo: JZSubmissionRepository
@@ -70,3 +74,4 @@ public final class JZUsecase {
         }
     }
 }
+

@@ -17,34 +17,49 @@ import RxGesture
 import CommonUI
 
 
-final class RichTextViewController: BaseContentViewController<UIScrollView> {
-
+final class RichTextViewController<Group: ActionButtonGroup>: BaseContentViewController<UIScrollView> {
     private(set) var containerView = UIView()
     private(set) var postingTitle = PostingTitleView()
     
-    private var richTextSwiftUIView: some View {
+    private(set) lazy var tagContainer: TagContainer = {
+        let container = TagContainer(frame: self.view.frame, spacing: 10)
+        return container
+    }()
+    
+    var richTextSwiftUIView: some View {
         RichTextSwiftUIView(htmlString, { [weak self] height in
            self?.layoutConstraintHeight?.constant = height
        })
     }
     
+    private var rightTopActionButton: Group?
+    
+    /// Layout
+    /// SwiftUI View 가 로드될때 ScrollView의 높이를 계산하기 위한 Constraint
+    private var layoutConstraintHeight: NSLayoutConstraint?
+    
     struct Dependency {
-        let html: String
-        let storeVO: StoreVO
-        let usecase: FirebaseUsecase
-        let viewType: RichViewModel.ViewType
+        let html:     String
+        let storeVO:  StoreVO
+        let usecase:  FirebaseUsecase
+        let viewType: ViewType
+        let group:    Group
     }
     
-    static func create(with dependency: Dependency) -> RichTextViewController {
+    static func create(with dependency: Dependency) -> RichTextViewController
+    {
         let vc = RichTextViewController(contentView: UIScrollView())
         vc.htmlString = dependency.html
-        vc.viewmodel = RichViewModel(storeVO: dependency.storeVO,
-                                     usecase: dependency.usecase,
-                                     viewType: dependency.viewType)
+        vc.viewmodel = RichViewModel(
+            storeVO: dependency.storeVO,
+            markDownString: dependency.html,
+            usecase: dependency.usecase,
+            viewType: dependency.viewType
+        )
+        vc.rightTopActionButton = dependency.group
         return vc
     }
     
-    private var layoutConstraintHeight: NSLayoutConstraint?
     private(set) var htmlString: String = ""
     private(set) var writerInfo: WriterInfo?
     private var viewmodel: RichViewModel!
@@ -56,6 +71,14 @@ final class RichTextViewController: BaseContentViewController<UIScrollView> {
         contentView.showsHorizontalScrollIndicator = false
         contentView.isScrollEnabled = true
         contentView.contentInset = .init(top: 0, left: 0, bottom: 150, right: 0)
+        
+        self.navigationItem.rightBarButtonItem
+        = self.rightTopActionButton?.makeRightBarButtonItem { [weak self] action in
+            if let actionType = ActionType(rawValue: action.title) {
+                if actionType == .setting { return }
+                self?.viewmodel.sendActionWrapper = actionType
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,6 +97,30 @@ final class RichTextViewController: BaseContentViewController<UIScrollView> {
     }
     
     override func binding() {
+        
+        posingBinding()
+        
+        if self.viewmodel.viewType != .preview {
+            hideTopBottomGestureBinding()
+        } else {
+            // preViews
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
+        }
+    }
+    
+    
+    private func hideTopBottomGestureBinding() {
+        contentView.rx.panGesture()
+            .skip(1)
+            .asTranslation()
+            .asDriver(onErrorJustReturn: (.zero,.zero))
+            .throttle(.milliseconds(200))
+            .map(\.translation.y)
+            .drive(animationBinder)
+            .disposed(by: disposebag)
+    }
+    
+    private func posingBinding() {
         // TODO: Tap Gesture 처리
         _ = [
             postingTitle.writerLabel.rx.tapGesture().when(.recognized),
@@ -87,20 +134,52 @@ final class RichTextViewController: BaseContentViewController<UIScrollView> {
             .observe(on: MainScheduler.instance)
             .bind(to: postingTitle.writerBinder)
             .disposed(by: disposebag)
-
-        contentView.rx.panGesture()
-            .skip(1)
-            .asTranslation()
-            .asDriver(onErrorJustReturn: (.zero,.zero))
-            .throttle(.milliseconds(200))
-            .map(\.translation.y)
-            .drive(animationBinder)
+        
+        viewmodel.$postingState
+            .asDriver(onErrorJustReturn: .none)
+            .drive(
+                with: self,
+                onNext: { vc, values in
+                    vc.showAlertUI(state: values)
+                }
+            )
             .disposed(by: disposebag)
+        
+        tagContainer.setTagItem(viewmodel.storeVO.tags)
+        let height = tagContainer.intrinsicContentSize.height
+        
+        tagContainer.snp.updateConstraints { make in
+            make.height.equalTo(height)
+        }
+    }
+    
+    private func showAlertUI(state: PostingState) {
+        switch state {
+        case .failedToPublish:
+            break
+        case .published:
+            break
+        case .saving:
+            break
+        case .savingFail:
+            break
+        case .deleted:
+            break
+        case .deletedFail:
+            break
+        case .reported:
+            break
+        case .reportedFail:
+            break
+        case .none:
+            break
+        }
     }
     
     private func _addAutoLayout() {
         view.addSubview(contentView)
         contentView.addSubview(postingTitle)
+        contentView.addSubview(tagContainer)
         contentView.addSubview(containerView)
         
         contentView.snp.makeConstraints { make in
@@ -118,8 +197,14 @@ final class RichTextViewController: BaseContentViewController<UIScrollView> {
             make.height.equalTo(200).priority(.low)
         }
         
-        containerView.snp.makeConstraints { make in
+        tagContainer.snp.makeConstraints { make in
             make.top.equalTo(postingTitle.snp.bottom).offset(5)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(150)
+        }
+        
+        containerView.snp.makeConstraints { make in
+            make.top.equalTo(tagContainer.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview()
             make.width.equalTo(Position.screenWidth)
             make.height.equalTo(500).priority(.low)
@@ -194,84 +279,5 @@ extension RichTextViewController {
         ])
         
         vc.didMove(toParent: self)
-    }
-}
-
-final class RichViewModel {
-    
-    enum ViewType {
-        case preview
-        case posting
-        case myPosting
-    }
-    
-    var storeVO: StoreVO
-    var viewType: ViewType = .posting
-    private let observable = PublishSubject<WriterInfo>()
-    private let usecase: FirebaseUsecase
-    
-    init(storeVO: StoreVO, usecase: FirebaseUsecase, viewType: ViewType) {
-        self.storeVO = storeVO
-        self.usecase = usecase
-        self.viewType = viewType
-    }
-    
-    func transForm() -> Observable<WriterInfo> {
-        if viewType == .posting || viewType == .myPosting {
-            return transFormPosting()
-        } else {
-            return transformPreview()
-        }
-    }
-    
-    private func transFormPosting() -> Observable<WriterInfo> {
-        DispatchQueue.global().asyncAfter(deadline: .now(), execute: {
-            Task {
-                [weak self] in
-                    guard let self else { return }
-                    let storeVO = self.storeVO
-                    let cached = ImageCacheClient.shared.getOtherImageFromCache(.init(key: .other(storeVO.userId)))
-                    
-                    var info = WriterInfo(title: storeVO.title,
-                                          writer: storeVO.name,
-                                          date: storeVO.date,
-                                          image: UIImage(named: "codeStack")!)
-                    
-                    if let cached {
-                        info.image = cached
-                        self.observable.onNext(info)
-                        return
-                    }
-                    
-                    let stream = self.usecase.fetchOtherUserImagePath(uid: storeVO.userId).values
-                    
-                    for try await imagePath in stream {
-                        let cacheKey = CacheKey(key: .other(storeVO.name))
-                        let image = await ImageCacheClient.shared.getOtherImageFromCache(cacheKey, imagePath)
-                        info.image = image ?? UIImage(named: "codeStack")!
-                    }
-                    observable.onNext(info)
-            }
-        })
-        
-        return observable.asObservable()
-    }
-    
-    private func transformPreview() -> Observable<WriterInfo> {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-            guard let self else { return }
-            let storeVO = self.storeVO
-            let cached = ImageCacheClient.shared.getMyImageFromCache()
-            
-            var info = WriterInfo(title: storeVO.title,
-                                  writer: storeVO.name,
-                                  date: storeVO.date,
-                                  image: UIImage(named: "codeStack")!)
-            if let cached {
-                info.image = cached
-            }
-            self.observable.onNext(info)
-        }
-        return observable.asObservable()
     }
 }

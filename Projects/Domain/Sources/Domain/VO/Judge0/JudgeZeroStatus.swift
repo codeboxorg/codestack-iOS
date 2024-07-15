@@ -21,7 +21,7 @@ public struct JudgeZeroStatus: Codable {
 public extension JudgeZeroStatus {
     
     func isProcessing() -> Error? {
-        #if DEBUG
+        #if Dev
         print("error: \(self.id), description: \(self.description)")
         #endif
         if self.id == 1 || self.id == 2 { return JZError.isProcessing }

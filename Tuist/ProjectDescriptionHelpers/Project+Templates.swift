@@ -105,16 +105,18 @@ public extension Project {
         
         if hostTargetNeeded {
             let hostTarget = Target.target(
-                name: "\(name)Demo",
+                name: "\(name)DemoApp",
                 destinations: .iOS,
                 product: .app,
                 bundleId: "\(String(describing: bundleID)).\(name)Demo",
                 deploymentTargets: deploymentTarget,
                 infoPlist: .default,
                 sources: ["Demo/**"],
-                resources: [.glob(pattern: .relativeToRoot("Projects/CodestackApp/Config/GoogleService-Info.plist"),
-                                  excluding: [],
-                                  tags: [])],
+                resources: [
+                    .glob(pattern: .relativeToRoot("Projects/CodestackApp/Config/GoogleService-Info.plist"),
+                          excluding: [],
+                          tags: [])
+                ],
                 entitlements: entitlement,
                 scripts: script,
                 dependencies: [ .target(name: "\(name)")],
@@ -141,13 +143,26 @@ public extension Project {
                 sources: ["Tests/**"],
                 entitlements: entitlement,
                 dependencies: [.target(name: name)],
-                settings: .settings(base: ["ENABLE_MODULE_VERIFIER": "YES"],configurations: [])
+                settings: .settings(
+                    base: ["ENABLE_MODULE_VERIFIER": "YES"],
+                    configurations: []
+                )
             )
             appTargets.append(testTarget)
         }
         
-        let scheme: [Scheme] = [.makeScheme(target: .configuration("Dev"), name: name),
-                                .makeScheme(target: .configuration("Prod"), name: name)]
+        let scheme: [Scheme] =
+        hostTargetNeeded ?
+        [
+            .makeScheme(target: .configuration("Dev"), name: name),
+            .makeScheme(target: .configuration("Prod"), name: name),
+            .makeDemoScheme(target: .configuration("Dev"), name: name)
+        ]
+        :
+        [
+            .makeScheme(target: .configuration("Dev"), name: name),
+            .makeScheme(target: .configuration("Prod"), name: name)
+        ]
         
         return Project(
             name: name,
@@ -184,6 +199,22 @@ extension Scheme {
             analyzeAction: .analyzeAction(configuration: target)
         )
     }
+    static func makeDemoScheme(target: ConfigurationName, name: String) -> Scheme {
+        return Scheme.scheme(
+               name: name,
+               shared: true,
+               buildAction: .buildAction(targets: ["\(name)DemoApp"]),
+               testAction: .targets(
+                   ["\(name)Tests"],
+                   configuration: target,
+                   options: .options(coverage: true, codeCoverageTargets: ["\(name)DemoApp"])
+               ),
+               runAction: .runAction(configuration: target),
+               archiveAction: .archiveAction(configuration: target),
+               profileAction: .profileAction(configuration: target),
+               analyzeAction: .analyzeAction(configuration: target)
+           )
+       }
 }
 
 //public extension Project {

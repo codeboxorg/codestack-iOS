@@ -15,10 +15,9 @@ final class TopNavigationView: BaseView {
     
     lazy var dismissButton: UIButton = makeSFSymbolButton(symbolName: "xmark")
     
-    private(set) lazy var sendButton: LoadingUIButton = {
-        var button = LoadingUIButton(frame: .zero, title: "저장하기")
-        button.addTarget(self, action: #selector(button.feedBackGenerate(_:)), for: .touchUpInside)
-        return button
+    private(set) var sendButton: LoadingUIButton = {
+        let feedBack = BaseFeedBack(LoadingUIButton(frame: .zero, title: "미리보기"))
+        return feedBack.button
     }()
     
     override func addAutoLayout() {
@@ -30,9 +29,10 @@ final class TopNavigationView: BaseView {
             make.leading.equalToSuperview().inset(12)
             make.width.height.equalTo(30)
         }
+        
         sendButton.snp.makeConstraints { make in
             make.centerY.equalTo(dismissButton)
-            make.trailing.equalToSuperview().inset(12)
+            make.trailing.equalToSuperview().inset(4)
             make.width.equalTo(sendButton.sendButtonWidth)
             make.height.equalTo(sendButton.sendButtonHeight)
             make.bottom.equalToSuperview().inset(12).priority(.high)
@@ -40,6 +40,7 @@ final class TopNavigationView: BaseView {
     }
     
     override func applyAttributes() {
+        self.backgroundColor = CColor.editorBlack.color
         sendButton.tintColor = .label
         sendButton.layer.borderColor = UIColor.sky_blue.cgColor
         sendButton.titleLabel?.font = .boldSystemFont(ofSize: 12)
@@ -47,7 +48,6 @@ final class TopNavigationView: BaseView {
         sendButton.layer.borderWidth = 0
         sendButton.tintColor = .whiteGray
         sendButton.buttonColor = .whiteGray
+        dismissButton.tintColor = dynamicLabelColor
     }
-    
-    
 }

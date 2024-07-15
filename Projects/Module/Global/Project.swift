@@ -12,16 +12,16 @@ import ProjectDescriptionHelpers
 let project = Project.createModule(name: "Global",
                                    product: .staticFramework,
                                    dependencies: [
-                                    .SPM.snapKit,
-                                    .SPM.then,
-                                    .SPM.apollo,
-                                    .SPM.richtextKit,
-                                    .SPM.rxdatasources,
-                                    .SPM.rxFlow,
-                                    .SPM.rxGesture,
-                                    .SPM.sqlite,
-                                    .SPM.swinject,
-                                    .SPM.codestackAPI,
-                                    .SPM.highlightr
+//                                    .SPM.snapKit,
+//                                    .SPM.then,
+//                                    .SPM.apollo,
+//                                    .SPM.richtextKit,
+//                                    .SPM.rxdatasources,
+//                                    .SPM.rxFlow,
+//                                    .SPM.rxGesture,
+//                                    .SPM.sqlite,
+//                                    .SPM.swinject,
+//                                    .SPM.codestackAPI,
+//                                    .SPM.highlightr
                                    ],
                                    resources: "Resources/**")

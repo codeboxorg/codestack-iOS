@@ -8,6 +8,15 @@
 
 import Foundation
 
+public struct PostingQuery {
+    public let token: String
+    public let store: Store
+    
+    public init(token: String, store: Store) {
+        self.token = token
+        self.store = store
+    }
+}
 
 public struct FireStoreWirteStoreEndPoint: EndPoint {
     public var host: String {
@@ -16,9 +25,7 @@ public struct FireStoreWirteStoreEndPoint: EndPoint {
     
     public var path: String
     
-    public var method: RequestMethod {
-        .post
-    }
+    public var method: RequestMethod = .post
     
     public var header: [String : String] = [ "Content-Type": "application/json"]
     
@@ -26,7 +33,7 @@ public struct FireStoreWirteStoreEndPoint: EndPoint {
     
     public var queryParams: [String : String]?
     
-    public init(_ token: String, _ store: Store) {
+    public init(_ token: String, _ store: Store, method: RequestMethod? = .post) {
         self.header = ["Content-Type": "application/json",
                        "Authorization" : "Bearer \(token)"]
         self.path = ""
@@ -39,4 +46,12 @@ public struct FireStoreWirteStoreEndPoint: EndPoint {
             + "/\(FireStore.stores)"
         }
     }
+//    public init(patch query: UserQuery) {
+//        self.init(get: query.query)
+//        let dto = FBUserDTO(nickname: query.nickname,
+//                            preferLanguage: query.preferLanguage,
+//                            profileURL: query.profileImagePath)
+//        let jsondata = try? JSONEncoder().encode(dto)
+//        self.body = jsondata
+//    }
 }

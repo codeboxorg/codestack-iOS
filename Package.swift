@@ -33,7 +33,7 @@ let package = Package(
         .package(url: "https://github.com/devxoul/Then", from: "2.7.0"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk" ,from: "10.19.1"),
         .package(url: "https://github.com/ReactorKit/ReactorKit.git", from: "3.2.0"),
-        .package(url: "https://github.com/Swinject/Swinject.git" , from: "2.8.4"),
+        .package(url: "https://github.com/Swinject/Swinject.git" , from: "2.8.8"),
         .package(url: "https://github.com/RxSwiftCommunity/RxGesture.git", from: "4.0.4"),
         .package(url: "https://github.com/apollographql/apollo-ios.git", from: "1.7.1"),
         .package(url: "https://github.com/danielsaidi/RichTextKit.git", from: "0.9.4"),

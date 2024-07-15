@@ -14,6 +14,7 @@ import SwiftHangeul
 import SwiftDown
 import SwiftUI
 
+
 final class WritePostingView: BaseView {
     
     static func create(with: SwiftDownEditor.ViewModel) -> WritePostingView {
@@ -31,66 +32,41 @@ final class WritePostingView: BaseView {
     }
     
     @ObservedObject private(set) var viewModel: SwiftDownEditor.ViewModel
+    
     private var hanguelFactory = SwiftHangeul()
     private var inputFlag: Bool = false
     
-    private(set) var titleTextLabel = UILabel().then { label in
-        label.text = "제목"
-    }
-    
     private(set) var titleTextField = InsetTextField().then { field in
-        field.placeholder = "제목을 입력해주세요"
+        field.placeholder = "#제목"
+        field.layer.borderWidth = 0
+        field.font = UIFont.boldSystemFont(ofSize: 30)
     }
     
-    private(set) var descriptionLabel = UILabel().then { label in
-        label.text = "소개"
-    }
-    
-    private(set) var descriptionField = InsetTextField().then { field in
-        field.placeholder = "글에 대한 설명을 입력해주세요"
-    }
-    
-    private(set) var tagSelectedView = TagSeletedView()
+    private(set) lazy var tagSelectedView
+    = TagSeletedView(
+        action: { [weak self] (flag: Bool) in
+            flag ? self?.tagHide() : self?.tagAppear()
+            return
+        }
+    )
     
     lazy var contentTextView: UIView = self.makeSwiftDownView()
     
     override func addAutoLayout() {
         self.addSubview(titleTextField)
-        self.addSubview(contentTextView)
-        self.addSubview(titleTextLabel)
-        self.addSubview(descriptionField)
-        self.addSubview(descriptionLabel)
         self.addSubview(tagSelectedView)
-    
-        titleTextLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        descriptionLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        
-        titleTextLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(titleTextField.snp.centerY)
-            make.leading.equalToSuperview().inset(16)
-        }
+        self.addSubview(contentTextView)
+        self.backgroundColor = CColor.editorBlack.color
     
         titleTextField.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(5)
-            make.leading.equalTo(titleTextLabel.snp.trailing).offset(16)
-            make.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(44)
-        }
-        
-        descriptionLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(descriptionField.snp.centerY)
-            make.leading.equalToSuperview().inset(16)
-        }
-        
-        descriptionField.snp.makeConstraints { make in
-            make.top.equalTo(titleTextField.snp.bottom).offset(24)
-            make.leading.equalTo(descriptionLabel.snp.trailing).offset(16)
+            make.leading.equalTo(self.snp.leading).offset(16)
             make.trailing.equalToSuperview().inset(20)
             make.height.equalTo(44)
         }
         
         tagSelectedView.snp.makeConstraints { make in
-            make.top.equalTo(descriptionField.snp.bottom).offset(24)
+            make.top.equalTo(titleTextField.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(100).priority(.low)
         }
@@ -104,16 +80,7 @@ final class WritePostingView: BaseView {
     override func applyAttributes() {
         titleTextField.tintColor = dynamicLabelColor
         titleTextField.textColor = dynamicLabelColor
-        titleTextField.backgroundColor = UIColor.systemGray6
-        
-        descriptionField.tintColor = dynamicLabelColor
-        descriptionField.textColor = dynamicLabelColor
-        descriptionField.backgroundColor = UIColor.systemGray6
-        
-        titleTextLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        titleTextLabel.textColor = dynamicLabelColor
-        descriptionLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        descriptionLabel.textColor = dynamicLabelColor
+        titleTextField.backgroundColor = CColor.editorBlack.color
         
         tagSelectedView.tagAddButton.tintColor = dynamicLabelColor
         
@@ -122,185 +89,67 @@ final class WritePostingView: BaseView {
         // contentTextView.attributedText = NSAttributedString.getPlaceHolderAttributeText()
         contentTextView.tintColor = dynamicLabelColor
     }
-}
+    
 
-
-// MARK: KeyBoard Appear / Disappear / Tag Strech Animation
-extension WritePostingView {
+    private(set) var keyboardHeight: CGFloat = 0
     
-    private enum TextViewContraintType {
-        case 태그_숨김
-        case 태그_등장
-        case 키보드_등장_텍스트필드_포커스(keyboard: CGFloat)
-        case 키보드_등장_텍스트뷰_포커스(keyboard: CGFloat)
-        case 키보드_사라짐_태그숨김_상태
-        case 키보드_사라짐_태그등장_상태
-        case 키보드_사라짐_모두숨김_상태
-        
-    }
-    
-    private enum AnimationType {
-        case keyboardAppear(CGRect)
-        case keyboardDissapear(hideType: CommonHideButton.HideType)
-        case tagHide(Bool)
-        case nameIntroduceHide(Bool)
-    }
-    
-    func tagHideSeletedAnimation() {
-        tagSelectedView.hideButton.hideFlag.toggle()
-        tagSelectedView.hideButton.hideFlagV2.toggle()
-        _ = tagSelectedView.hideButton.hideFlag
-        let hideFlagV2 = tagSelectedView.hideButton.hideFlagV2
-        
-        if case let .tagHide(flag) = hideFlagV2 {
-            textViewAnimationTrigger(.tagHide(flag))
-        } else if case let .nameIntroduceHide(flag) = hideFlagV2 {
-            textViewAnimationTrigger(.nameIntroduceHide(flag))
+    private func tagHide() {
+        contentTextView.snp.remakeConstraints { [unowned self] make in
+            make.top.equalTo(tagSelectedView.tagAddButton.snp.bottom).offset(14)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().inset(self.keyboardHeight)
         }
     }
     
-    func keyboardAppear(_ rect: CGRect) {
-        textViewAnimationTrigger(.keyboardAppear(rect))
-    }
-    
-    func keyboardDisappear() {
-        textViewAnimationTrigger(.keyboardDissapear(hideType: self.tagSelectedView.hideButton.hideFlagV2))
-    }
-    
-    private func textViewAnimationTrigger(_ animationType: AnimationType) {
-        switch animationType {
-        case .keyboardAppear(let rect):
-            keyBoardAppearConstraint(keyboard: rect.height)
-            
-        case .keyboardDissapear(let hideType):
-            keyboardDissapearContraint(hideType: hideType)
-            hiddenAction(isTextViewFocused: false)
-            
-        case .tagHide(let hideFlag):
-            tagSelectedView.remakeTagHeightWhenTags(isHide: hideFlag)
-            tagSeletedViewAnimation(tag: hideFlag)
-            updateTextViewContraint(for: hideFlag)
-            tagSelectedView.tagContainer.isHidden = hideFlag
-            
-        case .nameIntroduceHide(let hideFlag):
-            keyBoardAppearConstraint(keyboard: 0)
-            hiddenAction(isTextViewFocused: hideFlag)
+    private func tagAppear() {
+        contentTextView.snp.remakeConstraints { [unowned self] make in
+            make.top.equalTo(tagSelectedView.snp.bottom).offset(24)
+            make.leading.trailing.equalToSuperview().offset(0)
+            make.bottom.equalToSuperview().inset(self.keyboardHeight)
         }
     }
     
-    private func hiddenAction(isTextViewFocused: Bool) {
-        self.titleTextLabel.isHidden = isTextViewFocused
-        self.titleTextField.isHidden = isTextViewFocused
-        self.descriptionField.isHidden = isTextViewFocused
-        self.descriptionLabel.isHidden = isTextViewFocused
-        self.tagSelectedView.isHidden = isTextViewFocused
-    }
-    
-    private func updateTextViewContraint(for tagHide: Bool) {
-        if tagHide {
-            updateContentTextViewConstraint(type: .태그_숨김)
-        } else {
-            updateContentTextViewConstraint(type: .태그_등장)
-        }
-    }
-    
-    private func tagSeletedViewAnimation(tag hideFlag: Bool) {
-        UIView.animate(withDuration: 0.3, animations: { [weak self] in
-            guard let self else { return }
-            self.layoutIfNeeded()
-            self.tagSelectedView.tagContainer.alpha = hideFlag ? 0 : 1
-        }, completion: { [weak self] flag in
-            guard let self else { return }
-            if flag {
-                self.tagSelectedView.tagContainer.isHidden
-                = hideFlag
-            }
-        })
-    }
-    
-    private func keyBoardAppearConstraint(keyboard height: CGFloat) {
-        if self.titleTextField.isFirstResponder ||
-           self.descriptionField.isFirstResponder {
-            updateContentTextViewConstraint(type: .키보드_등장_텍스트필드_포커스(keyboard: height))
-        } else {
-            updateContentTextViewConstraint(type: .키보드_등장_텍스트뷰_포커스(keyboard: height))
-        }
-        
-        UIView.animate(withDuration: 0.3, animations: { [weak self] in
-            guard let self else { return }
-            if !self.titleTextField.isFirstResponder &&
-                !self.descriptionField.isFirstResponder {
-                hiddenAction(isTextViewFocused: true)
-            }
-            self.layoutIfNeeded()
-        })
-    }
-    
-    private func keyboardDissapearContraint(hideType: CommonHideButton.HideType) {
-        if case let .tagHide(flag) = hideType {
-            if flag {
-                updateContentTextViewConstraint(type: .키보드_사라짐_태그숨김_상태)
-            } else {
-                updateContentTextViewConstraint(type: .키보드_사라짐_태그등장_상태)
-            }
-        } else if case let .nameIntroduceHide(flag) = hideType {
-            if flag {
-                // TODO: 임시로 상태 변경 -> View 추가해서 appear처리 해야할듯
-                tagSelectedView.hideButton.hideFlagV2.toggle()
-                updateContentTextViewConstraint(type: .키보드_사라짐_태그등장_상태)
-            } else {
-                updateContentTextViewConstraint(type: .키보드_사라짐_태그숨김_상태)
-            }
-        }
-    }
-    
-    private func updateContentTextViewConstraint(type: TextViewContraintType) {
-        switch type {
-        case .태그_숨김:
+    func keyboardAppear(_ height: CGFloat) {
+        self.keyboardHeight = height
+        if tagSelectedView.tagDescriptionLabel.isFirstResponder == false &&
+            titleTextField.isFirstResponder == false
+        {
             contentTextView.snp.remakeConstraints { make in
-                make.top.equalTo(tagSelectedView.tagAddButton.snp.bottom).offset(24)
+                make.top.equalToSuperview().inset(5)
                 make.leading.trailing.equalToSuperview()
-                make.bottom.equalToSuperview()
+                make.bottom.equalToSuperview().inset(self.keyboardHeight)
             }
             
-        case .태그_등장:
-            contentTextView.snp.remakeConstraints { make in
-                make.top.equalTo(tagSelectedView.snp.bottom).offset(24)
-                make.leading.trailing.equalToSuperview()
-                make.bottom.equalToSuperview()
-            }
-            
-        case .키보드_등장_텍스트필드_포커스(let height):
-             contentTextView.snp.remakeConstraints { make in
-                 make.top.equalTo(tagSelectedView.snp.bottom).offset(24)
-                 make.leading.trailing.bottom.equalToSuperview()
-                 make.bottom.equalToSuperview().inset(height)
-             }
-            
-        case .키보드_등장_텍스트뷰_포커스(let height):
-            contentTextView.snp.remakeConstraints { make in
-                make.top.equalToSuperview()
-                make.leading.trailing.equalToSuperview()
-                make.bottom.equalToSuperview().inset(height)
-            }
-            
-        case .키보드_사라짐_태그숨김_상태:
-            contentTextView.snp.remakeConstraints { make in
-                make.top.equalTo(tagSelectedView.tagAddButton.snp.bottom).offset(24)
+            UIView.animate(
+                withDuration: 0.2,
+                animations: { [weak self] in
+                    self?.tagSelectedView.isHidden = true
+                    self?.titleTextField.isHidden = true
+                    self?.layoutIfNeeded()
+                }
+            )
+        }
+    }
+    
+    func keyboardDissapear() {
+        self.keyboardHeight = 0
+        if titleTextField.isHidden == true {
+            contentTextView.snp.remakeConstraints { [unowned self] make in
+                let val = self.tagSelectedView.hideButton.hideFlag ?
+                tagSelectedView.tagAddButton.snp.bottom : tagSelectedView.snp.bottom 
+                
+                make.top.equalTo(val).offset(24)
                 make.leading.trailing.bottom.equalToSuperview()
             }
             
-        case .키보드_사라짐_태그등장_상태:
-            contentTextView.snp.remakeConstraints { make in
-                make.top.equalTo(tagSelectedView.snp.bottom).offset(24)
-                make.leading.trailing.bottom.equalToSuperview()
-            }
-        case .키보드_사라짐_모두숨김_상태:
-            contentTextView.snp.remakeConstraints { make in
-                make.top.equalToSuperview()
-                make.leading.trailing.equalToSuperview()
-                make.bottom.equalToSuperview()
-            }
+            UIView.animate(
+                withDuration: 0.2,
+                animations: { [weak self] in
+                    self?.tagSelectedView.isHidden = false
+                    self?.titleTextField.isHidden = false
+                    self?.layoutIfNeeded()
+                }
+            )
         }
     }
 }

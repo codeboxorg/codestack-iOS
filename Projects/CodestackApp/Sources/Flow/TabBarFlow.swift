@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import Global
 import Domain
+import CommonUI
 
 final class TabBarStepper: Stepper {
     var steps: PublishRelay<Step> = PublishRelay<Step>()
@@ -84,15 +85,17 @@ final class TabBarFlow: Flow {
     }
     
     private func showPreviewRichText(_ html: String, _ storeVO: StoreVO) {
-        let vc = injector.resolve(RichTextViewController.self,
-                                  html,
-                                  storeVO,
-                                  RichViewModel.ViewType.preview)
+        let vc = injector.resolve(
+            RichTextViewController<PreviewsActionButtonGroup>.self,
+            html,
+            storeVO,
+            ViewType.preview
+        )
+        let navi = self.rootViewTabController.selectedViewController?.navigationController
         
-        self.rootViewTabController
-            .selectedViewController?
-            .navigationController?
-            .pushViewController(vc, animated: false)
+        navi?.navigationBar.tintColor = self.rootViewTabController.selectedViewController?.dynamicLabelColor
+        
+        navi?.pushViewController(vc, animated: false)
     }
     
     private func navigateToWritePostingVC() -> FlowContributors {
