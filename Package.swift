@@ -1,16 +1,16 @@
 
 
 // swift-tools-version: 5.9
-import PackageDescription
+@preconcurrency import PackageDescription
 
 #if TUIST
-    import ProjectDescription
+@preconcurrency import ProjectDescription
     import ProjectDescriptionHelpers
 
     let packageSettings = PackageSettings(
         productTypes: [ 
             // "SwiftHangeul" : .staticFramework,
-            "CodestackAPI" : .framework ,
+            // "CodestackAPI" : .framework ,
             "ApolloAPI" : .staticFramework,
             "Apollo" : .staticFramework,
             "Highlightr" : .staticFramework ,
@@ -40,9 +40,10 @@ let package = Package(
         .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git",from:  "5.0.2"),
         .package(url: "https://github.com/RxSwiftCommunity/RxFlow.git",from:  "2.13.0"),
         .package(url: "https://github.com/stephencelis/SQLite.swift.git",from:  "0.14.1"),
-        .package(path: "Projects/Module/CodestackAPI"),
+        // .package(path: "Projects/Module/CodestackAPI"),
         .package(path: "Projects/Module/Highlightr"),
         .package(url: "https://github.com/NuPlay/RichText.git", from: "2.0.0"),
         .package(url: "https://github.com/qeude/SwiftDown.git", from: "0.4.1")
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )

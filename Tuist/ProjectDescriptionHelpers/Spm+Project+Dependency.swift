@@ -1,5 +1,5 @@
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 
 
 public extension TargetDependency {
@@ -8,6 +8,7 @@ public extension TargetDependency {
     enum SPM {}
 }
 
+@MainActor
 public extension TargetDependency.SPM {
     static let rxSwift: TargetDependency = .external(name: "RxSwift")
     static let snapKit: TargetDependency = .external(name: "SnapKit")
@@ -19,7 +20,7 @@ public extension TargetDependency.SPM {
     static let rxGesture: TargetDependency = .external(name: "RxGesture")
     static let swinject: TargetDependency = .external(name: "Swinject")
     static let sqlite: TargetDependency    = .external(name: "SQLite")
-    static let codestackAPI: TargetDependency    = .external(name: "CodestackAPI")
+    // static let codestackAPI: TargetDependency    = .external(name: "CodestackAPI")
     static let highlightr: TargetDependency = .external(name: "Highlightr")
     
     // static let firebase: TargetDependency = .external(name: "FirebaseFirestore")
@@ -37,7 +38,8 @@ public extension TargetDependency.SPM {
     static let swiftDown: TargetDependency = .external(name: "SwiftDown")
 }
 
-public enum P { 
+@MainActor
+public enum P {
     public static let app: Path = .relativeToRoot("Projects/CodestackApp")
     public static let global: Path = .relativeToRoot("Projects/Module/Global")
     public static let data: Path = .relativeToRoot( "Projects/Data")
@@ -49,6 +51,7 @@ public enum P {
     public static let commonUI: Path = .relativeToRoot("Projects/CommonUI")
 }
 
+@MainActor
 public extension TargetDependency.PRO {
     static let global = TargetDependency.project(
         target: "Global",

@@ -5,8 +5,8 @@
 //  Created by 박형환 on 12/12/23.
 //
 
-import ProjectDescription
-import ProjectDescriptionHelpers
+@preconcurrency import ProjectDescription
+@preconcurrency import ProjectDescriptionHelpers
 
 
 let project = Project.createModule(name: "Global",
@@ -21,7 +21,7 @@ let project = Project.createModule(name: "Global",
                                     .SPM.rxGesture,
                                     .SPM.sqlite,
                                     .SPM.swinject,
-                                    .SPM.codestackAPI,
+                                    // .SPM.codestackAPI,
                                     .SPM.highlightr
                                    ],
                                    resources: "Resources/**")

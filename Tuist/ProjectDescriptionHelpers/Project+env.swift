@@ -5,9 +5,9 @@
 //  Created by 박형환 on 12/16/23.
 //
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 
-public struct Environment {
+public struct Environment: Sendable {
     public let organizationName: String
     public let deploymentTarget: DeploymentTargets
     public let platform: Platform

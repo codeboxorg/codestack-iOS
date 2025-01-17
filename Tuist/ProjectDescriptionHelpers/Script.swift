@@ -5,7 +5,7 @@
 //  Created by 박형환 on 3/2/24.
 //
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 
 public extension TargetScript {
     static let BuildScript = TargetScript.pre(script: """

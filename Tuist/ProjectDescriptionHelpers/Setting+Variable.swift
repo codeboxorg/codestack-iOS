@@ -36,7 +36,7 @@ public enum CSettings {
 
 //"SWIFT_ACTIVE_COMPILATION_CONDITIONS" : DEBUG, QA etc..
 
-let appBuildSetting: Settings = .settings(configurations: [
+@MainActor let appBuildSetting: Settings = .settings(configurations: [
     .debug(name: "Dev",
            settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG"),],
            xcconfig: "Config/Codestack.xcconfig"),
@@ -45,7 +45,7 @@ let appBuildSetting: Settings = .settings(configurations: [
            xcconfig: "Config/Codestack.xcconfig"),
   ])
 
-let targetSetting: [ProjectDescription.Configuration] = [
+@MainActor let targetSetting: [ProjectDescription.Configuration] = [
      .debug(name: "Dev",
             settings: [
                 "SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG"),
@@ -57,15 +57,15 @@ let targetSetting: [ProjectDescription.Configuration] = [
 ]
 
 
-let defalutBuildSetting: Settings = .settings(configurations: [
-    .debug(name: "Dev", 
+@MainActor let defalutBuildSetting: Settings = .settings(configurations: [
+    .debug(name: "Dev",
            xcconfig: .relativeToRoot("Projects/CodestackApp/Config/Dev.xcconfig")),
     .release(name: "Prod",
              xcconfig: .relativeToRoot("Projects/CodestackApp/Config/Prod.xcconfig"))
 ])
 
 
-let defaultTargetSetting: [ProjectDescription.Configuration] = [
+@MainActor let defaultTargetSetting: [ProjectDescription.Configuration] = [
     .debug(name: "Dev",
            settings: ["SWIFT_ACTIVE_COMPILATION_CONDITIONS": .string("DEBUG")]),
     .release(name: "Prod",

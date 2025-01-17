@@ -1,5 +1,5 @@
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 
 
 extension Project {
