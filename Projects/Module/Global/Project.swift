@@ -7,21 +7,40 @@
 
 @preconcurrency import ProjectDescription
 @preconcurrency import ProjectDescriptionHelpers
+import MyPlugin
 
+let project = ProjectFactory
+    .createModule(
+        name: "Global",
+        product: .staticFramework,
+        dependencies: [
+//            .SPM.snapKit,
+//            .SPM.then,
+//            .SPM.apollo,
+//            .SPM.richtextKit,
+//            .SPM.rxdatasources,
+//            .SPM.rxFlow,
+//            .SPM.rxGesture,
+//            .SPM.sqlite,
+//            .SPM.swinject,
+//            .SPM.highlightr
+        ]
+        
+    )
 
-let project = Project.createModule(name: "Global",
-                                   product: .staticFramework,
-                                   dependencies: [
-                                    .SPM.snapKit,
-                                    .SPM.then,
-                                    .SPM.apollo,
-                                    .SPM.richtextKit,
-                                    .SPM.rxdatasources,
-                                    .SPM.rxFlow,
-                                    .SPM.rxGesture,
-                                    .SPM.sqlite,
-                                    .SPM.swinject,
-                                    // .SPM.codestackAPI,
-                                    .SPM.highlightr
-                                   ],
-                                   resources: "Resources/**")
+//let project = Project.createModule(name: "Global",
+//                                   product: .staticFramework,
+//                                   dependencies: [
+//                                    .SPM.snapKit,
+//                                    .SPM.then,
+//                                    .SPM.apollo,
+//                                    .SPM.richtextKit,
+//                                    .SPM.rxdatasources,
+//                                    .SPM.rxFlow,
+//                                    .SPM.rxGesture,
+//                                    .SPM.sqlite,
+//                                    .SPM.swinject,
+//                                    // .SPM.codestackAPI,
+//                                    .SPM.highlightr
+//                                   ],
+//                                   resources: "Resources/**")

@@ -5,15 +5,21 @@
 //  Created by 박형환 on 1/23/24.
 //
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 import ProjectDescriptionHelpers
+import MyPlugin
 
-let project = Project.createModule(name: "CommonUI",
-                                   product: .staticFramework,
-                                   hostTargetNeeded: true,
-                                   dependencies: [
-                                    .PRO.global,
-                                    .SPM.snapKit,
-                                    .SPM.swiftHanguel,
-                                    .SPM.rxSwift
-                                   ])
+let name = "CommonUI"
+let project = ProjectFactory.createModuleWithDemo(
+    name: name,
+    product: .staticFramework,
+    dependencies: [
+        .PRO.global,
+        .SPM.then,
+        .SPM.richtextKit,
+        .SPM.highlightr,
+        .SPM.snapKit,
+        .SPM.swiftHanguel,
+        .SPM.rxSwift
+    ]
+)

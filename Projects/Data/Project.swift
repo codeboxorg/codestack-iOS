@@ -5,9 +5,9 @@
 //  Created by 박형환 on 12/12/23.
 //
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 import ProjectDescriptionHelpers
-
+import MyPlugin
 
 
 let targetDependecies: [TargetDependency] = [
@@ -29,20 +29,30 @@ paths.map { path in
     CoreDataModel.coreDataModel(Path.relativeToCurrentFile(path))
 }
 
-let baseSetting: SettingsDictionary =
-["HEADER_SEARCH_PATHS": [
-    "$(inherited)",
-    "$(SRCROOT)/../../Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GTMAppAuth/GTMAppAuth/Sources/Public/GTMAppAuth",
-    "$(SRCROOT)/../../Tuist/Dependencies/SwiftPackageManager/.build/checkouts/gtm-session-fetcher/Sources/Core/Public"
-],
- "OTHER_LDFLAGS" : "$(OTHER_LDFLAGS) -ObjC"]
+//let baseSetting: SettingsDictionary =
+//["HEADER_SEARCH_PATHS": [
+//    "$(inherited)",
+//    "$(SRCROOT)/../../Tuist/Dependencies/SwiftPackageManager/.build/checkouts/GTMAppAuth/GTMAppAuth/Sources/Public/GTMAppAuth",
+//    "$(SRCROOT)/../../Tuist/Dependencies/SwiftPackageManager/.build/checkouts/gtm-session-fetcher/Sources/Core/Public"
+//],
+// "OTHER_LDFLAGS" : "$(OTHER_LDFLAGS) -ObjC"]
 
-let value = Project.createModule(name: "Data",
-                                 product: .staticFramework,
-                                 includeTestTarget: true,
-                                 hostTargetNeeded: true,
-                                 dependencies: targetDependecies,
-                                 baseSettings: baseSetting,
-                                 coreDataModels: coreDataPaths,
-                                 resources: resources)
+let name = "Data"
 
+let project = ProjectFactory
+    .createModule(
+        name: name,
+        product: .staticFramework,
+        dependencies: targetDependecies,
+        coreDataModel: coreDataPaths
+    )
+
+//let value = Project.createModule(name: "Data",
+//                                 product: .staticFramework,
+//                                 includeTestTarget: true,
+//                                 hostTargetNeeded: true,
+//                                 dependencies: targetDependecies,
+//                                 baseSettings: baseSetting,
+//                                 coreDataModels: coreDataPaths,
+//                                 resources: resources)
+//

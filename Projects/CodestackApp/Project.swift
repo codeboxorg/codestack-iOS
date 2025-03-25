@@ -5,8 +5,10 @@
 //  Created by 박형환 on 12/10/23.
 //
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 import ProjectDescriptionHelpers
+import MyPlugin
+
 
 let dependencies: [TargetDependency] = [
     .PRO.domain,
@@ -21,9 +23,25 @@ let dependencies: [TargetDependency] = [
     .SPM.rxGesture,
     .SPM.richText,
     .SPM.richtextKit,
-        .SPM.swiftDown
-    // .PRO.presentation,
+    .SPM.swiftDown
 ]
+
+let mode: String = {
+    if case let .string(value) = Environment.MODE {
+        return value
+    }
+    return "all"
+}()
+
+let env_dependencies: [TargetDependency] = {
+    switch mode {
+    case "commonUIDemo":
+        debugPrint("CommonUIJDIFJSKJFS")
+        return [] // ✅ CommonUI 데모 모드에서는 Data 모듈 제외
+    default:
+        return dependencies
+    }
+}()
 
 let entitlementPath: Entitlements = .file(path: .path("Resources/CodeStack.entitlements"))
 
@@ -35,21 +53,34 @@ let resources: ResourceFileElements
     "Resources/knight-warrior-font/KnightWarrior-w16n8.otf",
     "Resources/**",
     "Resources/PLanguage/**/*.txt",
-    // "Resources/Base.lproj/*.storyboard",
     "Resources/GoogleService-Info.plist",
     "Config/GoogleService-Info.plist"
 ]
 
-let project = Project.createModule(name: "CodestackApp",
-                                   product: .app,
-                                   includeTestTarget: true,
-                                   bundleID: "kr.co.codestack.ios",
-                                   packages: [],
-                                   settings: true,
-                                   dependencies: dependencies,
-                                   baseSettings: CSettings.cmark.value,
-                                   configuration: true,
-                                   resources: resources,
-                                   entitlement: entitlementPath,
-                                   script: [.BuildScript],
-                                   infoPlist: "Config/Info.plist")
+
+let name = "CodestackApp"
+
+let project = ProjectFactory.createApp(
+    name: name,
+    product: .app,
+    resources: resources,
+    dependencies: dependencies,
+    infoPlist: .file(path: .relativeToRoot("Config/Info.plist"))
+)
+
+//
+//let project = Project.createModule(
+//    name: "CodestackApp",
+//    product: .app,
+//    includeTestTarget: true,
+//    bundleID: "kr.co.codestack.ios",
+//    packages: [],
+//    settings: true,
+//    dependencies: env_dependencies,
+//    baseSettings: CSettings.cmark.value,
+//    configuration: true,
+//    resources: resources,
+//    entitlement: entitlementPath,
+//    script: [.BuildScript],
+//    infoPlist: "Config/Info.plist"
+//)

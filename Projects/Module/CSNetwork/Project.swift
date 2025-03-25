@@ -5,8 +5,9 @@
 //  Created by 박형환 on 12/17/23.
 //
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 import ProjectDescriptionHelpers
+import MyPlugin
 
 
 let baseSetting: SettingsDictionary =
@@ -18,7 +19,15 @@ let baseSetting: SettingsDictionary =
  "OTHER_LDFLAGS" : "$(OTHER_LDFLAGS) -ObjC"]
 
 
-let project = Project.createModule(name: "CSNetwork",
-                                   product: .staticFramework,
-                                   dependencies: [.PRO.global,.PRO.thridParty],
-                                   baseSettings: baseSetting)
+let project = ProjectFactory
+    .createModule(
+        name: "CSNetowrk",
+        product: .staticFramework
+    )
+
+//let project = Project.createModule(
+//    name: "CSNetwork",
+//    product: .staticFramework,
+//    dependencies: [.PRO.global,.PRO.thridParty],
+//    baseSettings: baseSetting
+//)
