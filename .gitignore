@@ -3,10 +3,11 @@
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
 ## User settings
+
+.DS_Store
 xcuserdata/
 Projects/CodestackApp/Config/GoogleService-Info.plist
 ## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
-Projects/Module/Highilighrt/**/*.*
 *.xcscmblueprint
 Projects/CodestackApp/Resources/GoogleService-Info.plist
 Projects/CodestackApp/Derived/Sources/TuistPlists+CodestackApp.swift
@@ -18,9 +19,9 @@ Projects/Module/CodestackAPI/
 Projects/Module/Highlightr/**
 Projects/Module/Highlightr/**/*.*
 ./*.xcconfig
-APIResource.xcconfig
-/APIResource.xcconfig
-./APIResource.xcconfig
+**/APIResource.xcconfig
+
+
 ## compatibility with Xcode 3 and earlier (ignoring not required starting Xcode 4)
 build/
 DerivedData/
@@ -100,6 +101,7 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 ### Tuist derived files ###
+
 graph.dot
 Derived/
 FCM/
@@ -108,6 +110,7 @@ Shared.xcconfig
 *.plist
 !Info.plist
 *.entitlements
+
 ### Tuist managed dependencies ###
 Tuist/Dependencies
 Tuist/ProjectDescription.framework/
