@@ -1,0 +1,14 @@
+
+
+@preconcurrency import ProjectDescription
+import MyPlugin
+import ProjectDescriptionHelpers
+
+let project = ProjectFactory.createModuleWithDemo(
+    name: "{{ name }}",
+    product: .staticFramework,
+    dependencies: [
+        
+    ]
+)
+
