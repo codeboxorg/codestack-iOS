@@ -1,34 +1,26 @@
-//
-//  CodeTextView.swift
-//  CodeStack
-//
-//  Created by 박형환 on 2023/04/18.
-//
 
 import UIKit
 import Highlightr
-import RxSwift
-import Domain
 
-class CodeUITextView: UITextView {
+public class CodeUITextView: UITextView {
     
-    override var contentSize: CGSize {
-        didSet {
-        }
-    }
-    
-    override init(frame: CGRect, textContainer: NSTextContainer?) {
+    public override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         addDoneButtonOnKeyboard(#selector(doneButtonAction(_:)))
+        
         self.isScrollEnabled = true
         self.layer.borderWidth = 1
         self.spellCheckingType = .no
-        self.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        self.autocorrectionType = UITextAutocorrectionType.no
-        self.autocapitalizationType = UITextAutocapitalizationType.none
         self.alwaysBounceVertical = true
-        
+        self.autocorrectionType = .no         // 자동 수정 비활성화
+        self.autocapitalizationType = .none   // 자동 대문자 비활성화
+        self.smartDashesType = .no            // 스마트 대시(- → —) 비활성화
+        self.smartQuotesType = .no            // 스마트 인용부호(" → “ ”) 비활성화
+        self.smartInsertDeleteType = .no      // 스마트 삽입/삭제 비활성화
+        self.keyboardType = .default          // 키보드 종류
+        self.spellCheckingType = .no          // 맞춤법 검사 비활성화
         self.text = """
+
 #include <stdio.h>
     
 int main() {
@@ -38,8 +30,7 @@ int main() {
 """
     }
     
-    
-    override func caretRect(for position: UITextPosition) -> CGRect {
+    public override func caretRect(for position: UITextPosition) -> CGRect {
         var superRect = super.caretRect(for: position)
         guard let font = self.font else { return superRect }
         superRect.size.height = font.pointSize - font.descender
@@ -66,21 +57,21 @@ int main() {
     
     private var isFirst: Bool = true
     
-    func languageBinding(language: LanguageVO) {
+    public func languageBinding(name: String) {
         let storage = (self.textStorage as! CodeAttributedString)
         
-        if language.name == "Node" || language.name == "Node.js" {
+        if name == "Node" || name == "Node.js" {
             storage.language = "typescript"
         } else {
-            if language.name == "Python3" {
+            if name == "Python3" {
                 storage.language = "python"
             } else {
-                storage.language = "\(language.name)"
+                storage.language = "\(name)"
             }
         }
     }
     
-    func textBinding(sourceCode: String) {
+    public func textBinding(sourceCode: String) {
         self.text = sourceCode
     }
 }

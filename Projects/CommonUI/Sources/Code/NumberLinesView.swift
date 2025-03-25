@@ -10,11 +10,11 @@ import CoreImage
 import CoreFoundation
 import Global
 
-protocol TextViewSizeTracker: AnyObject{
+public protocol TextViewSizeTracker: AnyObject {
     func updateNumberViewsHeight(_ height: CGFloat)
 }
 
-final class LineNumberRulerView: UIView {
+public final class LineNumberRulerView: UIView {
     private weak var textView: UITextView?
     private var textViewContentObserver: NSKeyValueObservation?
     private weak var tracker: TextViewSizeTracker?
@@ -32,12 +32,12 @@ final class LineNumberRulerView: UIView {
     }
     
     //MARK: init process
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
      
     }
     
-    convenience init(frame: CGRect,textView: UITextView?) {
+    public convenience init(frame: CGRect,textView: UITextView?) {
         self.init(frame: frame)
         
         NotificationCenter.default.addObserver(forName: UIView.keyboardDidChangeFrameNotification, object: textView, queue: nil) { [weak self] _ in
@@ -55,9 +55,9 @@ final class LineNumberRulerView: UIView {
     
     
     //MARK: draw Process
-    typealias LinePoint = (start: CGPoint,end: CGPoint)
+    public typealias LinePoint = (start: CGPoint,end: CGPoint)
     
-    override func draw(_ layer: CALayer, in ctx: CGContext) {
+    public override func draw(_ layer: CALayer, in ctx: CGContext) {
         super.draw(layer, in: ctx)
         let context = ctx
         
@@ -109,12 +109,11 @@ final class LineNumberRulerView: UIView {
             })
             self.drawingLine(line: (start_line,end_line), context: context)
         }
-        
         layer.isHidden = false
     }
     
     //MARK: textView setting
-    func settingTextView(_ textView: UITextView, tracker delegate: TextViewSizeTracker?) {
+    public func settingTextView(_ textView: UITextView, tracker delegate: TextViewSizeTracker?) {
         self.textView = textView
         self.tracker = delegate
         self.backgroundColor = textView.backgroundColor
