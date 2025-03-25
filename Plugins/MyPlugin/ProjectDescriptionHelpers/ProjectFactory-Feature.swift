@@ -39,8 +39,8 @@ public extension ProjectFactory {
                     bundleId: "\(AppConfig.orgName).\(name)Demo",
                     deploymentTargets: AppConfig.deploymentTarget,
                     infoPlist: .extendingDefault(with: AppConfig.demoAppSceneDeleateSetting(name: name)),
-                    sources: ["Demo/**"],
-                    resources: ["Demo/Resources/**"],
+                    sources: ["\(name)Demo/**"],
+                    resources: ["\(name)Demo/Resources/**"],
                     dependencies: [
                         .target(name: name)
                     ],
