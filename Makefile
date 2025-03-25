@@ -7,7 +7,10 @@ gitignore-apply:
 	  git rm --cached "$$file" 2>/dev/null || echo "⚠️  Skipped (missing): $$file"; \
 	done
 	@echo "✅ .gitignore 적용 완료. 필요한 경우 커밋해 주세요."
-	
-add-renamed:
+
+add-deleted:
 	@git restore --staged .
-	@git diff --cached --name-status | awk '$$1 ~ /^R[0-9]+/ { print $$3 }' | xargs git add
+	@git ls-files --deleted -z | xargs -0 git add
+	@echo "deleted file add"
+	
+	
