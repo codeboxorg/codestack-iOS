@@ -6,8 +6,10 @@ public class CodeUITextView: UITextView {
     
     public override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
-        addDoneButtonOnKeyboard(#selector(doneButtonAction(_:)))
-        
+        self.backgroundColor = .black
+        self.layer.borderColor = UIColor.black.cgColor
+        self.tintColor = .whiteGray
+        self.inputView?.tintColor = dynamicLabelColor
         self.isScrollEnabled = true
         self.layer.borderWidth = 1
         self.spellCheckingType = .no
@@ -24,7 +26,7 @@ public class CodeUITextView: UITextView {
 #include <stdio.h>
     
 int main() {
-        
+
     return 0;
 }
 """
@@ -49,10 +51,6 @@ int main() {
     
     fileprivate func addAttributes(){
         self.font = UIFont.boldSystemFont(ofSize: 14)
-    }
-
-    @objc func doneButtonAction(_ sender: UIBarButtonItem){
-        self.endEditing(true)
     }
     
     private var isFirst: Bool = true
