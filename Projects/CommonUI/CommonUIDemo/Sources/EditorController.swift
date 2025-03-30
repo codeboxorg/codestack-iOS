@@ -32,21 +32,22 @@ extension EditorController {
         toolBar.barStyle = .default
         toolBar.tintColor = .whiteGray
 
-        let doneButton = EditorButtonGenerator.generate(type: .done(DoneCommand(editor: self.textView)))
-        
-        let (scrollView, stackView) = _containerView()
+        let (scrollView, stackViewInScrollView) = _containerView()
         let buttons = makeCommandActionButton()
-
-        buttons.enumerated().forEach { enumerated in
+        let done = buttons[0]
+        let separator1 = _makeSeparator()
+        let separator2 = _makeSeparator()
+        
+        buttons[1...].enumerated().forEach { enumerated in
             let (offset, button) = enumerated
             if offset == 1 {
-                stackView.addArrangedSubview(_makeSeparator())
+                stackViewInScrollView.addArrangedSubview(separator1)
             }
-            stackView.addArrangedSubview(button)
+            stackViewInScrollView.addArrangedSubview(button)
         }
         
-        let doneItem = UIBarButtonItem(customView: doneButton)
-        let separator = UIBarButtonItem(customView: _makeSeparator())
+        let doneItem = UIBarButtonItem(customView: done)
+        let separator = UIBarButtonItem(customView: separator2)
         let scrollItem = UIBarButtonItem(customView: scrollView)
         
         toolBar.items = [scrollItem, separator, doneItem]
@@ -60,6 +61,9 @@ extension EditorController {
 // MARK: MAKE COMMAND ACTION BUTTONS
 extension EditorController {
     func makeCommandActionButton() -> [UIButton] {
+        let done = EditorButtonGenerator.generate(type: .done(DoneCommand(editor: self.textView)))
+        let tapButton = EditorButtonGenerator.generate(type: .tap(TapCommand(editor: self.textView)))
+        
         let moveLeftButton = EditorButtonGenerator.generate(type: .moveLeft([
             MoveLeftCommand(editor: self.textView),
             MoveLeftTouchDownCommand(editor: self),
@@ -73,10 +77,7 @@ extension EditorController {
             MoveTouchUpCommand(editor: self),
             MoveTouchOutCommand(editor: self)
         ]))
-        
-        let tapButton = EditorButtonGenerator.generate(type: .tap(TapCommand(editor: self.textView)))
-        
-        return [tapButton, moveLeftButton, moveRightButton]
+        return [done, tapButton, moveLeftButton, moveRightButton] + TempButton
     }
 }
 
