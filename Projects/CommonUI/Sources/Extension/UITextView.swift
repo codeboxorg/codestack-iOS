@@ -11,18 +11,6 @@ import UIKit
 
 
 public extension UITextView {
-    func addDoneButtonOnKeyboard(_ action: Selector) {
-        let doneToolbar: UIToolbar = UIToolbar(frame: .zero)
-        doneToolbar.barStyle = .default
-        doneToolbar.tintColor = dynamicLabelColor
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: action)
-        
-        let items = [flexSpace, done]
-        doneToolbar.items = items
-        doneToolbar.sizeToFit()
-        self.inputAccessoryView = doneToolbar
-    }
     
     func addDoneButtonOnKeyboard(_ action: @escaping (UIAction) -> Void) {
         let doneToolbar: UIToolbar = UIToolbar(frame: .zero)
