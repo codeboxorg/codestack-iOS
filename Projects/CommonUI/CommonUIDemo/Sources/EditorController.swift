@@ -77,7 +77,7 @@ extension EditorController {
             MoveTouchUpCommand(editor: self),
             MoveTouchOutCommand(editor: self)
         ]))
-        return [done, tapButton, moveLeftButton, moveRightButton] + TempButton
+        return [done, tapButton, moveLeftButton, moveRightButton]
     }
 }
 
