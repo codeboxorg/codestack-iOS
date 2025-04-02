@@ -67,20 +67,3 @@ let project = ProjectFactory.createApp(
     dependencies: dependencies,
     infoPlist: .file(path: .relativeToRoot("Config/Info.plist"))
 )
-
-//
-//let project = Project.createModule(
-//    name: "CodestackApp",
-//    product: .app,
-//    includeTestTarget: true,
-//    bundleID: "kr.co.codestack.ios",
-//    packages: [],
-//    settings: true,
-//    dependencies: env_dependencies,
-//    baseSettings: CSettings.cmark.value,
-//    configuration: true,
-//    resources: resources,
-//    entitlement: entitlementPath,
-//    script: [.BuildScript],
-//    infoPlist: "Config/Info.plist"
-//)
