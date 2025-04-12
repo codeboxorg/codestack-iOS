@@ -2,13 +2,18 @@ import CommonUI
 import UIKit
 
 final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
-    internal weak var textView: UITextView?
+    enum KeyboardState {
+        case keyboard
+        case specialCharacters
+        case none
+    }
     
     struct Dependency {
         var textView: UITextView
         var lineNumberView: ChangeSelectedRange
         var widthUpdater: TextViewWidthUpdateProtocol?
     }
+    
     weak var textView: UITextView?
     weak var lineNumberView: ChangeSelectedRange?
     var moveTimer: Timer?
@@ -87,6 +92,53 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
         }
     }
 }
+
+// MARK: Delegate repalceInputView when tapped SymbolAlert Button
+extension EditorController: EditorReplaceInputView {
+    func replaceInputView() {
+        if keyboardState == .keyboard {
+            let customInputView = SpecialCharacterInputView(
+                inputViewHeight: totalInputViewSize,
+                input: { [weak self] specialChar in
+                    guard
+                        let self,
+                        let textView = self.textView
+                    else {
+                        return
+                    }
+                    if specialChar == SpecialLigature.back {
+                        if let range = textView.selectedTextRange {
+                            if range.isEmpty, let newPosition = textView.position(from: range.start, offset: -1),
+                               let deleteRange = textView.textRange(from: newPosition, to: range.start) {
+                                textView.replace(deleteRange, withText: "")
+                            } else {
+                                textView.replace(range, withText: "")
+                            }
+                        }
+                    } else {
+                        let selectedRange = textView.selectedRange
+                        let shouldChange = self.textView(textView, shouldChangeTextIn: selectedRange, replacementText: specialChar.rawValue)
+                        if shouldChange {
+                            let range = textView.textRange(from: textView.beginningOfDocument, offset: selectedRange.location, length: selectedRange.length)
+                            textView.replace(range, withText: specialChar.rawValue)
+                        }
+                    }
+                    self.replaceInputView()
+                }
+            )
+            customInputView.translatesAutoresizingMaskIntoConstraints = false
+            self.keyboardState = .specialCharacters
+            textView?.inputView = customInputView
+            
+        } else if keyboardState == .specialCharacters {
+            self.keyboardState = .keyboard
+            textView?.inputView = nil
+            addDoneButtonOnKeyboard()
+        }
+        textView?.reloadInputViews()
+    }
+}
+
 
 extension EditorController {
     fileprivate func addDoneButtonOnKeyboard() {
