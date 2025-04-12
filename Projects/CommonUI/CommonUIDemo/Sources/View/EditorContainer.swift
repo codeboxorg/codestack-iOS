@@ -36,37 +36,56 @@ final class EditorContainerView: BaseView {
         textStorage.addLayoutManager(layoutManager)
         let textContainer = NSTextContainer()
         layoutManager.addTextContainer(textContainer)
-        highlightr = textStorage.highlightr
-        highlightr?.setTheme(to: "Xcode")
         let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
         return textView
     }()
     
-    func setDelegate(_ delegate: CodeViewController) {
-        numbersView.settingTextView(self.codeUITextView, tracker: delegate)
-    }
+    let scroll: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.alwaysBounceHorizontal = true
+        scroll.showsHorizontalScrollIndicator = true
+        scroll.showsVerticalScrollIndicator = false
+        scroll.isScrollEnabled = true
+        scroll.bounces = true
+        scroll.isDirectionalLockEnabled = true
+        return scroll
+    }()
     
     override func applyAttributes() {
-        let black = self.highlightr?.theme.themeBackgroundColor
-        numberTextViewContainer.backgroundColor = black   
+        numbersView.settingTextView(self.codeUITextView, tracker: self)
+        codeUITextView.languageBinding(name: "Swift")
+        codeUITextView.layoutManager.delegate = editorController
+        codeUITextView.delegate = editorController
+        
+        highlightr = (codeUITextView.textStorage as! CodeAttributedString).highlightr
+        highlightr?.setTheme(to: "vs2015")
+        let color = self.highlightr?.theme.themeBackgroundColor
+        numberTextViewContainer.backgroundColor = color
+        numbersView.backgroundColor = color
+        codeUITextView.backgroundColor = color
     }
     
     override func addAutoLayout() {
-        self.addSubview(codeUITextView)
+        self.addSubview(scroll)
     
         codeUITextView.addSubview(numbersView)
 
+        scroll.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
+        scroll.addSubview(codeUITextView)
         
         codeUITextView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.trailing.bottom.equalToSuperview()
-            make.leading.equalToSuperview()
+            make.top.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.width.equalTo(UIScreen.main.bounds.width)
+            make.height.equalToSuperview() // or intrinsic height
         }
         
         //MARK: TextContainer Inset -> 넘버 뷰의 위치의 텍스트입력 방지 inset
         var inset = codeUITextView.textContainerInset
-        inset.left = 35
+        inset.left = numbersView.number_100_Width
         codeUITextView.textContainerInset = inset
         
         numbersView.snp.makeConstraints { make in
@@ -78,3 +97,10 @@ final class EditorContainerView: BaseView {
     }
 }
 
+extension EditorContainerView: TextViewSizeTracker {
+    func updateNumberViewsHeight(_ height: CGFloat){
+        numbersView.snp.updateConstraints { make in
+            make.height.equalTo(height)
+        }
+    }
+}

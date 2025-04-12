@@ -1,5 +1,6 @@
 import CommonUI
 import UIKit
+import Global
 
 final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     enum KeyboardState {
@@ -16,6 +17,10 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     
     weak var textView: UITextView?
     weak var lineNumberView: ChangeSelectedRange?
+    weak var widthUpdater: TextViewWidthUpdateProtocol?
+    
+    let manager = TextViewWidthLayoutManager()
+    
     var moveTimer: Timer?
     
     private lazy var keyboardState: KeyboardState = .keyboard
@@ -90,7 +95,14 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
         }
     }
 }
+
+extension EditorController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        if manager.update(textView: textView) {
+            widthUpdater?.updateTextViewWidth(manager.currentMaxWidth)
+        }
+        
         for command in inputCommands {
             if command.shouldHandle(text: text) {
                 return command.execute(range: range, text: text)

@@ -9,6 +9,7 @@
 import UIKit
 import CommonUI
 import Then
+import Highlightr
 import SafariServices
 import Global
 
