@@ -33,19 +33,15 @@ struct EnterCommand: TextInputCommand {
         
         let nextCharIndex = editor.text.index(editor.text.startIndex, offsetBy: range.location, limitedBy: editor.text.endIndex)
         
-        if let nextCharIndex = nextCharIndex, nextCharIndex < editor.text.endIndex {
+        if let nextCharIndex,
+           nextCharIndex < editor.text.endIndex,
+           range.location - 1 >= 0
+        {
             let nextChar = editor.text[nextCharIndex]
             let prevCharIndex = editor.text.index(editor.text.startIndex, offsetBy: range.location - 1)
             let prevChar = editor.text[prevCharIndex]
 
-            let isBracketPair: Bool = {
-                switch (prevChar, nextChar) {
-                case ("{", "}"), ("[", "]"), ("(", ")"): return true
-                default: return false
-                }
-            }()
-
-            if isBracketPair {
+            if MatchingCharacter.isBracketPair(prev: prevChar, next: nextChar) {
                 let closingTabs = String(repeating: "\t", count: max(0, indentLevel - 1))
                 insertion += "\n" + closingTabs
                 cursorPosition = range.location + 1 + indentLevel
