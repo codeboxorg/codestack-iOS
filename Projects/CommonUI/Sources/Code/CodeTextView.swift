@@ -1,6 +1,6 @@
-
 import UIKit
 import Highlightr
+
 
 public class CodeUITextView: UITextView {
     
@@ -26,13 +26,12 @@ public class CodeUITextView: UITextView {
         self.spellCheckingType = .no          // 맞춤법 검사 비활성화
         
         self.text = """
+import Foundation
 
-#include <stdio.h>
-    
-int main() {
-
-    return 0;
+func solution(_ arr: [Int], _ num: Int) -> Int {
+    return 0
 }
+
 """
     }
     
@@ -53,11 +52,12 @@ int main() {
         #endif
     }
     
-    fileprivate func addAttributes(){
-        self.font = UIFont.boldSystemFont(ofSize: 14)
-    }
-    
     private var isFirst: Bool = true
+    
+    
+    public func set(font: UIFont){
+        self.font = font
+    }
     
     public func languageBinding(name: String) {
         let storage = (self.textStorage as! CodeAttributedString)
@@ -77,4 +77,3 @@ int main() {
         self.text = sourceCode
     }
 }
-
