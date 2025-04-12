@@ -14,6 +14,9 @@ public class CodeUITextView: UITextView {
         self.layer.borderWidth = 1
         self.spellCheckingType = .no
         self.alwaysBounceVertical = true
+        self.textContainer.widthTracksTextView = false
+        self.textContainer.lineBreakMode = .byClipping
+        
         self.autocorrectionType = .no         // 자동 수정 비활성화
         self.autocapitalizationType = .none   // 자동 대문자 비활성화
         self.smartDashesType = .no            // 스마트 대시(- → —) 비활성화
@@ -21,6 +24,7 @@ public class CodeUITextView: UITextView {
         self.smartInsertDeleteType = .no      // 스마트 삽입/삭제 비활성화
         self.keyboardType = .default          // 키보드 종류
         self.spellCheckingType = .no          // 맞춤법 검사 비활성화
+        
         self.text = """
 
 #include <stdio.h>
