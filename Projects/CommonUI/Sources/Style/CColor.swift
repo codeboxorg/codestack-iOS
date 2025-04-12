@@ -72,6 +72,14 @@ public enum CustomColor {
 }
 
 extension UIColor {
+    public var isLight: Bool {
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        let brightness = (red * 299 + green * 587 + blue * 114) / 1000
+        return brightness > 0.5
+    }
+    
     public static func getRandomColor() -> UIColor{
         let randomRed:CGFloat = CGFloat(drand48())
         
