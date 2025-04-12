@@ -18,9 +18,20 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     weak var lineNumberView: ChangeSelectedRange?
     var moveTimer: Timer?
     
+    private lazy var keyboardState: KeyboardState = .keyboard
+    private var keyboardHeight: CGFloat = 0
+    private(set) var toolBarSize: CGFloat = 0
+    private var totalInputViewSize: CGFloat {
+        keyboardHeight - toolBarSize
+    }
+    
+    
     private lazy var inputCommands: [TextInputCommand] = [
         AutoPairCharacterCommand(self.textView),
-        EnterCommand(self.textView)
+        EnterCommand(self.textView),
+        AutoRemoveCommand(self.textView)
+    ]
+    
     private lazy var cursorCommands: [CursorCommand] = [
         FocusCursorCommand.init(line: self.lineNumberView),
         BracketPairCursorCommand.init(editor: self.textView, highlightor: self)
@@ -31,7 +42,9 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
         self.textView = dependency.textView
         self.lineNumberView = dependency.lineNumberView
         addDoneButtonOnKeyboard()
+        getKeyboardHegiht()
     }
+    
     
     func removeHightLight() {
         textView?.layer.sublayers?.removeAll(where: { $0.name == "BracketPairCursor" })
@@ -92,6 +105,7 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
         }
     }
 }
+
 
 // MARK: Delegate repalceInputView when tapped SymbolAlert Button
 extension EditorController: EditorReplaceInputView {

@@ -12,9 +12,15 @@ import Highlightr
 
 final class EditorContainerView: BaseView {
     weak var highlightr: Highlightr?
-    weak var textDelegate: CodeViewController?
     
-    private let numberTextViewContainer: UIView = {
+    lazy var editorController = EditorController(
+        dependency: .init(
+            textView: self.codeUITextView,
+            lineNumberView: self.numbersView
+        )
+    )
+    
+    let numberTextViewContainer: UIView = {
         let view = UIView()
         return view
     }()
