@@ -25,9 +25,3 @@ let project = ProjectFactory
         product: .staticFramework
     )
 
-//let project = Project.createModule(
-//    name: "CSNetwork",
-//    product: .staticFramework,
-//    dependencies: [.PRO.global,.PRO.thridParty],
-//    baseSettings: baseSetting
-//)

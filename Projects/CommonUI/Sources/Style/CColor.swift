@@ -13,7 +13,6 @@ import SwiftUI
 public typealias CColor = CustomColor
 
 public enum CustomColor {
-    
     case juhwang
     case juhwang_2
     case red
@@ -85,13 +84,12 @@ extension UIColor {
 }
 
 public extension UIColor {
-    static let juhwang: UIColor = UIColor(hexCode: "#ff7f00")
-    static let whiteGray: UIColor = UIColor(hexCode: "F4EEEE")
-    static let red_c: UIColor = UIColor(hexCode: "#FAE9DE")
-    static let juhwang_2: UIColor = UIColor(hexCode: "#FC4F08")
-    static let powder_blue: UIColor = UIColor(hexCode: "#B0E0E6")
-    static let sky_blue: UIColor = UIColor(hexCode: "#87CEEB")
-    
+    static let juhwang     = UIColor(hexCode: "#ff7f00")
+    static let whiteGray   = UIColor(hexCode: "F4EEEE")
+    static let red_c       = UIColor(hexCode: "#FAE9DE")
+    static let juhwang_2   = UIColor(hexCode: "#FC4F08")
+    static let powder_blue = UIColor(hexCode: "#B0E0E6")
+    static let sky_blue    = UIColor(hexCode: "#87CEEB")
     static let skeletonBack = UIColor.init(hexCode: "#D2D2D2")
     static let skeletonHighlight = UIColor.init(hexCode: "#EBEBEB")
     
@@ -128,9 +126,11 @@ public extension UIColor {
         var rgbValue: UInt64 = 0
         Scanner(string: hexFormatted).scanHexInt64(&rgbValue)
         
-        self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-                  green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-                  blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-                  alpha: alpha)
+        self.init(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: alpha
+        )
     }
 }
