@@ -1,7 +1,7 @@
 import CommonUI
 import UIKit
 
-final class EditorController: NSObject, EditorControl, UITextViewDelegate {
+final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     internal weak var textView: UITextView?
     
     struct Dependency {
@@ -28,6 +28,50 @@ final class EditorController: NSObject, EditorControl, UITextViewDelegate {
         addDoneButtonOnKeyboard()
     }
     
+    func removeHightLight() {
+        textView?.layer.sublayers?.removeAll(where: { $0.name == "BracketPairCursor" })
+    }
+    
+    
+    func highlight(first fRange: NSRange, second sRange: NSRange) {
+        guard let textView else {
+            return
+        }
+        
+        let firstRect = textView.layoutManager.boundingRect(forGlyphRange: fRange, in: textView.textContainer)
+        let secondRect = textView.layoutManager.boundingRect(forGlyphRange: sRange, in: textView.textContainer)
+
+        let _firstRect = firstRect.offsetBy(dx: textView.textContainerInset.left, dy: textView.textContainerInset.top)
+        let _secondRect = secondRect.offsetBy(dx: textView.textContainerInset.left, dy: textView.textContainerInset.top)
+
+        let bracketFirstLayer = CALayer()
+        bracketFirstLayer.name = "BracketPairCursor"
+        bracketFirstLayer.frame = _firstRect.insetBy(dx: -2, dy: -2)
+        bracketFirstLayer.borderColor = UIColor.systemGray.withAlphaComponent(0.8).cgColor
+        bracketFirstLayer.borderWidth = 1.5
+        bracketFirstLayer.cornerRadius = 4
+        bracketFirstLayer.backgroundColor = UIColor.clear.cgColor
+        self.textView?.layer.insertSublayer(bracketFirstLayer, at: 1)
+
+        let bracketSecondLayer = CALayer()
+        bracketSecondLayer.name = "BracketPairCursor"
+        bracketSecondLayer.frame = _secondRect.insetBy(dx: -2, dy: -2)
+        bracketSecondLayer.borderColor = UIColor.systemGray.withAlphaComponent(0.8).cgColor
+        bracketSecondLayer.borderWidth = 1.5
+        bracketSecondLayer.cornerRadius = 4
+        bracketSecondLayer.backgroundColor = UIColor.clear.cgColor
+        self.textView?.layer.insertSublayer(bracketSecondLayer, at: 1)
+    }
+    
+    private func getKeyboardHegiht() {
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main)
+        { [weak self] notification in
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                self?.keyboardHeight = keyboardFrame.height
+            }
+        }
+    }
+}
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         for command in inputCommands {
             if command.shouldHandle(text: text) {
