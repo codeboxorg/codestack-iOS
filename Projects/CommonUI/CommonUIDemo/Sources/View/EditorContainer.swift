@@ -11,7 +11,6 @@ import CommonUI
 import Highlightr
 
 final class EditorContainerView: BaseView {
-    
     weak var highlightr: Highlightr?
     weak var textDelegate: CodeViewController?
     
@@ -28,16 +27,12 @@ final class EditorContainerView: BaseView {
     lazy var codeUITextView: CodeUITextView = {
         let textStorage = CodeAttributedString()
         let layoutManager = NSLayoutManager()
-        
         textStorage.addLayoutManager(layoutManager)
         let textContainer = NSTextContainer()
         layoutManager.addTextContainer(textContainer)
-        
         highlightr = textStorage.highlightr
         highlightr?.setTheme(to: "Xcode")
-        
         let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
-        
         return textView
     }()
     
@@ -52,7 +47,10 @@ final class EditorContainerView: BaseView {
     
     override func addAutoLayout() {
         self.addSubview(codeUITextView)
+    
         codeUITextView.addSubview(numbersView)
+
+        
         
         codeUITextView.snp.makeConstraints { make in
             make.top.equalToSuperview()

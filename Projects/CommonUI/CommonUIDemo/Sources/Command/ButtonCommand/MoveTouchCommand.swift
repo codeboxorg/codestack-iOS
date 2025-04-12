@@ -12,7 +12,7 @@ final class MoveTouchUpCommand: ButtonCommand {
         self.editor = editor
     }
     
-    func excute() {
+    func execute() {
         self.editor?.moveTimer?.invalidate()
         self.editor?.moveTimer = nil
     }
@@ -30,7 +30,7 @@ final class MoveTouchOutCommand: ButtonCommand {
         self.editor = editor
     }
     
-    func excute() {
+    func execute() {
         self.editor?.moveTimer?.invalidate()
         self.editor?.moveTimer = nil
     }

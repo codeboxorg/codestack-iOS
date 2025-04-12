@@ -8,7 +8,7 @@ struct MoveLeftCommand: ButtonCommand {
         self.editor = editor
     }
     
-    func excute() {
+    func execute() {
         guard let editor = editor else { return }
         let currentPosition = editor.selectedRange.location
         let newPosition = max(0, currentPosition - 1)

@@ -21,7 +21,6 @@ struct AutoPairCharacterCommand: TextInputCommand {
             return true
         }
         
-
         let insertion = "\(value.rawValue)\(value.pair)"
 
         if let start = editor.position(from: editor.beginningOfDocument, offset: range.location),

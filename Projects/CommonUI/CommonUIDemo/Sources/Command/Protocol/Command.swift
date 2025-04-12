@@ -2,11 +2,11 @@ import UIKit
 
 protocol Command {
     var controlType: UIControl.Event { get }
-    func excute()
+    func execute()
 }
 
 extension Command {
     func asAction() -> UIAction {
-        return UIAction { _ in self.excute() }
+        return UIAction { _ in self.execute() }
     }
 }

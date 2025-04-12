@@ -9,7 +9,7 @@ final class ReplaceInputViewCommand: ButtonCommand {
         self.controller = controller
     }
     
-    func excute() {
+    func execute() {
         controller?.replaceInputView()
     }
 }

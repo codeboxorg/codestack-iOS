@@ -14,16 +14,7 @@ let project = ProjectFactory
         name: "Global",
         product: .staticFramework,
         dependencies: [
-//            .SPM.snapKit,
-//            .SPM.then,
-//            .SPM.apollo,
-//            .SPM.richtextKit,
-//            .SPM.rxdatasources,
-//            .SPM.rxFlow,
-//            .SPM.rxGesture,
-//            .SPM.sqlite,
-//            .SPM.swinject,
-//            .SPM.highlightr
+
         ]
         
     )

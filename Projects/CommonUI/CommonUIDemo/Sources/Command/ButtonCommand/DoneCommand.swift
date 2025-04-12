@@ -8,7 +8,7 @@ struct DoneCommand: ButtonCommand {
         self.editor = editor
     }
     
-    func excute() {
+    func execute() {
         self.editor?.endEditing(true)
     }
 }

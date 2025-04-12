@@ -11,10 +11,10 @@ final class MoveRightTouchDownCommand: ButtonCommand {
         self.editor = editor
     }
     
-    func excute() {
+    func execute() {
         editor?.moveTimer?.invalidate()
         editor?.moveTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { _ in
-            MoveRightCommand(editor: self.editor?.textView).excute()
+            MoveRightCommand(editor: self.editor?.textView).execute()
         }
     }
 }

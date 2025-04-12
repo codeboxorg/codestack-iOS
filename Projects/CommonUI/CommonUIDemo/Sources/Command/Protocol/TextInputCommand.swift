@@ -6,6 +6,9 @@ protocol TextInputCommand: Command {
 }
 
 extension TextInputCommand {
-    func excute() { }
+    func execute() { }
+    func execute(range: NSRange, text: String) -> Bool {
+        return false
+    }
     var controlType: UIControl.Event { .valueChanged }
 }

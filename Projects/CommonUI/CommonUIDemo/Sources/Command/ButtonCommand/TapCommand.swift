@@ -8,7 +8,7 @@ struct TapCommand: ButtonCommand {
         self.editor = editor
     }
     
-    func excute() {
+    func execute() {
         self.editor?.insertText("\t")
     }
 }
