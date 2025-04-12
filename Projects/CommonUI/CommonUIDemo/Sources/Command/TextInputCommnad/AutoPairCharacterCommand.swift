@@ -17,7 +17,7 @@ struct AutoPairCharacterCommand: TextInputCommand {
             return true
         }
         
-        guard let value = MatchingCharacter.matchingCharacter(text) else {
+        guard let value = MatchingCharacter.matchingCharacter(text), value.isOpening else {
             return true
         }
         

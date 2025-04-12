@@ -18,6 +18,7 @@ final class EditorController: NSObject, EditorControl, UITextViewDelegate {
         EnterCommand(self.textView)
     private lazy var cursorCommands: [CursorCommand] = [
         FocusCursorCommand.init(line: self.lineNumberView),
+        BracketPairCursorCommand.init(editor: self.textView, highlightor: self)
     ]
     
     init(dependency: Dependency) {
@@ -34,6 +35,12 @@ final class EditorController: NSObject, EditorControl, UITextViewDelegate {
             }
         }
         return true
+    }
+    
+    func textViewDidChangeSelection(_ textView: UITextView) {
+        for cursorCommand in self.cursorCommands where cursorCommand.shouldHandle {
+            cursorCommand.execute()
+        }
     }
 }
 
