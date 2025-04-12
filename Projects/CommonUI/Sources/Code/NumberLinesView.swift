@@ -149,28 +149,32 @@ public final class LineNumberRulerView: UIView, ChangeSelectedRange {
         
         paragraphRanges.forEach { [weak self] range in
             guard let self else { return }
-            var start_line: CGPoint = CGPoint(x: 0, y: 0)
-            var end_line: CGPoint = CGPoint(x: 0, y: 0)
+            var start_line:  CGPoint = CGPoint(x: 0, y: 0)
+            var end_line:    CGPoint = CGPoint(x: 0, y: 0)
             var beforeRange: NSRange = NSRange(location: NSNotFound, length: 0)
-            
-            textLayoutManager.enumerateEnclosingRects(forGlyphRange: range,
-                                                      withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0),
-                                                      in: textView.textContainer,
-                                                      using: {
-                rect, objcBool in
-                // 같은 Paragraph의 range일때는 라인number를 생략하여 진행한다.
-                if beforeRange == range{
-                    (start_line,end_line) = self.getLinePoint(rect)
-                    return
+            textLayoutManager.enumerateEnclosingRects(
+                forGlyphRange: range,
+                withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0),
+                in: textView.textContainer,
+                using: { rect, _ in
+                    // 같은 Paragraph의 range일때는 라인number를 생략하여 진행한다.
+                    if beforeRange == range {
+                        (start_line,end_line) = self.getLinePoint(rect)
+                        return
+                    }
+                    
+                    self.addDrawingText(
+                        rect: rect,
+                        context: context,
+                        line: lineNum
+                    )
+                    
+                    (start_line, end_line) = self.getLinePoint(rect)
+                    lineNum += 1
+                    beforeRange = range
                 }
-                
-                self.addDrawingText(rect, context: context, line: lineNum, attributes: self.attributes )
-                (start_line,end_line) = self.getLinePoint(rect)
-                lineNum += 1
-                beforeRange = range
-                
-            })
-            self.drawingLine(line: (start_line,end_line), context: context)
+            )
+            self.drawingLine(line: (start_line, end_line), context: context)
         }
         layer.isHidden = false
     }
@@ -179,9 +183,8 @@ public final class LineNumberRulerView: UIView, ChangeSelectedRange {
     public func settingTextView(_ textView: UITextView, tracker delegate: TextViewSizeTracker?) {
         self.textView = textView
         self.tracker = delegate
-        self.backgroundColor = textView.backgroundColor
         
-        if !textView.text.isEmpty{
+        if !textView.text.isEmpty {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: { [weak self] in
                 guard let self else {return}
                 self.layer.setNeedsDisplay()
@@ -200,13 +203,13 @@ public final class LineNumberRulerView: UIView, ChangeSelectedRange {
         })
     }
     
-    
-   
     //MARK: Custom Draw func
-    private func drawingLine(_ color: CGColor = UIColor.systemGray2.cgColor,
-                             _ width: CGFloat = 1.0,
-                             line point: LinePoint,
-                             context: CGContext){
+    private func drawingLine(
+        _ color: CGColor = UIColor.systemGray2.cgColor,
+        _ width: CGFloat = 1.0,
+        line point: LinePoint,
+        context: CGContext)
+    {
         context.saveGState()
         context.setStrokeColor(color)
         context.setLineWidth(width)
@@ -216,24 +219,38 @@ public final class LineNumberRulerView: UIView, ChangeSelectedRange {
         context.restoreGState()
     }
     
-    private func getLinePoint(_ rect: CGRect, _ lineSpacing: CGFloat = 6) -> LinePoint{
-        guard let textView else { return (CGPoint(x: NSNotFound, y: NSNotFound),CGPoint(x: NSNotFound, y: NSNotFound)) }
-        let start_line = CGPoint(x: 0,
-                             y: rect.origin.y + rect.height +  textView.textContainerInset.top + lineSpacing)
+    private func getLinePoint(_ rect: CGRect, _ lineSpacing: CGFloat = 6) -> LinePoint {
+        guard let textView else {
+            return (CGPoint(x: NSNotFound, y: NSNotFound), CGPoint(x: NSNotFound, y: NSNotFound))
+        }
+        
+        let start_line = CGPoint(
+            x: 0,
+            y: rect.origin.y + rect.height + textView.textContainerInset.top + lineSpacing
+        )
+        
         let end_line = CGPoint(x: self.frame.width, y: start_line.y)
+        
         return (start_line, end_line)
     }
     
-    private func addDrawingText(_ rect: CGRect,
-                                context: CGContext,
-                                line number: Int,
-                                attributes: [NSAttributedString.Key : Any]) {
-        guard let textView else {return}
+    private func addDrawingText(
+        rect: CGRect,
+        context: CGContext,
+        line number: Int
+    ) {
         
-        let frame = CGRect(x: rect.origin.x,
-                           y: rect.origin.y + textView.textContainerInset.top,
-                           width: rect.width,
-                           height: rect.height)
+        guard let textView else {
+            return
+        }
+        
+        let frame = CGRect(
+            x: rect.origin.x,
+            y: rect.origin.y + textView.textContainerInset.top,
+            width: rect.width,
+            height: rect.height
+        )
+        
         context.saveGState()
         
         if number < 100{
