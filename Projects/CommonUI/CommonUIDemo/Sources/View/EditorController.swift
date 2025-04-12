@@ -140,14 +140,45 @@ extension EditorController: EditorReplaceInputView {
 }
 
 
+
 extension EditorController {
+    var done: UIButton {
+        EditorButtonGenerator.generate(type: .done(DoneCommand(editor: self.textView)))
+    }
+    
+    var tapButton: UIButton {
+        EditorButtonGenerator.generate(type: .tap(TapCommand(editor: self.textView)))
+    }
+    
+    var moveLeftButton: UIButton {
+        EditorButtonGenerator.generate(type: .moveLeft([
+            MoveLeftCommand(editor: self.textView),
+            MoveLeftTouchDownCommand(editor: self),
+            MoveTouchUpCommand(editor: self),
+            MoveTouchOutCommand(editor: self),
+        ]))
+    }
+    
+    var moveRightButton: UIButton {
+        EditorButtonGenerator.generate(type: .moveRight([
+            MoveRightCommand(editor: self.textView),
+            MoveRightTouchDownCommand(editor: self),
+            MoveTouchUpCommand(editor: self),
+            MoveTouchOutCommand(editor: self)
+        ]))
+    }
+    
+    var symbolAlert: UIButton {
+        EditorButtonGenerator.generate(type: .symbol(ReplaceInputViewCommand(controller: self)))
+    }
+    
     fileprivate func addDoneButtonOnKeyboard() {
         let toolBar = UIToolbar()
         toolBar.barStyle = .default
         toolBar.tintColor = .whiteGray
 
         let (scrollView, stackViewInScrollView) = _containerView()
-        let buttons = makeCommandActionButton()
+        let buttons = [done, tapButton, moveLeftButton, moveRightButton, symbolAlert]
         let done = buttons[0]
         let separator1 = _makeSeparator()
         let separator2 = _makeSeparator()
@@ -166,32 +197,9 @@ extension EditorController {
         
         toolBar.items = [scrollItem, separator, doneItem]
         toolBar.sizeToFit()
-
+        let toolBarSize = toolBar.sizeThatFits(CGSize(width: UIScreen.main.bounds.width, height: CGFloat(50)))
+        self.toolBarSize = toolBarSize.height
         self.textView?.inputAccessoryView = toolBar
-    }
-}
-
-
-// MARK: MAKE COMMAND ACTION BUTTONS
-extension EditorController {
-    func makeCommandActionButton() -> [UIButton] {
-        let done = EditorButtonGenerator.generate(type: .done(DoneCommand(editor: self.textView)))
-        let tapButton = EditorButtonGenerator.generate(type: .tap(TapCommand(editor: self.textView)))
-        
-        let moveLeftButton = EditorButtonGenerator.generate(type: .moveLeft([
-            MoveLeftCommand(editor: self.textView),
-            MoveLeftTouchDownCommand(editor: self),
-            MoveTouchUpCommand(editor: self),
-            MoveTouchOutCommand(editor: self),
-        ]))
-        
-        let moveRightButton = EditorButtonGenerator.generate(type: .moveRight([
-            MoveRightCommand(editor: self.textView),
-            MoveRightTouchDownCommand(editor: self),
-            MoveTouchUpCommand(editor: self),
-            MoveTouchOutCommand(editor: self)
-        ]))
-        return [done, tapButton, moveLeftButton, moveRightButton]
     }
 }
 

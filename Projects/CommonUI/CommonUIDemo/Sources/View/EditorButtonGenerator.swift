@@ -14,6 +14,7 @@ enum EditorButtonGenerator {
         case moveRight([Command])
         case done(Command)
         case tap(Command)
+        case symbol(Command)
         case details
     }
     
@@ -34,7 +35,23 @@ enum EditorButtonGenerator {
         }
         
         button.addAction(action, for: .touchUpInside)
+        
         switch type {
+        case .symbol(let command):
+            let symbolAlertButton = button
+            symbolAlertButton.setTitle("S", for: .normal)
+            symbolAlertButton.addAction(command.asAction(), for: command.controlType)
+            
+            let colorAction = UIAction { [weak symbolAlertButton] action in
+                symbolAlertButton?.layer.cornerRadius = 6
+                symbolAlertButton?.backgroundColor = .whiteGray.withAlphaComponent(0.3)
+            }
+            
+            symbolAlertButton.addAction(colorAction, for: .touchUpInside)
+            
+            layoutConfig(button: symbolAlertButton, size: 30)
+            return symbolAlertButton
+            
         case .moveLeft(let commands):
             let moveLeftButton = button
             moveLeftButton.setImage(UIImage(systemName: "arrowshape.backward"), for: .normal)
