@@ -14,7 +14,13 @@ public protocol TextViewSizeTracker: AnyObject {
     func updateNumberViewsHeight(_ height: CGFloat)
 }
 
-public final class LineNumberRulerView: UIView {
+public protocol ChangeSelectedRange: AnyObject {
+    func handle()
+    func shouldHandleFocus() -> Bool
+}
+
+public final class LineNumberRulerView: UIView, ChangeSelectedRange {
+
     private weak var textView: UITextView?
     private var textViewContentObserver: NSKeyValueObservation?
     private weak var tracker: TextViewSizeTracker?
@@ -24,22 +30,25 @@ public final class LineNumberRulerView: UIView {
         self?.layer.setNeedsDisplay()
     }
     
-    private var attributes: [NSAttributedString.Key : Any] {
-        [
-           .font: UIFont.boldSystemFont(ofSize: 14),
-           .foregroundColor: UIColor.systemGray
-        ]
+    public var number_100_Width: CGFloat {
+        ("100" as NSString).size(withAttributes: self.attributes).width + 5
     }
+    
+    public var attributes: [NSAttributedString.Key : Any] = [
+        .font : UIFont.systemFont(ofSize: 14),
+        .foregroundColor : UIColor.systemGray
+    ]
+    
+    private var lastParagraphRange: NSRange?
     
     //MARK: init process
     public override init(frame: CGRect) {
         super.init(frame: frame)
-     
+        
     }
     
     public convenience init(frame: CGRect,textView: UITextView?) {
         self.init(frame: frame)
-        
         NotificationCenter.default.addObserver(forName: UIView.keyboardDidChangeFrameNotification, object: textView, queue: nil) { [weak self] _ in
             self?.layer.setNeedsDisplay()
         }
@@ -53,6 +62,60 @@ public final class LineNumberRulerView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func focusBackgroundColor() -> UIColor {
+        let baseColor = self.backgroundColor ?? .white
+        let highlightColor: UIColor
+
+        if baseColor.isLight {
+            highlightColor = UIColor.black.withAlphaComponent(0.05)
+        } else {
+            highlightColor = UIColor.white.withAlphaComponent(0.05)
+        }
+        
+        return highlightColor
+    }
+    
+    public func shouldHandleFocus() -> Bool {
+        let selectedRange = textView!.selectedRange
+        let nsText = textView!.text as NSString
+        let paragraphRange = nsText.paragraphRange(for: selectedRange)
+
+        if paragraphRange == lastParagraphRange {
+            return false
+        }
+        return true
+    }
+    
+    public func handle() {
+        guard let textView = textView else { return }
+        let selectedRange = textView.selectedRange
+        let nsText = textView.text as NSString
+        let paragraphRange = nsText.paragraphRange(for: selectedRange)
+        
+        lastParagraphRange = paragraphRange
+        
+        self.layer.sublayers?.removeAll(where: { $0.name == "LineHighlightLayer" })
+        textView.layer.sublayers?.removeAll(where: { $0.name == "LineHighlightLayer" })
+        
+        let highlightColor = focusBackgroundColor()
+        let layoutManager = textView.layoutManager
+        let glyphRange = layoutManager.glyphRange(forCharacterRange: paragraphRange, actualCharacterRange: nil)
+        
+        layoutManager.enumerateLineFragments(forGlyphRange: glyphRange) { rect, _, _, _, _ in
+            let lineRect = rect.offsetBy(dx: 0, dy: textView.textContainerInset.top)
+            let rulerLayer = CALayer()
+            rulerLayer.name = "LineHighlightLayer"
+            rulerLayer.frame = CGRect(x: 0, y: lineRect.origin.y - 4, width: self.bounds.width, height: lineRect.height)
+            rulerLayer.backgroundColor = highlightColor.withAlphaComponent(0.2).cgColor
+            self.layer.addSublayer(rulerLayer)
+
+            let textViewLayer = CALayer()
+            textViewLayer.name = "LineHighlightLayer"
+            textViewLayer.frame = CGRect(x: 0, y: lineRect.origin.y - 4, width: textView.bounds.width, height: lineRect.height)
+            textViewLayer.backgroundColor = highlightColor.withAlphaComponent(0.15).cgColor
+            textView.layer.insertSublayer(textViewLayer, at: 0)
+        }
+    }
     
     //MARK: draw Process
     public typealias LinePoint = (start: CGPoint,end: CGPoint)

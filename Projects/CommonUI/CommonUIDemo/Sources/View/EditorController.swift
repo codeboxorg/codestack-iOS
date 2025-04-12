@@ -3,16 +3,27 @@ import UIKit
 
 final class EditorController: NSObject, EditorControl, UITextViewDelegate {
     internal weak var textView: UITextView?
+    
+    struct Dependency {
+        var textView: UITextView
+        var lineNumberView: ChangeSelectedRange
+        var widthUpdater: TextViewWidthUpdateProtocol?
+    }
+    weak var textView: UITextView?
+    weak var lineNumberView: ChangeSelectedRange?
     var moveTimer: Timer?
     
     private lazy var inputCommands: [TextInputCommand] = [
         AutoPairCharacterCommand(self.textView),
         EnterCommand(self.textView)
+    private lazy var cursorCommands: [CursorCommand] = [
+        FocusCursorCommand.init(line: self.lineNumberView),
     ]
     
-    init(textView: UITextView? = nil) {
+    init(dependency: Dependency) {
         super.init()
-        self.textView = textView
+        self.textView = dependency.textView
+        self.lineNumberView = dependency.lineNumberView
         addDoneButtonOnKeyboard()
     }
     
