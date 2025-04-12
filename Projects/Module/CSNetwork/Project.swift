@@ -21,7 +21,7 @@ let baseSetting: SettingsDictionary =
 
 let project = ProjectFactory
     .createModule(
-        name: "CSNetowrk",
+        name: "CSNetwork",
         product: .staticFramework
     )
 

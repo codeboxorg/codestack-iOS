@@ -6,12 +6,11 @@
 //
 
 @preconcurrency import ProjectDescription
-import ProjectDescriptionHelpers
 import MyPlugin
+import ProjectDescriptionHelpers
 
-let name = "CommonUI"
 let project = ProjectFactory.createModuleWithDemo(
-    name: name,
+    name: "CommonUI",
     product: .staticFramework,
     dependencies: [
         .PRO.global,

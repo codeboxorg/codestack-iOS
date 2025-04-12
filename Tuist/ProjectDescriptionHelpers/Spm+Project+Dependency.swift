@@ -8,7 +8,6 @@ public extension TargetDependency {
     enum SPM {}
 }
 
-@MainActor
 public extension TargetDependency.SPM {
     static let rxSwift: TargetDependency = .external(name: "RxSwift")
     static let snapKit: TargetDependency = .external(name: "SnapKit")
@@ -38,7 +37,6 @@ public extension TargetDependency.SPM {
     static let swiftDown: TargetDependency = .external(name: "SwiftDown")
 }
 
-@MainActor
 public enum P {
     public static let app: Path = .relativeToRoot("Projects/CodestackApp")
     public static let global: Path = .relativeToRoot("Projects/Module/Global")
@@ -51,7 +49,6 @@ public enum P {
     public static let commonUI: Path = .relativeToRoot("Projects/CommonUI")
 }
 
-@MainActor
 public extension TargetDependency.PRO {
     static let global = TargetDependency.project(
         target: "Global",
