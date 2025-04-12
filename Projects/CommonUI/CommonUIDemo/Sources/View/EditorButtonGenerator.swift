@@ -25,9 +25,18 @@ enum EditorButtonGenerator {
     }
     
     static func generate(type: ButtonType) -> UIButton {
+        let button = UIButton(type: .system)
+        
+        let action = UIAction { _ in
+            let generator = UIImpactFeedbackGenerator(style: .soft)
+            generator.prepare()
+            generator.impactOccurred()
+        }
+        
+        button.addAction(action, for: .touchUpInside)
         switch type {
         case .moveLeft(let commands):
-            let moveLeftButton = UIButton(type: .system)
+            let moveLeftButton = button
             moveLeftButton.setImage(UIImage(systemName: "arrowshape.backward"), for: .normal)
             layoutConfig(button: moveLeftButton, size: 30)
             
@@ -38,7 +47,7 @@ enum EditorButtonGenerator {
             return moveLeftButton
             
         case .moveRight(let commands):
-            let moveRightButton = UIButton(type: .system)
+            let moveRightButton = button
             moveRightButton.setImage(UIImage(systemName: "arrowshape.right"), for: .normal)
             layoutConfig(button: moveRightButton, size: 30)
             
@@ -49,14 +58,14 @@ enum EditorButtonGenerator {
             return moveRightButton
             
         case .done(let command):
-            let doneButton = UIButton(type: .system)
+            let doneButton = button
             doneButton.setImage(UIImage(systemName: "keyboard.chevron.compact.down"), for: .normal)
             layoutConfig(button: doneButton)
             doneButton.addAction(command.asAction(), for: .touchUpInside)
             return doneButton
             
         case .tap(let command):
-            let tapButton = UIButton(type: .system)
+            let tapButton = button
             tapButton.setImage(UIImage(systemName: "arrow.right.to.line"), for: .normal)
             layoutConfig(button: tapButton)
             tapButton.addAction(command.asAction(), for: .touchUpInside)
