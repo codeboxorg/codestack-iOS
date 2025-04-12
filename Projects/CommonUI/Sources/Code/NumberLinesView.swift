@@ -253,17 +253,24 @@ public final class LineNumberRulerView: UIView, ChangeSelectedRange {
         
         context.saveGState()
         
-        if number < 100{
-            context.textPosition = frame.origin.applying(.init(translationX: 5, y: 12))
-        }else{
-            context.textPosition = frame.origin.applying(.init(translationX: 0, y: 12))
-        }
+        let numberFont = attributes[.font] as? UIFont ?? UIFont.systemFont(ofSize: 14)
+        let numberLineHeight = numberFont.lineHeight
         
-        let ctline = CTLineCreateWithAttributedString(CFAttributedStringCreate(nil, "\(number)" as CFString, attributes as CFDictionary))
-        CTLineDraw(ctline, context)
+        let codeFont = textView.font ?? UIFont.systemFont(ofSize: 14)
+        let codeLineHeight = codeFont.lineHeight
+
+        let padding = max(5, (codeLineHeight - numberLineHeight))
+        let yOffset = numberLineHeight / 2 + padding
+
+        let attributedString = NSAttributedString(string: "\(number)", attributes: attributes)
+        let ctLine = CTLineCreateWithAttributedString(attributedString as CFAttributedString)
+
+        let lineWidth = CTLineGetTypographicBounds(ctLine, nil, nil, nil)
+        let xOffset = (self.bounds.width - CGFloat(lineWidth)) / 2
+
+        context.textPosition = frame.origin.applying(.init(translationX: xOffset, y: yOffset))
+        CTLineDraw(ctLine, context)
+        
         context.restoreGState()
-        
     }
 }
-
-
