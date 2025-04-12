@@ -16,8 +16,8 @@
             "Highlightr" : .staticFramework ,
             "SQLite" : .framework],
         baseSettings: .settings(configurations: [
-            .debug(name: "Dev"),
-            .release(name: "Prod"),
+            .debug(name: "DEV"),
+            .release(name: "PROD"),
         ]),
         platforms: [.iOS]
     )
