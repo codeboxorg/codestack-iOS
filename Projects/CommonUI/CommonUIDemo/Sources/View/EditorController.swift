@@ -32,14 +32,26 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     
     
     private lazy var inputCommands: [TextInputCommand] = [
+        EnterCommand(
+            editor: self.textView,
+            suggestionLayout: self.suggestLayoutManager
+        ),
+        SuggestionEnterCommand(
+            editor: self.textView,
+            suggestionManager: self.suggestionManager
+        ),
+        SuggestionGeneratorCommand(
+            editor: self.textView,
+            suggestionManager: self.suggestionManager
+        ),
+        AutoRemoveCommand(self.textView),
         AutoPairCharacterCommand(self.textView),
-        EnterCommand(self.textView),
-        AutoRemoveCommand(self.textView)
     ]
     
     private lazy var cursorCommands: [CursorCommand] = [
         FocusCursorCommand.init(line: self.lineNumberView),
-        BracketPairCursorCommand.init(editor: self.textView, highlightor: self)
+        BracketPairCursorCommand.init(editor: self.textView, highlightor: self),
+        SuggestFocusCusorCommand(suggestionManager: self.suggestionManager)
     ]
     
     init(dependency: Dependency) {
@@ -98,17 +110,22 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
 
 extension EditorController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        
         if manager.update(textView: textView) {
             widthUpdater?.updateTextViewWidth(manager.currentMaxWidth)
         }
         
+        var systemUpdate = true
+        
         for command in inputCommands {
             if command.shouldHandle(text: text) {
-                return command.execute(range: range, text: text)
+                let shouldUpdate = command.execute(range: range, text: text)
+                if shouldUpdate == false {
+                    systemUpdate = false
+                }
             }
         }
-        return true
+        
+        return systemUpdate
     }
     
     func textViewDidChangeSelection(_ textView: UITextView) {
