@@ -30,14 +30,12 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     )
     
     var moveTimer: Timer?
-    
     private lazy var keyboardState: KeyboardState = .keyboard
     private var keyboardHeight: CGFloat = 0
     private(set) var toolBarSize: CGFloat = 0
     private var totalInputViewSize: CGFloat {
         keyboardHeight - toolBarSize
     }
-    
     
     private lazy var inputCommands: [TextInputCommand] = [
         EnterCommand(
@@ -114,6 +112,15 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
                 self?.keyboardHeight = keyboardFrame.height
             }
         }
+        
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] notification in
+            guard let self else {
+                return
+            }
+            self.lineNumberView?.removeLayer()
+            self.removeHightLight()
+            self.suggestionManager.removeSuggestionView()
+        }
     }
 }
 
@@ -121,6 +128,7 @@ extension EditorController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
          suggestionManager.suggestionLayoutGenerate()
     }
+    
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if manager.update(textView: textView) {
             widthUpdater?.updateTextViewWidth(manager.currentMaxWidth)
