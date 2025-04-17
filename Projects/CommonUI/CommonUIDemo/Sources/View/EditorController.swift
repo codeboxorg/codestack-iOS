@@ -18,8 +18,16 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     weak var textView: UITextView?
     weak var lineNumberView: ChangeSelectedRange?
     weak var widthUpdater: TextViewWidthUpdateProtocol?
-    
+    lazy var suggestLayoutManager: SuggestionLayout = SuggestionLayoutManager(editor: textView)
     let manager = TextViewWidthLayoutManager()
+    
+    private(set) lazy var suggestionManager: SuggestionManager = DefaultSuggestionManager(
+        dependency: .init(
+            suggestion: DefaultWordSuggenstion(),
+            editor: self.textView,
+            layoutManager: suggestLayoutManager
+        )
+    )
     
     var moveTimer: Timer?
     
@@ -58,6 +66,7 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
         super.init()
         self.textView = dependency.textView
         self.lineNumberView = dependency.lineNumberView
+        suggestionManager.initSuggestion()
         addDoneButtonOnKeyboard()
         getKeyboardHegiht()
     }
@@ -109,6 +118,9 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
 }
 
 extension EditorController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+         suggestionManager.suggestionLayoutGenerate()
+    }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if manager.update(textView: textView) {
             widthUpdater?.updateTextViewWidth(manager.currentMaxWidth)
