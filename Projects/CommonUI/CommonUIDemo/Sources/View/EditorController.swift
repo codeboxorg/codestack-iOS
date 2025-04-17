@@ -15,6 +15,7 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
         var widthUpdater: TextViewWidthUpdateProtocol?
     }
     
+    
     weak var textView: UITextView?
     weak var lineNumberView: ChangeSelectedRange?
     weak var widthUpdater: TextViewWidthUpdateProtocol?
@@ -38,10 +39,6 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     }
     
     private lazy var inputCommands: [TextInputCommand] = [
-        EnterCommand(
-            editor: self.textView,
-            suggestionLayout: self.suggestLayoutManager
-        ),
         SuggestionEnterCommand(
             editor: self.textView,
             suggestionManager: self.suggestionManager
@@ -49,6 +46,10 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
         SuggestionGeneratorCommand(
             editor: self.textView,
             suggestionManager: self.suggestionManager
+        ),
+        EnterCommand(
+            editor: self.textView,
+            suggestionLayout: self.suggestLayoutManager
         ),
         AutoRemoveCommand(self.textView),
         AutoPairCharacterCommand(self.textView),
@@ -135,15 +136,30 @@ extension EditorController: UITextViewDelegate {
         }
         
         var systemUpdate = true
+        var suggestionEnterCommandExcuted = false
         
         for command in inputCommands {
             if command.shouldHandle(text: text) {
-                let shouldUpdate = command.execute(range: range, text: text)
-                if shouldUpdate == false {
+                let commandType = type(of: command)
+                var commandUpdate: Bool = true
+                
+                if commandType is SuggestionEnterCommand.Type {
+                    commandUpdate = command.execute(range: range, text: text)
+                    suggestionEnterCommandExcuted = !commandUpdate
+                } else if commandType is EnterCommand.Type {
+                    if !suggestionEnterCommandExcuted {
+                        commandUpdate = command.execute(range: range, text: text)
+                    }
+                } else {
+                    commandUpdate = command.execute(range: range, text: text)
+                }
+                
+                if commandUpdate == false {
                     systemUpdate = false
                 }
             }
         }
+        
         
         return systemUpdate
     }
