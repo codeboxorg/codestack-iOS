@@ -74,11 +74,10 @@ final class SuggestionLayoutManager: SuggestionLayout {
             selectAction: selectAction,
             gestureAction: gestureAction
         )
-        
-        suggestionView.updateSuggestions(words: suggestions)
 
+        let updatedCount = suggestionView.updateSuggestions(words: suggestions)
         let lineHeight: CGFloat = suggestionView.tableView.rowHeight
-        let viewHeight = CGFloat(min(suggestions.count, 5)) * lineHeight + 4
+        let viewHeight = CGFloat(min(updatedCount, 5)) * lineHeight + 4
         
         suggestionView.frame = CGRect(
             x: rect.minX,
@@ -87,6 +86,7 @@ final class SuggestionLayoutManager: SuggestionLayout {
             height: viewHeight
         )
         self.editor?.addSubview(suggestionView)
+        suggestionView.reload()
     }
     
     private func removeSuggestionView() {

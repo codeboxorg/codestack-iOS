@@ -236,7 +236,15 @@ extension EditorController {
     }
     
     fileprivate func addDoneButtonOnKeyboard() {
-        let toolBar = UIToolbar()
+        let toolBar = UIToolbar(
+            frame: CGRect(
+                origin: CGPoint.zero,
+                size: CGSize(
+                    width: UIScreen.main.bounds.width,
+                    height: CGFloat(44)
+                )
+            )
+        )
         toolBar.barStyle = .default
         toolBar.tintColor = .whiteGray
 

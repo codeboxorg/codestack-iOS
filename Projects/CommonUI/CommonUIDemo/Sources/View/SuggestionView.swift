@@ -7,7 +7,6 @@ final class SuggestionView: BaseView {
     private(set) var tableView = UITableView()
     
     private var suggestions: [String] = []
-    
     private var selectAction: (String) -> Void
     private var gestureAction: (String) -> Void
     
@@ -80,15 +79,15 @@ final class SuggestionView: BaseView {
         tableView.setContentOffset(point, animated: false)
     }
     
-    func updateSuggestions(words: [String]) {
-        suggestions = Array(words.prefix(10))
-        tableView.reloadData()
-        let rowHeight: CGFloat = 40
+    func updateSuggestions(words: [String]) -> Int {
+        suggestions = Array(words.prefix(20))
         let maxVisibleRows = 5
         let visibleRowCount = min(suggestions.count, maxVisibleRows)
-        let height = CGFloat(visibleRowCount) * rowHeight
-        NSLayoutConstraint.deactivate(self.constraints.filter { $0.firstAttribute == .height })
-        self.heightAnchor.constraint(equalToConstant: height).isActive = true
+        return visibleRowCount
+    }
+    
+    func reload() {
+        tableView.reloadData()
         suggestionView(didHoverOver: IndexPath(row: 0, section: 0))
     }
 }
