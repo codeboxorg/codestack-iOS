@@ -4,14 +4,30 @@ import Global
 struct EnterCommand: TextInputCommand {
     
     weak var editor: UITextView?
+    weak var suggestionLayout: SuggestionLayout?
     
-    init(_ editor: UITextView?) {
+    init(
+        editor: UITextView?,
+        suggestionLayout: SuggestionLayout?
+    ) {
         self.editor = editor
+        self.suggestionLayout = suggestionLayout
     }
     
     @inlinable
     func shouldHandle(text: String) -> Bool {
-        text == "\n" ? true : false
+        let isEnter = text == "\n" ? true : false
+        
+        if !isEnter {
+            return false
+        }
+        
+        if let state = suggestionLayout?.state,
+           case .focusing = state {
+            return false
+        } else {
+            return true
+        }
     }
     
     @inlinable
