@@ -17,6 +17,7 @@ public protocol TextViewSizeTracker: AnyObject {
 public protocol ChangeSelectedRange: AnyObject {
     func handle()
     func shouldHandleFocus() -> Bool
+    func removeLayer()
 }
 
 public final class LineNumberRulerView: UIView, ChangeSelectedRange {
@@ -86,6 +87,11 @@ public final class LineNumberRulerView: UIView, ChangeSelectedRange {
         return true
     }
     
+    public func removeLayer() {
+        self.layer.sublayers?.removeAll(where: { $0.name == "LineHighlightLayer" })
+        self.textView?.layer.sublayers?.removeAll(where: { $0.name == "LineHighlightLayer" })
+    }
+    
     public func handle() {
         guard let textView = textView else { return }
         let selectedRange = textView.selectedRange
@@ -94,8 +100,7 @@ public final class LineNumberRulerView: UIView, ChangeSelectedRange {
         
         lastParagraphRange = paragraphRange
         
-        self.layer.sublayers?.removeAll(where: { $0.name == "LineHighlightLayer" })
-        textView.layer.sublayers?.removeAll(where: { $0.name == "LineHighlightLayer" })
+        removeLayer()
         
         let highlightColor = focusBackgroundColor()
         let layoutManager = textView.layoutManager
