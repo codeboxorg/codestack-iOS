@@ -56,6 +56,11 @@ struct BracketPairCursorCommand: CursorCommand {
         let startIndex = editor.text.startIndex
         let endIndex = editor.text.endIndex
         let cursor = editor.selectedRange.location
+        
+        if cursor == 0 {
+            return nil
+        }
+        
         let priorIndex = editor.text.index(editor.text.startIndex, offsetBy: cursor - 1, limitedBy: editor.text.endIndex)
         let afterIndex = editor.text.index(editor.text.startIndex, offsetBy: cursor, limitedBy: editor.text.endIndex)
         
