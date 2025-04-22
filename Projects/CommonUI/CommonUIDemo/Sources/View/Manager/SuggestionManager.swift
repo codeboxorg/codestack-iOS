@@ -196,7 +196,7 @@ internal struct SuggestionCommand {
     }
     
     func insert(using word: String) {
-        guard let (_, position) = findPriorCusorWords(),
+        guard let (priorWord, position) = findPriorCusorWords(),
               let editor = editor,
               let range = editor.textRange(
                 from: position, to: editor.selectedTextRange!.start
@@ -205,19 +205,21 @@ internal struct SuggestionCommand {
             return
         }
         
+        let oldSelectedRange = editor.selectedTextRange
         let startOffset = editor.offset(from: editor.beginningOfDocument, to: range.start)
-        let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: word.count)
+        
+        editor.replace(range, withText: word)
+        
+        let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: word.count)!
         
         let undoCommand = UndoSnapshotCommand(
             undoRange: undoRange,
             redoRange: range,
             insertedText: word,
-            replacedText: "",
+            replacedText: priorWord,
             selectedTextRange: nil,
-            oldSelectedTextRange: nil
+            oldSelectedTextRange: oldSelectedRange
         )
-        
-        editor.replace(range, withText: word)
         
         invoker?.push(undoCommand)
     }

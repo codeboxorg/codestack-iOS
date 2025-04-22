@@ -1,20 +1,18 @@
 import UIKit
 
 struct TextInputCommandResult: Equatable {
-    let replacementRange: UITextRange
-    let replacementText: String
-    let newSelectedRange: UITextRange?
-    let state: Set<CommandExcuteState>
+    var replacementRange: UITextRange
+    var replacementText: String
+    var newSelectedRange: UITextRange?
+    
     init(
         replacementRange: UITextRange,
         replacementText: String,
-        newSelectedRange: UITextRange?,
-        state: Set<CommandExcuteState> = .init()
+        newSelectedRange: UITextRange?
     ) {
         self.replacementRange = replacementRange
         self.replacementText = replacementText
         self.newSelectedRange = newSelectedRange
-        self.state = state
     }
 }
 

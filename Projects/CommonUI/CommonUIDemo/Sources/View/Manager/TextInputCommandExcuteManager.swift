@@ -45,6 +45,8 @@ final class TextInputCommandExcuteManager {
         let replacedText = editor.text(in: result.replacementRange) ?? ""
         var newSelectedTextRange: UITextRange? = nil
         
+        editor.replace(result.replacementRange, withText: result.replacementText)
+        
         // 2. Recalculate new selectedTextRange after replacement
         if let newSelectedRange = result.newSelectedRange,
            let _newSelectedTextRange = editor.textRange(
@@ -59,12 +61,9 @@ final class TextInputCommandExcuteManager {
         // 3. Recalculate undo range based on the updated state
         let startOffset = editor.offset(from: editor.beginningOfDocument, to: result.replacementRange.start)
         let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: result.replacementText.count)
-
-        editor.replace(result.replacementRange, withText: result.replacementText)
         editor.selectedTextRange = newSelectedTextRange
-
-        // 4. Create undo command with updated selectedTextRange
-        let undoCommand = UndoSnapshotCommand(
+        
+        let snapShot = UndoSnapshotCommand(
             undoRange: undoRange,
             redoRange: result.replacementRange,
             insertedText: result.replacementText,
@@ -72,8 +71,74 @@ final class TextInputCommandExcuteManager {
             selectedTextRange: newSelectedTextRange,
             oldSelectedTextRange: oldSelectedTextRange
         )
-
+        undoableManager?.push(snapShot)
+    }
+        
         // 5. Push undo command and cancel further processing
+    func systemRemoveActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
+        guard let editor else {
+            return
+        }
+        let priorWord = (editor.text as NSString).substring(with: range)
+        let oldSelectedRange = editor.selectedTextRange
+        let startPosition = editor.position(from: editor.beginningOfDocument, offset: range.location)
+        let undoEndPosition = editor.position(from: startPosition ?? UITextPosition(), offset: range.length - priorWord.count)
+        let redoEndPosition = editor.position(from: startPosition ?? UITextPosition(), offset: range.length)
+
+        var undoRange: UITextRange? = nil
+        var redoRange: UITextRange? = nil
+
+        if let start = startPosition, let end = undoEndPosition, let redo_end = redoEndPosition {
+            undoRange = editor.textRange(from: start, to: end)
+            redoRange = editor.textRange(from: start, to: redo_end)
+        }
+
+        let cursorOffset = range.location
+        let newCursorPosition = editor.position(from: editor.beginningOfDocument, offset: cursorOffset)
+        let selectedTextRange = newCursorPosition.flatMap { editor.textRange(from: $0, to: $0) }
+
+        let undoCommand = UndoSnapshotCommand(
+            undoRange: undoRange,
+            redoRange: redoRange,
+            insertedText: text,
+            replacedText: priorWord,
+            selectedTextRange: selectedTextRange,
+            oldSelectedTextRange: oldSelectedRange
+        )
+
+        undoableManager?.push(undoCommand)
+    }
+    
+    func systemInsertActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
+        guard let editor else {
+            return
+        }
+        let priorWord = (editor.text as NSString).substring(with: range)
+        let oldSelectedRange = editor.selectedTextRange
+
+        let undoStartPosition = editor.position(from: editor.beginningOfDocument, offset: range.location)
+        let undoEndPosition = editor.position(from: undoStartPosition ?? UITextPosition(), offset: range.length + text.count)
+        let redoEndPosition = editor.position(from: undoStartPosition ?? UITextPosition(), offset: range.length)
+
+        var undoRange: UITextRange? = nil
+        var redoRange: UITextRange? = nil
+        if let start = undoStartPosition, let end = undoEndPosition, let redo_end = redoEndPosition {
+            undoRange = editor.textRange(from: start, to: end)
+            redoRange = editor.textRange(from: start, to: redo_end)
+        }
+        
+        let cursorOffset = range.location + text.count
+        let newCursorPosition = editor.position(from: editor.beginningOfDocument, offset: cursorOffset)
+        let selectedTextRange = newCursorPosition.flatMap { editor.textRange(from: $0, to: $0) }
+
+        let undoCommand = UndoSnapshotCommand(
+            undoRange: undoRange,
+            redoRange: redoRange,
+            insertedText: text,
+            replacedText: priorWord,
+            selectedTextRange: selectedTextRange,
+            oldSelectedTextRange: oldSelectedRange
+        )
         undoableManager?.push(undoCommand)
     }
     
@@ -95,37 +160,11 @@ final class TextInputCommandExcuteManager {
         }
         
         if systemUpdate {
-            guard let editor = editor else {
-                return false
+            if range.length >= 1 && text.count == 0 {
+                systemRemoveActionSnapShot(shouldChangeTextIn: range, replacementText: text)
+            } else {
+                systemInsertActionSnapShot(shouldChangeTextIn: range, replacementText: text)
             }
-
-            let priorWord = (editor.text as NSString).substring(with: range)
-            let oldSelectedRange = editor.selectedTextRange
-
-            let startPosition = editor.position(from: editor.beginningOfDocument, offset: range.location)
-            let endPosition = editor.position(from: startPosition ?? UITextPosition(), offset: range.length)
-
-            var undoRange: UITextRange? = nil
-            if let start = startPosition, let end = endPosition {
-                undoRange = editor.textRange(from: start, to: end)
-            }
-            
-            let cursorOffset = range.location + text.count
-            let newCursorPosition = editor.position(from: editor.beginningOfDocument, offset: cursorOffset)
-            let selectedTextRange = newCursorPosition.flatMap { editor.textRange(from: $0, to: $0) }
-
-            let undoCommand = UndoSnapshotCommand(
-                undoRange: undoRange,
-                redoRange: undoRange,
-                insertedText: text,
-                replacedText: priorWord,
-                selectedTextRange: selectedTextRange,
-                oldSelectedTextRange: oldSelectedRange
-            )
-            
-            Log.debug("priorword: \(String(describing: priorWord))")
-
-            undoableManager?.push(undoCommand)
         }
         
         return systemUpdate
@@ -160,7 +199,6 @@ extension TextInputCommandExcuteManager {
         
         if let position = editor.position(from: editor.beginningOfDocument, offset: cursorPosition) {
             newSelectedRange = editor.textRange(from: position, to: position)
-            editor.selectedTextRange = newSelectedRange
         }
         
         let result = TextInputCommandResult(
