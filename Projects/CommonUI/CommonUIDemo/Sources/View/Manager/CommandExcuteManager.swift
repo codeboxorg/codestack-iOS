@@ -36,7 +36,6 @@ final class TextInputCommandExcuteManager {
     
     func commandExecute(shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         var systemUpdate = true
-        var suggestionEnterCommandExcuted = false
         var state = Set<CommandExcuteState>()
         
         for command in inputCommands {
