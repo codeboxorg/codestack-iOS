@@ -129,37 +129,10 @@ extension EditorController: UITextViewDelegate {
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if manager.update(textView: textView) {
-            widthUpdater?.updateTextViewWidth(manager.currentMaxWidth)
+        if textViewWidthLayoutManager.update(textView: textView) {
+            widthUpdater?.updateTextViewWidth(textViewWidthLayoutManager.currentMaxWidth)
         }
-        
-        var systemUpdate = true
-        var suggestionEnterCommandExcuted = false
-        
-        for command in inputCommands {
-            if command.shouldHandle(text: text) {
-                let commandType = type(of: command)
-                var commandUpdate: Bool = true
-                
-                if commandType is SuggestionEnterCommand.Type {
-                    commandUpdate = command.execute(range: range, text: text)
-                    suggestionEnterCommandExcuted = !commandUpdate
-                } else if commandType is EnterCommand.Type {
-                    if !suggestionEnterCommandExcuted {
-                        commandUpdate = command.execute(range: range, text: text)
-                    }
-                } else {
-                    commandUpdate = command.execute(range: range, text: text)
-                }
-                
-                if commandUpdate == false {
-                    systemUpdate = false
-                }
-            }
-        }
-        
-        
-        return systemUpdate
+        return textInputCommandExcuteManager.commandExecute(shouldChangeTextIn: range, replacementText: text)
     }
     
     func textViewDidChangeSelection(_ textView: UITextView) {
@@ -346,7 +319,7 @@ extension EditorController {
     }
 }
 
-private extension UITextView {
+extension UITextView {
     func textRange(from beginning: UITextPosition, offset: Int, length: Int) -> UITextRange {
         let start = self.position(from: beginning, offset: offset)!
         let end = self.position(from: start, offset: length)!
