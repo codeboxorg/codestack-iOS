@@ -21,7 +21,7 @@ final class DefaultSuggestionManager: SuggestionManager {
         var suggestion: WordSuggenstion
         var editor: UITextView?
         var layoutManager: SuggestionLayout
-        var invoker: CommandInvoker
+        var invoker: UndoableManager
     }
     
     private var suggestionCommand: SuggestionCommand
@@ -137,9 +137,9 @@ final class DefaultSuggestionManager: SuggestionManager {
 
 internal struct SuggestionCommand {
     weak var editor: UITextView!
-    weak var invoker: CommandInvoker?
+    weak var invoker: UndoableManager?
     
-    init(editor: UITextView?, invoker: CommandInvoker?) {
+    init(editor: UITextView?, invoker: UndoableManager?) {
         self.editor = editor
         self.invoker = invoker
     }
@@ -206,7 +206,7 @@ internal struct SuggestionCommand {
         }
         
         let startOffset = editor.offset(from: editor.beginningOfDocument, to: range.start)
-        let undoRange = editor.textRange(from: editor.beginningOfDocument,offset: startOffset, length: word.count)
+        let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: word.count)
         
         let undoCommand = UndoSnapshotCommand(
             undoRange: undoRange,

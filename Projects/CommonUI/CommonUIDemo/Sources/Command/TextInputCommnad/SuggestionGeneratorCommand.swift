@@ -1,19 +1,16 @@
-import UIKit
+import Foundation
 import Global
 
 struct SuggestionGeneratorCommand: TextInputCommand {
     
-    weak var editor: UITextView?
     weak var suggestionManager: SuggestionManager?
     var commandState: CommandExcuteState {
         .suggestionGenerator
     }
     
     init(
-        editor: UITextView?,
         suggestionManager: SuggestionManager?
     ) {
-        self.editor = editor
         self.suggestionManager = suggestionManager
     }
     
