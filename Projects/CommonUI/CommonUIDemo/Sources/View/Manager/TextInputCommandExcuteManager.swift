@@ -199,7 +199,6 @@ extension TextInputCommandExcuteManager {
         
         if let position = editor.position(from: editor.beginningOfDocument, offset: cursorPosition) {
             newSelectedRange = editor.textRange(from: position, to: position)
-            editor.selectedTextRange = newSelectedRange
         }
         
         let result = TextInputCommandResult(
