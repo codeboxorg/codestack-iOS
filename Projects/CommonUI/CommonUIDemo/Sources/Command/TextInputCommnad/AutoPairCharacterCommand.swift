@@ -1,8 +1,13 @@
 import UIKit
+import CommonUI
 
 struct AutoPairCharacterCommand: TextInputCommand {
     
     weak var editor: UITextView?
+    
+    var commandState: CommandExcuteState {
+        .autoPairChar
+    }
     
     init(_ editor: UITextView?) {
         self.editor = editor

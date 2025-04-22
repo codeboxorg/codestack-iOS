@@ -10,6 +10,11 @@ struct AutoRemoveCommand: TextInputCommand {
     
     weak var editor: UITextView?
     
+    var commandState: CommandExcuteState {
+        .autoPairChar
+    }
+    
+    
     init(_ editor: UITextView?) {
         self.editor = editor
     }

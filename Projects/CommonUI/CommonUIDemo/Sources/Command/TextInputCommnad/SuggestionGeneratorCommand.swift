@@ -5,6 +5,9 @@ struct SuggestionGeneratorCommand: TextInputCommand {
     
     weak var editor: UITextView?
     weak var suggestionManager: SuggestionManager?
+    var commandState: CommandExcuteState {
+        .suggestionGenerator
+    }
     
     init(
         editor: UITextView?,

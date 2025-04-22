@@ -21,9 +21,10 @@ final class DefaultSuggestionManager: SuggestionManager {
         var suggestion: WordSuggenstion
         var editor: UITextView?
         var layoutManager: SuggestionLayout
+        var invoker: CommandInvoker
     }
     
-    private lazy var suggestionCommand = SuggestionCommand(editor: editor)
+    private var suggestionCommand: SuggestionCommand
     private let suggestion: WordSuggenstion
     private weak var editor: UITextView?
     private var layout: SuggestionLayout?
@@ -44,12 +45,22 @@ final class DefaultSuggestionManager: SuggestionManager {
         self.suggestion = dependency.suggestion
         self.editor = dependency.editor
         self.layout = dependency.layoutManager
+        self.suggestionCommand = SuggestionCommand(
+            editor: dependency.editor,
+            invoker: dependency.invoker
+        )
     }
     
     func initSuggestion() {
         guard let editor = editor else {
             return
         }
+        let swiftString = "Int,Int8,Int16,Int32,Int64,UInt,UInt8,UInt16,UInt32,UInt64,Float,Double,Bool,String,Character,Array,Dictionary,Set,Any,AnyObject,Never,Optional,Error,if,else,guard,switch,case,default,for,while,repeating,in,break,continue,return,throw,try,catch,defer,do,let,var,func,typealias,struct,class,enum,protocol,extension,init,deinit,subscript,public,private,fileprivate,internal,open,static,final,override,convenience,lazy,mutating,nonmutating,weak,unowned,strong,self,super,as,is,await,async,throws,inout,some,any,where,associatedtype,print,debugPrint,map,flatMap,compactMap,filter,reduce,forEach,sorted,contains,first,last,count,isEmpty,append,remove,insert,dropFirst,dropLast,split,joined,prefix,suffix,index,indices,hasPrefix,hasSuffix,uppercased,lowercased,trimmingCharacters,random,shuffled".split(separator: ",").map { String($0) }.joined(separator: " ")
+        
+        let protocolKeywords = "Collection,BidirectionalCollection,MutableCollection,Sequence,IteratorProtocol,CustomStringConvertible,CustomDebugStringConvertible,CustomReflectable,Equatable,Comparable,Hashable,Codable,CaseIterable"
+        
+        suggestion.input(for: protocolKeywords)
+        suggestion.input(for: swiftString)
         suggestion.input(for: editor.text)
     }
     
@@ -111,6 +122,7 @@ final class DefaultSuggestionManager: SuggestionManager {
     
     func insertCurrentFocusingSuggestionWord() {
         suggestionCommand.insert(using: currentFocusingItem)
+        layout?.state = .none
     }
     
     func input(for text: String) {
@@ -125,9 +137,11 @@ final class DefaultSuggestionManager: SuggestionManager {
 
 internal struct SuggestionCommand {
     weak var editor: UITextView!
+    weak var invoker: CommandInvoker?
     
-    init(editor: UITextView?) {
+    init(editor: UITextView?, invoker: CommandInvoker?) {
         self.editor = editor
+        self.invoker = invoker
     }
     
     func findWordStartPosition() -> UITextPosition? {
@@ -170,10 +184,10 @@ internal struct SuggestionCommand {
     
     /// 커서가 단어의 중간이면 suggestion 미표시
     func isRightPosition(cursorPosition: UITextPosition) -> Bool {
-        if let nextCharPosition = editor!.position(from: cursorPosition, offset: 0),
-           let nextCharPosition2 = editor!.position(from: nextCharPosition, offset: 1),
-           let textRange = editor!.textRange(from: cursorPosition, to: nextCharPosition2),
-           let nextChar = editor!.text(in: textRange),
+        if let nextCharPosition = editor.position(from: cursorPosition, offset: 0),
+           let nextCharPosition2 = editor.position(from: nextCharPosition, offset: 1),
+           let textRange = editor.textRange(from: cursorPosition, to: nextCharPosition2),
+           let nextChar = editor.text(in: textRange),
            nextChar.range(of: "[a-zA-Z0-9_]", options: .regularExpression) != nil {
             return true
         } else {
@@ -190,6 +204,21 @@ internal struct SuggestionCommand {
         else {
             return
         }
+        
+        let startOffset = editor.offset(from: editor.beginningOfDocument, to: range.start)
+        let undoRange = editor.textRange(from: editor.beginningOfDocument,offset: startOffset, length: word.count)
+        
+        let undoCommand = UndoSnapshotCommand(
+            undoRange: undoRange,
+            redoRange: range,
+            insertedText: word,
+            replacedText: "",
+            selectedTextRange: nil,
+            oldSelectedTextRange: nil
+        )
+        
         editor.replace(range, withText: word)
+        
+        invoker?.push(undoCommand)
     }
 }

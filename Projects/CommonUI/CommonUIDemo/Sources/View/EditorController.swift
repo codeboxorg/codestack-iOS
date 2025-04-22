@@ -20,13 +20,20 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     weak var lineNumberView: ChangeSelectedRange?
     weak var widthUpdater: TextViewWidthUpdateProtocol?
     lazy var suggestLayoutManager: SuggestionLayout = SuggestionLayoutManager(editor: textView)
-    let manager = TextViewWidthLayoutManager()
+    let textViewWidthLayoutManager = TextViewWidthLayoutManager()
+    
+    private lazy var invoker = CommandInvoker(
+        editor: self.textView,
+        undoStack: [],
+        redoStack: []
+    )
     
     private(set) lazy var suggestionManager: SuggestionManager = DefaultSuggestionManager(
         dependency: .init(
             suggestion: DefaultWordSuggenstion(),
             editor: self.textView,
-            layoutManager: suggestLayoutManager
+            layoutManager: suggestLayoutManager,
+            invoker: self.invoker
         )
     )
     

@@ -3,8 +3,14 @@ import Global
 
 struct EnterCommand: TextInputCommand {
     
+    
+    
     weak var editor: UITextView?
     weak var suggestionLayout: SuggestionLayout?
+    
+    var commandState: CommandExcuteState {
+        .enter
+    }
     
     init(
         editor: UITextView?,
@@ -12,6 +18,11 @@ struct EnterCommand: TextInputCommand {
     ) {
         self.editor = editor
         self.suggestionLayout = suggestionLayout
+    }
+    
+    func shouldHandle(text: String, state: Set<CommandExcuteState>) -> Bool {
+        if state.contains(.suggestionEnter) { return false }
+        return shouldHandle(text: text)
     }
     
     @inlinable
