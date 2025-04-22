@@ -35,6 +35,7 @@ final class TextInputCommandExcuteManager {
         self.suggestionLayoutManger = suggestionLayoutManger
     }
     
+    
     func applyUndoableSnapShot(input result: TextInputCommandResult) {
         guard let editor else {
             return
@@ -62,9 +63,8 @@ final class TextInputCommandExcuteManager {
         let startOffset = editor.offset(from: editor.beginningOfDocument, to: result.replacementRange.start)
         let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: result.replacementText.count)
         editor.selectedTextRange = newSelectedTextRange
-
-        // 4. Create undo command with updated selectedTextRange
-        let undoCommand = UndoSnapshotCommand(
+    
+        let snapShot = UndoSnapshotCommand(
             undoRange: undoRange,
             redoRange: result.replacementRange,
             insertedText: result.replacementText,
@@ -72,7 +72,7 @@ final class TextInputCommandExcuteManager {
             selectedTextRange: newSelectedTextRange,
             oldSelectedTextRange: oldSelectedTextRange
         )
-
+        
         // 5. Push undo command and cancel further processing
     func systemRemoveActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
         guard let editor else {
