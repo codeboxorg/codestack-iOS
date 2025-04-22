@@ -83,7 +83,7 @@ final class SuggestionLayoutManager: SuggestionLayout {
             x: rect.minX,
             y: rect.maxY + 4,
             width: 150,
-            height: viewHeight
+            height: viewHeight + (lineHeight / 3)
         )
         self.editor?.addSubview(suggestionView)
         suggestionView.reload()
