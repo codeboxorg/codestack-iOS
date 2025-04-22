@@ -257,6 +257,24 @@ extension EditorController {
     var symbolAlert: UIButton {
         EditorButtonGenerator.generate(type: .symbol(ReplaceInputViewCommand(controller: self)))
     }
+
+    var undoButton: UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle("Undo", for: .normal)
+        button.addAction(UIAction { [weak self] _ in
+            self?.invoker.undo()
+        }, for: .touchUpInside)
+        return button
+    }
+
+    var redoButton: UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle("Redo", for: .normal)
+        button.addAction(UIAction { [weak self] _ in
+            self?.invoker.redo()
+        }, for: .touchUpInside)
+        return button
+    }
     
     fileprivate func addDoneButtonOnKeyboard() {
         let toolBar = UIToolbar(
@@ -272,7 +290,7 @@ extension EditorController {
         toolBar.tintColor = .whiteGray
 
         let (scrollView, stackViewInScrollView) = _containerView()
-        let buttons = [done, tapButton, moveLeftButton, moveRightButton, symbolAlert]
+        let buttons = [done, tapButton, moveLeftButton, moveRightButton, symbolAlert, undoButton, redoButton]
         let done = buttons[0]
         let separator1 = _makeSeparator()
         let separator2 = _makeSeparator()
@@ -355,11 +373,11 @@ extension EditorController {
     }
 }
 
-private extension UITextView {
-    func textRange(from beginning: UITextPosition, offset: Int, length: Int) -> UITextRange {
+extension UITextView {
+    func textRange(from beginning: UITextPosition, offset: Int, length: Int) -> UITextRange? {
         let start = self.position(from: beginning, offset: offset)!
         let end = self.position(from: start, offset: length)!
-        return self.textRange(from: start, to: end)!
+        return self.textRange(from: start, to: end)
     }
 }
 
