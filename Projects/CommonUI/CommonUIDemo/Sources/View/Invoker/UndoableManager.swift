@@ -1,8 +1,24 @@
 import UIKit
 import Global
 
-final class CommandInvoker {
+
+protocol UndoableManager: AnyObject {
+    var isUndoable: Bool { get }
+    var isRedoable: Bool { get }
+    func push(_ command: UndoableTextInputCommand)
+    func undo()
+    func redo()
+}
+
+final class DefaultUndoableManager: UndoableManager {
     private weak var editor: UITextView?
+    
+    var isUndoable: Bool {
+        self.undoStack.isEmpty
+    }
+    var isRedoable: Bool {
+        self.redoStack.isEmpty
+    }
     
     init(editor: UITextView? = nil, undoStack: [UndoableTextInputCommand], redoStack: [UndoableTextInputCommand]) {
         self.editor = editor
