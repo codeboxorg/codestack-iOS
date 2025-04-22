@@ -45,6 +45,8 @@ final class TextInputCommandExcuteManager {
         let replacedText = editor.text(in: result.replacementRange) ?? ""
         var newSelectedTextRange: UITextRange? = nil
         
+        editor.replace(result.replacementRange, withText: result.replacementText)
+        
         // 2. Recalculate new selectedTextRange after replacement
         if let newSelectedRange = result.newSelectedRange,
            let _newSelectedTextRange = editor.textRange(
@@ -59,8 +61,6 @@ final class TextInputCommandExcuteManager {
         // 3. Recalculate undo range based on the updated state
         let startOffset = editor.offset(from: editor.beginningOfDocument, to: result.replacementRange.start)
         let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: result.replacementText.count)
-
-        editor.replace(result.replacementRange, withText: result.replacementText)
         editor.selectedTextRange = newSelectedTextRange
 
         // 4. Create undo command with updated selectedTextRange
