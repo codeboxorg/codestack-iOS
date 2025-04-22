@@ -2,14 +2,14 @@ import UIKit
 
 struct DoneCommand: ButtonCommand {
     
-    weak var editor: UITextView?
+    weak var layout: ButtonCommandExecuteManager?
     
-    init(editor: UITextView?) {
-        self.editor = editor
+    init(layout: ButtonCommandExecuteManager?) {
+        self.layout = layout
     }
     
     func execute() {
-        self.editor?.endEditing(true)
+        layout?.tapButtonExecute()
     }
 }
 

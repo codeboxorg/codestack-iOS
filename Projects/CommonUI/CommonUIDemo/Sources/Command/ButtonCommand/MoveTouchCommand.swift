@@ -6,15 +6,14 @@ final class MoveTouchUpCommand: ButtonCommand {
         .touchUpInside
     }
     
-    private weak var editor: EditorControl?
+    private weak var layout: ButtonCommandExecuteManager?
     
-    init(editor: EditorControl?) {
-        self.editor = editor
+    init(layout: ButtonCommandExecuteManager?) {
+        self.layout = layout
     }
     
     func execute() {
-        self.editor?.moveTimer?.invalidate()
-        self.editor?.moveTimer = nil
+        layout?.moveTouchUpCommand()
     }
 }
 
@@ -24,14 +23,13 @@ final class MoveTouchOutCommand: ButtonCommand {
         .touchUpOutside
     }
     
-    private weak var editor: EditorControl?
+    private weak var layout: ButtonCommandExecuteManager?
     
-    init(editor: EditorControl?) {
-        self.editor = editor
+    init(layout: ButtonCommandExecuteManager?) {
+        self.layout = layout
     }
     
     func execute() {
-        self.editor?.moveTimer?.invalidate()
-        self.editor?.moveTimer = nil
+        layout?.moveTouchOutCommand()
     }
 }

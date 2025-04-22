@@ -6,16 +6,18 @@ final class MoveLeftTouchDownCommand: ButtonCommand {
         .touchDown
     }
     
-    private weak var editor: EditorControl?
+    private weak var timerControl: EditorControl?
+    private weak var layout: ButtonCommandExecuteManager?
     
-    init(editor: EditorControl?) {
-        self.editor = editor
+    init(timerControl: EditorControl?, layout: ButtonCommandExecuteManager?) {
+        self.timerControl = timerControl
+        self.layout = layout
     }
     
     func execute() {
-        editor?.moveTimer?.invalidate()
-        editor?.moveTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { _ in
-            MoveLeftCommand(editor: self.editor?.textView).execute()
+        timerControl?.moveTimer?.invalidate()
+        timerControl?.moveTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { [weak self] _ in
+            MoveLeftCommand(layout: self?.layout).execute()
         }
     }
 }

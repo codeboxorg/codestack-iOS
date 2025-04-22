@@ -1,20 +1,22 @@
 import UIKit
 
 final class MoveRightTouchDownCommand: ButtonCommand {
-    weak var editor: EditorControl?
+    weak var timerControl: EditorControl?
+    weak var layout: ButtonCommandExecuteManager?
     
     var controlType: UIControl.Event {
         .touchDown
     }
     
-    init(editor: EditorControl?) {
-        self.editor = editor
+    init(timerControl: EditorControl?, layout: ButtonCommandExecuteManager?) {
+        self.timerControl = timerControl
+        self.layout = layout
     }
     
     func execute() {
-        editor?.moveTimer?.invalidate()
-        editor?.moveTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { _ in
-            MoveRightCommand(editor: self.editor?.textView).execute()
+        timerControl?.moveTimer?.invalidate()
+        timerControl?.moveTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { [weak self] _ in
+            MoveRightCommand(layout: self?.layout).execute()
         }
     }
 }
