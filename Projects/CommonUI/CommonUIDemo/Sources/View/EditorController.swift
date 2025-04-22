@@ -19,10 +19,18 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     weak var textView: UITextView?
     weak var lineNumberView: ChangeSelectedRange?
     weak var widthUpdater: TextViewWidthUpdateProtocol?
-    lazy var suggestLayoutManager: SuggestionLayout = SuggestionLayoutManager(editor: textView)
-    let textViewWidthLayoutManager = TextViewWidthLayoutManager()
     
-    private lazy var invoker = CommandInvoker(
+    private lazy var suggestLayoutManager: SuggestionLayout = SuggestionLayoutManager(editor: textView)
+    private let textViewWidthLayoutManager = TextViewWidthLayoutManager()
+    
+    private lazy var textInputCommandExcuteManager = TextInputCommandExcuteManager(
+        editor: textView,
+        undoableManager: undoableManager,
+        suggestionManager: suggestionManager,
+        suggestionLayoutManger: suggestLayoutManager
+    )
+    
+    private lazy var undoableManager: UndoableManager = DefaultUndoableManager(
         editor: self.textView,
         undoStack: [],
         redoStack: []
@@ -33,7 +41,7 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
             suggestion: DefaultWordSuggenstion(),
             editor: self.textView,
             layoutManager: suggestLayoutManager,
-            invoker: self.invoker
+            invoker: self.undoableManager
         )
     )
     
@@ -44,23 +52,6 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     private var totalInputViewSize: CGFloat {
         keyboardHeight - toolBarSize
     }
-    
-    private lazy var inputCommands: [TextInputCommand] = [
-        SuggestionEnterCommand(
-            editor: self.textView,
-            suggestionManager: self.suggestionManager
-        ),
-        SuggestionGeneratorCommand(
-            editor: self.textView,
-            suggestionManager: self.suggestionManager
-        ),
-        EnterCommand(
-            editor: self.textView,
-            suggestionLayout: self.suggestLayoutManager
-        ),
-        AutoRemoveCommand(self.textView),
-        AutoPairCharacterCommand(self.textView),
-    ]
     
     private lazy var cursorCommands: [CursorCommand] = [
         FocusCursorCommand.init(line: self.lineNumberView),
