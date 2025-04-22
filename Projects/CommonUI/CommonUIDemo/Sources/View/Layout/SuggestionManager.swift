@@ -21,7 +21,7 @@ final class DefaultSuggestionManager: SuggestionManager {
         var suggestion: WordSuggenstion
         var editor: UITextView?
         var layoutManager: SuggestionLayout
-        var invoker: CommandInvoker
+        var invoker: UndoableManager
     }
     
     private var suggestionCommand: SuggestionCommand
@@ -206,7 +206,7 @@ internal struct SuggestionCommand {
         }
         
         let startOffset = editor.offset(from: editor.beginningOfDocument, to: range.start)
-        let undoRange = editor.textRange(from: editor.beginningOfDocument,offset: startOffset, length: word.count)
+        let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: word.count)
         
         let undoCommand = UndoSnapshotCommand(
             undoRange: undoRange,
