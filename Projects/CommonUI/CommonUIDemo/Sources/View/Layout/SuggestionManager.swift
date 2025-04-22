@@ -137,9 +137,9 @@ final class DefaultSuggestionManager: SuggestionManager {
 
 internal struct SuggestionCommand {
     weak var editor: UITextView!
-    weak var invoker: CommandInvoker?
+    weak var invoker: UndoableManager?
     
-    init(editor: UITextView?, invoker: CommandInvoker?) {
+    init(editor: UITextView?, invoker: UndoableManager?) {
         self.editor = editor
         self.invoker = invoker
     }
