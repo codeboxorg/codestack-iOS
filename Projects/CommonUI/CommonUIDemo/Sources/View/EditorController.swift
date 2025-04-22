@@ -21,6 +21,13 @@ final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
     weak var widthUpdater: TextViewWidthUpdateProtocol?
     
     private lazy var suggestLayoutManager: SuggestionLayout = SuggestionLayoutManager(editor: textView)
+    
+    private lazy var buttonCommandExecuteManager: ButtonCommandExecuteManager = DefaultButtonCommandExecuteManager(
+        editor: self.textView,
+        editorControl: self,
+        undoableManager: self.undoableManager
+    )
+    
     private let textViewWidthLayoutManager = TextViewWidthLayoutManager()
     
     private lazy var textInputCommandExcuteManager = TextInputCommandExcuteManager(
@@ -194,54 +201,6 @@ extension EditorController: EditorReplaceInputView {
 
 
 extension EditorController {
-    var done: UIButton {
-        EditorButtonGenerator.generate(type: .done(DoneCommand(editor: self.textView)))
-    }
-    
-    var tapButton: UIButton {
-        EditorButtonGenerator.generate(type: .tap(TapCommand(editor: self.textView)))
-    }
-    
-    var moveLeftButton: UIButton {
-        EditorButtonGenerator.generate(type: .moveLeft([
-            MoveLeftCommand(editor: self.textView),
-            MoveLeftTouchDownCommand(editor: self),
-            MoveTouchUpCommand(editor: self),
-            MoveTouchOutCommand(editor: self),
-        ]))
-    }
-    
-    var moveRightButton: UIButton {
-        EditorButtonGenerator.generate(type: .moveRight([
-            MoveRightCommand(editor: self.textView),
-            MoveRightTouchDownCommand(editor: self),
-            MoveTouchUpCommand(editor: self),
-            MoveTouchOutCommand(editor: self)
-        ]))
-    }
-    
-    var symbolAlert: UIButton {
-        EditorButtonGenerator.generate(type: .symbol(ReplaceInputViewCommand(controller: self)))
-    }
-
-    var undoButton: UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle("Undo", for: .normal)
-        button.addAction(UIAction { [weak self] _ in
-            self?.undoableManager.undo()
-        }, for: .touchUpInside)
-        return button
-    }
-
-    var redoButton: UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle("Redo", for: .normal)
-        button.addAction(UIAction { [weak self] _ in
-            self?.undoableManager.redo()
-        }, for: .touchUpInside)
-        return button
-    }
-    
     fileprivate func addDoneButtonOnKeyboard() {
         let toolBar = UIToolbar(
             frame: CGRect(
@@ -256,7 +215,7 @@ extension EditorController {
         toolBar.tintColor = .whiteGray
 
         let (scrollView, stackViewInScrollView) = _containerView()
-        let buttons = [done, tapButton, moveLeftButton, moveRightButton, symbolAlert, undoButton, redoButton]
+        let buttons = buttonCommandExecuteManager.allCommandButtons
         let done = buttons[0]
         let separator1 = _makeSeparator()
         let separator2 = _makeSeparator()
