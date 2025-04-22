@@ -58,12 +58,12 @@ final class TextInputCommandExcuteManager {
         {
             newSelectedTextRange = _newSelectedTextRange
         }
-
+        
         // 3. Recalculate undo range based on the updated state
         let startOffset = editor.offset(from: editor.beginningOfDocument, to: result.replacementRange.start)
         let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: result.replacementText.count)
         editor.selectedTextRange = newSelectedTextRange
-    
+        
         let snapShot = UndoSnapshotCommand(
             undoRange: undoRange,
             redoRange: result.replacementRange,
@@ -72,6 +72,9 @@ final class TextInputCommandExcuteManager {
             selectedTextRange: newSelectedTextRange,
             oldSelectedTextRange: oldSelectedTextRange
         )
+        
+        undoableManager?.push(snapShot)
+    }
         
         // 5. Push undo command and cancel further processing
     func systemRemoveActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
