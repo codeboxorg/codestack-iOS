@@ -259,14 +259,14 @@ class CodeEditorViewController: UIViewController,
                 .withLatestFrom(loadSourceCode) { language, sourceCode in
                     return (language, sourceCode)
                 }
-                .drive(with: self, onNext: { vm, tuple  in
+                .drive(with: self, onNext: { editorViewController, tuple  in
                     let (language, sourceCode) = tuple
-                    vm.ediotrContainer.codeUITextView.languageBinding(language: language)
-                    if !vm.sourceCodeState {
-                        vm.ediotrContainer.codeUITextView.text = ""
-                        vm.ediotrContainer.codeUITextView.text = sourceCode
+                    editorViewController.ediotrContainer.codeUITextView.languageBinding(language: language)
+                    if !editorViewController.sourceCodeState {
+                        editorViewController.ediotrContainer.codeUITextView.text = ""
+                        editorViewController.ediotrContainer.codeUITextView.text = sourceCode
                     } else {
-                        vm.sourceCodeState = false
+                        editorViewController.sourceCodeState = false
                     }
                 }).disposed(by: disposeBag)
         }
