@@ -205,7 +205,9 @@ extension EditorController: EditorReplaceInputView {
                         let selectedRange = textView.selectedRange
                         let shouldChange = self.textView(textView, shouldChangeTextIn: selectedRange, replacementText: specialChar.rawValue)
                         if shouldChange {
-                            let range = textView.textRange(from: textView.beginningOfDocument, offset: selectedRange.location, length: selectedRange.length)
+                            guard let range = textView.textRange(from: textView.beginningOfDocument, offset: selectedRange.location, length: selectedRange.length) else {
+                                return
+                            }
                             textView.replace(range, withText: specialChar.rawValue)
                         }
                     }
