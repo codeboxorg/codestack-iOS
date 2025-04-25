@@ -9,7 +9,7 @@ struct DoneCommand: ButtonCommand {
     }
     
     func execute() {
-        layout?.tapButtonExecute()
+        layout?.doneExecute()
     }
 }
 
