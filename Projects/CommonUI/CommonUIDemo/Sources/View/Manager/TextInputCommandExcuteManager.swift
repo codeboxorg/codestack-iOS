@@ -60,7 +60,7 @@ final class TextInputCommandExcuteManager {
 
         // 3. Recalculate undo range based on the updated state
         let startOffset = editor.offset(from: editor.beginningOfDocument, to: result.replacementRange.start)
-        let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: result.replacementText.count)
+        let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: result.replacementText.utf16.count)
         editor.selectedTextRange = newSelectedTextRange
         
         let snapShot = UndoSnapshotCommand(
@@ -82,7 +82,7 @@ final class TextInputCommandExcuteManager {
         let priorWord = (editor.text as NSString).substring(with: range)
         let oldSelectedRange = editor.selectedTextRange
         let startPosition = editor.position(from: editor.beginningOfDocument, offset: range.location)
-        let undoEndPosition = editor.position(from: startPosition ?? UITextPosition(), offset: range.length - priorWord.count)
+        let undoEndPosition = editor.position(from: startPosition ?? UITextPosition(), offset: range.length - priorWord.utf16.count)
         let redoEndPosition = editor.position(from: startPosition ?? UITextPosition(), offset: range.length)
 
         var undoRange: UITextRange? = nil
@@ -117,7 +117,7 @@ final class TextInputCommandExcuteManager {
         let oldSelectedRange = editor.selectedTextRange
 
         let undoStartPosition = editor.position(from: editor.beginningOfDocument, offset: range.location)
-        let undoEndPosition = editor.position(from: undoStartPosition ?? UITextPosition(), offset: range.length + text.count)
+        let undoEndPosition = editor.position(from: undoStartPosition ?? UITextPosition(), offset: range.length + text.utf16.count)
         let redoEndPosition = editor.position(from: undoStartPosition ?? UITextPosition(), offset: range.length)
 
         var undoRange: UITextRange? = nil
