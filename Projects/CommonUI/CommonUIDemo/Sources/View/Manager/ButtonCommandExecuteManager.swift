@@ -44,7 +44,7 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager,
                     )
                 )
         )
-        button.accessibilityIdentifier = "symbolAlertButton"
+        button.accessibilityIdentifier = AccessoryButtonIdentifier.symbolAlertButton.string
         return button
     }()
     
@@ -62,13 +62,13 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager,
         self.undoButton = UIButton(type: .system)
         self.redoButton = UIButton(type: .system)
         
-        self.undoButton.accessibilityIdentifier = "undoButton"
+        self.undoButton.accessibilityIdentifier = AccessoryButtonIdentifier.undoButton.string
         self.undoButton.setImage(UIImage(systemName: "arrow.uturn.backward"), for: .normal)
         self.undoButton.addAction(UIAction { [weak self] _ in
             self?.undoButtonExecute()
         }, for: .touchUpInside)
 
-        self.redoButton.accessibilityIdentifier = "redoButton"
+        self.redoButton.accessibilityIdentifier = AccessoryButtonIdentifier.redoButton.string
         self.redoButton.setImage(UIImage(systemName: "arrow.uturn.forward"), for: .normal)
         self.redoButton.addAction(UIAction { [weak self] _ in
             self?.redoButtonExecute()
@@ -180,19 +180,35 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager,
 
 // MARK: UIKIT UIButton Generator
 extension DefaultButtonCommandExecuteManager {
+    
+    enum AccessoryButtonIdentifier: String {
+        case doneButton
+        case tapButton
+        case moveLeftButton
+        case moveRightButton
+        case symbolAlertButton
+        case undoButton
+        case redoButton
+        case deleteLineButton
+        
+        var string: String {
+            self.rawValue
+        }
+    }
+    
     var allCommandButtons: [UIButton] {
         [done, tapButton, moveLeftButton, moveRightButton, symbolAlert, undoButton, redoButton, deleteLineButton]
     }
     
     var done: UIButton {
         let button = EditorButtonGenerator.generate(type: .done(DoneCommand(layout: self)))
-        button.accessibilityIdentifier = "doneButton"
+        button.accessibilityIdentifier = AccessoryButtonIdentifier.doneButton.string
         return button
     }
     
     var tapButton: UIButton {
         let button = EditorButtonGenerator.generate(type: .tap(TapCommand(layout: self)))
-        button.accessibilityIdentifier = "tapButton"
+        button.accessibilityIdentifier = AccessoryButtonIdentifier.tapButton.string
         return button
     }
     
@@ -203,7 +219,7 @@ extension DefaultButtonCommandExecuteManager {
             MoveTouchUpCommand(layout: self),
             MoveTouchOutCommand(layout: self),
         ]))
-        button.accessibilityIdentifier = "moveLeftButton"
+        button.accessibilityIdentifier = AccessoryButtonIdentifier.moveLeftButton.string
         return button
     }
     
@@ -214,15 +230,17 @@ extension DefaultButtonCommandExecuteManager {
             MoveTouchUpCommand(layout: self),
             MoveTouchOutCommand(layout: self)
         ]))
-        button.accessibilityIdentifier = "moveRightButton"
+        button.accessibilityIdentifier = AccessoryButtonIdentifier.moveRightButton.string
         return button
     }
     
     var deleteLineButton: UIButton {
-        EditorButtonGenerator.generate(
+        let button = EditorButtonGenerator.generate(
             type: .deleteLine(
                 DeleteLineCommand(layout: self)
             )
         )
+        button.accessibilityIdentifier = AccessoryButtonIdentifier.deleteLineButton.string
+        return button
     }
 }
