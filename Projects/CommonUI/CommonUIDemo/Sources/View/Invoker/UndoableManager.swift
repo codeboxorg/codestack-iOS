@@ -23,43 +23,48 @@ protocol UndoableManager: AnyObject {
 
 final class DefaultUndoableManager: UndoableManager {
     private weak var editor: UITextView?
+    private(set) var undoManager = UndoManager()
+    
     
     var isUndoable: Bool {
-        self.undoStack.isEmpty
+        undoManager.canUndo
     }
     var isRedoable: Bool {
-        self.redoStack.isEmpty
+        undoManager.canRedo
     }
-    
-    init(editor: UITextView? = nil, undoStack: [UndoableTextInputCommand], redoStack: [UndoableTextInputCommand]) {
+
+    init(editor: UITextView? = nil) {
         self.editor = editor
-        self.undoStack = undoStack
-        self.redoStack = redoStack
+        editor?.undoManager?.disableUndoRegistration()
     }
-    
-    private var undoStack: [UndoableTextInputCommand] = []
-    private var redoStack: [UndoableTextInputCommand] = []
 
     func push(_ command: UndoableTextInputCommand) {
-        undoStack.append(command)
-        redoStack.removeAll()
+        undoManager.registerUndo(withTarget: self) { target in
+            guard let editor = target.editor else { return }
+            
+            command.undo(editor)
+            
+            target.undoManager.registerUndo(withTarget: target) { innerTarget in
+                guard let editor = innerTarget.editor else { return }
+                command.redo(editor)
+                innerTarget.push(command)
+            }
+        }
+        undoManager.setActionName("\(command.actionCommandType.rawValue)")
     }
 
     func undo() {
-        guard let command = undoStack.popLast(), let editor else { return }
-        command.undo(editor)
-        redoStack.append(command)
+        undoManager.undo()
     }
 
     func redo() {
-        guard let command = redoStack.popLast(), let editor  else { return }
-        command.redo(editor)
-        undoStack.append(command)
+        undoManager.redo()
     }
 }
 
 
 final class UndoSnapshotCommand: UndoableTextInputCommand {
+    let actionCommandType: ActionCommandType
     private let undoRange: UITextRange?
     private let redoRange: UITextRange?
     private let insertedText: String
@@ -68,6 +73,7 @@ final class UndoSnapshotCommand: UndoableTextInputCommand {
     private let oldSelectedTextRange: UITextRange?
 
     init(
+        actionCommandType: ActionCommandType,
         undoRange: UITextRange?,
         redoRange: UITextRange?,
         insertedText: String,
@@ -75,6 +81,7 @@ final class UndoSnapshotCommand: UndoableTextInputCommand {
         selectedTextRange: UITextRange?,
         oldSelectedTextRange: UITextRange?
     ) {
+        self.actionCommandType = actionCommandType
         self.undoRange = undoRange
         self.redoRange = redoRange
         self.insertedText = insertedText
