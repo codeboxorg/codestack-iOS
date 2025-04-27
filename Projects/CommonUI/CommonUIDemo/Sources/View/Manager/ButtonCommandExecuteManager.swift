@@ -19,18 +19,17 @@ protocol ButtonCommandExecuteManager: AnyObject {
 
 
 final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager {
+                                                EditorControl,
     
+    var moveTimer: Timer?
     weak var editor: UITextView?
-    weak var editorControl: EditorControl?
     weak var undoableManager: UndoableManager!
     
     init(
         editor: UITextView? = nil,
-        editorControl: EditorControl? = nil,
         undoableManager: UndoableManager
     ) {
         self.editor = editor
-        self.editorControl = editorControl
         self.undoableManager = undoableManager
     }
     

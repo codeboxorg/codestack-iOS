@@ -3,7 +3,7 @@ import UIKit
 
 protocol EditorControl: AnyObject {
     var moveTimer: Timer? { get set }
-    var textView: UITextView? { get set }
+    var editor: UITextView? { get set }
 }
 
 

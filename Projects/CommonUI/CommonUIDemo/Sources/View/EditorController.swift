@@ -2,7 +2,7 @@ import CommonUI
 import UIKit
 import Global
 
-final class EditorController: NSObject, EditorControl, CusorHighlightProtocol {
+final class EditorController: NSObject, CusorHighlightProtocol {
     enum KeyboardState {
         case keyboard
         case specialCharacters
