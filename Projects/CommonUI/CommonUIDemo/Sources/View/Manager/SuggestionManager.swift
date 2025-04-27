@@ -11,8 +11,16 @@ protocol SuggestionManager: AnyObject {
     
     func input(for text: String)
     func remove(for text: String)
-    
+    var currentFocusingItem: String { get set }
     var isSuggestionFocusingState: Bool { get }
+}
+
+protocol SuggestionCommandProtocol {
+    func findPriorWord() -> String?
+    func findPriorCusorWords() -> (word: String, position: UITextPosition)?
+    func contains(other suggestedWords: [SuggestionWord], word: String) -> Bool
+    func isRightPosition(cursorPosition: UITextPosition) -> Bool
+    func insert(using word: String)
 }
 
 final class DefaultSuggestionManager: SuggestionManager {
@@ -21,20 +29,20 @@ final class DefaultSuggestionManager: SuggestionManager {
         var suggestion: WordSuggenstion
         var editor: UITextView?
         var layoutManager: SuggestionLayout
-        var invoker: UndoableManager
+        var suggestionCommand: SuggestionCommandProtocol
     }
     
-    private var suggestionCommand: SuggestionCommand
+    private var suggestionCommand: SuggestionCommandProtocol
     private let suggestion: WordSuggenstion
     private weak var editor: UITextView?
-    private var layout: SuggestionLayout?
-    private var currentFocusingItem: String = ""
+    private var layoutManager: SuggestionLayout?
+    var currentFocusingItem: String = ""
     
     var isSuggestionFocusingState: Bool {
-        guard let layout else {
+        guard let layoutManager else {
             return false
         }
-        if case .focusing = layout.state {
+        if case .focusing = layoutManager.state {
             return true
         } else {
             return false
@@ -44,11 +52,8 @@ final class DefaultSuggestionManager: SuggestionManager {
     init(dependency: Dependency) {
         self.suggestion = dependency.suggestion
         self.editor = dependency.editor
-        self.layout = dependency.layoutManager
-        self.suggestionCommand = SuggestionCommand(
-            editor: dependency.editor,
-            invoker: dependency.invoker
-        )
+        self.layoutManager = dependency.layoutManager
+        self.suggestionCommand = dependency.suggestionCommand
     }
     
     func initSuggestion() {
@@ -135,7 +140,7 @@ final class DefaultSuggestionManager: SuggestionManager {
 }
 
 
-internal struct SuggestionCommand {
+internal struct SuggestionCommand: SuggestionCommandProtocol {
     weak var editor: UITextView!
     weak var invoker: UndoableManager?
     
