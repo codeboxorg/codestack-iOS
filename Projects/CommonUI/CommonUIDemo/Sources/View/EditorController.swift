@@ -156,6 +156,7 @@ extension EditorController: UITextViewDelegate {
         for cursorCommand in self.cursorCommands where cursorCommand.shouldHandle {
             cursorCommand.execute()
         }
+        widthUpdater?.positioningScrollView()
     }
 }
 
