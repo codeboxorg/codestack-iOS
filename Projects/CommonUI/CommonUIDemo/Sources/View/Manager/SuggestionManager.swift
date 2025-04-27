@@ -213,6 +213,7 @@ internal struct SuggestionCommand {
         let undoRange = editor.textRange(from: editor.beginningOfDocument, offset: startOffset, length: word.count)!
         
         let undoCommand = UndoSnapshotCommand(
+            actionCommandType: .suggestionEnter,
             undoRange: undoRange,
             redoRange: range,
             insertedText: word,

@@ -2,6 +2,17 @@ import UIKit
 import Global
 
 
+enum ActionCommandType: String {
+    case suggestionEnter
+    case systemInput
+    case systemReplace
+    case systemRemove
+    case enterCommand
+    case autoPairInsert
+    case autoPairRemove
+    case deleteLine
+}
+
 protocol UndoableManager: AnyObject {
     var isUndoable: Bool { get }
     var isRedoable: Bool { get }

@@ -64,6 +64,7 @@ final class TextInputCommandExcuteManager {
         editor.selectedTextRange = newSelectedTextRange
         
         let snapShot = UndoSnapshotCommand(
+            actionCommandType: result.actionCommandType,
             undoRange: undoRange,
             redoRange: result.replacementRange,
             insertedText: result.replacementText,
@@ -96,8 +97,9 @@ final class TextInputCommandExcuteManager {
         let cursorOffset = range.location
         let newCursorPosition = editor.position(from: editor.beginningOfDocument, offset: cursorOffset)
         let selectedTextRange = newCursorPosition.flatMap { editor.textRange(from: $0, to: $0) }
-
+        
         let undoCommand = UndoSnapshotCommand(
+            actionCommandType: .systemRemove,
             undoRange: undoRange,
             redoRange: redoRange,
             insertedText: text,
@@ -132,6 +134,7 @@ final class TextInputCommandExcuteManager {
         let selectedTextRange = newCursorPosition.flatMap { editor.textRange(from: $0, to: $0) }
 
         let undoCommand = UndoSnapshotCommand(
+            actionCommandType: .systemInput,
             undoRange: undoRange,
             redoRange: redoRange,
             insertedText: text,
@@ -202,6 +205,7 @@ extension TextInputCommandExcuteManager {
         }
         
         let result = TextInputCommandResult(
+            actionCommandType: .autoPairInsert,
             replacementRange: replacementRange ?? .init(),
             replacementText: replacementText,
             newSelectedRange: newSelectedRange
@@ -238,6 +242,7 @@ extension TextInputCommandExcuteManager {
                let replaceRange = editor.textRange(from: start, to: end)
             {
                 let result = TextInputCommandResult(
+                    actionCommandType: .autoPairRemove,
                     replacementRange: replaceRange,
                     replacementText: "",
                     newSelectedRange: editor.textRange(from: start, to: start)
@@ -328,6 +333,7 @@ extension TextInputCommandExcuteManager {
         }
         
         let result = TextInputCommandResult(
+            actionCommandType: .enterCommand,
             replacementRange: replacementRange ?? .init(),
             replacementText: replacementText,
             newSelectedRange: newSelectedRange
