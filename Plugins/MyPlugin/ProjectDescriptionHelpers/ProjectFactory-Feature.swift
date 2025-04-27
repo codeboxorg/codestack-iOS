@@ -46,7 +46,30 @@ public extension ProjectFactory {
                     ],
                     settings: AppConfig.demoProjectConfiguration(path: name)
                 ),
-                
+                .target(
+                    name: "\(name)DemoTests",
+                    destinations: .iOS,
+                    product: .unitTests,
+                    bundleId: "\(AppConfig.orgName).\(name)DemoTests",
+                    deploymentTargets: AppConfig.deploymentTarget,
+                    infoPlist: .default,
+                    sources: ["\(name)Demo/Tests/**"],
+                    dependencies: [
+                        .target(name: "\(name)Demo")
+                    ]
+                ),
+                .target(
+                    name: "\(name)DemoUITests",
+                    destinations: .iOS,
+                    product: .uiTests,
+                    bundleId: "\(AppConfig.orgName).\(name)DemoUITests",
+                    deploymentTargets: AppConfig.deploymentTarget,
+                    infoPlist: .default,
+                    sources: ["\(name)Demo/UITests/**"],
+                    dependencies: [
+                        .target(name: "\(name)Demo")
+                    ]
+                ),
                 .target(
                     name: "\(name)Tests",
                     destinations: .iOS,

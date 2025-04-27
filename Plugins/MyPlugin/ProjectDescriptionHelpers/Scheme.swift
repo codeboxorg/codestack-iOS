@@ -25,6 +25,14 @@ extension Scheme {
             name: "\(name)Demo",
             shared: true,
             buildAction: .buildAction(targets: ["\(name)Demo"]),
+            testAction: .targets(
+                [
+                    "\(name)DemoTests",
+                    "\(name)DemoUITests"
+                ],
+                configuration: BuildConfig.dev.configName,
+                options: .options(coverage: true, codeCoverageTargets: ["\(name)Demo"])
+            ),
             runAction: .runAction(configuration: BuildConfig.dev.configName),
             archiveAction: .archiveAction(configuration: BuildConfig.dev.configName),
             profileAction: .profileAction(configuration: BuildConfig.dev.configName),
