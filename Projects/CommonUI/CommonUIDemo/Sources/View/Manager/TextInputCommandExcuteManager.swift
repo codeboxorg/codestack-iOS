@@ -36,6 +36,40 @@ final class TextInputCommandExcuteManager {
         self.suggestionLayoutManger = suggestionLayoutManger
     }
     
+    func commandExecute(shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        var systemUpdate = true
+        var state = Set<CommandExcuteState>()
+        
+        for command in inputCommands {
+            if command.shouldHandle(text: text, state: state) {
+                let commandUpdate = command.execute(
+                    range: range,
+                    text: text,
+                    state: &state
+                )
+                if commandUpdate == false {
+                    systemUpdate = false
+                }
+            }
+        }
+        
+        if systemUpdate {
+            if range.length >= 1 && text.count == 0 {
+                systemRemoveActionSnapShot(shouldChangeTextIn: range, replacementText: text)
+            } else if range.length >= 1 && text.count != 0 {
+                systemReplaceActionSnapShot(shouldChangeTextIn: range, replacementText: text)
+            } else {
+                systemInsertUpdate = (editor!.selectedTextRange!, range, text)
+            }
+        }
+        
+        return systemUpdate
+    }
+}
+
+
+
+extension TextInputCommandExcuteManager {
     func applyUndoableSnapShot(input result: TextInputCommandResult) {
         guard let editor else {
             return
@@ -73,7 +107,45 @@ final class TextInputCommandExcuteManager {
             selectedTextRange: newSelectedTextRange,
             oldSelectedTextRange: oldSelectedTextRange
         )
+        
         undoableManager?.push(snapShot)
+    }
+    
+    func systemReplaceActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
+        guard let editor else {
+            return
+        }
+        
+        let priorWord = (editor.text as NSString).substring(with: range)
+        let oldSelectedRange = editor.selectedTextRange
+        
+        let startPosition = editor.position(from: editor.beginningOfDocument, offset: range.location)
+        let undoEndPosition = editor.position(from: startPosition ?? UITextPosition(), offset: range.length - priorWord.utf16.count + text.utf16.count)
+        let redoEndPosition = editor.position(from: startPosition ?? UITextPosition(), offset: range.length)
+        
+        var undoRange: UITextRange? = nil
+        var redoRange: UITextRange? = nil
+
+        if let start = startPosition, let end = undoEndPosition, let redo_end = redoEndPosition {
+            undoRange = editor.textRange(from: start, to: end)
+            redoRange = editor.textRange(from: start, to: redo_end)
+        }
+        
+        let cursorOffset = range.location + text.utf16.count
+        let newCursorPosition = editor.position(from: editor.beginningOfDocument, offset: cursorOffset)
+        let selectedTextRange = newCursorPosition.flatMap { editor.textRange(from: $0, to: $0) }
+        
+        let undoCommand = UndoSnapshotCommand(
+            actionCommandType: .systemReplace,
+            undoRange: undoRange,
+            redoRange: redoRange,
+            insertedText: text,
+            replacedText: priorWord,
+            selectedTextRange: selectedTextRange,
+            oldSelectedTextRange: oldSelectedRange
+        )
+
+        undoableManager?.push(undoCommand)
     }
         
         // 5. Push undo command and cancel further processing
@@ -143,35 +215,8 @@ final class TextInputCommandExcuteManager {
             selectedTextRange: selectedTextRange,
             oldSelectedTextRange: oldSelectedRange
         )
+        
         undoableManager?.push(undoCommand)
-    }
-    
-    func commandExecute(shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        var systemUpdate = true
-        var state = Set<CommandExcuteState>()
-        
-        for command in inputCommands {
-            if command.shouldHandle(text: text, state: state) {
-                let commandUpdate = command.execute(
-                    range: range,
-                    text: text,
-                    state: &state
-                )
-                if commandUpdate == false {
-                    systemUpdate = false
-                }
-            }
-        }
-        
-        if systemUpdate {
-            if range.length >= 1 && text.count == 0 {
-                systemRemoveActionSnapShot(shouldChangeTextIn: range, replacementText: text)
-            } else {
-                systemInsertActionSnapShot(shouldChangeTextIn: range, replacementText: text)
-            }
-        }
-        
-        return systemUpdate
     }
 }
 
