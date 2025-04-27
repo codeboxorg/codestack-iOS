@@ -15,6 +15,7 @@ enum EditorButtonGenerator {
         case done(Command)
         case tap(Command)
         case symbol(Command)
+        case deleteLine(Command)
         case details
     }
     
@@ -95,6 +96,13 @@ enum EditorButtonGenerator {
             layoutConfig(button: tapButton)
             tapButton.addAction(command.asAction(), for: .touchUpInside)
             return tapButton
+            
+        case .deleteLine(let command):
+            let deleteLine = button
+            deleteLine.setImage(UIImage(systemName: "trash"), for: .normal)
+            layoutConfig(button: deleteLine)
+            deleteLine.addAction(command.asAction(), for: .touchUpInside)
+            return deleteLine
             
         case .details:
             return UIButton(type: .system)

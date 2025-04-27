@@ -95,7 +95,6 @@ func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
     }
     
     
-    
     func test_redo_after_suggest_enter__action() {
         _ = input_setting()
         let afterUndo = """
@@ -110,5 +109,79 @@ func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
         buttonCommandExecuteManager.redoButtonExecute()
         
         XCTAssertEqual(editorController.textView!.text, afterUndo)
+    }
+    
+    func test_deleteLine_action() {
+        let textView = editorController.textView!
+        let base = """
+import Foundation
+
+func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
+    func
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        textView.text = base
+        textView.selectedRange = NSRange(location: 0, length: 0)
+        
+        buttonCommandExecuteManager.deleteLine()
+        buttonCommandExecuteManager.deleteLine()
+        buttonCommandExecuteManager.deleteLine()
+        let after = """
+    func
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        XCTAssertEqual(editorController.textView!.text, after)
+    }
+    
+    func test_deleteLine_and_undo_action() {
+        let textView = editorController.textView!
+        let base = """
+import Foundation
+
+func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
+    func
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        textView.text = base
+        textView.selectedRange = NSRange(location: 0, length: 0)
+        
+        buttonCommandExecuteManager.deleteLine()
+        buttonCommandExecuteManager.deleteLine()
+        buttonCommandExecuteManager.deleteLine()
+        buttonCommandExecuteManager.undoButtonExecute()
+        buttonCommandExecuteManager.undoButtonExecute()
+        buttonCommandExecuteManager.undoButtonExecute()
+        
+        XCTAssertEqual(editorController.textView!.text, base)
+    }
+    
+    func test_deleteLine_and_redo_action() {
+        let textView = editorController.textView!
+        let base = """
+import Foundation
+
+func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
+    func
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        textView.text = base
+        textView.selectedRange = NSRange(location: 0, length: 0)
+        
+        buttonCommandExecuteManager.deleteLine()
+        buttonCommandExecuteManager.deleteLine()
+        buttonCommandExecuteManager.deleteLine()
+        buttonCommandExecuteManager.undoButtonExecute()
+        buttonCommandExecuteManager.undoButtonExecute()
+        buttonCommandExecuteManager.undoButtonExecute()
+        buttonCommandExecuteManager.redoButtonExecute()
+        buttonCommandExecuteManager.redoButtonExecute()
+        buttonCommandExecuteManager.redoButtonExecute()
+        
+        let after = """
+    func
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        
+        XCTAssertEqual(editorController.textView!.text, after)
     }
 }
