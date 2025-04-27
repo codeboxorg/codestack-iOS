@@ -6,6 +6,7 @@ final class TextInputCommandExcuteManager {
     weak var undoableManager: UndoableManager?
     weak var suggestionManager: SuggestionManager?
     weak var suggestionLayoutManger: SuggestionLayout?
+    var systemInsertUpdate: (oldTextRange: UITextRange, shouldChangeTextIn: NSRange, text: String)? = nil
     
     private lazy var inputCommands: [TextInputCommand] = [
         SuggestionEnterCommand(
@@ -111,12 +112,12 @@ final class TextInputCommandExcuteManager {
         undoableManager?.push(undoCommand)
     }
     
-    func systemInsertActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
+    func systemInsertActionSnapShot(oldTextRange: UITextRange, shouldChangeTextIn range: NSRange, replacementText text: String) {
         guard let editor else {
             return
         }
         let priorWord = (editor.text as NSString).substring(with: range)
-        let oldSelectedRange = editor.selectedTextRange
+        let oldSelectedRange = oldTextRange
 
         let undoStartPosition = editor.position(from: editor.beginningOfDocument, offset: range.location)
         let undoEndPosition = editor.position(from: undoStartPosition ?? UITextPosition(), offset: range.length + text.utf16.count)
