@@ -63,7 +63,7 @@ final class SuggestionLayoutManager: SuggestionLayout {
         selectAction: @escaping (String) -> Void,
         gestureAction: @escaping (String) -> Void
     ) {
-        guard let rect = self.cursorPosition() else {
+        guard let rect = self.cursorPosition(), let editor = self.editor else {
             return
         }
         
@@ -78,13 +78,21 @@ final class SuggestionLayoutManager: SuggestionLayout {
         let updatedCount = suggestionView.updateSuggestions(words: suggestions)
         let lineHeight: CGFloat = suggestionView.tableView.rowHeight
         let viewHeight = CGFloat(min(updatedCount, 5)) * lineHeight + 4
+        let viewWidth: CGFloat = 150
+        var suggestionX = rect.minX
+        
+        if suggestionX + viewWidth > editor.bounds.width {
+            
+            suggestionX = max(0, rect.maxX - viewWidth)
+        }
         
         suggestionView.frame = CGRect(
-            x: rect.minX,
+            x: suggestionX,
             y: rect.maxY + 4,
-            width: 150,
+            width: viewWidth,
             height: viewHeight + (lineHeight / 3)
         )
+        
         self.editor?.addSubview(suggestionView)
         suggestionView.reload()
     }
