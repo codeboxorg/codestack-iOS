@@ -91,6 +91,10 @@ extension TextInputCommandExcuteManager {
            )
         {
             newSelectedTextRange = _newSelectedTextRange
+        } else if result.newSelectedRange == nil, let offset = result.offset,
+           let position = editor.position(from: editor.beginningOfDocument, offset: offset)
+        {
+            newSelectedTextRange = editor.textRange(from: position, to: position)
         }
 
         // 3. Recalculate undo range based on the updated state
@@ -254,7 +258,8 @@ extension TextInputCommandExcuteManager {
             actionCommandType: .autoPairInsert,
             replacementRange: replacementRange ?? .init(),
             replacementText: replacementText,
-            newSelectedRange: newSelectedRange
+            newSelectedRange: newSelectedRange,
+            offset: newSelectedRange == nil ? cursorPosition : nil
         )
         
         applyUndoableSnapShot(input: result)
@@ -382,7 +387,8 @@ extension TextInputCommandExcuteManager {
             actionCommandType: .enterCommand,
             replacementRange: replacementRange ?? .init(),
             replacementText: replacementText,
-            newSelectedRange: newSelectedRange
+            newSelectedRange: newSelectedRange,
+            offset: cursorPosition
         )
         
         applyUndoableSnapShot(input: result)
