@@ -15,11 +15,14 @@ protocol ButtonCommandExecuteManager: AnyObject {
     
     func undoButtonExecute()
     func redoButtonExecute()
+protocol UpdateUndoRedoButtonStateDelegate: AnyObject {
+    func updateUndoRedoButtonState()
 }
 
 
 final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager {
                                                 EditorControl,
+                                                UpdateUndoRedoButtonStateDelegate {
     
     var moveTimer: Timer?
     weak var editor: UITextView?
@@ -62,17 +65,18 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager {
     }
     
     func moveTouchUpCommand() {
-        self.editorControl?.moveTimer?.invalidate()
-        self.editorControl?.moveTimer = nil
+        self.moveTimer?.invalidate()
+        self.moveTimer = nil
     }
     
     func moveTouchOutCommand() {
-        self.editorControl?.moveTimer?.invalidate()
-        self.editorControl?.moveTimer = nil
+        self.moveTimer?.invalidate()
+        self.moveTimer = nil
     }
     
     func undoButtonExecute() {
         self.undoableManager.undo()
+        self.updateUndoRedoButtonState()
     }
     
     func redoButtonExecute() {
