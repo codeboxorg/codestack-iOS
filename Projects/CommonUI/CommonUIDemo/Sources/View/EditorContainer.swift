@@ -13,10 +13,20 @@ import Highlightr
 final class EditorContainerView: BaseView {
     weak var highlightr: Highlightr?
     
+    private lazy var undoableManager: UndoableManager = DefaultUndoableManager(
+        editor: self.codeUITextView
+    )
+    
     lazy var editorController = EditorController(
         dependency: .init(
             textView: self.codeUITextView,
-            lineNumberView: self.numbersView
+            lineNumberView: self.numbersView,
+            widthUpdater: self,
+            buttonCommandExecuteManager: DefaultButtonCommandExecuteManager(
+                editor: self.codeUITextView,
+                undoableManager: self.undoableManager
+            ),
+            undoableManager: self.undoableManager
         )
     )
     

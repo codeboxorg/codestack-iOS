@@ -13,6 +13,8 @@ final class EditorController: NSObject, CusorHighlightProtocol {
         var textView: UITextView
         var lineNumberView: ChangeSelectedRange
         var widthUpdater: TextViewWidthUpdateProtocol?
+        var buttonCommandExecuteManager: ButtonCommandExecuteManager
+        var undoableManager: UndoableManager
     }
     
     
@@ -22,11 +24,7 @@ final class EditorController: NSObject, CusorHighlightProtocol {
     
     private lazy var suggestLayoutManager: SuggestionLayout = SuggestionLayoutManager(editor: textView)
     
-    private lazy var buttonCommandExecuteManager: ButtonCommandExecuteManager = DefaultButtonCommandExecuteManager(
-        editor: self.textView,
-        editorControl: self,
-        undoableManager: self.undoableManager
-    )
+    private var buttonCommandExecuteManager: ButtonCommandExecuteManager!
     
     private let textViewWidthLayoutManager = TextViewWidthLayoutManager()
     
@@ -37,22 +35,20 @@ final class EditorController: NSObject, CusorHighlightProtocol {
         suggestionLayoutManger: suggestLayoutManager
     )
     
-    private lazy var undoableManager: UndoableManager = DefaultUndoableManager(
-        editor: self.textView,
-        undoStack: [],
-        redoStack: []
-    )
+    private var undoableManager: UndoableManager!
     
     private(set) lazy var suggestionManager: SuggestionManager = DefaultSuggestionManager(
         dependency: .init(
             suggestion: DefaultWordSuggenstion(),
             editor: self.textView,
-            layoutManager: suggestLayoutManager,
-            invoker: self.undoableManager
+            layoutManager: self.suggestLayoutManager,
+            suggestionCommand: SuggestionCommand(
+                editor: self.textView,
+                invoker: self.undoableManager
+            )
         )
     )
     
-    var moveTimer: Timer?
     private lazy var keyboardState: KeyboardState = .keyboard
     private var keyboardHeight: CGFloat = 0
     private(set) var toolBarSize: CGFloat = 0
@@ -70,6 +66,11 @@ final class EditorController: NSObject, CusorHighlightProtocol {
         super.init()
         self.textView = dependency.textView
         self.lineNumberView = dependency.lineNumberView
+        self.buttonCommandExecuteManager = dependency.buttonCommandExecuteManager
+        self.undoableManager = dependency.undoableManager
+        self.widthUpdater = dependency.widthUpdater
+        buttonCommandExecuteManager.replaceInputViewDelegate = self
+        
         suggestionManager.initSuggestion()
         addDoneButtonOnKeyboard()
         getKeyboardHegiht()

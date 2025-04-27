@@ -19,6 +19,8 @@ import Global
 
 final class CodeViewController: BaseViewController {
     
+    let ediotrContainer = EditorContainerView()
+    
     private lazy var availableThemes: [String] = getAvailableThemes() // Replace with your own theme loader
     private var selectedThemeIndex: Int = 0
 
@@ -37,8 +39,6 @@ final class CodeViewController: BaseViewController {
         picker.dataSource = self
         return picker
     }()
-
-    let ediotrContainer = EditorContainerView()
     
     private lazy var settingButton: UIButton = {
         let button = UIButton(type: .system)
