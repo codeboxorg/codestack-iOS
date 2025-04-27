@@ -307,26 +307,6 @@ extension EditorController {
     }
 }
 
-extension UITextView {
-    func textRange(from beginning: UITextPosition, offset: Int, length: Int) -> UITextRange? {        
-        guard let start = self.position(from: beginning, offset: offset)
-                ,let end = self.position(from: start, offset: length) else {
-            return nil
-        }
-        return self.textRange(from: start, to: end)
-    }
-    
-    func textRange(from nsRange: NSRange) -> UITextRange? {
-        guard
-            let start = self.position(from: self.beginningOfDocument, offset: nsRange.location),
-            let end = self.position(from: start, offset: nsRange.length)
-        else {
-            return nil
-        }
-        return self.textRange(from: start, to: end)
-    }
-}
-
 extension EditorController: NSLayoutManagerDelegate {
     func layoutManager(_ layoutManager: NSLayoutManager, paragraphSpacingAfterGlyphAt glyphIndex: Int, withProposedLineFragmentRect rect: CGRect) -> CGFloat {
         return 10
