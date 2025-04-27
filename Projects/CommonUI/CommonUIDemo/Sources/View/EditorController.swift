@@ -199,16 +199,13 @@ extension EditorController: EditorReplaceInputView {
             customInputView.translatesAutoresizingMaskIntoConstraints = false
             self.keyboardState = .specialCharacters
             textView?.inputView = customInputView
-            
         } else if keyboardState == .specialCharacters {
             self.keyboardState = .keyboard
             textView?.inputView = nil
-            addDoneButtonOnKeyboard()
         }
         textView?.reloadInputViews()
     }
 }
-
 
 
 extension EditorController {
@@ -227,6 +224,7 @@ extension EditorController {
 
         let (scrollView, stackViewInScrollView) = _containerView()
         let buttons = buttonCommandExecuteManager.allCommandButtons
+        
         let done = buttons[0]
         let separator1 = _makeSeparator()
         let separator2 = _makeSeparator()

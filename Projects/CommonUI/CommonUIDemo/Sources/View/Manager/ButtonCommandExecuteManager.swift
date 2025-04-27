@@ -1,8 +1,8 @@
-
 import UIKit
 
 protocol ButtonCommandExecuteManager: AnyObject {
     var allCommandButtons: [UIButton] { get }
+    var replaceInputViewDelegate: EditorReplaceInputView? { get set }
     
     func doneExecute()
     func tapButtonExecute()
@@ -27,6 +27,7 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager {
     var moveTimer: Timer?
     weak var editor: UITextView?
     weak var undoableManager: UndoableManager!
+    weak var replaceInputViewDelegate: EditorReplaceInputView?
     
     init(
         editor: UITextView? = nil,
