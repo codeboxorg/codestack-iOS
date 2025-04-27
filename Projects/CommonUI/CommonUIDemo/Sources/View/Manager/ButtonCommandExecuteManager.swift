@@ -35,6 +35,11 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager {
     ) {
         self.editor = editor
         self.undoableManager = undoableManager
+        defer {
+            self.undoableManager.updateUndoRedoButtonStateDelegate = self
+        }
+        
+        self.updateUndoRedoButtonState()
     }
     
     func doneExecute() {
@@ -82,9 +87,13 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager {
     
     func redoButtonExecute() {
         self.undoableManager.redo()
+        self.updateUndoRedoButtonState()
     }
-}
-
+    
+    func updateUndoRedoButtonState() {
+        undoButton.isEnabled = undoableManager.isUndoable
+        redoButton.isEnabled = undoableManager.isRedoable
+    }
 
 
 // MARK: UIKIT UIButton Generator
