@@ -2,6 +2,7 @@ import UIKit
 
 protocol ButtonCommandExecuteManager: AnyObject {
     var allCommandButtons: [UIButton] { get }
+    var symbolAlert: UIButton { get }
     var replaceInputViewDelegate: EditorReplaceInputView? { get set }
     
     func doneExecute()
@@ -15,12 +16,15 @@ protocol ButtonCommandExecuteManager: AnyObject {
     
     func undoButtonExecute()
     func redoButtonExecute()
+    
+}
+
 protocol UpdateUndoRedoButtonStateDelegate: AnyObject {
     func updateUndoRedoButtonState()
 }
 
 
-final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager {
+final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager,
                                                 EditorControl,
                                                 UpdateUndoRedoButtonStateDelegate {
     
@@ -29,15 +33,45 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager {
     weak var undoableManager: UndoableManager!
     weak var replaceInputViewDelegate: EditorReplaceInputView?
     
+    private let undoButton: UIButton
+    private let redoButton: UIButton
+    lazy var symbolAlert: UIButton = {
+        let button = EditorButtonGenerator.generate(type:
+                .symbol(
+                    ReplaceInputViewCommand(
+                        controller: replaceInputViewDelegate
+                    )
+                )
+        )
+        button.accessibilityIdentifier = "symbolAlertButton"
+        return button
+    }()
+    
     init(
         editor: UITextView? = nil,
         undoableManager: UndoableManager
     ) {
         self.editor = editor
         self.undoableManager = undoableManager
+        
         defer {
             self.undoableManager.updateUndoRedoButtonStateDelegate = self
         }
+        
+        self.undoButton = UIButton(type: .system)
+        self.redoButton = UIButton(type: .system)
+        
+        self.undoButton.accessibilityIdentifier = "undoButton"
+        self.undoButton.setImage(UIImage(systemName: "arrow.uturn.backward"), for: .normal)
+        self.undoButton.addAction(UIAction { [weak self] _ in
+            self?.undoButtonExecute()
+        }, for: .touchUpInside)
+
+        self.redoButton.accessibilityIdentifier = "redoButton"
+        self.redoButton.setImage(UIImage(systemName: "arrow.uturn.forward"), for: .normal)
+        self.redoButton.addAction(UIAction { [weak self] _ in
+            self?.redoButtonExecute()
+        }, for: .touchUpInside)
         
         self.updateUndoRedoButtonState()
     }
@@ -103,50 +137,44 @@ extension DefaultButtonCommandExecuteManager {
     }
     
     var done: UIButton {
-        EditorButtonGenerator.generate(type: .done(DoneCommand(layout: self)))
+        let button = EditorButtonGenerator.generate(type: .done(DoneCommand(layout: self)))
+        button.accessibilityIdentifier = "doneButton"
+        return button
     }
     
     var tapButton: UIButton {
-        EditorButtonGenerator.generate(type: .tap(TapCommand(layout: self)))
+        let button = EditorButtonGenerator.generate(type: .tap(TapCommand(layout: self)))
+        button.accessibilityIdentifier = "tapButton"
+        return button
     }
     
     var moveLeftButton: UIButton {
-        EditorButtonGenerator.generate(type: .moveLeft([
+        let button = EditorButtonGenerator.generate(type: .moveLeft([
             MoveLeftCommand(layout: self),
-            MoveLeftTouchDownCommand(timerControl: editorControl, layout: self),
+            MoveLeftTouchDownCommand(layout: self),
             MoveTouchUpCommand(layout: self),
             MoveTouchOutCommand(layout: self),
         ]))
+        button.accessibilityIdentifier = "moveLeftButton"
+        return button
     }
     
     var moveRightButton: UIButton {
-        EditorButtonGenerator.generate(type: .moveRight([
+        let button = EditorButtonGenerator.generate(type: .moveRight([
             MoveRightCommand(layout: self),
-            MoveRightTouchDownCommand(timerControl: editorControl, layout: self),
+            MoveRightTouchDownCommand(layout: self),
             MoveTouchUpCommand(layout: self),
             MoveTouchOutCommand(layout: self)
         ]))
+        button.accessibilityIdentifier = "moveRightButton"
+        return button
     }
     
-    var symbolAlert: UIButton {
-        EditorButtonGenerator.generate(type: .symbol(ReplaceInputViewCommand(controller: (editorControl as? EditorReplaceInputView))))
-    }
-
-    var undoButton: UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle("Undo", for: .normal)
-        button.addAction(UIAction { [weak self] _ in
-            self?.undoButtonExecute()
-        }, for: .touchUpInside)
-        return button
-    }
-
-    var redoButton: UIButton {
-        let button = UIButton(type: .system)
-        button.setTitle("Redo", for: .normal)
-        button.addAction(UIAction { [weak self] _ in
-            self?.redoButtonExecute()
-        }, for: .touchUpInside)
-        return button
+    var deleteLineButton: UIButton {
+        EditorButtonGenerator.generate(
+            type: .deleteLine(
+                DeleteLineCommand(layout: self)
+            )
+        )
     }
 }
