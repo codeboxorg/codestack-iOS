@@ -42,9 +42,17 @@ enum EditorButtonGenerator {
             symbolAlertButton.setTitle("S", for: .normal)
             symbolAlertButton.addAction(command.asAction(), for: command.controlType)
             
-            let colorAction = UIAction { [weak symbolAlertButton] action in
-                symbolAlertButton?.layer.cornerRadius = 6
-                symbolAlertButton?.backgroundColor = .whiteGray.withAlphaComponent(0.3)
+            let colorAction = UIAction { [weak symbolAlertButton] _ in
+                let selectedColor = UIColor.whiteGray.withAlphaComponent(0.3)
+                guard let button = symbolAlertButton else { return }
+                
+                if button.backgroundColor == .clear || button.backgroundColor == nil {
+                    button.backgroundColor = selectedColor
+                } else {
+                    button.backgroundColor = .clear
+                }
+                
+                button.layer.cornerRadius = 6
             }
             
             symbolAlertButton.addAction(colorAction, for: .touchUpInside)
