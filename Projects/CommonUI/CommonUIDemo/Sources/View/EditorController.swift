@@ -226,19 +226,24 @@ extension EditorController {
         let buttons = buttonCommandExecuteManager.allCommandButtons
         
         let done = buttons[0]
-        let separator1 = _makeSeparator()
-        let separator2 = _makeSeparator()
+        
         
         buttons[1...].enumerated().forEach { enumerated in
             let (offset, button) = enumerated
-            if offset == 1 {
-                stackViewInScrollView.addArrangedSubview(separator1)
+            if button.accessibilityIdentifier == DefaultButtonCommandExecuteManager.AccessoryButtonIdentifier.moveLeftButton.string {
+                stackViewInScrollView.addArrangedSubview(_makeSeparator())
+            } else if button.accessibilityIdentifier == DefaultButtonCommandExecuteManager.AccessoryButtonIdentifier.symbolAlertButton.string {
+                stackViewInScrollView.addArrangedSubview(_makeSeparator())
+            } else if button.accessibilityIdentifier == DefaultButtonCommandExecuteManager.AccessoryButtonIdentifier.undoButton.string {
+                stackViewInScrollView.addArrangedSubview(_makeSeparator())
+            } else if button.accessibilityIdentifier == DefaultButtonCommandExecuteManager.AccessoryButtonIdentifier.deleteLineButton.string {
+                stackViewInScrollView.addArrangedSubview(_makeSeparator())
             }
             stackViewInScrollView.addArrangedSubview(button)
         }
         
         let doneItem = UIBarButtonItem(customView: done)
-        let separator = UIBarButtonItem(customView: separator2)
+        let separator = UIBarButtonItem(customView: _makeSeparator())
         let scrollItem = UIBarButtonItem(customView: scrollView)
         
         toolBar.items = [scrollItem, separator, doneItem]
