@@ -358,6 +358,11 @@ extension TextInputCommandExcuteManager {
         let beforeText = fullText.substring(with: nsRange)
         
         let indentLevel = getIndentLevel(before: beforeText)
+        
+        if indentLevel == 0 {
+            return true
+        }
+        
         var insertion = "\n" + String(repeating: "\t", count: indentLevel)
         
         let cursorPosition = changeInsertion(
@@ -379,7 +384,6 @@ extension TextInputCommandExcuteManager {
         }
         
         if let position = editor.position(from: editor.beginningOfDocument, offset: cursorPosition) {
-            // editor.selectedTextRange = editor.textRange(from: position, to: position)
             newSelectedRange = editor.textRange(from: position, to: position)
         }
         
