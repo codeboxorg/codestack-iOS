@@ -70,7 +70,7 @@ final class DefaultSuggestionManager: SuggestionManager {
     }
     
     func removeSuggestionView() {
-        layout?.state = .none
+        layoutManager?.state = .none
     }
     
     /// Cusor Command에서 이 함수 호출
@@ -85,7 +85,7 @@ final class DefaultSuggestionManager: SuggestionManager {
     /// 1. HandleInput 에서 현재 커서가 단어의 끝에 있을 경우에만 input을 적용 ( cursor가 단어의 중간에 있을때는 미적용) (완료)
     /// 2. Debouncing Thorottling 적용
     func suggestionLayoutGenerate() {
-        guard let layout = layout else {
+        guard let layout = layoutManager else {
             return
         }
         
@@ -127,7 +127,7 @@ final class DefaultSuggestionManager: SuggestionManager {
     
     func insertCurrentFocusingSuggestionWord() {
         suggestionCommand.insert(using: currentFocusingItem)
-        layout?.state = .none
+        layoutManager?.state = .none
     }
     
     func input(for text: String) {
