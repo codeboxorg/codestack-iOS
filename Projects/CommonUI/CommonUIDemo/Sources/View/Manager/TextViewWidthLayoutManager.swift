@@ -8,6 +8,7 @@ protocol TextViewWidthTrackable {
 
 protocol TextViewWidthUpdateProtocol: AnyObject {
     func updateTextViewWidth(_ width: CGFloat)
+    func positioningScrollView()
 }
 
 final class TextViewWidthLayoutManager: TextViewWidthTrackable {

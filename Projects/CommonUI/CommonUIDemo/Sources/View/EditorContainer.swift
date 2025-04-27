@@ -50,13 +50,12 @@ final class EditorContainerView: BaseView {
         return textView
     }()
     
-    let scroll: UIScrollView = {
+    let scrollView: UIScrollView = {
         let scroll = UIScrollView()
-        scroll.alwaysBounceHorizontal = true
+        scroll.bounces = false
         scroll.showsHorizontalScrollIndicator = true
         scroll.showsVerticalScrollIndicator = false
         scroll.isScrollEnabled = true
-        scroll.bounces = true
         scroll.isDirectionalLockEnabled = true
         return scroll
     }()
@@ -76,15 +75,15 @@ final class EditorContainerView: BaseView {
     }
     
     override func addAutoLayout() {
-        self.addSubview(scroll)
+        self.addSubview(scrollView)
     
         codeUITextView.addSubview(numbersView)
 
-        scroll.snp.makeConstraints { make in
+        scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         
-        scroll.addSubview(codeUITextView)
+        scrollView.addSubview(codeUITextView)
         
         codeUITextView.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
@@ -104,6 +103,27 @@ final class EditorContainerView: BaseView {
             make.height.equalTo(codeUITextView.bounds.height)
             make.width.equalTo(inset.left).priority(.high)
         }
+    }
+}
+
+extension EditorContainerView: TextViewWidthUpdateProtocol {
+    func updateTextViewWidth(_ width: CGFloat) {
+        codeUITextView.snp.updateConstraints { make in
+            make.width.equalTo(width + 40)
+        }
+    }
+    
+    func positioningScrollView() {
+        guard let selectedTextRange = codeUITextView.selectedTextRange else { return }
+        
+        let caretRect = codeUITextView.caretRect(for: selectedTextRange.start)
+        let caretRectInScrollView = codeUITextView.convert(caretRect, to: scrollView)
+        
+        var targetRect = caretRectInScrollView
+        targetRect.origin.x -= 100
+        targetRect.size.width += 100
+        
+        scrollView.scrollRectToVisible(targetRect, animated: true)
     }
 }
 

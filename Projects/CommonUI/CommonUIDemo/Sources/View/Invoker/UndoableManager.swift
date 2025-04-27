@@ -14,6 +14,7 @@ enum ActionCommandType: String {
 }
 
 protocol UndoableManager: AnyObject {
+    var updateUndoRedoButtonStateDelegate: UpdateUndoRedoButtonStateDelegate? { get set }
     var isUndoable: Bool { get }
     var isRedoable: Bool { get }
     func push(_ command: UndoableTextInputCommand)
@@ -24,6 +25,7 @@ protocol UndoableManager: AnyObject {
 final class DefaultUndoableManager: UndoableManager {
     private weak var editor: UITextView?
     private(set) var undoManager = UndoManager()
+    weak var updateUndoRedoButtonStateDelegate: UpdateUndoRedoButtonStateDelegate?
     
     
     var isUndoable: Bool {
@@ -51,6 +53,7 @@ final class DefaultUndoableManager: UndoableManager {
             }
         }
         undoManager.setActionName("\(command.actionCommandType.rawValue)")
+        updateUndoRedoButtonStateDelegate?.updateUndoRedoButtonState()
     }
 
     func undo() {
