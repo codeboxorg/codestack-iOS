@@ -6,7 +6,7 @@ import SnapKit
 private class SpecialCharacterFlowLayout: UICollectionViewFlowLayout {
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let attributesArray = super.layoutAttributesForElements(in: rect) else { return nil }
-
+        
         let flatCharacters = SpecialLigature.all.compactMap { $0 }
         
         guard let spaceIndex = flatCharacters.firstIndex(of: .space),
@@ -17,25 +17,25 @@ private class SpecialCharacterFlowLayout: UICollectionViewFlowLayout {
         
         var spaceAttr: UICollectionViewLayoutAttributes?
         var enterAttr: UICollectionViewLayoutAttributes?
-
+        
         var modifiedAttributes: [UICollectionViewLayoutAttributes] = []
-
+        
         for attr in attributesArray {
             let item = attr.indexPath.item
-
+            
             if item == spaceIndex {
                 spaceAttr = attr
             } else if item == enterIndex {
                 enterAttr = attr
             }
-
+            
             modifiedAttributes.append(attr)
         }
-
+        
         if let spaceAttr = spaceAttr {
             let totalWidth = collectionView.bounds.width
             let inset = sectionInset.left + sectionInset.right
-
+            
             if let enterAttr = enterAttr, enterAttr.frame.origin.y == spaceAttr.frame.origin.y {
                 let spacing = minimumInteritemSpacing
                 let enterWidth = enterAttr.frame.width
@@ -61,9 +61,9 @@ private class SpecialCharacterFlowLayout: UICollectionViewFlowLayout {
     }
 }
 
-final class SpecialCharacterInputView: UIInputView {
+final class SpecialCharacterInputView: UIView {
     private let inputViewHeight: CGFloat
-    private var inputHandler: (SpecialLigature) -> Void
+    private var inputHandler: ((SpecialLigature) -> Void)?
     
     private lazy var collectionView: UICollectionView = {
         let layout = SpecialCharacterFlowLayout().then {
@@ -89,44 +89,43 @@ final class SpecialCharacterInputView: UIInputView {
     init(inputViewHeight: CGFloat, input handler: @escaping (SpecialLigature) -> Void) {
         self.inputViewHeight = inputViewHeight
         self.inputHandler = handler
-        super.init(frame: .zero, inputViewStyle: .keyboard)
+        super.init(frame: .zero)
         self.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        self.allowsSelfSizing = true
         setupUI()
     }
     
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard superview != nil else { return }
-        UIView.transition(with: collectionView, duration: 0.3, options: [.transitionCrossDissolve]) {
-            self.collectionView.alpha = 1.0
+        UIView.transition(with: collectionView, duration: 0.3, options: [.transitionCrossDissolve]) { [weak self] in
+            self?.collectionView.alpha = 1.0
         }
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func setupUI() {
         self.backgroundColor = .systemGray6
         self.addSubview(collectionView)
-
+        
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
-
+    
     override var intrinsicContentSize: CGSize {
         return CGSize(width: UIView.noIntrinsicMetric, height: inputViewHeight)
     }
-
+    
 }
 
 extension SpecialCharacterInputView: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         SpecialLigature.strings.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SpecialCharacterCell.identifier, for: indexPath) as! SpecialCharacterCell
         let char = SpecialLigature.strings[indexPath.item]
@@ -139,12 +138,12 @@ extension SpecialCharacterInputView: UICollectionViewDataSource, UICollectionVie
         }
         return cell
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedChar = SpecialLigature.all[indexPath.item]
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.prepare()
         generator.impactOccurred()
-        inputHandler(selectedChar)
+        inputHandler?(selectedChar)
     }
 }
