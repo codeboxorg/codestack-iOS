@@ -3,21 +3,16 @@ import UIKit
 
 protocol TextViewWidthTrackable {
     var currentMaxWidth: CGFloat { get }
-    func update(textView: UITextView) -> Bool
+    mutating func update(textView: UITextView) -> Bool
 }
 
-protocol TextViewWidthUpdateProtocol: AnyObject {
-    func updateTextViewWidth(_ width: CGFloat)
-    func positioningScrollView()
-}
-
-final class TextViewWidthLayoutManager: TextViewWidthTrackable {
+struct TextViewWidthLayoutManager: TextViewWidthTrackable {
     private(set) var currentMaxWidth: CGFloat = UIScreen.main.bounds.width
     private let minWidth: CGFloat = UIScreen.main.bounds.width
     private let maxWidth: CGFloat = UIScreen.main.bounds.width * 2
     private var maxLineIndex: Int = 0
 
-    func update(textView: UITextView) -> Bool {
+    mutating func update(textView: UITextView) -> Bool {
         guard let font = textView.font else { return false }
         let lines = textView.text.components(separatedBy: .newlines)
         let cursorIndex = textView.selectedRange.location
@@ -45,7 +40,6 @@ final class TextViewWidthLayoutManager: TextViewWidthTrackable {
                 widthChanged = true
             }
         }
-        
         return widthChanged
     }
 }
