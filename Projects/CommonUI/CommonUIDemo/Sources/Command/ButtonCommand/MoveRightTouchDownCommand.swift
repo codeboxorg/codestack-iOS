@@ -15,9 +15,6 @@ final class MoveRightTouchDownCommand: ButtonCommand {
         guard let timerControl = layout as? EditorControl else {
             return
         }
-        timerControl.moveTimer?.invalidate()
-        timerControl.moveTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { [weak self] _ in
-            MoveRightCommand(layout: self?.layout).execute()
-        }
+        timerControl.moveRightTimerTouchExecute()
     }
 }

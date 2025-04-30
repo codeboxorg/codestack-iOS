@@ -119,6 +119,20 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager,
         self.moveTimer = nil
     }
     
+    func moveLeftTimerTouchExecute() {
+        moveTimer?.invalidate()
+        moveTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { [weak self] _ in
+            MoveLeftCommand(layout: self).execute()
+        }
+    }
+    
+    func moveRightTimerTouchExecute() {
+        moveTimer?.invalidate()
+        moveTimer = Timer.scheduledTimer(withTimeInterval: 0.06, repeats: true) { [weak self] _ in
+            MoveRightCommand(layout: self).execute()
+        }
+    }
+    
     func undoButtonExecute() {
         self.undoableManager.undo()
         self.updateUndoRedoButtonState()
