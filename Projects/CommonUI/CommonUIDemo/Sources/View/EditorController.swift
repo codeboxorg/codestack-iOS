@@ -134,14 +134,14 @@ final class EditorController: NSObject, CusorHighlightProtocol {
 extension EditorController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         suggestionManager.suggestionLayoutGenerate()
-        if let (oldTextRange, range, text) = textInputCommandExcuteManager.systemInsertUpdate {
+        if let (oldTextRange, range, text) = SystemInsertSnapShot.shared.useWhenTextDidChange {
             textInputCommandExcuteManager
                 .systemInsertActionSnapShot(
                     oldTextRange: oldTextRange,
                     shouldChangeTextIn: range,
                     replacementText: text
                 )
-            textInputCommandExcuteManager.systemInsertUpdate = nil
+            SystemInsertSnapShot.shared.useWhenTextDidChange = nil
         }
     }
     

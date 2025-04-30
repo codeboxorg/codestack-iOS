@@ -82,6 +82,10 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager,
     }
     
     func tapButtonExecute() {
+        guard let selectedTextRange = editor?.selectedTextRange else {
+            return
+        }
+        SystemInsertSnapShot.shared.useWhenTextDidChange = (selectedTextRange, editor!.selectedRange, "\t")
         self.editor?.insertText("\t")
     }
     

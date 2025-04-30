@@ -64,11 +64,12 @@ final class TextInputCommandExcuteManager {
             } else if range.length >= 1 && text.count != 0 {
                 systemReplaceActionSnapShot(shouldChangeTextIn: range, replacementText: text)
             } else {
-                systemInsertUpdate = (editor!.selectedTextRange!, range, text)
+                SystemInsertSnapShot.shared.useWhenTextDidChange = (editor!.selectedTextRange!, range, text)
             }
+            return true
+        } else {
+            return false
         }
-        
-        return systemUpdate
     }
 }
 
