@@ -64,6 +64,7 @@ private class SpecialCharacterFlowLayout: UICollectionViewFlowLayout {
 final class SpecialCharacterInputView: UIView {
     private let inputViewHeight: CGFloat
     private var inputHandler: ((SpecialLigature) -> Void)?
+    var array = Array(repeating: Int.max, count: 10_000_000)
     
     private lazy var collectionView: UICollectionView = {
         let layout = SpecialCharacterFlowLayout().then {

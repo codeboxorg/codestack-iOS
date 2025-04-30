@@ -7,13 +7,23 @@ protocol SuggestionLayout: AnyObject {
     var state: SuggestionLayoutState { get set }
 }
 
-enum SuggestionLayoutState {
+enum SuggestionLayoutState: Equatable {
     case focusing(
         [String],
         selectAction: (String) -> Void,
         gestureAction: (String) -> Void
     )
     case none
+    
+    static func ==(_ lhs: SuggestionLayoutState, _ rhs: SuggestionLayoutState) -> Bool {
+        if case .focusing = lhs, case .focusing = rhs {
+            return true
+        } else if case .none = lhs, case .none = rhs {
+            return true
+        } else {
+            return false
+        }
+    }
 }
 
 enum GestureFocusingItemState {
