@@ -10,7 +10,6 @@ final class TextInputCommandExcuteManager {
     weak var suggestionLayoutManger: SuggestionLayout?
     
     var resolver: TextRangeResolver
-    var systemInsertUpdate: (oldTextRange: UITextRange, shouldChangeTextIn: NSRange, text: String)? = nil
     
     private lazy var inputCommands: [TextInputCommand] = [
         SuggestionEnterCommand(
