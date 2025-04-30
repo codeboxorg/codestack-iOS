@@ -1,8 +1,6 @@
+import Foundation
 
-import UIKit
-
-
-final class ReplaceInputViewCommand: ButtonCommand {
+struct ReplaceInputViewCommand: ButtonCommand {
     weak var controller: EditorReplaceInputView?
     
     init(controller: EditorReplaceInputView? = nil) {
