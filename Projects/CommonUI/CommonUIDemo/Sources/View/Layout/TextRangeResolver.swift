@@ -32,7 +32,7 @@ struct TextRangeResolver {
     
     func applyUndoableSnapShot(_ result: TextInputCommandResult) -> UndoSnapshotCommand {
         // 1. Get Current TextView Range State
-        let oldSelectedTextRange = editor.selectedTextRange
+        let oldSelectedTextRange = result.currentSelectedRange
         let replacedText = editor.text(in: result.replacementRange) ?? ""
         var newSelectedTextRange: UITextRange? = nil
         
@@ -153,6 +153,39 @@ struct TextRangeResolver {
             replacedText: priorWord,
             selectedTextRange: selectedTextRange,
             oldSelectedTextRange: oldSelectedRange
+        )
+    }
+    
+    func deleteLineSnapShot() -> UndoSnapshotCommand? {
+        // 1. Define paragraph range and contents
+        let paragraphRange = (editor.text as NSString).paragraphRange(for: editor.selectedRange)
+        let paragraphText = (editor.text as NSString).substring(with: paragraphRange)
+        let oldSelectedTextRange = editor.selectedTextRange
+        
+        // 2. Calculate undo and redo text ranges
+        guard let startPosition = editor.position(from: editor.beginningOfDocument, offset: paragraphRange.location),
+              let redoEndPosition = editor.position(from: startPosition, offset: paragraphRange.length) else {
+            return nil 
+        }
+        
+        let undoEndPosition = startPosition // Undo deletes everything → undo range is empty at start
+        let undoRange = editor.textRange(from: startPosition, to: undoEndPosition)
+        let redoRange = editor.textRange(from: startPosition, to: redoEndPosition)
+        
+        // 3. Determine new cursor position after deletion
+        let newCursorOffset = max(0, paragraphRange.location - 1)
+        let newCursorPosition = editor.position(from: editor.beginningOfDocument, offset: newCursorOffset)
+        let newSelectedTextRange = newCursorPosition.flatMap { editor.textRange(from: $0, to: $0) }
+        
+        // 4. Register Undo Snapshot
+        return UndoSnapshotCommand(
+            actionCommandType: .systemRemove,
+            undoRange: undoRange,
+            redoRange: redoRange,
+            insertedText: "",
+            replacedText: paragraphText,
+            selectedTextRange: newSelectedTextRange,
+            oldSelectedTextRange: oldSelectedTextRange
         )
     }
 }

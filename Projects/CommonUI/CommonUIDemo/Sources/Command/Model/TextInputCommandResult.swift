@@ -5,6 +5,7 @@ struct TextInputCommandResult: Equatable {
     var replacementRange: UITextRange
     var replacementText: String
     var newSelectedRange: UITextRange?
+    var currentSelectedRange: UITextRange?
     var offset: Int?
     
     init(
@@ -12,12 +13,14 @@ struct TextInputCommandResult: Equatable {
         replacementRange: UITextRange,
         replacementText: String,
         newSelectedRange: UITextRange?,
+        currentSelectedRange: UITextRange?,
         offset: Int? = nil
     ) {
         self.actionCommandType = actionCommandType
         self.replacementRange = replacementRange
         self.replacementText = replacementText
         self.newSelectedRange = newSelectedRange
+        self.currentSelectedRange = currentSelectedRange
         self.offset = offset
     }
 }

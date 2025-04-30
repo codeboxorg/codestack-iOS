@@ -90,10 +90,6 @@ extension TextInputCommandExcuteManager {
     }
     
     func systemReplaceActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
-        guard let editor else {
-            return
-        }
-        
         let undoCommand = resolver.replaceSnapshot(range, text)
         
         undoableManager?.push(undoCommand)
@@ -101,20 +97,12 @@ extension TextInputCommandExcuteManager {
         
         // 5. Push undo command and cancel further processing
     func systemRemoveActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
-        guard let editor else {
-            return
-        }
-        
         let undoCommand = resolver.removeSnapShot(range, text)
         
         undoableManager?.push(undoCommand)
     }
     
     func systemInsertActionSnapShot(oldTextRange: UITextRange, shouldChangeTextIn range: NSRange, replacementText text: String) {
-        guard let editor else {
-            return
-        }
-        
         let undoCommand = resolver.insertSnapshot(oldTextRange, range, text)
         
         undoableManager?.push(undoCommand)
@@ -156,6 +144,7 @@ extension TextInputCommandExcuteManager {
             replacementRange: replacementRange ?? .init(),
             replacementText: replacementText,
             newSelectedRange: newSelectedRange,
+            currentSelectedRange: editor.selectedTextRange,
             offset: newSelectedRange == nil ? cursorPosition : nil
         )
         
@@ -193,7 +182,8 @@ extension TextInputCommandExcuteManager {
                     actionCommandType: .autoPairRemove,
                     replacementRange: replaceRange,
                     replacementText: "",
-                    newSelectedRange: editor.textRange(from: start, to: start)
+                    newSelectedRange: editor.textRange(from: start, to: start),
+                    currentSelectedRange: editor.selectedTextRange
                 )
                 
                 applyUndoableSnapShot(input: result)
@@ -289,6 +279,7 @@ extension TextInputCommandExcuteManager {
             replacementRange: replacementRange ?? .init(),
             replacementText: replacementText,
             newSelectedRange: newSelectedRange,
+            currentSelectedRange: editor.selectedTextRange,
             offset: cursorPosition
         )
         
