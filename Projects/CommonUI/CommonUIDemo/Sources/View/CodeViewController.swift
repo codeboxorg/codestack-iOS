@@ -13,13 +13,49 @@ import Highlightr
 import SafariServices
 import Global
 
-/// VC -> EditorContainer -> CodeUITextView
-///  |                            |----> LineNumberRulerView
-///  | -> EditorController -> CodeUITextView
-
 final class CodeViewController: BaseViewController {
     
-    let ediotrContainer = EditorContainerView()
+    var editorContainerView = EditorContainerView.init(frame: .zero)
+    lazy var undoableManager  : UndoableManager  = DefaultUndoableManager(editor: self.editor)
+    lazy var suggestionLayout : SuggestionLayout = SuggestionLayoutManager(editor: self.editor)
+    private let wordSuggestion: WordSuggenstion  = DefaultWordSuggenstion()
+    
+    lazy var suggestionManager: SuggestionManager = DefaultSuggestionManager(
+       dependency: .init(
+           suggestion: self.wordSuggestion,
+           editor: self.editor,
+           suggestionLayout: self.suggestionLayout,
+           suggestionCommand: SuggestionCommand(
+               editor: self.editor,
+               invoker: self.undoableManager
+           )
+       )
+   )
+    
+    var editor             : UITextView { self.editorContainerView.codeUITextView }
+    var changeSelected     : ChangeSelectedRange { self.editorContainerView.numbersView as ChangeSelectedRange }
+    var textViewWidthUpdate: TextViewWidthUpdateProtocol { self.editorContainerView as TextViewWidthUpdateProtocol }
+    
+    lazy var editorController = EditorController(
+        dependency: .init(
+            textView: self.editor,
+            changeSelecteRange: self.changeSelected,
+            widthUpdater: self.textViewWidthUpdate,
+            undoableManager: self.undoableManager,
+            suggestionManager: self.suggestionManager,
+            suggestionLayout: self.suggestionLayout,
+            textInputCommandExcuteManager: TextInputCommandExcuteManager(
+                editor: self.editor,
+                undoableManager: self.undoableManager,
+                suggestionManager: self.suggestionManager,
+                suggestionLayoutManger: self.suggestionLayout
+            ),
+            buttonCommandExecuteManager: DefaultButtonCommandExecuteManager(
+                editor: self.editor,
+                undoableManager: self.undoableManager
+            )
+        )
+    )
     
     private lazy var availableThemes: [String] = getAvailableThemes() // Replace with your own theme loader
     private var selectedThemeIndex: Int = 0
@@ -49,6 +85,8 @@ final class CodeViewController: BaseViewController {
     }()
     
     override func viewDidLoad() {
+        editorContainerView.codeUITextView.layoutManager.delegate = self.editorController
+        editorContainerView.codeUITextView.delegate = self.editorController
         layoutConfigure()
         configureSettingButton()
         configureThemePicker()
@@ -62,8 +100,9 @@ final class CodeViewController: BaseViewController {
                   let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
 
             UIView.animate(withDuration: duration) {
-                self.ediotrContainer.snp.updateConstraints { make in
-                    make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).inset(keyboardFrame.height - self.ediotrContainer.editorController.toolBarSize)
+                self.editorContainerView.snp.updateConstraints { make in
+                    make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
+                        .inset(keyboardFrame.height - self.editorController.inputViewLayoutManager.toolBarHeight)
                 }
                 self.view.layoutIfNeeded()
             }
@@ -74,7 +113,7 @@ final class CodeViewController: BaseViewController {
                   let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
 
             UIView.animate(withDuration: duration) {
-                self.ediotrContainer.snp.updateConstraints { make in
+                self.editorContainerView.snp.updateConstraints { make in
                     make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
                 }
                 self.view.layoutIfNeeded()
@@ -118,8 +157,8 @@ final class CodeViewController: BaseViewController {
         
         if isHidden {
             themePickerView.selectRow(selectedThemeIndex, inComponent: 0, animated: false)
-            if ediotrContainer.codeUITextView.isFirstResponder {
-                ediotrContainer.codeUITextView.resignFirstResponder()
+            if editorContainerView.codeUITextView.isFirstResponder {
+                editorContainerView.codeUITextView.resignFirstResponder()
             }
         }
 
@@ -130,31 +169,31 @@ final class CodeViewController: BaseViewController {
     }
     
     private func applyTheme(_ theme: String) {
-        self.ediotrContainer.highlightr?.setTheme(to: theme)
-        let color = self.ediotrContainer.highlightr?.theme.themeBackgroundColor
-        self.ediotrContainer.numberTextViewContainer.backgroundColor = color
-        self.ediotrContainer.codeUITextView.backgroundColor = color
-        self.ediotrContainer.numbersView.backgroundColor = color
+        self.editorContainerView.highlightr?.setTheme(to: theme)
+        let color = self.editorContainerView.highlightr?.theme.themeBackgroundColor
+        self.editorContainerView.numberTextViewContainer.backgroundColor = color
+        self.editorContainerView.codeUITextView.backgroundColor = color
+        self.editorContainerView.numbersView.backgroundColor = color
     }
 }
 
 //MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
 extension CodeViewController {
     func showProblemDiscription() {
-        ediotrContainer.numbersView.layer.setNeedsDisplay()
+        editorContainerView.numbersView.layer.setNeedsDisplay()
     }
     
     //이거 먼저 선언
     func dismissProblemDiscription(button height: CGFloat = 44){
-        ediotrContainer.numbersView.layer.setNeedsDisplay()
+        editorContainerView.numbersView.layer.setNeedsDisplay()
     }
 }
 
 //MARK: - layout setting
 extension CodeViewController {
     private func layoutConfigure() {
-        self.view.addSubview(ediotrContainer)
-        ediotrContainer.snp.makeConstraints { make in
+        self.view.addSubview(editorContainerView)
+        editorContainerView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.leading.equalTo(self.view.safeAreaLayoutGuide.snp.leading)
             make.trailing.equalTo(self.view.safeAreaLayoutGuide.snp.trailing)

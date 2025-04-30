@@ -10,37 +10,26 @@ import UIKit
 import CommonUI
 import Highlightr
 
+protocol TextViewWidthUpdateProtocol: AnyObject {
+    func updateTextViewWidth(_ width: CGFloat)
+    func positioningScrollView()
+}
+
 final class EditorContainerView: BaseView {
+    
     weak var highlightr: Highlightr?
-    
-    private lazy var undoableManager: UndoableManager = DefaultUndoableManager(
-        editor: self.codeUITextView
-    )
-    
-    lazy var editorController = EditorController(
-        dependency: .init(
-            textView: self.codeUITextView,
-            lineNumberView: self.numbersView,
-            widthUpdater: self,
-            buttonCommandExecuteManager: DefaultButtonCommandExecuteManager(
-                editor: self.codeUITextView,
-                undoableManager: self.undoableManager
-            ),
-            undoableManager: self.undoableManager
-        )
-    )
-    
+
     let numberTextViewContainer: UIView = {
         let view = UIView()
         return view
     }()
     
-    let numbersView: LineNumberRulerView = {
+    private(set) var numbersView: LineNumberRulerView = {
         let view = LineNumberRulerView(frame: .zero, textView: nil)
         return view
     }()
     
-    lazy var codeUITextView: CodeUITextView = {
+    private(set) lazy var codeUITextView: CodeUITextView = {
         let textStorage = CodeAttributedString()
         let layoutManager = NSLayoutManager()
         textStorage.addLayoutManager(layoutManager)
@@ -63,9 +52,6 @@ final class EditorContainerView: BaseView {
     override func applyAttributes() {
         numbersView.settingTextView(self.codeUITextView, tracker: self)
         codeUITextView.languageBinding(name: "Swift")
-        codeUITextView.layoutManager.delegate = editorController
-        codeUITextView.delegate = editorController
-        
         highlightr = (codeUITextView.textStorage as! CodeAttributedString).highlightr
         highlightr?.setTheme(to: "vs2015")
         let color = self.highlightr?.theme.themeBackgroundColor

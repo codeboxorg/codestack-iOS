@@ -3,77 +3,61 @@ import UIKit
 import Global
 
 final class EditorController: NSObject, CusorHighlightProtocol {
-    enum KeyboardState {
-        case keyboard
-        case specialCharacters
-        case none
-    }
-    
     struct Dependency {
-        var textView: UITextView
-        var lineNumberView: ChangeSelectedRange
-        var widthUpdater: TextViewWidthUpdateProtocol?
-        var buttonCommandExecuteManager: ButtonCommandExecuteManager
-        var undoableManager: UndoableManager
+        var textView                     : UITextView?
+        var changeSelecteRange           : ChangeSelectedRange?
+        var widthUpdater                 : TextViewWidthUpdateProtocol?
+        var undoableManager              : UndoableManager
+        var suggestionManager            : SuggestionManager
+        var suggestionLayout             : SuggestionLayout
+        var textInputCommandExcuteManager: TextInputCommandExcuteManager
+        var buttonCommandExecuteManager  : ButtonCommandExecuteManager
     }
     
+    private(set) weak var textView           : UITextView!
+    private weak var changeSelecteRange      : ChangeSelectedRange!
+    private weak var widthUpdater            : TextViewWidthUpdateProtocol!
+    private weak var suggestLayoutManager    : SuggestionLayout!
+    private weak var undoableManager         : UndoableManager!
+    private weak var suggestionManager       : SuggestionManager!
+    private let buttonCommandExecuteManager  : ButtonCommandExecuteManager
+    private let textInputCommandExcuteManager: TextInputCommandExcuteManager
     
-    weak var textView: UITextView?
-    weak var lineNumberView: ChangeSelectedRange?
-    weak var widthUpdater: TextViewWidthUpdateProtocol?
-    
-    private lazy var suggestLayoutManager: SuggestionLayout = SuggestionLayoutManager(editor: textView)
-    
-    private var buttonCommandExecuteManager: ButtonCommandExecuteManager!
-    
-    private let textViewWidthLayoutManager = TextViewWidthLayoutManager()
-    
-    private lazy var textInputCommandExcuteManager = TextInputCommandExcuteManager(
-        editor: textView,
-        undoableManager: undoableManager,
-        suggestionManager: suggestionManager,
-        suggestionLayoutManger: suggestLayoutManager
-    )
-    
-    private var undoableManager: UndoableManager!
-    
-    private(set) lazy var suggestionManager: SuggestionManager = DefaultSuggestionManager(
-        dependency: .init(
-            suggestion: DefaultWordSuggenstion(),
-            editor: self.textView,
-            layoutManager: self.suggestLayoutManager,
-            suggestionCommand: SuggestionCommand(
-                editor: self.textView,
-                invoker: self.undoableManager
-            )
-        )
-    )
-    
-    private lazy var keyboardState: KeyboardState = .keyboard
-    private var keyboardHeight: CGFloat = 0
-    private(set) var toolBarSize: CGFloat = 0
-    private var totalInputViewSize: CGFloat {
-        keyboardHeight - toolBarSize
-    }
+    private(set) var inputViewLayoutManager  : InputViewLayoutManager!
+    private var textViewWidthLayoutManager = TextViewWidthLayoutManager()
     
     private lazy var cursorCommands: [CursorCommand] = [
-        FocusCursorCommand.init(line: self.lineNumberView),
+        FocusCursorCommand.init(line: self.changeSelecteRange),
         BracketPairCursorCommand.init(editor: self.textView, highlightor: self),
         SuggestFocusCusorCommand(suggestionManager: self.suggestionManager)
     ]
     
     init(dependency: Dependency) {
-        super.init()
-        self.textView = dependency.textView
-        self.lineNumberView = dependency.lineNumberView
-        self.buttonCommandExecuteManager = dependency.buttonCommandExecuteManager
-        self.undoableManager = dependency.undoableManager
-        self.widthUpdater = dependency.widthUpdater
-        buttonCommandExecuteManager.replaceInputViewDelegate = self
+        self.textView                      = dependency.textView
+        self.changeSelecteRange            = dependency.changeSelecteRange
+        self.widthUpdater                  = dependency.widthUpdater
+        self.suggestLayoutManager          = dependency.suggestionLayout
+        self.buttonCommandExecuteManager   = dependency.buttonCommandExecuteManager
+        self.textInputCommandExcuteManager = dependency.textInputCommandExcuteManager
+        self.undoableManager               = dependency.undoableManager
+        self.suggestionManager             = dependency.suggestionManager
         
-        suggestionManager.initSuggestion()
-        addDoneButtonOnKeyboard()
-        getKeyboardHegiht()
+        defer {
+            self.inputViewLayoutManager = InputViewLayoutManager(textView: self.textView)
+            { [weak self] in
+                self?.changeSelecteRange?.removeLayer()
+                self?.removeHightLight()
+                self?.suggestionManager.removeSuggestionView()
+            }
+            
+            self.buttonCommandExecuteManager.replaceInputViewDelegate = self.inputViewLayoutManager
+            let (toolbar, height) = ToolBarGenerator.makeToolBar(buttonCommandExecuteManager.allCommandButtons)
+            self.inputViewLayoutManager.toolBarHeight = height
+            self.textView?.inputAccessoryView = toolbar
+            self.textView?.delegate = self
+            self.inputViewLayoutManager.getKeyboardHegiht()
+        }
+        super.init()
     }
     
     
