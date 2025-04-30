@@ -4,42 +4,75 @@ import XCTest
 
 
 final class ButtonCommandExecuteManagerTestCase: XCTestCase {
+    private var textView: UITextView!
+    private var suggestionManager: SuggestionManager!
+    private var suggestion: WordSuggenstion!
+    private var suggestionLayout: SuggestionLayout!
+    private var undoableManager: UndoableManager!
+    private var textCommand: TextInputCommandExcuteManager!
+    
     var editorController: EditorController!
     var buttonCommandExecuteManager: ButtonCommandExecuteManager!
     
     override func setUpWithError() throws {
-        let textView = UITextView()
-        
-        let undoableManager = DefaultUndoableManager(
+        textView = UITextView()
+        undoableManager = DefaultUndoableManager(
             editor: textView
         )
-        
         buttonCommandExecuteManager = DefaultButtonCommandExecuteManager(
             editor: textView,
             undoableManager: undoableManager
         )
+        suggestion = DefaultWordSuggenstion()
         
-        let dependency = EditorController.Dependency(
+        suggestionLayout = SuggestionLayoutManager(editor: textView)
+        
+        suggestionManager =  DefaultSuggestionManager(
+            dependency: .init(
+                suggestion: self.suggestion,
+                editor: textView,
+                suggestionLayout: suggestionLayout,
+                suggestionCommand: SuggestionCommand(
+                    editor: textView,
+                    invoker: undoableManager
+                )
+            )
+        )
+        
+        textCommand = TextInputCommandExcuteManager(
+            editor: textView,
+            undoableManager: undoableManager,
+            suggestionManager: suggestionManager,
+            suggestionLayoutManger: suggestionLayout
+        )
+        
+        editorController = EditorController(dependency: .init(
             textView: textView,
-            lineNumberView: MockLineNumberView(),
-            buttonCommandExecuteManager: buttonCommandExecuteManager,
-            undoableManager: undoableManager
+            changeSelecteRange: MockLineNumberView(),
+            widthUpdater: MockTextViewWidthUpdate(),
+            undoableManager: undoableManager,
+            suggestionManager: suggestionManager,
+            suggestionLayout: suggestionLayout,
+            textInputCommandExcuteManager: textCommand,
+            buttonCommandExecuteManager: buttonCommandExecuteManager)
         )
         
-        editorController = EditorController(
-            dependency: dependency
-        )
-        
-        textView.delegate = editorController
+        // editorController = mockDelegate
+        // textView.delegate = editorController
     }
     
     override func tearDownWithError() throws {
         editorController = nil
         buttonCommandExecuteManager = nil
+        suggestionManager = nil
+        suggestion = nil
+        suggestionLayout = nil
+        undoableManager = nil
+        textCommand = nil
     }
     
-    func input_setting() -> Bool? {
-        let textView = editorController.textView!
+    func input_setting() -> Bool {
+        let textView = textView!
         
         textView.text = """
 import Foundation
@@ -68,18 +101,16 @@ import Foundation
 func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
     func
 }
-""".replacingOccurrences(of: "    ", with: "\t")
+""".replacingOccurrences(of: "    ", with:"\t")
         
         XCTAssertFalse(systemUpdate ?? true)
-        XCTAssertEqual(editorController.textView!.text, after)
-        return systemUpdate
+        XCTAssertEqual(textView.text, after)
+        return systemUpdate!
     }
-
-    
     
     func test_undo_after_suggest_enter__action() {
         _ = input_setting()
-        let textView = editorController.textView!
+        let textView = textView!
         
         let afterUndo = """
 import Foundation
@@ -108,11 +139,11 @@ func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
         buttonCommandExecuteManager.undoButtonExecute()
         buttonCommandExecuteManager.redoButtonExecute()
         
-        XCTAssertEqual(editorController.textView!.text, afterUndo)
+        XCTAssertEqual(textView.text, afterUndo)
     }
     
     func test_deleteLine_action() {
-        let textView = editorController.textView!
+        let textView = textView!
         let base = """
 import Foundation
 
@@ -130,11 +161,11 @@ func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
     func
 }
 """.replacingOccurrences(of: "    ", with: "\t")
-        XCTAssertEqual(editorController.textView!.text, after)
+        XCTAssertEqual(textView.text, after)
     }
     
     func test_deleteLine_and_undo_action() {
-        let textView = editorController.textView!
+        let textView = textView!
         let base = """
 import Foundation
 
@@ -152,11 +183,11 @@ func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
         buttonCommandExecuteManager.undoButtonExecute()
         buttonCommandExecuteManager.undoButtonExecute()
         
-        XCTAssertEqual(editorController.textView!.text, base)
+        XCTAssertEqual(textView.text, base)
     }
     
     func test_deleteLine_and_redo_action() {
-        let textView = editorController.textView!
+        let textView = textView!
         let base = """
 import Foundation
 
@@ -182,6 +213,6 @@ func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
 }
 """.replacingOccurrences(of: "    ", with: "\t")
         
-        XCTAssertEqual(editorController.textView!.text, after)
+        XCTAssertEqual(textView.text, after)
     }
 }

@@ -16,8 +16,6 @@ final class TextInputCommandExecuteManagerTestCase: XCTestCase {
     override func setUpWithError() throws {
         let _editor = UITextView()
         
-        mockDelegate = MockEditorDelegate()
-        _editor.delegate = mockDelegate
         
         undoableManager = DefaultUndoableManager.init(editor: _editor)
         wordSuggestion = DefaultWordSuggenstion()
@@ -30,7 +28,7 @@ final class TextInputCommandExecuteManagerTestCase: XCTestCase {
             dependency: .init(
                 suggestion: wordSuggestion,
                 editor: editor,
-                layoutManager: suggestionLayout,
+                suggestionLayout: suggestionLayout,
                 suggestionCommand: suggestionCommand
             )
         )
@@ -42,7 +40,12 @@ final class TextInputCommandExecuteManagerTestCase: XCTestCase {
             suggestionLayoutManger: suggestionLayout
         )
         
-        mockDelegate.manager = manager
+        mockDelegate = MockEditorDelegate.init(
+            textInputCommandExcuteManager: manager,
+            suggestionManager: suggestionManager,
+            cusorCommand: SuggestFocusCusorCommand(suggestionManager: self.suggestionManager)
+        )
+        _editor.delegate = mockDelegate
         editor = _editor
     }
     
@@ -303,6 +306,46 @@ func solution(_ arr: [Int], _ value: [String]) {
         XCTAssertTrue(systemUpdate)
         XCTAssertEqual(editor.text, "func solutions")
         // XCTAssertEqual(editor.selectedRange, NSRange(location: 14, length: 0))
+    }
+    
+    func visualize(_ string: String) -> String {
+        string
+            .replacingOccurrences(of: "\n", with: "\\n\n")
+            .replacingOccurrences(of: "\t", with: "\\t")
+    }
+    
+    func test_enter_command_execute() {
+        let prior = """
+func solution() {
+}
+"""
+        editor.text = prior
+        editor.selectedRange = NSRange(location: 17, length: 0)
+        
+        _ = manager.commandExecute(shouldChangeTextIn: editor.selectedRange, replacementText: "\n")
+        
+        let after = """
+func solution() {
+\t
+}
+"""
+        XCTAssertEqual(editor.text, after)
+    }
+    
+    func test_enter_command_undo() {
+        let prior = """
+func solution() {
+}
+"""
+        editor.text = prior
+        editor.selectedRange = NSRange(location: 17, length: 0)
+        
+        _ = manager.commandExecute(shouldChangeTextIn: editor.selectedRange, replacementText: "\n")
+        
+        manager.undoableManager?.undo()
+        
+        XCTAssertEqual(editor.selectedRange, NSRange(location: 17, length: 0))
+        XCTAssertEqual(editor.text, prior)
     }
     
 }
