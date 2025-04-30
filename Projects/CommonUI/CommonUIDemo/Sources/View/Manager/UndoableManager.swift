@@ -75,9 +75,8 @@ final class UndoSnapshotCommand: UndoableTextInputCommand {
     private let selectedTextRange: UITextRange?
     private let oldSelectedTextRange: UITextRange?
     
-    var getNewSelectedRange: UITextRange? {
-        selectedTextRange
-    }
+    var getNewSelectedRange: UITextRange? { selectedTextRange }
+    var getRedoRange: UITextRange? { redoRange }
 
     init(
         actionCommandType: ActionCommandType,
