@@ -28,11 +28,11 @@ protocol UpdateUndoRedoButtonStateDelegate: AnyObject {
 final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager,
                                                 EditorControl,
                                                 UpdateUndoRedoButtonStateDelegate {
-    
     var moveTimer: Timer?
     weak var editor: UITextView?
     weak var undoableManager: UndoableManager!
     weak var replaceInputViewDelegate: EditorReplaceInputView?
+    private lazy var resolver: TextRangeResolver = TextRangeResolver(editor: self.editor!)
     
     private let undoButton: UIButton
     private let redoButton: UIButton
@@ -138,44 +138,18 @@ final class DefaultButtonCommandExecuteManager: ButtonCommandExecuteManager,
     func deleteLine() {
         guard let editor else { return }
         
-        // 1. Define paragraph range and contents
-        let paragraphRange = (editor.text as NSString).paragraphRange(for: editor.selectedRange)
-        let paragraphText = (editor.text as NSString).substring(with: paragraphRange)
-        let oldSelectedTextRange = editor.selectedTextRange
-        
-        // 2. Calculate undo and redo text ranges
-        guard let startPosition = editor.position(from: editor.beginningOfDocument, offset: paragraphRange.location),
-              let redoEndPosition = editor.position(from: startPosition, offset: paragraphRange.length) else {
+        guard let snapshotCommand = resolver.deleteLineSnapShot() else {
             return
         }
         
-        let undoEndPosition = startPosition // Undo deletes everything → undo range is empty at start
-        let undoRange = editor.textRange(from: startPosition, to: undoEndPosition)
-        let redoRange = editor.textRange(from: startPosition, to: redoEndPosition)
-        
-        // 3. Determine new cursor position after deletion
-        let newCursorOffset = max(0, paragraphRange.location - 1)
-        let newCursorPosition = editor.position(from: editor.beginningOfDocument, offset: newCursorOffset)
-        let newSelectedTextRange = newCursorPosition.flatMap { editor.textRange(from: $0, to: $0) }
-        
-        // 4. Register Undo Snapshot
-        let undoCommand = UndoSnapshotCommand(
-            actionCommandType: .systemRemove,
-            undoRange: undoRange,
-            redoRange: redoRange,
-            insertedText: "",
-            replacedText: paragraphText,
-            selectedTextRange: newSelectedTextRange,
-            oldSelectedTextRange: oldSelectedTextRange
-        )
-        undoableManager?.push(undoCommand)
+        undoableManager?.push(snapshotCommand)
         
         // 5. Perform deletion
-        if let redoRange {
+        if let redoRange = snapshotCommand.getRedoRange {
             editor.replace(redoRange, withText: "")
         }
         
-        if let newSelectedTextRange {
+        if let newSelectedTextRange = snapshotCommand.getNewSelectedRange {
             editor.selectedTextRange = newSelectedTextRange
         }
     }
