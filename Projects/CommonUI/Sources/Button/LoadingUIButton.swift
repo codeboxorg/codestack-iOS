@@ -7,9 +7,14 @@
 
 import UIKit
 
-public final class LoadingUIButton: UIButton {
+public protocol Loading: UIButton {
+    func showLoading()
+    func hideLoading()
+}
 
-    public var buttonColor: UIColor = .clear
+public final class LoadingUIButton: UIButton, Loading {
+
+    public var buttonColor: UIColor = .label
     public var indicatorColor : UIColor = .lightGray
     public var originalButtonText: String?
     
@@ -32,6 +37,8 @@ public final class LoadingUIButton: UIButton {
             sendButtonHeight = title.height(withConstrainedWidth: 150, font: font) + 16
             sendButtonWidth = title.width(withConstrainedHeight: 166, font: font) + 40
         }
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(activityIndicator)
     }
     
     /// Send Button Attribute Setting
@@ -56,26 +63,24 @@ public final class LoadingUIButton: UIButton {
         showSpinning()
     }
 
+    
     public func hideLoading() {
         DispatchQueue.main.async(execute: { [weak self] in
-            if let color = self?.buttonColor {
-                self?.tintColor = color
-                self?.setTitleColor(color, for: .normal)
-            }
-            self?.isEnabled = true
-            self?.activityIndicator.stopAnimating()
-            self?.setTitle(self?.originalButtonText, for: .normal)
+            guard let self else { return }
+            self.isEnabled = true
+            self.setTitleColor(.label, for: .normal)
+            self.tintColor = .label
+            self.activityIndicator.stopAnimating()
+            self.setTitle(self.originalButtonText, for: .normal) // 타이틀 복원
         })
     }
 
     private func showSpinning() {
-        self.addSubview(activityIndicator)
         centerActivityIndicatorInButton()
         activityIndicator.startAnimating()
     }
 
     private func centerActivityIndicatorInButton() {
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
             activityIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0)
