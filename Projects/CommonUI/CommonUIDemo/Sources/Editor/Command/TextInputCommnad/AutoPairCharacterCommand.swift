@@ -3,13 +3,13 @@ import Foundation
 
 struct AutoPairCharacterCommand: TextInputCommand {
     
-    weak var commandExecutor: TextInputCommandExcuteManager?
+    weak var commandExecutor: AutoPairCommandExecutor?
     
     var commandState: CommandExcuteState {
         .autoPairChar
     }
     
-    init(commandExecutor: TextInputCommandExcuteManager?) {
+    init(commandExecutor: AutoPairCommandExecutor?) {
         self.commandExecutor = commandExecutor
     }
     

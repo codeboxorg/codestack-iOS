@@ -44,7 +44,7 @@ final class CodeViewController: BaseViewController {
             undoableManager: self.undoableManager,
             suggestionManager: self.suggestionManager,
             suggestionLayout: self.suggestionLayout,
-            textInputCommandExcuteManager: TextInputCommandExcuteManager(
+            textInputCommandExcuteManager: DefaultTextInputCommandExcuteManager(
                 editor: self.editor,
                 undoableManager: self.undoableManager,
                 suggestionManager: self.suggestionManager,

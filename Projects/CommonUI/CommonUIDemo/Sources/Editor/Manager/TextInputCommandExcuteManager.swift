@@ -3,7 +3,28 @@ import UIKit
 import Global
 #endif
 
-final class TextInputCommandExcuteManager {
+
+protocol TextInputCommandExcuteManager {
+    func commandExecute(shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool
+    func systemInsertActionSnapShot(oldTextRange: UITextRange, shouldChangeTextIn range: NSRange, replacementText text: String)
+}
+
+protocol EnterCommandExecutor: AnyObject {
+    func enterCommandExecute(range: NSRange, text: String) -> Bool
+}
+
+protocol AutoRemoveCommandExecutor: AnyObject {
+    func autoRemoveCommandExecute(range: NSRange, text: String) -> Bool
+}
+
+protocol AutoPairCommandExecutor: AnyObject {
+    func autoPairExecute(range: NSRange, text: String) -> Bool
+}
+
+final class DefaultTextInputCommandExcuteManager: TextInputCommandExcuteManager,
+                                                  EnterCommandExecutor,
+                                                  AutoRemoveCommandExecutor,
+                                                  AutoPairCommandExecutor {
     weak var editor: UITextView?
     weak var undoableManager: UndoableManager?
     weak var suggestionManager: SuggestionManager?
@@ -40,6 +61,12 @@ final class TextInputCommandExcuteManager {
         self.suggestionLayoutManger = suggestionLayoutManger
     }
     
+    func systemInsertActionSnapShot(oldTextRange: UITextRange, shouldChangeTextIn range: NSRange, replacementText text: String) {
+        let undoCommand = resolver.insertSnapshot(oldTextRange, range, text)
+        
+        undoableManager?.push(undoCommand)
+    }
+    
     func commandExecute(shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         var systemUpdate = true
         var state = Set<CommandExcuteState>()
@@ -59,9 +86,11 @@ final class TextInputCommandExcuteManager {
         
         if systemUpdate {
             if range.length >= 1 && text.count == 0 {
-                systemRemoveActionSnapShot(shouldChangeTextIn: range, replacementText: text)
+                let undoCommand = resolver.removeSnapShot(range, text)
+                undoableManager?.push(undoCommand)
             } else if range.length >= 1 && text.count != 0 {
-                systemReplaceActionSnapShot(shouldChangeTextIn: range, replacementText: text)
+                let undoCommand = resolver.replaceSnapshot(range, text)
+                undoableManager?.push(undoCommand)
             } else {
                 SystemInsertSnapShot.shared.useWhenTextDidChange = (editor!.selectedTextRange!, range, text)
             }
@@ -72,10 +101,8 @@ final class TextInputCommandExcuteManager {
     }
 }
 
-
-
-extension TextInputCommandExcuteManager {
-    func applyUndoableSnapShot(input result: TextInputCommandResult) {
+extension DefaultTextInputCommandExcuteManager {
+    private func applyUndoableSnapShot(input result: TextInputCommandResult) {
         guard let editor else {
             return
         }
@@ -88,29 +115,10 @@ extension TextInputCommandExcuteManager {
         
         undoableManager?.push(snapShot)
     }
-    
-    func systemReplaceActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
-        let undoCommand = resolver.replaceSnapshot(range, text)
-        
-        undoableManager?.push(undoCommand)
-    }
-        
-        // 5. Push undo command and cancel further processing
-    func systemRemoveActionSnapShot(shouldChangeTextIn range: NSRange, replacementText text: String) {
-        let undoCommand = resolver.removeSnapShot(range, text)
-        
-        undoableManager?.push(undoCommand)
-    }
-    
-    func systemInsertActionSnapShot(oldTextRange: UITextRange, shouldChangeTextIn range: NSRange, replacementText text: String) {
-        let undoCommand = resolver.insertSnapshot(oldTextRange, range, text)
-        
-        undoableManager?.push(undoCommand)
-    }
 }
 
 // MARK: Auto Pair Command
-extension TextInputCommandExcuteManager {
+extension DefaultTextInputCommandExcuteManager {
     func autoPairExecute(range: NSRange, text: String) -> Bool {
         guard let editor = editor else {
             return true
@@ -155,7 +163,7 @@ extension TextInputCommandExcuteManager {
 }
 
 // MARK: Auto Remove Command
-extension TextInputCommandExcuteManager {
+extension DefaultTextInputCommandExcuteManager {
     func autoRemoveCommandExecute(range: NSRange, text: String) -> Bool {
         guard let editor else {
             return true
@@ -196,7 +204,7 @@ extension TextInputCommandExcuteManager {
 }
 
 // MARK: Enter Command
-extension TextInputCommandExcuteManager {
+extension DefaultTextInputCommandExcuteManager {
     @inlinable
     func getIndentLevel(before text: String) -> Int {
         return text.reduce(0) { count, char in
@@ -208,7 +216,7 @@ extension TextInputCommandExcuteManager {
         }
     }
     
-    func changeInsertion(range: NSRange, indentLevel: Int, insertion: inout String) -> Int {
+    private func changeInsertion(range: NSRange, indentLevel: Int, insertion: inout String) -> Int {
         guard let editor else {
             return (0)
         }

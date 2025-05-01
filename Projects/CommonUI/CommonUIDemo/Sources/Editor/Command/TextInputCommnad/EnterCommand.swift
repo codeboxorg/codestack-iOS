@@ -4,7 +4,7 @@ import Global
 struct EnterCommand: TextInputCommand {
     
     weak var suggestionLayout: SuggestionLayout?
-    weak var commandExecutor: TextInputCommandExcuteManager?
+    weak var commandExecutor: EnterCommandExecutor?
     
     var commandState: CommandExcuteState {
         .enter
@@ -12,7 +12,7 @@ struct EnterCommand: TextInputCommand {
     
     init(
         suggestionLayout: SuggestionLayout?,
-        commandExecutor: TextInputCommandExcuteManager?
+        commandExecutor: EnterCommandExecutor?
     ) {
         self.suggestionLayout = suggestionLayout
         self.commandExecutor = commandExecutor

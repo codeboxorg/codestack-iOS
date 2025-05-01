@@ -7,14 +7,14 @@ import Global
 
 struct AutoRemoveCommand: TextInputCommand {
     
-    weak var commandExecutor: TextInputCommandExcuteManager?
+    weak var commandExecutor: AutoRemoveCommandExecutor?
     
     var commandState: CommandExcuteState {
         .autoPairChar
     }
     
     
-    init(commandExecutor: TextInputCommandExcuteManager?) {
+    init(commandExecutor: AutoRemoveCommandExecutor?) {
         self.commandExecutor = commandExecutor
     }
     
