@@ -15,7 +15,7 @@ protocol TextViewWidthUpdateProtocol: AnyObject {
     func positioningScrollView()
 }
 
-final class EditorContainerView: BaseView {
+final class EditorContainerView: BaseView, TextViewWidthUpdateProtocol {
     
     weak var highlightr: Highlightr?
 
@@ -92,7 +92,7 @@ final class EditorContainerView: BaseView {
     }
 }
 
-extension EditorContainerView: TextViewWidthUpdateProtocol {
+extension EditorContainerView {
     func updateTextViewWidth(_ width: CGFloat) {
         codeUITextView.snp.updateConstraints { make in
             make.width.equalTo(width + 40)
