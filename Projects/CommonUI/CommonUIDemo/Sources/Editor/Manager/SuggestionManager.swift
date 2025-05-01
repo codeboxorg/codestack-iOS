@@ -90,11 +90,15 @@ final class DefaultSuggestionManager: SuggestionManager {
             return
         }
         
-        guard let (word, cursorPosition) = suggestionCommand.findPriorCusorWords() else {
+        guard let (word, _) = suggestionCommand.findPriorCusorWords() else {
             return
         }
         
-        guard suggestionCommand.isRightPosition(cursorPosition: cursorPosition) else {
+        
+        if let editor,
+           let currentPosition = editor.position(from: editor.beginningOfDocument, offset: editor.selectedRange.location),
+           !suggestionCommand.isRightPosition(cursorPosition: currentPosition)
+        {
             layout.state = .none
             return
         }
@@ -195,9 +199,9 @@ internal struct SuggestionCommand: SuggestionCommandProtocol {
            let textRange = editor.textRange(from: cursorPosition, to: nextCharPosition2),
            let nextChar = editor.text(in: textRange),
            nextChar.range(of: "[a-zA-Z0-9_]", options: .regularExpression) != nil {
-            return true
-        } else {
             return false
+        } else {
+            return true
         }
     }
     
