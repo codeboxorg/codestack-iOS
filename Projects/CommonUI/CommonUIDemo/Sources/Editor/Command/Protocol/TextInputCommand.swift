@@ -11,9 +11,6 @@ protocol TextInputCommand: Command {
 
 extension TextInputCommand {
     func execute() { }
-    func execute(range: NSRange, text: String) -> Bool {
-        return false
-    }
     var controlType: UIControl.Event { .valueChanged }
     
     func shouldHandle(text: String, state: Set<CommandExcuteState>) -> Bool {

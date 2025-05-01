@@ -2,18 +2,48 @@ import UIKit
 import Global
 
 protocol SuggestionManager: AnyObject {
-    func suggestionLayoutGenerate()
-    func initSuggestion()
-    func findPriorWord() -> String?
-    func removeSuggestionView()
-    func excuteWhenCusorPositionChanged()
-    func insertCurrentFocusingSuggestionWord()
-
-    func input(for text: String)
+    func initSuggestion(string: [String])
     func remove(for text: String)
     var currentFocusingItem: String { get set }
+}
+
+extension SuggestionManager {
+    func initSuggestion(string: [String] = []) {
+        self.initSuggestion(string: string)
+    }
+}
+
+protocol SuggestionViewRemoval: AnyObject {
+    func removeSuggestionView()
+}
+
+protocol SuggestionLayoutGenerator: AnyObject {
+    func suggestionLayoutGenerate()
+}
+
+protocol SuggestionCusorPosition: AnyObject {
+    func excuteWhenCusorPositionChanged()
     var isSuggestionFocusingState: Bool { get }
 }
+
+protocol SuggestionInsert: AnyObject {
+    func insertCurrentFocusingSuggestionWord()
+}
+
+protocol SuggestionGenerator: AnyObject {
+    func input(for text: String)
+    func findPriorWord() -> String?
+}
+
+
+typealias CompositeSuggestionManager = (
+    SuggestionManager &
+    SuggestionViewRemoval &
+    SuggestionLayoutGenerator &
+    SuggestionCusorPosition &
+    SuggestionInsert &
+    SuggestionGenerator
+)
 
 protocol SuggestionCommandProtocol {
     func findPriorWord() -> String?
@@ -23,7 +53,12 @@ protocol SuggestionCommandProtocol {
     func insert(using word: String)
 }
 
-final class DefaultSuggestionManager: SuggestionManager {
+final class DefaultSuggestionManager: SuggestionManager,
+                                      SuggestionViewRemoval,
+                                      SuggestionLayoutGenerator,
+                                      SuggestionCusorPosition,
+                                      SuggestionInsert,
+                                      SuggestionGenerator {
     
     struct Dependency {
         var suggestion: WordSuggenstion
@@ -57,16 +92,24 @@ final class DefaultSuggestionManager: SuggestionManager {
         initSuggestion()
     }
     
-    func initSuggestion() {
+    let value = "Int,Int8,Int16,Int32,Int64,UInt,UInt8,UInt16,UInt32,UInt64,Float,Double,Bool,String,Character,Array,Dictionary,Set,Any,AnyObject,Never,Optional,Error,if,else,guard,switch,case,default,for,while,repeating,in,break,continue,return,throw,try,catch,defer,do,let,var,func,typealias,struct,class,enum,protocol,extension,init,deinit,subscript,public,private,fileprivate,internal,open,static,final,override,convenience,lazy,mutating,nonmutating,weak,unowned,strong,self,super,as,is,await,async,throws,inout,some,any,where,associatedtype,print,debugPrint,map,flatMap,compactMap,filter,reduce,forEach,sorted,contains,first,last,count,isEmpty,append,remove,insert,dropFirst,dropLast,split,joined,prefix,suffix,index,indices,hasPrefix,hasSuffix,uppercased,lowercased,trimmingCharacters,random,shuffled"
+    let value2 = "CustomStringConvertible,CustomDebugStringConvertible,Equatable,Comparable,Hashable"
+    
+    func initSuggestion(string: [String] = []) {
         guard let editor = editor else {
             return
         }
-        let swiftString = "Int,Int8,Int16,Int32,Int64,UInt,UInt8,UInt16,UInt32,UInt64,Float,Double,Bool,String,Character,Array,Dictionary,Set,Any,AnyObject,Never,Optional,Error,if,else,guard,switch,case,default,for,while,repeating,in,break,continue,return,throw,try,catch,defer,do,let,var,func,typealias,struct,class,enum,protocol,extension,init,deinit,subscript,public,private,fileprivate,internal,open,static,final,override,convenience,lazy,mutating,nonmutating,weak,unowned,strong,self,super,as,is,await,async,throws,inout,some,any,where,associatedtype,print,debugPrint,map,flatMap,compactMap,filter,reduce,forEach,sorted,contains,first,last,count,isEmpty,append,remove,insert,dropFirst,dropLast,split,joined,prefix,suffix,index,indices,hasPrefix,hasSuffix,uppercased,lowercased,trimmingCharacters,random,shuffled".split(separator: ",").map { String($0) }.joined(separator: " ")
+        var string = string
         
-        let protocolKeywords = "Collection,BidirectionalCollection,MutableCollection,Sequence,IteratorProtocol,CustomStringConvertible,CustomDebugStringConvertible,CustomReflectable,Equatable,Comparable,Hashable,Codable,CaseIterable"
+        if string.isEmpty {
+            string = [value, value2]
+        }
         
-        suggestion.input(for: protocolKeywords)
-        suggestion.input(for: swiftString)
+        for str in string {
+            let string = str.split(separator: ",").map { String($0) }.joined(separator: " ")
+            suggestion.input(for: string)
+        }
+        
         suggestion.input(for: editor.text)
     }
     
@@ -75,7 +118,7 @@ final class DefaultSuggestionManager: SuggestionManager {
     }
     
     /// Cusor Command에서 이 함수 호출
-    /// Cusor의 위치 변화에 따라서 Suggestion 상태 변경이 필요할 때
+    /// Cusor의 위치 변화에 따라서 Suggestion 상태 변경이 필요할 때!
     func excuteWhenCusorPositionChanged() {
         if isSuggestionFocusingState {
             suggestionLayoutGenerate()

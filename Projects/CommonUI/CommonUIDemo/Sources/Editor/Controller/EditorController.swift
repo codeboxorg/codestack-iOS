@@ -67,7 +67,7 @@ final class EditorController: NSObject {
 
 extension EditorController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-        suggestionManager.suggestionLayoutGenerate()
+        (suggestionManager as? SuggestionLayoutGenerator)?.suggestionLayoutGenerate()
         if let (oldTextRange, range, text) = SystemInsertSnapShot.shared.useWhenTextDidChange {
             textInputCommandExcuteManager.systemInsertActionSnapShot(oldTextRange: oldTextRange, shouldChangeTextIn: range, replacementText: text)
             SystemInsertSnapShot.shared.useWhenTextDidChange = nil

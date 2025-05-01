@@ -3,13 +3,13 @@ import Global
 
 struct SuggestionGeneratorCommand: TextInputCommand {
     
-    weak var suggestionManager: SuggestionManager?
+    weak var suggestionManager: SuggestionGenerator?
     var commandState: CommandExcuteState {
         .suggestionGenerator
     }
     
     init(
-        suggestionManager: SuggestionManager?
+        suggestionManager: SuggestionGenerator?
     ) {
         self.suggestionManager = suggestionManager
     }
@@ -31,7 +31,6 @@ struct SuggestionGeneratorCommand: TextInputCommand {
         else {
             return true
         }
-        Log.debug("word: \(word)")
         suggestionManager.input(for: word)
         
         return true

@@ -34,10 +34,10 @@ final class DefaultTextInputCommandExcuteManager: TextInputCommandExcuteManager,
     
     private lazy var inputCommands: [TextInputCommand] = [
         SuggestionEnterCommand(
-            suggestionManager: self.suggestionManager
+            suggestionManager: self.suggestionManager as? SuggestionInsert
         ),
         SuggestionGeneratorCommand(
-            suggestionManager: self.suggestionManager
+            suggestionManager: self.suggestionManager as? SuggestionGenerator
         ),
         EnterCommand(
             suggestionLayout: self.suggestionLayoutManger,

@@ -3,12 +3,12 @@ import Global
 
 struct SuggestionEnterCommand: TextInputCommand {
     
-    weak var suggestionManager: SuggestionManager?
+    weak var suggestionManager: SuggestionInsert?
     var commandState: CommandExcuteState {
         .suggestionEnter
     }
     init(
-        suggestionManager: SuggestionManager?
+        suggestionManager: SuggestionInsert?
     ) {
         self.suggestionManager = suggestionManager
     }
@@ -19,7 +19,7 @@ struct SuggestionEnterCommand: TextInputCommand {
         if !isEnter {
             return false
         }
-        guard let shouldHandle = suggestionManager?.isSuggestionFocusingState else {
+        guard let shouldHandle = (suggestionManager as? SuggestionCusorPosition)?.isSuggestionFocusingState else {
             return false
         }
         return shouldHandle

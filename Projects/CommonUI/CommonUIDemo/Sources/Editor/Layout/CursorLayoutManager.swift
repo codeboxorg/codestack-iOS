@@ -16,7 +16,7 @@ final class CursorLayoutManager: CusorHighlightProtocol {
     private(set) lazy var removeLayoutAction: () -> Void = { [weak self] in
         self?.changeSelectedRange?.removeLayer()
         self?.removeHightLight()
-        self?.suggestionManager?.removeSuggestionView()
+        (self?.suggestionManager as? SuggestionViewRemoval)?.removeSuggestionView()
     }
     
     init(
@@ -32,7 +32,7 @@ final class CursorLayoutManager: CusorHighlightProtocol {
     private(set) lazy var cursorCommands: [CursorCommand] = [
         FocusCursorCommand.init(line: self.changeSelectedRange),
         BracketPairCursorCommand.init(editor: self.textView, highlightor: self),
-        SuggestFocusCusorCommand(suggestionManager: self.suggestionManager)
+        SuggestFocusCusorCommand(suggestionManager: self.suggestionManager as? SuggestionCusorPosition)
     ]
     
     func executeWhenChangingLayoutSelection() {

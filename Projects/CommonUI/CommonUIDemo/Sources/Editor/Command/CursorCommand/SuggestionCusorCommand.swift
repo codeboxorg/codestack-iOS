@@ -2,9 +2,9 @@ import CommonUI
 import UIKit
 
 struct SuggestFocusCusorCommand: CursorCommand {
-    weak var suggestionManager: SuggestionManager?
+    weak var suggestionManager: SuggestionCusorPosition?
     
-    init(suggestionManager: SuggestionManager?) {
+    init(suggestionManager: SuggestionCusorPosition?) {
         self.suggestionManager = suggestionManager
     }
     
