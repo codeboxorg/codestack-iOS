@@ -7,7 +7,7 @@ protocol WordSuggenstion: AnyObject {
     func suggest(for prefix: String) -> [SuggestionWord]
 }
 
-struct SuggestionWord {
+struct SuggestionWord: Equatable {
     let word: String
     let count: Int
 }

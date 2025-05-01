@@ -6,4 +6,5 @@ enum CommandExcuteState {
     case enter
     case suggestionEnter
     case suggestionGenerator
+    case systemInput
 }

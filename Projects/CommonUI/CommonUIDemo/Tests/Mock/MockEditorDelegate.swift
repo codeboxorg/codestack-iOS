@@ -4,13 +4,13 @@ import Global
 
 final class MockEditorDelegate: NSObject, UITextViewDelegate {
     
-    var textInputCommandExcuteManager: TextInputCommandExcuteManager!
-    var suggestionManager: SuggestionManager!
+    var textInputCommandExcuteManager: DefaultTextInputCommandExcuteManager!
+    var suggestionManager: CompositeSuggestionManager!
     var cursorCommand: SuggestFocusCusorCommand
     
     init(
-        textInputCommandExcuteManager: TextInputCommandExcuteManager!,
-        suggestionManager: SuggestionManager!,
+        textInputCommandExcuteManager: DefaultTextInputCommandExcuteManager!,
+        suggestionManager: CompositeSuggestionManager!,
         cusorCommand: SuggestFocusCusorCommand
     ) {
         self.textInputCommandExcuteManager = textInputCommandExcuteManager

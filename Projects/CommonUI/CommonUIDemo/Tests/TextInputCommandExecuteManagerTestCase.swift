@@ -6,9 +6,9 @@ import XCTest
 final class TextInputCommandExecuteManagerTestCase: XCTestCase {
     
     var mockDelegate: MockEditorDelegate!
-    var manager: TextInputCommandExcuteManager!
+    var manager: DefaultTextInputCommandExcuteManager!
     var suggestionLayout: SuggestionLayout!
-    var suggestionManager: SuggestionManager!
+    var suggestionManager: CompositeSuggestionManager!
     var wordSuggestion: WordSuggenstion!
     var undoableManager: DefaultUndoableManager!
     var editor: UITextView!
@@ -33,7 +33,7 @@ final class TextInputCommandExecuteManagerTestCase: XCTestCase {
             )
         )
         
-        manager = TextInputCommandExcuteManager(
+        manager = DefaultTextInputCommandExcuteManager(
             editor: _editor,
             undoableManager: undoableManager,
             suggestionManager: suggestionManager,

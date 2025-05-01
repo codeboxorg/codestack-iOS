@@ -5,7 +5,7 @@ import XCTest
 
 final class ButtonCommandExecuteManagerTestCase: XCTestCase {
     private var textView: UITextView!
-    private var suggestionManager: SuggestionManager!
+    private var suggestionManager: CompositeSuggestionManager!
     private var suggestion: WordSuggenstion!
     private var suggestionLayout: SuggestionLayout!
     private var undoableManager: UndoableManager!
@@ -39,7 +39,7 @@ final class ButtonCommandExecuteManagerTestCase: XCTestCase {
             )
         )
         
-        textCommand = TextInputCommandExcuteManager(
+        textCommand = DefaultTextInputCommandExcuteManager(
             editor: textView,
             undoableManager: undoableManager,
             suggestionManager: suggestionManager,
@@ -56,9 +56,6 @@ final class ButtonCommandExecuteManagerTestCase: XCTestCase {
             textInputCommandExcuteManager: textCommand,
             buttonCommandExecuteManager: buttonCommandExecuteManager)
         )
-        
-        // editorController = mockDelegate
-        // textView.delegate = editorController
     }
     
     override func tearDownWithError() throws {
@@ -215,4 +212,113 @@ func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
         
         XCTAssertEqual(textView.text, after)
     }
+    
+    
+    func test_move_right_Action() {
+        let textView = textView!
+        let base = """
+import Foundation
+
+func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
+    func
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        textView.text = base
+        textView.selectedRange = NSRange(location: 0, length: 0)
+        
+        
+        let button = buttonCommandExecuteManager.allCommandButtons.filter {
+            $0.accessibilityIdentifier! == DefaultButtonCommandExecuteManager.AccessoryButtonIdentifier.moveRightButton.string
+        }.first!
+        
+        buttonCommandExecuteManager.moveRightCommand()
+        button.sendActions(for: .touchUpInside)
+        button.sendActions(for: .touchUpInside)
+        
+        XCTAssertEqual(textView.selectedRange, NSRange(location: 3, length: 0))
+    }
+    
+    func test_move_left_Action() {
+        let textView = textView!
+        let base = """
+import Foundation
+
+func swift_test_function(_ arr: [Int], _ num: Int) -> Int {
+    func
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        textView.text = base
+        textView.selectedRange = NSRange(location: 3, length: 0)
+        
+        let button = buttonCommandExecuteManager.allCommandButtons.filter {
+            $0.accessibilityIdentifier! == DefaultButtonCommandExecuteManager.AccessoryButtonIdentifier.moveLeftButton.string
+        }.first!
+        
+        buttonCommandExecuteManager.moveLeftButtonExecute()
+        button.sendActions(for: .touchUpInside)
+        button.sendActions(for: .touchUpInside)
+        
+        XCTAssertEqual(textView.selectedRange, NSRange(location: 0, length: 0))
+    }
+    
+    
+    func test_move_right_long_Action() {
+        let textView = textView!
+        let base = """
+import Foundation
+func solution(_ arr: [Int], _ num: Int) -> Int {
+    return 0
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        textView.text = base
+        textView.selectedRange = NSRange(location: 0, length: 0)
+        
+        let expectation = XCTestExpectation(description: "moveRight")
+        
+        let button = buttonCommandExecuteManager.allCommandButtons.filter {
+            $0.accessibilityIdentifier! == DefaultButtonCommandExecuteManager.AccessoryButtonIdentifier.moveRightButton.string
+        }.first!
+        
+        button.sendActions(for: .touchDown)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: {
+            button.sendActions(for: .touchUpOutside)
+            XCTAssertEqual(textView.selectedRange, NSRange(location: textView.text.count, length: 0))
+            expectation.fulfill()
+        })
+        
+        wait(for: [expectation])
+    }
+    
+    func test_move_left_long_Action() {
+        let textView = textView!
+        let base = """
+import Foundation
+func solution(_ arr: [Int], _ num: Int) -> Int {
+    return 0
+}
+""".replacingOccurrences(of: "    ", with: "\t")
+        textView.text = base
+        textView.selectedRange = NSRange(location: base.count, length: 0)
+        
+        let expectation = XCTestExpectation(description: "moveLeft")
+        
+        let button = buttonCommandExecuteManager.allCommandButtons.filter {
+            $0.accessibilityIdentifier! == DefaultButtonCommandExecuteManager.AccessoryButtonIdentifier.moveLeftButton.string
+        }.first!
+        
+        button.sendActions(for: .touchDown)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: {
+            button.sendActions(for: .touchUpOutside)
+            XCTAssertEqual(textView.selectedRange, NSRange(location: 0, length: 0))
+            expectation.fulfill()
+        })
+        
+        wait(for: [expectation])
+    }
+    
+    
+    
+    
 }
