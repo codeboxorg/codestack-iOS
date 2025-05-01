@@ -26,6 +26,16 @@ enum EditorButtonGenerator {
         button.heightAnchor.constraint(equalToConstant: size).isActive = true
     }
     
+    static func symbolAlertColorAction(button: UIButton) {
+        let selectedColor = UIColor.whiteGray.withAlphaComponent(0.3)
+        if button.backgroundColor == .clear || button.backgroundColor == nil {
+            button.backgroundColor = selectedColor
+        } else {
+            button.backgroundColor = .clear
+        }
+        button.layer.cornerRadius = 6
+    }
+    
     static func generate(type: ButtonType) -> UIButton {
         let button = UIButton(type: .system)
         
@@ -42,18 +52,9 @@ enum EditorButtonGenerator {
             let symbolAlertButton = button
             symbolAlertButton.setTitle("S", for: .normal)
             symbolAlertButton.addAction(command.asAction(), for: command.controlType)
-            
             let colorAction = UIAction { [weak symbolAlertButton] _ in
-                let selectedColor = UIColor.whiteGray.withAlphaComponent(0.3)
                 guard let button = symbolAlertButton else { return }
-                
-                if button.backgroundColor == .clear || button.backgroundColor == nil {
-                    button.backgroundColor = selectedColor
-                } else {
-                    button.backgroundColor = .clear
-                }
-                
-                button.layer.cornerRadius = 6
+                symbolAlertColorAction(button: button)
             }
             
             symbolAlertButton.addAction(colorAction, for: .touchUpInside)

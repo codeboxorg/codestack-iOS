@@ -45,10 +45,16 @@ final class EditorController: NSObject {
             self.inputViewLayoutManager = InputViewLayoutManager(textView: self.textView)
             { [weak self] in
                 self?.cusorLayoutManager.removeLayoutAction()
+            } inputViewHideAction: { [weak buttonCommandExecuteManager] in
+                guard let symbolAlert = buttonCommandExecuteManager?.symbolAlert else {
+                    return
+                }
+                EditorButtonGenerator.symbolAlertColorAction(button: symbolAlert)
             }
             
             self.buttonCommandExecuteManager.replaceInputViewDelegate = self.inputViewLayoutManager
             let (toolbar, height) = ToolBarGenerator.makeToolBar(buttonCommandExecuteManager.allCommandButtons)
+            
             self.inputViewLayoutManager.toolBarHeight = height
             self.textView?.inputAccessoryView = toolbar
             self.textView?.delegate = self
@@ -63,12 +69,7 @@ extension EditorController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         suggestionManager.suggestionLayoutGenerate()
         if let (oldTextRange, range, text) = SystemInsertSnapShot.shared.useWhenTextDidChange {
-            textInputCommandExcuteManager
-                .systemInsertActionSnapShot(
-                    oldTextRange: oldTextRange,
-                    shouldChangeTextIn: range,
-                    replacementText: text
-                )
+            textInputCommandExcuteManager.systemInsertActionSnapShot(oldTextRange: oldTextRange, shouldChangeTextIn: range, replacementText: text)
             SystemInsertSnapShot.shared.useWhenTextDidChange = nil
         }
     }

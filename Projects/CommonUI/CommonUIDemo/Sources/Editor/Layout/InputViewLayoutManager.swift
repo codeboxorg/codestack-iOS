@@ -15,13 +15,19 @@ final class InputViewLayoutManager: EditorReplaceInputView {
     
     private lazy var keyboardState: KeyboardState = .keyboard
     
-    var action: () -> Void
+    var keyboardHideAction: () -> Void
+    var inputViewHideAction: () -> Void
+    
     weak var textView: UITextView!
     weak var delegate: UITextViewDelegate!
     
-    init(textView: UITextView?, _ action: @escaping () -> Void) {
+    init(textView: UITextView?,
+         keyboardHideAction: @escaping () -> Void,
+         inputViewHideAction: @escaping () -> Void
+    ) {
         self.textView = textView
-        self.action = action
+        self.keyboardHideAction = keyboardHideAction
+        self.inputViewHideAction = inputViewHideAction
     }
     
     func getKeyboardHegiht() {
@@ -35,7 +41,7 @@ final class InputViewLayoutManager: EditorReplaceInputView {
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main)
         { [weak self] notification in
             guard let self else { return }
-            self.action()
+            self.keyboardHideAction()
         }
     } 
     
@@ -80,6 +86,7 @@ final class InputViewLayoutManager: EditorReplaceInputView {
         } else if keyboardState == .specialCharacters {
             self.keyboardState = .keyboard
             textView?.inputView = nil
+            inputViewHideAction()
         }
         textView?.reloadInputViews()
     }
