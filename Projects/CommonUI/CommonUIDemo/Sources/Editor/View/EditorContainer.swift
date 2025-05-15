@@ -16,10 +16,13 @@ protocol TextViewWidthUpdateProtocol: AnyObject {
 }
 
 final class EditorContainerView: BaseView, TextViewWidthUpdateProtocol {
-    
-    weak var highlightr: Highlightr?
 
-    let numberTextViewContainer: UIView = {
+    var highlightr: Highlightr? { self._highlightr }
+    var numberTextViewContainer: UIView { self._numberTextViewContainer }
+    
+    private weak var _highlightr: Highlightr?
+
+    private let _numberTextViewContainer: UIView = {
         let view = UIView()
         return view
     }()
@@ -52,10 +55,10 @@ final class EditorContainerView: BaseView, TextViewWidthUpdateProtocol {
     override func applyAttributes() {
         numbersView.settingTextView(self.codeUITextView, tracker: self)
         codeUITextView.languageBinding(name: "Swift")
-        highlightr = (codeUITextView.textStorage as! CodeAttributedString).highlightr
-        highlightr?.setTheme(to: "vs2015")
-        let color = self.highlightr?.theme.themeBackgroundColor
-        numberTextViewContainer.backgroundColor = color
+        _highlightr = (codeUITextView.textStorage as! CodeAttributedString).highlightr
+        _highlightr?.setTheme(to: "vs2015")
+        let color = self._highlightr?.theme.themeBackgroundColor
+        _numberTextViewContainer.backgroundColor = color
         numbersView.backgroundColor = color
         codeUITextView.backgroundColor = color
     }
