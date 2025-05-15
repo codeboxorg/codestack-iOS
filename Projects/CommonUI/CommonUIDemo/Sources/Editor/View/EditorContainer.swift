@@ -29,17 +29,17 @@ final class EditorContainerView: BaseView, TextViewWidthUpdateProtocol {
         return view
     }()
     
-    private(set) lazy var codeUITextView: CodeUITextView = {
+    private(set) lazy var codeUITextView: Editor = {
         let textStorage = CodeAttributedString()
         let layoutManager = NSLayoutManager()
         textStorage.addLayoutManager(layoutManager)
         let textContainer = NSTextContainer()
         layoutManager.addTextContainer(textContainer)
-        let textView = CodeUITextView(frame: .zero, textContainer: textContainer)
+        let textView = Editor(frame: .zero, textContainer: textContainer)
         return textView
     }()
     
-    let scrollView: UIScrollView = {
+    private let scrollView: UIScrollView = {
         let scroll = UIScrollView()
         scroll.bounces = false
         scroll.showsHorizontalScrollIndicator = true

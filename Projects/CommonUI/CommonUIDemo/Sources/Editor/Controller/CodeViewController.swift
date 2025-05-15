@@ -1,72 +1,55 @@
-//
-//  CodeViewController.swift
-//  CommonUIDemo
-//
-//  Created by hwan on 3/25/25.
-//  Copyright © 2025 com.hwan. All rights reserved.
-//
+
 
 import UIKit
 import CommonUI
 import Then
 import Highlightr
-import SafariServices
 import Global
+
+final class ResultViewController: BaseViewController {
+    
+    lazy var textView: UITextView = {
+        let label = UITextView()
+        label.font = UIFont.systemFont(ofSize: 15)
+        label.textColor = UIColor.white
+        label.backgroundColor = .black
+        return label
+    }()
+    
+    private var result: String = ""
+    
+    static func create(with result: String) -> ResultViewController {
+        let vc = ResultViewController()
+        vc.result = result
+        return vc
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(textView)
+        
+        NSLayoutConstraint.activate([
+            textView.heightAnchor.constraint(equalToConstant: 300),
+            textView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            textView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+            textView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+        ])
+        
+        textView.text = result
+    }
+}
 
 final class CodeViewController: BaseViewController {
     
-    var editorContainerView = EditorContainerView.init(frame: .zero)
-    lazy var undoableManager  : UndoableManager  = DefaultUndoableManager(editor: self.editor)
-    lazy var suggestionLayout : SuggestionLayout = SuggestionLayoutManager(editor: self.editor)
-    private let wordSuggestion: WordSuggenstion  = DefaultWordSuggenstion()
-    
-    lazy var suggestionManager: SuggestionManager = DefaultSuggestionManager(
-       dependency: .init(
-           suggestion: self.wordSuggestion,
-           editor: self.editor,
-           suggestionLayout: self.suggestionLayout,
-           suggestionCommand: SuggestionCommand(
-               editor: self.editor,
-               invoker: self.undoableManager
-           )
-       )
-   )
-    
-    var editor             : UITextView { self.editorContainerView.codeUITextView }
-    var changeSelected     : ChangeSelectedRange { self.editorContainerView.numbersView as ChangeSelectedRange }
-    var textViewWidthUpdate: TextViewWidthUpdateProtocol { self.editorContainerView as TextViewWidthUpdateProtocol }
-    
-    lazy var editorController = EditorController(
-        dependency: .init(
-            textView: self.editor,
-            changeSelecteRange: self.changeSelected,
-            widthUpdater: self.textViewWidthUpdate,
-            undoableManager: self.undoableManager,
-            suggestionManager: self.suggestionManager,
-            suggestionLayout: self.suggestionLayout,
-            textInputCommandExcuteManager: DefaultTextInputCommandExcuteManager(
-                editor: self.editor,
-                undoableManager: self.undoableManager,
-                suggestionManager: self.suggestionManager,
-                suggestionLayoutManger: self.suggestionLayout
-            ),
-            buttonCommandExecuteManager: DefaultButtonCommandExecuteManager(
-                editor: self.editor,
-                undoableManager: self.undoableManager
-            )
-        )
-    )
+    private let editor        : some EditorWrapper = DefaultEditorWrapper(frame: .zero)
+    private let codeSendButton: some Loading = SendButton.create(font: .boldSystemFont(ofSize: 10))
     
     private lazy var availableThemes: [String] = getAvailableThemes() // Replace with your own theme loader
     private var selectedThemeIndex: Int = 0
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait // 또는 .portraitUpsideDown 포함 가능
-    }
-    
-    override var shouldAutorotate: Bool {
-        return false
-    }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .portrait } // 또는 .portraitUpsideDown 포함 가능
+    override var shouldAutorotate: Bool { false }
     
     private lazy var themePickerView: UIPickerView = {
         let picker = UIPickerView()
@@ -85,40 +68,42 @@ final class CodeViewController: BaseViewController {
     }()
     
     override func viewDidLoad() {
-        editorContainerView.codeUITextView.layoutManager.delegate = self.editorController
-        editorContainerView.codeUITextView.delegate = self.editorController
-        layoutConfigure()
+        view.addSubview(editor)
+        editor.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide.snp.edges)
+        }
+        
         configureSettingButton()
         configureThemePicker()
-        addKeyboardObserver()
-    }
-    
-    private func addKeyboardObserver() {
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak self] notification in
-            guard let self = self,
-                  let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-                  let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
-
-            UIView.animate(withDuration: duration) {
-                self.editorContainerView.snp.updateConstraints { make in
-                    make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
-                        .inset(keyboardFrame.height - self.editorController.inputViewLayoutManager.toolBarHeight)
+        configureCodeSendButton()
+        
+        view.bringSubviewToFront(settingButton)
+        view.bringSubviewToFront(themePickerView)
+        view.bringSubviewToFront(codeSendButton)
+        
+        codeSendButton.addAction(
+            UIAction(handler: { [weak self] action in
+                guard
+                    let code = self?.editor.code,
+                    let base64 = code.data(using: .utf8)?.base64EncodedString()
+                else {
+                    return
                 }
-                self.view.layoutIfNeeded()
-            }
-        }
-
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] notification in
-            guard let self = self,
-                  let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
-
-            UIView.animate(withDuration: duration) {
-                self.editorContainerView.snp.updateConstraints { make in
-                    make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
+                Task {
+                    do {
+                        let service = TestSubmissions()
+                        let result = try await service.post(base64: base64)
+                        try await Task.sleep(nanoseconds: 5_000_000_000)
+                        let result2 = try await service.fetchResult(using: result)
+                        let vc = ResultViewController.create(with: result2.description)
+                        self?.show(vc, sender: nil)
+                    } catch {
+                        Log.debug(error)
+                    }
                 }
-                self.view.layoutIfNeeded()
-            }
-        }
+            }),
+            for: .touchUpInside
+        )
     }
     
     private func configureSettingButton() {
@@ -141,6 +126,16 @@ final class CodeViewController: BaseViewController {
         themePickerView.alpha = 0
     }
     
+    private func configureCodeSendButton() {
+        view.addSubview(codeSendButton)
+        codeSendButton.snp.makeConstraints { make in
+            make.top.equalTo(self.settingButton.snp.bottom)
+            make.trailing.equalTo(self.view.safeAreaLayoutGuide.snp.trailing).inset(16)
+            make.width.equalTo(50)
+            make.height.equalTo(30)
+        }
+    }
+    
     private func getAvailableThemes() -> [String] {
         guard let fileNames = try? FileManager.default.contentsOfDirectory(atPath: HighlightrResources.bundle.bundlePath) else {
             Log.debug("Highlightr.bundle not found")
@@ -157,55 +152,13 @@ final class CodeViewController: BaseViewController {
         
         if isHidden {
             themePickerView.selectRow(selectedThemeIndex, inComponent: 0, animated: false)
-            if editorContainerView.codeUITextView.isFirstResponder {
-                editorContainerView.codeUITextView.resignFirstResponder()
-            }
+            editor.resignTextView()
         }
 
         UIView.animate(withDuration: 0.3) {
             self.themePickerView.transform = isHidden ? .identity : CGAffineTransform(translationX: 0, y: 200)
             self.themePickerView.alpha = isHidden ? 1 : 0
         }
-    }
-    
-    private func applyTheme(_ theme: String) {
-        self.editorContainerView.highlightr?.setTheme(to: theme)
-        let color = self.editorContainerView.highlightr?.theme.themeBackgroundColor
-        self.editorContainerView.numberTextViewContainer.backgroundColor = color
-        self.editorContainerView.codeUITextView.backgroundColor = color
-        self.editorContainerView.numbersView.backgroundColor = color
-    }
-}
-
-//MARK: - 코드 문제 설명 뷰의 애니메이션 구현부
-extension CodeViewController {
-    func showProblemDiscription() {
-        editorContainerView.numbersView.layer.setNeedsDisplay()
-    }
-    
-    //이거 먼저 선언
-    func dismissProblemDiscription(button height: CGFloat = 44){
-        editorContainerView.numbersView.layer.setNeedsDisplay()
-    }
-}
-
-//MARK: - layout setting
-extension CodeViewController {
-    private func layoutConfigure() {
-        self.view.addSubview(editorContainerView)
-        editorContainerView.snp.makeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
-            make.leading.equalTo(self.view.safeAreaLayoutGuide.snp.leading)
-            make.trailing.equalTo(self.view.safeAreaLayoutGuide.snp.trailing)
-            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
-            make.height.equalTo(self.view.snp.height).priority(.low)
-        }
-    }
-}
-
-extension CodeViewController: SFSafariViewControllerDelegate {
-    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-        self.navigationController?.popViewController(animated: true)
     }
 }
 
@@ -222,6 +175,7 @@ extension CodeViewController: UIPickerViewDataSource, UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedThemeIndex = row
         let theme = self.availableThemes[row]
-        applyTheme(theme)
+        editor.applyTheme(theme)
     }
 }
+

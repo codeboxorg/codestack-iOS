@@ -45,7 +45,7 @@ final class EditorController: NSObject {
             self.inputViewLayoutManager = InputViewLayoutManager(textView: self.textView)
             { [weak self] in
                 self?.cusorLayoutManager.removeLayoutAction()
-            } inputViewHideAction: { [weak buttonCommandExecuteManager] in
+            } inputViewChangeAction: { [weak buttonCommandExecuteManager] in
                 guard let symbolAlert = buttonCommandExecuteManager?.symbolAlert else {
                     return
                 }
@@ -57,7 +57,6 @@ final class EditorController: NSObject {
             
             self.inputViewLayoutManager.toolBarHeight = height
             self.textView?.inputAccessoryView = toolbar
-            self.textView?.delegate = self
             self.inputViewLayoutManager.getKeyboardHegiht()
             self.inputViewLayoutManager.delegate = self
         }
@@ -84,13 +83,5 @@ extension EditorController: UITextViewDelegate {
     func textViewDidChangeSelection(_ textView: UITextView) {
         cusorLayoutManager.executeWhenChangingLayoutSelection()
         widthUpdater?.positioningScrollView()
-    }
-}
-
-
-extension EditorController: NSLayoutManagerDelegate {
-    func layoutManager(_ layoutManager: NSLayoutManager, paragraphSpacingAfterGlyphAt glyphIndex: Int, withProposedLineFragmentRect rect: CGRect) -> CGFloat
-    {
-        return 10
     }
 }
