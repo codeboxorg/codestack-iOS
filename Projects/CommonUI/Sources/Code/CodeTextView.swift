@@ -1,7 +1,7 @@
 import UIKit
 import Highlightr
 
-public class CodeUITextView: UITextView {
+open class CodeUITextView: UITextView {
     
     public override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
@@ -39,7 +39,7 @@ func solution(_ arr: [Int], _ num: Int) -> Int {
         return superRect
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("fattal error in codeUITextView this is not by using Storyboard")
     }
     
