@@ -52,13 +52,6 @@ enum EditorButtonGenerator {
             let symbolAlertButton = button
             symbolAlertButton.setTitle("S", for: .normal)
             symbolAlertButton.addAction(command.asAction(), for: command.controlType)
-            let colorAction = UIAction { [weak symbolAlertButton] _ in
-                guard let button = symbolAlertButton else { return }
-                symbolAlertColorAction(button: button)
-            }
-            
-            symbolAlertButton.addAction(colorAction, for: .touchUpInside)
-            
             layoutConfig(button: symbolAlertButton, size: 30)
             return symbolAlertButton
             
