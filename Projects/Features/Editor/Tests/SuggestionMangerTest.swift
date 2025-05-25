@@ -1,4 +1,4 @@
-@testable import CommonUIDemo
+@testable import Editor
 import XCTest
 
 

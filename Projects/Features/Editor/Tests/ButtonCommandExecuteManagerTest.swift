@@ -1,10 +1,10 @@
-@testable import CommonUIDemo
-@testable import CommonUI
+@testable import Editor
 import XCTest
+import CommonUI
 
 
 final class ButtonCommandExecuteManagerTestCase: XCTestCase {
-    private var textView: UITextView!
+    private var textView: Editor!
     private var suggestionManager: CompositeSuggestionManager!
     private var suggestion: WordSuggenstion!
     private var suggestionLayout: SuggestionLayout!
@@ -15,7 +15,7 @@ final class ButtonCommandExecuteManagerTestCase: XCTestCase {
     var buttonCommandExecuteManager: ButtonCommandExecuteManager!
     
     override func setUpWithError() throws {
-        textView = UITextView()
+        textView = Editor()
         undoableManager = DefaultUndoableManager(
             editor: textView
         )
@@ -38,17 +38,23 @@ final class ButtonCommandExecuteManagerTestCase: XCTestCase {
                 )
             )
         )
+        textView.undoableManager = undoableManager
         
-        textCommand = DefaultTextInputCommandExcuteManager(
+        textCommand = DefaultTextInputCommandExcuteManager.init(
             editor: textView,
-            undoableManager: undoableManager,
-            suggestionManager: suggestionManager,
-            suggestionLayoutManger: suggestionLayout
+            undoableManager: self.undoableManager,
+            textRangeResolver: TextRangeResolver(editor: textView),
+            textInputCommands:
+                    SuggestionEnterCommand(suggestionManager: self.suggestionManager),
+                    SuggestionGeneratorCommand(suggestionManager: self.suggestionManager),
+                    EnterCommand(suggestionLayout: self.suggestionLayout, commandExecutor: textView),
+                    AutoRemoveCommand(commandExecutor: textView),
+                    AutoPairCharacterCommand(commandExecutor: textView)
         )
         
         editorController = EditorController(dependency: .init(
             textView: textView,
-            changeSelecteRange: MockLineNumberView(),
+            changeSelecteRange: MockLineNumberView() as? ChangeSelectedRange,
             widthUpdater: MockTextViewWidthUpdate(),
             undoableManager: undoableManager,
             suggestionManager: suggestionManager,
@@ -56,6 +62,7 @@ final class ButtonCommandExecuteManagerTestCase: XCTestCase {
             textInputCommandExcuteManager: textCommand,
             buttonCommandExecuteManager: buttonCommandExecuteManager)
         )
+        textView.delegate = editorController
     }
     
     override func tearDownWithError() throws {

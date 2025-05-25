@@ -1,5 +1,4 @@
-@testable import CommonUIDemo
-@testable import CommonUI
+@testable import Editor
 import XCTest
 
 
@@ -11,10 +10,10 @@ final class TextInputCommandExecuteManagerTestCase: XCTestCase {
     var suggestionManager: CompositeSuggestionManager!
     var wordSuggestion: WordSuggenstion!
     var undoableManager: DefaultUndoableManager!
-    var editor: UITextView!
+    var editor: Editor!
     
     override func setUpWithError() throws {
-        let _editor = UITextView()
+        let _editor = Editor()
         
         
         undoableManager = DefaultUndoableManager.init(editor: _editor)
@@ -33,11 +32,16 @@ final class TextInputCommandExecuteManagerTestCase: XCTestCase {
             )
         )
         
-        manager = DefaultTextInputCommandExcuteManager(
+        manager = DefaultTextInputCommandExcuteManager.init(
             editor: _editor,
-            undoableManager: undoableManager,
-            suggestionManager: suggestionManager,
-            suggestionLayoutManger: suggestionLayout
+            undoableManager: self.undoableManager,
+            textRangeResolver: TextRangeResolver(editor: _editor),
+            textInputCommands:
+                SuggestionEnterCommand(suggestionManager: self.suggestionManager as SuggestionInsert),
+            SuggestionGeneratorCommand(suggestionManager: self.suggestionManager as SuggestionGenerator),
+            EnterCommand(suggestionLayout: self.suggestionLayout, commandExecutor: _editor),
+            AutoRemoveCommand(commandExecutor: _editor),
+            AutoPairCharacterCommand(commandExecutor: _editor)
         )
         
         mockDelegate = MockEditorDelegate.init(
@@ -46,6 +50,7 @@ final class TextInputCommandExecuteManagerTestCase: XCTestCase {
             cusorCommand: SuggestFocusCusorCommand(suggestionManager: self.suggestionManager)
         )
         _editor.delegate = mockDelegate
+        _editor.undoableManager = undoableManager
         editor = _editor
     }
     
@@ -342,8 +347,9 @@ func solution() {
         
         _ = manager.commandExecute(shouldChangeTextIn: editor.selectedRange, replacementText: "\n")
         
-        manager.undoableManager?.undo()
         
+        manager.undoableManager?.undo()
+        XCTAssertNotNil(manager.undoableManager)
         XCTAssertEqual(editor.selectedRange, NSRange(location: 17, length: 0))
         XCTAssertEqual(editor.text, prior)
     }

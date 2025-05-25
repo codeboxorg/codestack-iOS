@@ -1,7 +1,7 @@
 
-@testable import CommonUIDemo
-@testable import CommonUI
+@testable import Editor
 import Foundation
+import CommonUI
 
 
 final class MockLineNumberView: ChangeSelectedRange {

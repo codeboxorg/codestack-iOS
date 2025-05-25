@@ -1,5 +1,5 @@
 
-@testable import CommonUIDemo
+@testable import Editor
 import UIKit
 
 class MockTextViewWidthUpdate: TextViewWidthUpdateProtocol {

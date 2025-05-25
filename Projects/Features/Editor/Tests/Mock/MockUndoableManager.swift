@@ -1,8 +1,6 @@
 
 
-@testable import CommonUIDemo
-
-
+@testable import Editor
 
 final class MockUpdateUndoRedoButtonStateDelegate: UpdateUndoRedoButtonStateDelegate {
     func updateUndoRedoButtonState() {
@@ -11,7 +9,7 @@ final class MockUpdateUndoRedoButtonStateDelegate: UpdateUndoRedoButtonStateDele
 }
 
 final class MockUndoableManager: UndoableManager {
-    var updateUndoRedoButtonStateDelegate: (any CommonUIDemo.UpdateUndoRedoButtonStateDelegate)?
+    var updateUndoRedoButtonStateDelegate: (any UpdateUndoRedoButtonStateDelegate)?
     
     var isUndoable: Bool {
         false
@@ -21,7 +19,7 @@ final class MockUndoableManager: UndoableManager {
         false
     }
     
-    func push(_ command: any CommonUIDemo.UndoableTextInputCommand) {
+    func push(_ command: any UndoableTextInputCommand) {
         
     }
     
