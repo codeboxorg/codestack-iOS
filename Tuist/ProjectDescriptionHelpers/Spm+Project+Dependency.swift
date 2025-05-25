@@ -47,9 +47,15 @@ public enum P {
     public static let thirdParty: Path = .relativeToRoot("Projects/Module/ThirdParty")
     public static let presentation: Path = .relativeToRoot("Projects/Presentation")
     public static let commonUI: Path = .relativeToRoot("Projects/CommonUI")
+    public static let editor: Path = .relativeToRoot("Projects/Features/Editor")
 }
 
 public extension TargetDependency.PRO {
+    static let editor = TargetDependency.project(
+        target: "Editor",
+        path: P.editor
+    )
+    
     static let global = TargetDependency.project(
         target: "Global",
         path: P.global

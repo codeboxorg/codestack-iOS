@@ -21,7 +21,8 @@ public enum AppConfig {
                         ]
                     ]
                 ]
-            ]
+            ],
+            "Judge0APIURL": "$(JUDGE0_API_URL)"
         ]
     }
     
