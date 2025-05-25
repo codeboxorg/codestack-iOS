@@ -10,13 +10,13 @@ protocol TextInputCommandExcuteManager {
 }
 
 final class DefaultTextInputCommandExcuteManager: TextInputCommandExcuteManager {
-    weak var editor: Editor?
+    weak var editor: SelectedRange?
     weak var undoableManager: UndoableManager?
     private var resolver: TextRangeResolver
     private var inputCommands: [TextInputCommand]
     
     init(
-        editor: Editor?,
+        editor: SelectedRange?,
         undoableManager: UndoableManager?,
         textRangeResolver: TextRangeResolver,
         textInputCommands: TextInputCommand...
@@ -51,14 +51,17 @@ final class DefaultTextInputCommandExcuteManager: TextInputCommandExcuteManager 
             }
         }
         
+        let isRemoveAction = range.length >= 1 && text.count == 0
+        let isReplaceAction = range.length >= 1 && text.count != 0
+        
         if systemUpdate {
-            if range.length >= 1 && text.count == 0 {
+            if isRemoveAction {
                 let undoCommand = resolver.removeSnapShot(range, text)
                 undoableManager?.push(undoCommand)
-            } else if range.length >= 1 && text.count != 0 {
+            } else if isReplaceAction {
                 let undoCommand = resolver.replaceSnapshot(range, text)
                 undoableManager?.push(undoCommand)
-            } else {
+            } else { // insert Action
                 SystemInsertSnapShot.shared.useWhenTextDidChange = (editor!.selectedTextRange!, range, text)
             }
             return true

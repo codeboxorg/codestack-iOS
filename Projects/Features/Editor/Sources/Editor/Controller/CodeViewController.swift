@@ -41,15 +41,15 @@ final class ResultViewController: BaseViewController {
     }
 }
 
-final class CodeViewController: BaseViewController {
+public final class CodeViewController: BaseViewController {
     
     private let editor        : some EditorWrapper = DefaultEditorWrapper(frame: .zero)
-    private let codeSendButton: some Loading = SendButton.create(font: .boldSystemFont(ofSize: 10))
+    private let codeSendButton: some Loading =  SendButton.init(frame: .zero, title: "제출하기")
     
     private lazy var availableThemes: [String] = getAvailableThemes() // Replace with your own theme loader
     private var selectedThemeIndex: Int = 0
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .portrait } // 또는 .portraitUpsideDown 포함 가능
-    override var shouldAutorotate: Bool { false }
+    public override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .portrait } // 또는 .portraitUpsideDown 포함 가능
+    public override var shouldAutorotate: Bool { false }
     
     private lazy var themePickerView: UIPickerView = {
         let picker = UIPickerView()
@@ -67,7 +67,7 @@ final class CodeViewController: BaseViewController {
         return button
     }()
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         view.addSubview(editor)
         editor.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide.snp.edges)
@@ -91,11 +91,11 @@ final class CodeViewController: BaseViewController {
                 }
                 Task {
                     do {
-                        let service = TestSubmissions()
-                        let result = try await service.post(base64: base64)
+//                        let service = TestSubmissions()
+//                        let result = try await service.post(base64: base64)
                         try await Task.sleep(nanoseconds: 5_000_000_000)
-                        let result2 = try await service.fetchResult(using: result)
-                        let vc = ResultViewController.create(with: result2.description)
+                        let result2 = ""
+                        let vc = ResultViewController.create(with: result2)
                         self?.show(vc, sender: nil)
                     } catch {
                         Log.debug(error)
@@ -163,16 +163,17 @@ final class CodeViewController: BaseViewController {
 }
 
 extension CodeViewController: UIPickerViewDataSource, UIPickerViewDelegate {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
+    public func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
     
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return availableThemes.count
     }
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+    
+    public func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return availableThemes[row]
     }
     
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedThemeIndex = row
         let theme = self.availableThemes[row]
         editor.applyTheme(theme)

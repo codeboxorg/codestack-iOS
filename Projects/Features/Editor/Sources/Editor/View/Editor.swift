@@ -2,7 +2,12 @@ import CommonUI
 import UIKit
 
 
+protocol SelectedRange: AnyObject {
+    var selectedTextRange: UITextRange? { get }
+}
+
 public final class Editor: CodeUITextView,
+                           SelectedRange,
                            EnterCommandExecutor,
                            AutoRemoveCommandExecutor,
                            AutoPairCommandExecutor {

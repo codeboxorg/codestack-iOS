@@ -1,9 +1,10 @@
-//
-//  EditorExample.swift
-//  Editor
-//
-//  Created by hwan on 5/24/25.
-//  Copyright © 2025 com.hwan. All rights reserved.
-//
+import Editor
+import UIKit
 
-import Foundation
+
+final class EditorViewController: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+}

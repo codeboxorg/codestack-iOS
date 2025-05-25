@@ -12,6 +12,8 @@ public protocol Loading: UIButton {
     func hideLoading()
 }
 
+public typealias SendButton = LoadingUIButton
+
 public final class LoadingUIButton: UIButton, Loading {
 
     public var buttonColor: UIColor = .label
@@ -27,7 +29,6 @@ public final class LoadingUIButton: UIButton, Loading {
         activityIndicator.color = indicatorColor
         return activityIndicator
     }()
-    
     
     public convenience init(frame: CGRect, title: String) {
         self.init(frame: frame)

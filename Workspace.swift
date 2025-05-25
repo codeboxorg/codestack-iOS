@@ -11,6 +11,7 @@ let workspace = Workspace(
         P.csNetwork,
         P.global,
         P.thirdParty,
-        P.commonUI
+        P.commonUI,
+        P.editor
         //P.presentation
     ])
