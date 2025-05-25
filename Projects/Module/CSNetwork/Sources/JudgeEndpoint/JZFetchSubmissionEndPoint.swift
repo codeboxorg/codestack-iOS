@@ -7,7 +7,7 @@ public struct JZFetchSubmissionEndpoint: EndPoint {
     }
     
     public var host: String {
-        judgeZeroBase
+        judgeZeroLocalBase
     }
     
     public var port: Int? {

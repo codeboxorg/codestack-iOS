@@ -15,6 +15,12 @@ extension EndPoint {
         return base
     }
     
+    var judgeZeroLocalBase: String {
+        guard let base = Bundle.main.infoDictionary?["Judge0APIURL"] as? String
+        else { return "" }
+        return base
+    }
+    
     var judgeZeroBase: String {
         guard let base = Bundle.main.infoDictionary?["judgezero_endpoint"] as? String
         else { return "" }

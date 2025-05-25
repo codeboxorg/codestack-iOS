@@ -7,7 +7,6 @@
 
 import UIKit
 import RxSwift
-import RxCocoa
 
 // TODO: DOmain layer로 옮겨야됨
 public protocol LoginViewModelProtocol: AnyObject {

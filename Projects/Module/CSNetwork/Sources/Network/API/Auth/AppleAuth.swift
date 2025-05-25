@@ -7,7 +7,6 @@
 
 import Foundation
 import RxSwift
-import RxCocoa
 
 //MARK: - Apple
 extension LoginService: AppleAuth {

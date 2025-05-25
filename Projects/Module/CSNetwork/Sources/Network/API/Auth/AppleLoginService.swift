@@ -8,7 +8,7 @@
 import Foundation
 import AuthenticationServices
 import RxSwift
-import RxRelay
+
 
 public protocol AppleLoginViewType: AnyObject {
 }

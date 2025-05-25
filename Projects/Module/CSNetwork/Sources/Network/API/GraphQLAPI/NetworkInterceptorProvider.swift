@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import ApolloAPI
-import Apollo
 
 
 final class NetworkInterceptorProvider: InterceptorProvider {

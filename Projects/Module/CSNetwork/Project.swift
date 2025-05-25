@@ -22,6 +22,10 @@ let baseSetting: SettingsDictionary =
 let project = ProjectFactory
     .createModule(
         name: "CSNetwork",
-        product: .staticFramework
+        product: .staticFramework,
+        dependencies: [
+            .SPM.firebaseAuth,
+            .SPM.rxSwift
+        ]
     )
 
