@@ -12,7 +12,6 @@ public extension TargetDependency.SPM {
     static let rxSwift: TargetDependency = .external(name: "RxSwift")
     static let snapKit: TargetDependency = .external(name: "SnapKit")
     static let then: TargetDependency    = .external(name: "Then")
-    static let apollo: TargetDependency = .external(name: "Apollo")
     static let richtextKit: TargetDependency = .external(name: "RichTextKit")
     static let rxdatasources: TargetDependency    = .external(name: "RxDataSources")
     static let rxFlow: TargetDependency = .external(name: "RxFlow")

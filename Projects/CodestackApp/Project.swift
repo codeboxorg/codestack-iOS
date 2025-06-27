@@ -47,8 +47,6 @@ let entitlementPath: Entitlements = .file(path: .path("Resources/CodeStack.entit
 
 let resources: ResourceFileElements
 = [
-    "Resources/Apollo/codestackSchema.graphqls",
-    "Resources/Apollo/graphqlQueries.graphql",
     "Resources/Asset/*.*",
     "Resources/knight-warrior-font/KnightWarrior-w16n8.otf",
     "Resources/**",

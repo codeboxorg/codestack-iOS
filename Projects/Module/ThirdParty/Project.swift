@@ -17,7 +17,6 @@ let project = ProjectFactory
             .SPM.rxSwift,
             .SPM.snapKit,
             .SPM.then,
-            .SPM.apollo,
             .SPM.richtextKit,
             .SPM.rxdatasources,
             .SPM.rxFlow,
